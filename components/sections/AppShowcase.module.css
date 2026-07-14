@@ -48,8 +48,9 @@
 
 .layout{
   display:grid;
-  grid-template-columns:460px 1fr;
-  gap:120px;
+  grid-template-columns:420px minmax(0,1fr);
+  gap:90px;
+  align-items:start;
 }
 
 .stickyPhone{
@@ -62,7 +63,7 @@
 
 .phone{
   position:relative;
-  width:360px;
+  width:min(340px,100%);
   aspect-ratio:9/19.5;
   padding:12px;
   border-radius:54px;
@@ -273,15 +274,59 @@
    NOTEBOOKS (1366 ~ 1440)
 =========================================================== */
 
-@media (max-width:1440px){
+/* ===========================================================
+   NOTEBOOKS (1366 ~ 1440)
+=========================================================== */
+
+@media (min-width:1100px) and (max-width:1450px){
 
   .section{
-    padding:110px 0;
+    padding:100px 0;
   }
 
-  .header{
-    max-width:760px;
-    margin-bottom:72px;
+  .layout{
+    grid-template-columns:320px minmax(0,1fr);
+    gap:56px;
+    align-items:start;
+  }
+
+  .stickyPhone{
+    top:48px;
+  }
+
+  .phone{
+    width:270px;
+    border-radius:42px;
+  }
+
+  .screen{
+    border-radius:32px;
+  }
+
+  .step{
+    min-height:58vh;
+    padding:28px 0;
+  }
+
+  .stepNumber{
+    margin-bottom:18px;
+  }
+
+  .step h3{
+    max-width:540px;
+    font-size:3rem;
+    line-height:1;
+  }
+
+  .step p{
+    max-width:480px;
+    font-size:.98rem;
+    line-height:1.6;
+  }
+
+  .cta{
+    margin-top:90px;
+    padding:48px;
   }
 
   .header h2{
