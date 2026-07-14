@@ -1,0 +1,3 @@
+import { stores } from "../../../data/content";
+import { AdminTable, AdminToolbar } from "../../../components/admin/AdminTable";
+export default function Page(){return <section className="admin-page"><AdminToolbar title="Lojas" description="Atualize endereço, contato, horário e imagem de cada unidade." action="Nova loja"/><AdminTable><div className="admin-table-head"><span>Unidade</span><span>Cidade</span><span>Horário</span><span>Status</span></div>{stores.map((s)=><div className="admin-table-row" key={s.id}><div><b>{s.name}</b><small>{s.neighborhood}</small></div><span>{s.city}</span><span>{s.hours}</span><span className="badge">Publicada</span></div>)}</AdminTable></section>}

@@ -1,0 +1,2 @@
+import { InternalPage } from "@/components/layout/InternalPage";import { Stores } from "@/components/sections/Stores";import { getStores } from "@/lib/content";
+export default async function Page(){const stores=await getStores();return <InternalPage eyebrow="Nossas Lojas" title="Tem uma Coopercica perto de você." intro="Conheça nossas unidades em Jundiaí e região."><Stores items={stores}/></InternalPage>}

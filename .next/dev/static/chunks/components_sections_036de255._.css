@@ -1,0 +1,830 @@
+/* [project]/components/sections/History.module.css [app-client] (css) */
+.History-module__ihtrHG__history {
+  color: #1c4722;
+  background: #f3f8f4;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.History-module__ihtrHG__topbar {
+  z-index: 20;
+  pointer-events: none;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 40px;
+  padding: 38px clamp(24px, 6vw, 112px) 20px;
+  display: grid;
+  position: absolute;
+  inset: 0 0 auto;
+}
+
+.History-module__ihtrHG__kicker, .History-module__ihtrHG__eyebrow {
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-size: .75rem;
+  font-weight: 800;
+  display: block;
+}
+
+.History-module__ihtrHG__heading {
+  color: #1c4722;
+  letter-spacing: -.05em;
+  max-width: 780px;
+  margin: 0;
+  font-size: clamp(2rem, 3.6vw, 4.4rem);
+  line-height: .98;
+}
+
+.History-module__ihtrHG__liveYear {
+  justify-items: end;
+  min-width: 190px;
+  padding-bottom: 4px;
+  display: grid;
+}
+
+.History-module__ihtrHG__liveYear span {
+  color: #5b7160;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: .76rem;
+  font-weight: 700;
+}
+
+.History-module__ihtrHG__liveYear strong {
+  color: #ef4037;
+  letter-spacing: -.06em;
+  font-size: clamp(2.2rem, 4vw, 4.5rem);
+  line-height: .95;
+  animation: .42s cubic-bezier(.2, .7, .2, 1) History-module__ihtrHG__yearReveal;
+}
+
+.History-module__ihtrHG__track {
+  will-change: transform;
+  width: max-content;
+  height: 100vh;
+  display: flex;
+}
+
+.History-module__ihtrHG__slide {
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, .85fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 100px);
+  width: 100vw;
+  min-width: 100vw;
+  height: 100vh;
+  padding: clamp(150px, 18vh, 205px) clamp(24px, 6vw, 112px) clamp(105px, 14vh, 145px);
+  display: grid;
+  position: relative;
+  overflow: hidden;
+}
+
+.History-module__ihtrHG__light {
+  background: #f7fbf7;
+}
+
+.History-module__ihtrHG__soft {
+  background: #eef6ef;
+}
+
+.History-module__ihtrHG__medium {
+  background: #e3f0e5;
+}
+
+.History-module__ihtrHG__dark {
+  color: #fff;
+  background: #1c4722;
+}
+
+.History-module__ihtrHG__yearWatermark {
+  z-index: 0;
+  color: currentColor;
+  letter-spacing: -.09em;
+  opacity: .04;
+  -webkit-user-select: none;
+  user-select: none;
+  font-size: clamp(8rem, 21vw, 23rem);
+  font-weight: 900;
+  line-height: .76;
+  position: absolute;
+  bottom: 7vh;
+  right: -1vw;
+}
+
+.History-module__ihtrHG__media {
+  z-index: 1;
+  border-radius: 34px;
+  width: min(62vw, 920px);
+  height: min(56vh, 620px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 80px #1c472221;
+}
+
+.History-module__ihtrHG__media:after {
+  content: "";
+  border-radius: inherit;
+  pointer-events: none;
+  border: 1px solid #ffffff3d;
+  position: absolute;
+  inset: 0;
+}
+
+.History-module__ihtrHG__image {
+  object-fit: cover;
+  object-position: center;
+  will-change: transform, filter, opacity;
+  transform-origin: center;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.History-module__ihtrHG__content {
+  z-index: 2;
+  will-change: transform, filter, opacity;
+  max-width: 560px;
+  position: relative;
+}
+
+.History-module__ihtrHG__year {
+  color: inherit;
+  letter-spacing: -.075em;
+  margin-bottom: 10px;
+  font-size: clamp(4rem, 7vw, 8.3rem);
+  font-weight: 900;
+  line-height: .86;
+  display: block;
+}
+
+.History-module__ihtrHG__content h3 {
+  color: inherit;
+  letter-spacing: -.045em;
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 3.2vw, 3.9rem);
+  line-height: 1;
+}
+
+.History-module__ihtrHG__content p {
+  color: #536c58;
+  max-width: 520px;
+  margin: 0;
+  font-size: clamp(1rem, 1.25vw, 1.16rem);
+  line-height: 1.72;
+}
+
+.History-module__ihtrHG__dark .History-module__ihtrHG__content p {
+  color: #ffffffc7;
+}
+
+.History-module__ihtrHG__counter {
+  color: currentColor;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 30px;
+  font-size: .76rem;
+  font-weight: 800;
+  display: inline-block;
+}
+
+.History-module__ihtrHG__journey {
+  z-index: 50;
+  pointer-events: auto;
+  height: 74px;
+  position: absolute;
+  bottom: 28px;
+  left: clamp(24px, 6vw, 112px);
+  right: clamp(24px, 6vw, 112px);
+}
+
+.History-module__ihtrHG__road {
+  height: 100%;
+  position: relative;
+}
+
+.History-module__ihtrHG__road:before {
+  content: "";
+  background: #1c472221;
+  border-radius: 999px;
+  height: 5px;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+}
+
+.History-module__ihtrHG__roadProgress {
+  transform-origin: 0;
+  will-change: transform;
+  pointer-events: none;
+  background: #ef4037;
+  border-radius: 999px;
+  height: 5px;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  transform: scaleX(0);
+  box-shadow: 0 0 22px #ef403747;
+}
+
+.History-module__ihtrHG__traveler {
+  z-index: 8;
+  filter: drop-shadow(0 8px 14px #1c472233);
+  will-change: left, transform;
+  pointer-events: none;
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.History-module__ihtrHG__travelerImage {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  animation: 2.8s ease-in-out infinite History-module__ihtrHG__travelerFloat;
+  display: block;
+}
+
+.History-module__ihtrHG__travelerSnapped .History-module__ihtrHG__travelerImage {
+  animation: .5s cubic-bezier(.2, 1.5, .35, 1) History-module__ihtrHG__magneticSnap, 2.8s ease-in-out .5s infinite History-module__ihtrHG__travelerFloat;
+}
+
+.History-module__ihtrHG__milestones {
+  z-index: 10;
+  pointer-events: auto;
+  position: absolute;
+  inset: 0;
+}
+
+.History-module__ihtrHG__milestone {
+  appearance: none;
+  width: 44px;
+  height: 70px;
+  color: inherit;
+  cursor: pointer;
+  z-index: 12;
+  pointer-events: auto;
+  touch-action: manipulation;
+  background: none;
+  border: 0;
+  padding: 0;
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+}
+
+.History-module__ihtrHG__milestoneDot {
+  pointer-events: none;
+  background: #b9cbbd;
+  border: 4px solid #f3f8f4;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  transition: background-color .22s, transform .22s, box-shadow .22s;
+  position: absolute;
+  top: 19px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 1px #1c472214;
+}
+
+.History-module__ihtrHG__milestoneReached .History-module__ihtrHG__milestoneDot {
+  background: #ef4037;
+}
+
+.History-module__ihtrHG__milestoneActive .History-module__ihtrHG__milestoneDot {
+  transform: translateX(-50%)scale(1.14);
+  box-shadow: 0 0 0 7px #ef403729;
+}
+
+.History-module__ihtrHG__milestone:hover .History-module__ihtrHG__milestoneDot, .History-module__ihtrHG__milestone:focus-visible .History-module__ihtrHG__milestoneDot {
+  transform: translateX(-50%)scale(1.28);
+  box-shadow: 0 0 0 8px #ef403729;
+}
+
+.History-module__ihtrHG__milestone:focus-visible {
+  outline-offset: 4px;
+  border-radius: 999px;
+  outline: 2px solid #ef4037;
+}
+
+.History-module__ihtrHG__milestonePulse .History-module__ihtrHG__milestoneDot {
+  animation: .5s ease-out History-module__ihtrHG__markerPulse;
+}
+
+.History-module__ihtrHG__milestoneYear {
+  color: #738779;
+  white-space: nowrap;
+  pointer-events: none;
+  font-size: .66rem;
+  font-weight: 800;
+  transition: color .22s;
+  position: absolute;
+  top: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.History-module__ihtrHG__milestoneReached .History-module__ihtrHG__milestoneYear, .History-module__ihtrHG__milestoneActive .History-module__ihtrHG__milestoneYear {
+  color: #1c4722;
+}
+
+.History-module__ihtrHG__tooltip {
+  color: #1c4722;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background: #fffffff5;
+  border: 1px solid #1c47221a;
+  border-radius: 12px;
+  gap: 3px;
+  width: max-content;
+  max-width: 230px;
+  padding: 10px 13px;
+  transition: opacity .18s, transform .18s;
+  display: grid;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 8px);
+  box-shadow: 0 12px 35px #1c472224;
+}
+
+.History-module__ihtrHG__tooltip strong {
+  font-size: .8rem;
+}
+
+.History-module__ihtrHG__tooltip small {
+  color: #5b7160;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+.History-module__ihtrHG__milestone:hover .History-module__ihtrHG__tooltip, .History-module__ihtrHG__milestone:focus-visible .History-module__ihtrHG__tooltip {
+  opacity: 1;
+  transform: translate(-50%);
+}
+
+@keyframes History-module__ihtrHG__travelerFloat {
+  0%, 100% {
+    transform: translateY(0)rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(-3px)rotate(1deg);
+  }
+}
+
+@keyframes History-module__ihtrHG__magneticSnap {
+  0% {
+    transform: scale(.96)translateY(-1px);
+  }
+
+  48% {
+    transform: scale(1.17)translateY(2px);
+  }
+
+  72% {
+    transform: scale(.99)translateY(0);
+  }
+
+  100% {
+    transform: scale(1)translateY(0);
+  }
+}
+
+@keyframes History-module__ihtrHG__markerPulse {
+  0% {
+    box-shadow: 0 0 #ef403761;
+  }
+
+  100% {
+    box-shadow: 0 0 0 15px #ef403700;
+  }
+}
+
+@keyframes History-module__ihtrHG__yearReveal {
+  from {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur();
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1100px) {
+  .History-module__ihtrHG__milestoneYear {
+    display: none;
+  }
+
+  .History-module__ihtrHG__milestone:first-child .History-module__ihtrHG__milestoneYear, .History-module__ihtrHG__milestone:last-child .History-module__ihtrHG__milestoneYear {
+    display: block;
+  }
+}
+
+@media (max-width: 900px) {
+  .History-module__ihtrHG__history {
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .History-module__ihtrHG__topbar {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 82px 24px 30px;
+    position: relative;
+  }
+
+  .History-module__ihtrHG__liveYear {
+    display: none;
+  }
+
+  .History-module__ihtrHG__track {
+    width: 100%;
+    height: auto;
+    display: block;
+    transform: none !important;
+  }
+
+  .History-module__ihtrHG__slide {
+    grid-template-columns: 1fr;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 100svh;
+    padding: 48px 24px 76px;
+  }
+
+  .History-module__ihtrHG__media {
+    border-radius: 26px;
+    width: 100%;
+    height: min(56vh, 540px);
+  }
+
+  .History-module__ihtrHG__content {
+    max-width: 100%;
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .History-module__ihtrHG__image {
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .History-module__ihtrHG__year {
+    margin-top: 8px;
+    font-size: clamp(4rem, 20vw, 7rem);
+  }
+
+  .History-module__ihtrHG__yearWatermark, .History-module__ihtrHG__journey {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .History-module__ihtrHG__track, .History-module__ihtrHG__image, .History-module__ihtrHG__content, .History-module__ihtrHG__roadProgress, .History-module__ihtrHG__travelerImage, .History-module__ihtrHG__milestoneDot, .History-module__ihtrHG__tooltip, .History-module__ihtrHG__liveYear strong {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* [project]/components/sections/AppShowcase.module.css [app-client] (css) */
+.AppShowcase-module__Ib1FvG__section {
+  background: radial-gradient(circle at 20% 10%, #6ab9452e, #0000 35%), linear-gradient(#f7fbf7 0%, #edf6ee 100%);
+  padding: 140px 0;
+  position: relative;
+  overflow: clip;
+}
+
+.AppShowcase-module__Ib1FvG__header, .AppShowcase-module__Ib1FvG__layout, .AppShowcase-module__Ib1FvG__cta {
+  width: min(1440px, 100% - 48px);
+  margin-inline: auto;
+}
+
+.AppShowcase-module__Ib1FvG__header {
+  text-align: center;
+  max-width: 900px;
+  margin-bottom: 90px;
+}
+
+.AppShowcase-module__Ib1FvG__kicker {
+  color: #39733e;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  font-size: .8rem;
+  font-weight: 800;
+  display: inline-block;
+}
+
+.AppShowcase-module__Ib1FvG__header h2 {
+  color: #1c4722;
+  letter-spacing: -.06em;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 7rem);
+  line-height: .92;
+}
+
+.AppShowcase-module__Ib1FvG__header p {
+  color: #5b7160;
+  max-width: 720px;
+  margin: 28px auto 0;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.AppShowcase-module__Ib1FvG__layout {
+  grid-template-columns: 460px 1fr;
+  gap: 120px;
+  display: grid;
+}
+
+.AppShowcase-module__Ib1FvG__stickyPhone {
+  justify-items: center;
+  gap: 36px;
+  display: grid;
+  position: sticky;
+  top: 80px;
+}
+
+.AppShowcase-module__Ib1FvG__phone {
+  aspect-ratio: 9 / 19.5;
+  background: #101010;
+  border-radius: 54px;
+  width: 360px;
+  padding: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 45px 100px #1c472240, inset 0 0 0 1px #ffffff14;
+}
+
+.AppShowcase-module__Ib1FvG__phoneTop {
+  z-index: 5;
+  background: #050505;
+  border-radius: 999px;
+  width: 34%;
+  height: 28px;
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.AppShowcase-module__Ib1FvG__phoneTop span {
+  background: #232323;
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  top: 9px;
+  right: 18px;
+}
+
+.AppShowcase-module__Ib1FvG__screen {
+  background: #fff;
+  border-radius: 42px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.AppShowcase-module__Ib1FvG__screenImage {
+  object-fit: cover;
+  object-position: top;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity .45s, transform .65s;
+  position: absolute;
+  inset: 0;
+  transform: translateY(25px)scale(1.03);
+}
+
+.AppShowcase-module__Ib1FvG__active {
+  opacity: 1;
+  transform: none;
+}
+
+.AppShowcase-module__Ib1FvG__phoneCaption {
+  text-align: center;
+  max-width: 420px;
+}
+
+.AppShowcase-module__Ib1FvG__phoneCaption span {
+  color: #39733e;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-size: .8rem;
+  font-weight: 800;
+  display: block;
+}
+
+.AppShowcase-module__Ib1FvG__phoneCaption strong {
+  color: #1c4722;
+  font-size: 2rem;
+  line-height: 1.1;
+  display: block;
+}
+
+.AppShowcase-module__Ib1FvG__phoneCaption p {
+  color: #5b7160;
+  margin-top: 14px;
+  line-height: 1.7;
+}
+
+.AppShowcase-module__Ib1FvG__steps {
+  display: grid;
+}
+
+.AppShowcase-module__Ib1FvG__step {
+  opacity: .35;
+  border-bottom: 1px solid #1c47221a;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 72vh;
+  padding: 48px 0;
+  transition: opacity .35s, transform .35s;
+  display: flex;
+}
+
+.AppShowcase-module__Ib1FvG__stepActive {
+  opacity: 1;
+  transform: translateX(-10px);
+}
+
+.AppShowcase-module__Ib1FvG__stepNumber {
+  color: #6ab945;
+  letter-spacing: .14em;
+  margin-bottom: 36px;
+  font-size: .85rem;
+  font-weight: 800;
+}
+
+.AppShowcase-module__Ib1FvG__stepEyebrow {
+  color: #39733e;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  font-size: .82rem;
+  font-weight: 800;
+  display: block;
+}
+
+.AppShowcase-module__Ib1FvG__step h3 {
+  color: #1c4722;
+  letter-spacing: -.05em;
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(2.8rem, 5vw, 5.5rem);
+  line-height: .96;
+}
+
+.AppShowcase-module__Ib1FvG__step p {
+  color: #5b7160;
+  max-width: 620px;
+  margin-top: 24px;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.AppShowcase-module__Ib1FvG__cta {
+  background: #1c4722;
+  border-radius: 40px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 48px;
+  margin-top: 140px;
+  padding: 70px;
+  display: flex;
+  box-shadow: 0 35px 90px #1c472240;
+}
+
+.AppShowcase-module__Ib1FvG__cta h3 {
+  color: #fff;
+  letter-spacing: -.05em;
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  line-height: 1;
+}
+
+.AppShowcase-module__Ib1FvG__cta .AppShowcase-module__Ib1FvG__kicker {
+  color: #d9f1dc;
+}
+
+.AppShowcase-module__Ib1FvG__buttons {
+  flex-wrap: wrap;
+  gap: 16px;
+  display: flex;
+}
+
+.AppShowcase-module__Ib1FvG__primaryButton, .AppShowcase-module__Ib1FvG__secondaryButton {
+  border-radius: 999px;
+  justify-content: center;
+  align-items: center;
+  height: 54px;
+  padding: 0 26px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all .25s;
+  display: inline-flex;
+}
+
+.AppShowcase-module__Ib1FvG__primaryButton {
+  color: #1c4722;
+  background: #fff;
+}
+
+.AppShowcase-module__Ib1FvG__primaryButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px #0000002e;
+}
+
+.AppShowcase-module__Ib1FvG__secondaryButton {
+  color: #fff;
+  border: 1px solid #ffffff59;
+}
+
+.AppShowcase-module__Ib1FvG__secondaryButton:hover {
+  background: #ffffff14;
+  transform: translateY(-3px);
+}
+
+@media (max-width: 900px) {
+  .AppShowcase-module__Ib1FvG__section {
+    padding: 90px 0;
+  }
+
+  .AppShowcase-module__Ib1FvG__header, .AppShowcase-module__Ib1FvG__layout, .AppShowcase-module__Ib1FvG__cta {
+    width: min(720px, 100% - 32px);
+  }
+
+  .AppShowcase-module__Ib1FvG__header {
+    text-align: left;
+    margin-bottom: 60px;
+  }
+
+  .AppShowcase-module__Ib1FvG__header p {
+    margin-left: 0;
+  }
+
+  .AppShowcase-module__Ib1FvG__layout {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  .AppShowcase-module__Ib1FvG__stickyPhone {
+    position: relative;
+    top: auto;
+  }
+
+  .AppShowcase-module__Ib1FvG__phone {
+    width: min(330px, 82vw);
+  }
+
+  .AppShowcase-module__Ib1FvG__step {
+    opacity: 1;
+    min-height: auto;
+    padding: 36px 0;
+    transform: none;
+  }
+
+  .AppShowcase-module__Ib1FvG__cta {
+    border-radius: 30px;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 90px;
+    padding: 40px 28px;
+  }
+
+  .AppShowcase-module__Ib1FvG__buttons {
+    width: 100%;
+  }
+
+  .AppShowcase-module__Ib1FvG__primaryButton, .AppShowcase-module__Ib1FvG__secondaryButton {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .AppShowcase-module__Ib1FvG__screenImage, .AppShowcase-module__Ib1FvG__step, .AppShowcase-module__Ib1FvG__primaryButton, .AppShowcase-module__Ib1FvG__secondaryButton {
+    transition: none !important;
+  }
+}
+
+/*# sourceMappingURL=components_sections_036de255._.css.map*/

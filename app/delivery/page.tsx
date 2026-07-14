@@ -1,0 +1,2 @@
+import { InternalPage } from "@/components/layout/InternalPage";import { Delivery } from "@/components/sections/Delivery";
+export default function Page(){return <InternalPage eyebrow="Delivery" title="Sua Coopercica em poucos cliques." intro="Escolha seus produtos e receba suas compras com praticidade."><Delivery/><section className="section"><div className="shell prose"><h2>Site e aplicativo</h2><p>Uma experiência simples para comprar supermercado, hortifruti, padaria, açougue e muito mais.</p></div></section></InternalPage>}

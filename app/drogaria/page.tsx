@@ -1,0 +1,2 @@
+import { InternalPage } from "@/components/layout/InternalPage";import { Pharmacy } from "@/components/sections/Pharmacy";
+export default function Page(){return <InternalPage eyebrow="Drogaria" title="Cuidado próximo, todos os dias." intro="Saúde, bem-estar e atendimento para toda a família."><Pharmacy/><section className="section"><div className="shell prose"><h2>Mais do que medicamentos.</h2><p>Um espaço pensado para cuidado, prevenção, beleza e qualidade de vida.</p></div></section></InternalPage>}

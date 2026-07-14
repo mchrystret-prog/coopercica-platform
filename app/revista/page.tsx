@@ -1,0 +1,2 @@
+import { InternalPage } from "@/components/layout/InternalPage";import { Magazine } from "@/components/sections/Magazine";import { getMagazines } from "@/lib/content";
+export default async function Page(){const items=await getMagazines();return <InternalPage eyebrow="Revista" title="Histórias, receitas e inspiração." intro="Acompanhe as últimas edições da Revista Coopercica."><Magazine items={items}/></InternalPage>}

@@ -1,0 +1,1 @@
+Aplicar manualmente: adicionar botão .nextSection em History.tsx apontando para #app-showcase e remover titulo duplicado do primeiro mockup do AppShowcase. CSS ja incluso.

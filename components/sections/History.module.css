@@ -1,0 +1,487 @@
+
+.history {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #f3f8f4;
+  color: #1c4722;
+}
+
+.topbar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 40px;
+  align-items: end;
+  padding: 38px clamp(24px, 6vw, 112px) 20px;
+  pointer-events: none;
+}
+
+.kicker,
+.eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.heading {
+  max-width: 780px;
+  margin: 0;
+  color: #1c4722;
+  font-size: clamp(2rem, 3.6vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.liveYear {
+  display: grid;
+  justify-items: end;
+  min-width: 190px;
+  padding-bottom: 4px;
+}
+
+.liveYear span {
+  color: #5b7160;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.liveYear strong {
+  color: #ef4037;
+  font-size: clamp(2.2rem, 4vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  animation: yearReveal 420ms cubic-bezier(.2,.7,.2,1);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  height: 100vh;
+  will-change: transform;
+}
+
+.slide {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  gap: clamp(32px, 6vw, 100px);
+  align-items: center;
+  width: 100vw;
+  min-width: 100vw;
+  height: 100vh;
+  padding: clamp(150px, 18vh, 205px) clamp(24px, 6vw, 112px)
+    clamp(105px, 14vh, 145px);
+  overflow: hidden;
+}
+
+.light { background: #f7fbf7; }
+.soft { background: #eef6ef; }
+.medium { background: #e3f0e5; }
+.dark { background: #1c4722; color: #fff; }
+
+.yearWatermark {
+  position: absolute;
+  right: -1vw;
+  bottom: 7vh;
+  z-index: 0;
+  color: currentColor;
+  font-size: clamp(8rem, 21vw, 23rem);
+  font-weight: 700;
+  line-height: 0.76;
+  letter-spacing: -0.09em;
+  opacity: 0.04;
+  user-select: none;
+}
+
+.media {
+  position: relative;
+  z-index: 1;
+  width: min(62vw, 920px);
+  height: min(56vh, 620px);
+  overflow: hidden;
+  border-radius: 34px;
+  box-shadow: 0 28px 80px rgb(28 71 34 / 13%);
+}
+
+.media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(255 255 255 / 24%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  will-change: transform, filter, opacity;
+  transform-origin: center center;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  will-change: transform, filter, opacity;
+}
+
+.year {
+  display: block;
+  margin-bottom: 10px;
+  color: inherit;
+  font-size: clamp(4rem, 7vw, 8.3rem);
+  font-weight: 700;
+  line-height: 0.86;
+  letter-spacing: -0.075em;
+}
+
+.content h3 {
+  margin: 0 0 18px;
+  color: inherit;
+  font-size: clamp(2rem, 3.2vw, 3.9rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.content p {
+  max-width: 520px;
+  margin: 0;
+  color: #536c58;
+  font-size: clamp(1rem, 1.25vw, 1.16rem);
+  line-height: 1.72;
+}
+
+.dark .content p { color: rgb(255 255 255 / 78%); }
+
+.counter {
+  display: inline-block;
+  margin-top: 30px;
+  color: currentColor;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.journey {
+  position: absolute;
+  right: clamp(24px, 6vw, 112px);
+  bottom: 28px;
+  left: clamp(24px, 6vw, 112px);
+  z-index: 50;
+  height: 74px;
+  pointer-events: auto;
+}
+
+.road {
+  position: relative;
+  height: 100%;
+}
+
+.road::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  right: 0;
+  left: 0;
+  height: 5px;
+  border-radius: 999px;
+  background: rgb(28 71 34 / 13%);
+}
+
+.roadProgress {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  left: 0;
+  height: 5px;
+  border-radius: 999px;
+  background: #ef4037;
+  box-shadow: 0 0 22px rgb(239 64 55 / 28%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.traveler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 8;
+  width: 44px;
+  height: 44px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 8px 14px rgb(28 71 34 / 20%));
+  will-change: left, transform;
+  pointer-events: none;
+}
+
+.travelerImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  animation: travelerFloat 2.8s ease-in-out infinite;
+}
+
+.travelerSnapped .travelerImage {
+  animation: magneticSnap 360ms cubic-bezier(.2,1.5,.35,1),
+    travelerFloat 2.8s ease-in-out 500ms infinite;
+}
+
+.milestones {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.milestone {
+  appearance: none;
+  position: absolute;
+  top: -4px;
+  width: 44px;
+  height: 70px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transform: translateX(-50%);
+  z-index: 12;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.milestoneDot {
+  position: absolute;
+  top: 19px;
+  left: 50%;
+  width: 15px;
+  height: 15px;
+  border: 4px solid #f3f8f4;
+  border-radius: 50%;
+  background: #b9cbbd;
+  box-shadow: 0 0 0 1px rgb(28 71 34 / 8%);
+  transform: translateX(-50%);
+  transition: background-color 220ms ease, transform 220ms ease,
+    box-shadow 220ms ease;
+  pointer-events: none;
+}
+
+.milestoneReached .milestoneDot { background: #ef4037; }
+
+.milestoneActive .milestoneDot {
+  box-shadow: 0 0 0 7px rgb(239 64 55 / 16%);
+  transform: translateX(-50%) scale(1.14);
+}
+
+.milestone:hover .milestoneDot,
+.milestone:focus-visible .milestoneDot {
+  transform: translateX(-50%) scale(1.28);
+  box-shadow: 0 0 0 8px rgb(239 64 55 / 16%);
+}
+
+.milestone:focus-visible {
+  outline: 2px solid #ef4037;
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
+.milestonePulse .milestoneDot { animation: markerPulse 500ms ease-out; }
+
+.milestoneYear {
+  position: absolute;
+  top: 46px;
+  left: 50%;
+  color: #738779;
+  font-size: 0.66rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  transition: color 220ms ease;
+  pointer-events: none;
+}
+
+.milestoneReached .milestoneYear,
+.milestoneActive .milestoneYear { color: #1c4722; }
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  display: grid;
+  width: max-content;
+  max-width: 230px;
+  gap: 3px;
+  padding: 10px 13px;
+  border: 1px solid rgb(28 71 34 / 10%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 96%);
+  color: #1c4722;
+  box-shadow: 0 12px 35px rgb(28 71 34 / 14%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  backdrop-filter: blur(10px);
+}
+
+.tooltip strong { font-size: 0.8rem; }
+.tooltip small { color: #5b7160; font-size: 0.7rem; line-height: 1.35; }
+
+.milestone:hover .tooltip,
+.milestone:focus-visible .tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@keyframes travelerFloat {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-3px) rotate(1deg); }
+}
+
+@keyframes magneticSnap {
+  0% { transform: scale(.98) translateY(-1px); }
+  55% { transform: scale(1.08) translateY(1px); }
+  78% { transform: scale(1) translateY(0); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+@keyframes markerPulse {
+  0% { box-shadow: 0 0 0 0 rgb(239 64 55 / 38%); }
+  100% { box-shadow: 0 0 0 15px rgb(239 64 55 / 0%); }
+}
+
+@keyframes yearReveal {
+  from { opacity: 0; transform: translateY(14px); filter: blur(5px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@media (max-width: 1100px) {
+  .milestoneYear { display: none; }
+  .milestone:first-child .milestoneYear,
+  .milestone:last-child .milestoneYear { display: block; }
+}
+
+@media (max-width: 900px) {
+  .history { min-height: auto; overflow: visible; }
+  .topbar { position: relative; grid-template-columns: 1fr; gap: 18px; padding: 82px 24px 30px; }
+  .liveYear { display: none; }
+  .track { display: block; width: 100%; height: auto; transform: none !important; }
+  .slide { grid-template-columns: 1fr; width: 100%; min-width: 0; height: auto; min-height: 100svh; padding: 48px 24px 76px; }
+  .media { width: 100%; height: min(56vh, 540px); border-radius: 26px; }
+  .content { max-width: 100%; filter: none !important; opacity: 1 !important; transform: none !important; }
+  .image { filter: none !important; opacity: 1 !important; transform: none !important; }
+  .year { margin-top: 8px; font-size: clamp(4rem, 20vw, 7rem); }
+  .yearWatermark, .journey { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .image,
+  .content,
+  .roadProgress,
+  .travelerImage,
+  .milestoneDot,
+  .tooltip,
+  .liveYear strong {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+
+/* V4.1 — BRAND BOOK FIRST */
+.topbar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.kicker,
+.eyebrow {
+  color: #ef4037;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.heading {
+  color: #1c4722;
+  font-size: clamp(2.5rem, 4.8vw, 5.8rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+
+.headingSupport {
+  max-width: 620px;
+  margin: 16px 0 0;
+  color: #5f6962;
+  font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.liveYear {
+  display: none !important;
+}
+
+.year {
+  color: #ef4037;
+  font-weight: 700;
+}
+
+.content h3 {
+  color: #1c4722;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.content p {
+  color: #5f6962;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.dark .year {
+  color: #ff7068;
+}
+
+.dark .content h3 {
+  color: #ffffff;
+}
+
+.dark .content p {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.yearWatermark {
+  opacity: 0.018;
+}
+
+.counter {
+  color: #69756d;
+  font-weight: 500;
+}
+
+.dark .counter {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+
+.nextSection{position:absolute;right:40px;bottom:28px;width:46px;height:46px;border-radius:999px;border:1px solid rgba(28,71,34,.08);background:rgba(255,255,255,.82);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;color:#1C4722;transition:.25s;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.nextSection:hover{color:#EF4037;transform:translateY(-3px)}
+.nextSection svg{animation:bounce 2s infinite}@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}

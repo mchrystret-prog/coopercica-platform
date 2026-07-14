@@ -1,0 +1,2 @@
+import { Header } from "./Header";import { Footer } from "./Footer";
+export function InternalPage({eyebrow,title,intro,children}:{eyebrow:string;title:string;intro:string;children:React.ReactNode}){return <><Header/><main><section className="internal-hero"><div className="shell"><span className="eyebrow light">{eyebrow}</span><h1>{title}</h1><p>{intro}</p></div></section>{children}</main><Footer/></>}

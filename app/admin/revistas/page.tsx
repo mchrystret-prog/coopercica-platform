@@ -1,0 +1,3 @@
+import { magazines } from "../../../data/content";
+import { AdminTable, AdminToolbar } from "../../../components/admin/AdminTable";
+export default function Page(){return <section className="admin-page"><AdminToolbar title="Revistas" description="Cadastre capas, PDFs e edições em destaque." action="Nova edição"/><AdminTable><div className="admin-table-head"><span>Edição</span><span>Período</span><span>Link</span><span>Status</span></div>{magazines.map((m)=><div className="admin-table-row" key={m.id}><div><b>{m.title}</b><small>{m.edition}</small></div><span>{m.edition}</span><span>{m.href}</span><span className="badge">Publicada</span></div>)}</AdminTable></section>}

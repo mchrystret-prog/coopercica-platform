@@ -1,0 +1,3 @@
+import { campaigns } from "../../../data/content";
+import { AdminTable, AdminToolbar } from "../../../components/admin/AdminTable";
+export default function Page(){return <section className="admin-page"><AdminToolbar title="Campanhas" description="Organize os banners do hero, links, ordem e período de exibição." action="Adicionar banner"/><AdminTable><div className="admin-table-head"><span>Campanha</span><span>Destino</span><span>Ordem</span><span>Status</span></div>{campaigns.map((c)=><div className="admin-table-row" key={c.id}><div><b>{c.title}</b><small>{c.eyebrow}</small></div><span>{c.href}</span><span>{c.order}</span><span className="badge">{c.active?'Ativa':'Inativa'}</span></div>)}</AdminTable></section>}
