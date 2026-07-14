@@ -32,6 +32,7 @@ export function Stores({ items }: { items: Store[] }) {
           >
             <div>
               <span>{store.city}</span>
+
               <h3>
                 {store.name} — {store.neighborhood}
               </h3>
@@ -39,7 +40,9 @@ export function Stores({ items }: { items: Store[] }) {
           </div>
 
           <div className="store-info">
-            <span className="eyebrow">Unidade selecionada</span>
+            <span className="eyebrow">
+              Unidade selecionada
+            </span>
 
             <h3>{store.name}</h3>
 
@@ -67,7 +70,9 @@ export function Stores({ items }: { items: Store[] }) {
             <button
               key={item.id}
               onClick={() => setCurrent(index)}
-              className={index === current ? "active" : ""}
+              className={
+                index === current ? "active" : ""
+              }
             >
               {item.name}
             </button>
