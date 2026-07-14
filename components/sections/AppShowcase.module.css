@@ -269,6 +269,80 @@
   transform:translateY(-3px);
 }
 
+/* ===========================================================
+   NOTEBOOKS (1366 ~ 1440)
+=========================================================== */
+
+@media (max-width:1440px){
+
+  .section{
+    padding:110px 0;
+  }
+
+  .header{
+    max-width:760px;
+    margin-bottom:72px;
+  }
+
+  .header h2{
+    font-size:clamp(2.4rem,4vw,4.6rem);
+  }
+
+  .header p{
+    max-width:620px;
+    font-size:1rem;
+  }
+
+  .layout{
+    grid-template-columns:380px 1fr;
+    gap:72px;
+  }
+
+  .stickyPhone{
+    top:56px;
+  }
+
+  .phone{
+    width:320px;
+    border-radius:48px;
+  }
+
+  .screen{
+    border-radius:36px;
+  }
+
+  .step{
+    min-height:64vh;
+    padding:36px 0;
+  }
+
+  .stepNumber{
+    margin-bottom:26px;
+  }
+
+  .step h3{
+    font-size:clamp(2.3rem,3.3vw,4rem);
+    max-width:620px;
+  }
+
+  .step p{
+    max-width:520px;
+    font-size:1rem;
+    line-height:1.65;
+  }
+
+  .cta{
+    margin-top:110px;
+    padding:54px;
+    border-radius:32px;
+  }
+
+  .cta h3{
+    font-size:clamp(2rem,3vw,3rem);
+  }
+
+}
+
 @media (max-width:900px){
 
   .section{

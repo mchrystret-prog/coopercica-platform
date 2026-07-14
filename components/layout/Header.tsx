@@ -42,20 +42,25 @@ export function Header() {
           className={`${styles.nav} ${open ? styles.open : ""}`}
           aria-label="Navegação principal"
         >
-          {links.map(([label, href]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)}>
-              {label}
-            </Link>
-          ))}
-
           <a
             className={styles.cta}
             href="https://www.coopercicadelivery.com.br/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Comprar online <span aria-hidden="true">↗</span>
+            Comprar online
+            <span aria-hidden="true">↗</span>
           </a>
+
+          {links.map(([label, href]) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setOpen(false)}
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
       </div>
     </header>
