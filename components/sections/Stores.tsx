@@ -5,8 +5,9 @@ import { useState } from "react";
 
 export function Stores({ items }: { items: Store[] }) {
   const [current, setCurrent] = useState(0);
-
   const store = items[current];
+
+  if (!store) return null;
 
   return (
     <section className="section stores-section">
@@ -16,11 +17,7 @@ export function Stores({ items }: { items: Store[] }) {
             <span className="eyebrow">Nossas Lojas</span>
             <h2>Sempre perto de você.</h2>
           </div>
-
-          <p>
-            Escolha uma unidade e encontre as informações para a sua próxima
-            visita.
-          </p>
+          <p>Escolha uma unidade e encontre as informações para a sua próxima visita.</p>
         </div>
 
         <div className="store-stage">
@@ -32,33 +29,21 @@ export function Stores({ items }: { items: Store[] }) {
           >
             <div>
               <span>{store.city}</span>
-
-              <h3>
-                {store.name} — {store.neighborhood}
-              </h3>
+              <h3>{store.name} — {store.neighborhood}</h3>
             </div>
           </div>
 
           <div className="store-info">
-            <span className="eyebrow">
-              Unidade selecionada
-            </span>
-
+            <span className="eyebrow">Unidade selecionada</span>
             <h3>{store.name}</h3>
-
-            <p>
-              {store.neighborhood} • {store.city}
-            </p>
-
+            <p>{store.neighborhood} • {store.city}</p>
             <p>{store.address}</p>
-
             <p>{store.hours}</p>
-
             <a
               className="button"
               target="_blank"
               rel="noreferrer"
-              href={store.mapsUrl}
+              href={store.maps || "#"}
             >
               Ver rota ↗
             </a>
@@ -68,11 +53,10 @@ export function Stores({ items }: { items: Store[] }) {
         <div className="store-tabs">
           {items.map((item, index) => (
             <button
+              type="button"
               key={item.id}
               onClick={() => setCurrent(index)}
-              className={
-                index === current ? "active" : ""
-              }
+              className={index === current ? "active" : ""}
             >
               {item.name}
             </button>

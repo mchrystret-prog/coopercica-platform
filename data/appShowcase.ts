@@ -7,59 +7,32 @@ export interface AppShowcaseItem {
   imageAlt: string;
 }
 
-export const appShowcaseItems: AppShowcaseItem[] = [
+export const appShowcaseItems = [
   {
     id: "home",
-    eyebrow: "Aplicativo Coopercica",
-    title: "Tudo em um só lugar.",
+    eyebrow: "APLICATIVO COOPERCICA",
+    title: "TUDO EM UM SÓ LUGAR.",
     description:
-      "Acesse ofertas, Delivery, folhetos, Coopermais e muito mais em um único aplicativo.",
-    image: "/app/home.png",
+      "Encontre ofertas, folhetos, revistas e muito mais em um único aplicativo.",
+    image: "/app/home.jpeg",
     imageAlt: "Tela inicial do aplicativo Coopercica",
   },
   {
     id: "delivery",
-    eyebrow: "Delivery",
-    title: "Compre onde estiver.",
+    eyebrow: "DELIVERY",
+    title: "COMPRE DE ONDE ESTIVER.",
     description:
-      "Faça suas compras online e receba seus produtos com praticidade.",
-    image: "/app/delivery.png",
-    imageAlt: "Tela do Delivery",
-  },
-  {
-    id: "ofertas",
-    eyebrow: "Ofertas",
-    title: "Economize todos os dias.",
-    description:
-      "Confira as melhores promoções e ofertas exclusivas para você.",
-    image: "/app/ofertas.png",
-    imageAlt: "Tela de ofertas",
-  },
-  {
-    id: "folhetos",
-    eyebrow: "Folhetos",
-    title: "Ofertas sempre atualizadas.",
-    description:
-      "Consulte os tabloides digitais diretamente pelo aplicativo.",
-    image: "/app/folhetos.png",
-    imageAlt: "Tela de folhetos",
+      "Faça seu pedido pelo app com a mesma qualidade e confiança das nossas lojas.",
+    image: "/app/delivery.jpeg",
+    imageAlt: "Tela do Delivery Coopercica",
   },
   {
     id: "coopermais",
-    eyebrow: "Cliente Coopermais",
-    title: "Mais vantagens para você.",
+    eyebrow: "COOPERMAIS",
+    title: "BENEFÍCIOS QUE ACOMPANHAM VOCÊ.",
     description:
-      "Identifique-se pelo CPF e aproveite benefícios exclusivos.",
-    image: "/app/coopermais.png",
-    imageAlt: "Tela Coopermais",
-  },
-  {
-    id: "pedidos",
-    eyebrow: "Pedidos",
-    title: "Acompanhe suas compras.",
-    description:
-      "Veja o histórico e acompanhe seus pedidos em tempo real.",
-    image: "/app/pedidos.png",
-    imageAlt: "Tela de pedidos",
+      "Informe seu CPF de Cliente Coopermais e aproveite vantagens exclusivas em cada compra.",
+    image: "/app/coopermais.jpeg",
+    imageAlt: "Tela do programa Coopermais",
   },
 ];
