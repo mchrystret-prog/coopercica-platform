@@ -1,7 +1,13 @@
 .section {
   position: relative;
-  padding: 132px 0;
-  overflow: clip;
+  background: #fff;
+}
+
+.stage {
+  display: grid;
+  min-height: 100svh;
+  align-items: center;
+  overflow: hidden;
   background: #fff;
 }
 
@@ -15,26 +21,19 @@
   display: grid;
   grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
   gap: clamp(64px, 7vw, 112px);
-  align-items: stretch;
+  align-items: center;
 }
 
 .phoneColumn {
-  min-width: 0;
-  align-self: stretch;
-}
-
-.stickyPhone {
-  position: sticky;
-  top: clamp(96px, 12vh, 132px);
   display: grid;
+  min-width: 0;
   justify-items: center;
   gap: 28px;
-  width: 100%;
 }
 
 .phone {
   position: relative;
-  width: min(340px, 100%, calc((100vh - 180px) * 0.4615));
+  width: min(340px, 100%, calc((100svh - 170px) * 0.4615));
   aspect-ratio: 9 / 19.5;
   padding: 12px;
   overflow: hidden;
@@ -43,20 +42,15 @@
   box-shadow:
     0 38px 88px rgba(28, 71, 34, 0.22),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  animation: phoneFloat 10s ease-in-out infinite;
   transform-origin: center;
   will-change: transform;
-}
-
-.phoneTransitioning {
-  animation-play-state: paused;
 }
 
 .phoneTop {
   position: absolute;
   top: 18px;
   left: 50%;
-  z-index: 7;
+  z-index: 8;
   width: 34%;
   height: 28px;
   border-radius: 999px;
@@ -84,44 +78,17 @@
   isolation: isolate;
 }
 
-.screenGlow {
-  position: absolute;
-  inset: -20%;
-  z-index: 5;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 45%,
-    rgba(255, 255, 255, 0.28),
-    transparent 42%
-  );
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-.screenGlowActive {
-  animation: screenGlowPulse 0.62s ease both;
-}
-
 .screenImage {
   position: absolute;
   inset: 0;
-  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top;
   opacity: 0;
-  filter: blur(0);
-  transform: translateY(18px) scale(1.025);
   will-change: opacity, transform, filter;
   pointer-events: none;
-}
-
-.active {
-  z-index: 2;
-  opacity: 1;
-  transform: none;
 }
 
 .phoneProgress {
@@ -138,42 +105,32 @@
   border-radius: 999px;
   background: rgba(28, 71, 34, 0.2);
   transition:
-    width 0.28s cubic-bezier(.2,.7,.2,1),
-    background-color 0.28s ease,
-    transform 0.28s ease;
+    width 0.32s cubic-bezier(.2, .7, .2, 1),
+    background-color 0.32s ease;
 }
 
 .phoneProgressDotActive {
   width: 28px;
   background: #ef4037;
-  transform: scaleY(1.06);
 }
 
-.steps {
-  display: grid;
+.copyStage {
+  position: relative;
   min-width: 0;
+  min-height: 430px;
 }
 
-.step {
-  display: flex;
-  min-height: 72vh;
-  flex-direction: column;
-  justify-content: center;
-  padding: 48px 0;
-  border-bottom: 1px solid rgba(28, 71, 34, 0.1);
-  opacity: 0.28;
-  transform: translateX(0);
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
-}
-
-.stepActive {
-  opacity: 1;
-  transform: translateX(-10px);
+.copy {
+  position: absolute;
+  inset: 50% 0 auto;
+  max-width: 720px;
+  opacity: 0;
+  transform: translateY(-50%);
+  will-change: opacity, transform, filter;
 }
 
 .stepNumber {
+  display: block;
   margin-bottom: 30px;
   color: #ef4037;
   font-size: 0.82rem;
@@ -192,13 +149,13 @@
   text-transform: uppercase;
 }
 
-.step h3,
+.copy h3,
 .cta h3 {
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.step h3 {
+.copy h3 {
   max-width: 720px;
   margin: 0;
   color: #1c4722;
@@ -207,7 +164,7 @@
   letter-spacing: -0.04em;
 }
 
-.step p {
+.copy p {
   max-width: 620px;
   margin: 24px 0 0;
   color: #5f6962;
@@ -219,7 +176,7 @@
 .cta {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  margin-top: 126px;
+  margin: 110px auto 132px;
   padding: 64px;
   align-items: center;
   gap: 32px;
@@ -244,15 +201,12 @@
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  justify-content: flex-start;
   gap: 10px;
 }
 
 .buttons a {
   display: inline-flex;
   flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
   transition: transform 0.2s ease;
 }
 
@@ -266,38 +220,7 @@
   height: 60px;
 }
 
-@keyframes phoneFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes screenGlowPulse {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-
-  40% {
-    opacity: 0.58;
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(1.08);
-  }
-}
-
 @media (min-width: 901px) and (max-width: 1450px) {
-  .section {
-    padding: 96px 0;
-  }
-
   .layout,
   .cta {
     width: min(1180px, calc(100% - 64px));
@@ -308,13 +231,8 @@
     gap: 54px;
   }
 
-  .stickyPhone {
-    top: 92px;
-    gap: 20px;
-  }
-
   .phone {
-    width: min(270px, 100%, calc((100vh - 150px) * 0.4615));
+    width: min(270px, 100%, calc((100svh - 140px) * 0.4615));
     padding: 9px;
     border-radius: 42px;
   }
@@ -328,21 +246,16 @@
     border-radius: 33px;
   }
 
-  .step {
-    min-height: 66vh;
-    padding: 30px 0;
+  .copyStage {
+    min-height: 360px;
   }
 
-  .stepNumber {
-    margin-bottom: 18px;
-  }
-
-  .step h3 {
+  .copy h3 {
     max-width: 560px;
     font-size: clamp(2.35rem, 3.6vw, 3.8rem);
   }
 
-  .step p {
+  .copy p {
     max-width: 500px;
     margin-top: 18px;
     font-size: 0.98rem;
@@ -352,12 +265,7 @@
   .cta {
     margin-top: 90px;
     padding: 46px;
-    gap: 32px;
     border-radius: 32px;
-  }
-
-  .cta h3 {
-    font-size: clamp(2rem, 3vw, 3rem);
   }
 
   .buttons img {
@@ -366,8 +274,10 @@
 }
 
 @media (max-width: 900px) {
-  .section {
+  .stage {
+    min-height: auto;
     padding: 82px 0;
+    overflow: visible;
   }
 
   .layout,
@@ -380,32 +290,31 @@
     gap: 54px;
   }
 
-  .phoneColumn {
-    min-height: auto;
-  }
-
-  .stickyPhone {
-    position: relative;
-    top: auto;
-  }
-
   .phone {
     width: min(310px, 78vw);
   }
 
-  .step {
+  .copyStage {
+    display: grid;
     min-height: auto;
-    padding: 38px 0;
-    opacity: 1;
-    transform: none;
+    gap: 54px;
   }
 
-  .step h3 {
+  .copy {
+    position: relative;
+    inset: auto;
+    max-width: none;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .copy h3 {
     font-size: clamp(2.25rem, 10vw, 3.5rem);
   }
 
   .cta {
-    margin-top: 82px;
+    margin: 82px auto;
     padding: 38px 28px;
     grid-template-columns: 1fr;
     align-items: flex-start;
@@ -423,9 +332,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .phone,
-  .screenGlowActive,
   .screenImage,
-  .step,
+  .copy,
   .buttons a {
     transition: none !important;
     animation: none !important;
