@@ -35,22 +35,17 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
   color: var(--brand-green-900);
   font-weight: 800;
   letter-spacing: -0.03em;
   text-decoration: none;
 }
 
-.brandMark {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--brand-green-900);
-  color: var(--white);
-  box-shadow: inset -8px 0 0 var(--brand-red-500);
+.logo {
+  display: block;
+  height: 44px;
+  width: auto;
+  object-fit: contain;
 }
 
 .nav {
