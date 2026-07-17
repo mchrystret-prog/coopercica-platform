@@ -223,12 +223,12 @@
 @media (min-width: 901px) and (max-width: 1450px) {
   .layout {
     width: min(1160px, calc(100% - 64px));
-    grid-template-columns: 290px minmax(0, 1fr);
-    gap: 60px;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 40px;
   }
 
   .phone {
-    width: min(278px, 100%, calc((100svh - 128px) * 0.4615));
+    width: min(320px, 100%, calc((100svh - 128px) * 0.4615));
     padding: 9px;
     border-radius: 44px;
   }
@@ -253,7 +253,7 @@
 
   .copy h2 {
     max-width: 590px;
-    font-size: clamp(2.35rem, 3.55vw, 3.8rem);
+    font-size: clamp(2.1rem, 3.2vw, 3.4rem);
   }
 
   .copy p {
