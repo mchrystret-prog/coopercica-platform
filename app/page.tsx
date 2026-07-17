@@ -4,10 +4,10 @@ import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { History } from "@/components/sections/History";
 import { AppShowcase } from "@/components/sections/AppShowcase";
+import { Pharmacy } from "@/components/sections/Pharmacy";
+import { Delivery } from "@/components/sections/Delivery";
 import { Stores } from "@/components/sections/Stores";
 import { Magazine } from "@/components/sections/Magazine";
-import { Delivery } from "@/components/sections/Delivery";
-import { Pharmacy } from "@/components/sections/Pharmacy";
 
 import {
   getCampaigns,
@@ -33,9 +33,9 @@ export default async function Home() {
 
         <AppShowcase />
 
-        <Delivery />
-
         <Pharmacy />
+
+        <Delivery />
 
         <Stores items={stores} />
 

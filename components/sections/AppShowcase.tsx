@@ -9,19 +9,18 @@ export function AppShowcase() {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const phoneRef = useRef<HTMLDivElement | null>(null);
   const imageRefs = useRef<Array<HTMLImageElement | null>>([]);
-  const copyRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const progressRefs = useRef<Array<HTMLSpanElement | null>>([]);
-
+  const copyRefs = useRef<Array<HTMLElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useLayoutEffect(() => {
-    let context: { revert: () => void } | undefined;
-    let resizeObserver: ResizeObserver | undefined;
     let cancelled = false;
+    let cleanup: (() => void) | undefined;
 
     const init = async () => {
-      const gsapModule = await import("gsap");
-      const scrollTriggerModule = await import("gsap/ScrollTrigger");
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
 
       if (
         cancelled ||
@@ -32,197 +31,187 @@ export function AppShowcase() {
         return;
       }
 
-      const gsap = gsapModule.default;
-      const ScrollTrigger = scrollTriggerModule.ScrollTrigger;
-
       gsap.registerPlugin(ScrollTrigger);
 
       const section = sectionRef.current;
       const stage = stageRef.current;
       const phone = phoneRef.current;
-      const images = imageRefs.current.filter(Boolean);
-      const copies = copyRefs.current.filter(Boolean);
-      const progressItems = progressRefs.current.filter(Boolean);
+      const images = imageRefs.current.filter(
+        (image): image is HTMLImageElement => image !== null,
+      );
+      const copies = copyRefs.current.filter(
+        (copy): copy is HTMLElement => copy !== null,
+      );
+      const media = gsap.matchMedia();
 
-      context = gsap.context(() => {
+      media.add("(min-width: 901px)", () => {
         gsap.set(images, {
           autoAlpha: 0,
-          yPercent: 8,
-          scale: 1.015,
+          yPercent: 7,
+          scale: 1.018,
           filter: "blur(7px)",
         });
 
         gsap.set(copies, {
           autoAlpha: 0,
-          y: 28,
+          y: 24,
           filter: "blur(5px)",
+          pointerEvents: "none",
         });
 
-        gsap.set(progressItems, {
-          scaleX: 1,
+        gsap.set(images[0], {
+          autoAlpha: 1,
+          yPercent: 0,
+          scale: 1,
+          filter: "blur(0px)",
         });
 
-        if (images[0]) {
-          gsap.set(images[0], {
-            autoAlpha: 1,
-            yPercent: 0,
-            scale: 1,
-            filter: "blur(0px)",
-          });
-        }
-
-        if (copies[0]) {
-          gsap.set(copies[0], {
-            autoAlpha: 1,
-            y: 0,
-            filter: "blur(0px)",
-          });
-        }
+        gsap.set(copies[0], {
+          autoAlpha: 1,
+          y: 0,
+          filter: "blur(0px)",
+          pointerEvents: "auto",
+        });
 
         const timeline = gsap.timeline({
-          defaults: {
-            ease: "power3.inOut",
-          },
+          defaults: { ease: "power3.inOut" },
           scrollTrigger: {
             trigger: section,
             start: "top top",
-            end: () => `+=${window.innerHeight * appShowcaseItems.length}`,
+            end: () => `+=${window.innerHeight * 1.85}`,
             pin: stage,
-            scrub: 0.65,
+            scrub: 0.42,
             anticipatePin: 1,
             invalidateOnRefresh: true,
             snap: {
-              snapTo: (value: number) => {
-                const segments = appShowcaseItems.length;
-                const step = 1 / segments;
-                return Math.round(value / step) * step;
-              },
-              duration: { min: 0.25, max: 0.65 },
-              delay: 0.08,
+              snapTo: 1 / Math.max(1, appShowcaseItems.length - 1),
+              duration: { min: 0.18, max: 0.42 },
+              delay: 0.05,
               ease: "power2.inOut",
             },
             onUpdate: (self) => {
-              const index = Math.min(
+              const nextIndex = Math.min(
                 appShowcaseItems.length - 1,
-                Math.floor(self.progress * appShowcaseItems.length),
+                Math.round(self.progress * (appShowcaseItems.length - 1)),
               );
 
-              setActiveIndex((current) => (current === index ? current : index));
+              setActiveIndex((current) =>
+                current === nextIndex ? current : nextIndex,
+              );
             },
           },
         });
 
-        appShowcaseItems.forEach((_, index) => {
-          const start = index;
-          const image = images[index];
-          const copy = copies[index];
+        timeline.to({}, { duration: 0.25 });
 
-          if (index === 0) {
-            timeline.to({}, { duration: 0.9 });
-            return;
-          }
-
+        for (let index = 1; index < appShowcaseItems.length; index += 1) {
           const previousImage = images[index - 1];
+          const currentImage = images[index];
           const previousCopy = copies[index - 1];
+          const currentCopy = copies[index];
 
           timeline
             .to(
               previousCopy,
               {
                 autoAlpha: 0,
-                y: -22,
+                y: -20,
                 filter: "blur(5px)",
-                duration: 0.28,
+                pointerEvents: "none",
+                duration: 0.3,
               },
-              start,
+              ">",
             )
             .to(
               previousImage,
               {
                 autoAlpha: 0,
-                yPercent: -6,
+                yPercent: -5,
                 scale: 0.992,
                 filter: "blur(6px)",
                 duration: 0.34,
               },
-              start,
+              "<",
             )
             .to(
               phone,
               {
-                y: -7,
-                scale: 0.994,
-                duration: 0.2,
+                y: -6,
+                scale: 0.995,
+                duration: 0.18,
               },
-              start,
+              "<",
             )
             .fromTo(
-              image,
+              currentImage,
               {
                 autoAlpha: 0,
-                yPercent: 9,
+                yPercent: 7,
                 scale: 1.018,
-                filter: "blur(8px)",
+                filter: "blur(7px)",
               },
               {
                 autoAlpha: 1,
                 yPercent: 0,
                 scale: 1,
                 filter: "blur(0px)",
-                duration: 0.58,
+                duration: 0.48,
                 ease: "power3.out",
               },
-              start + 0.22,
+              ">-0.1",
             )
             .fromTo(
-              copy,
+              currentCopy,
               {
                 autoAlpha: 0,
-                y: 26,
+                y: 22,
                 filter: "blur(5px)",
               },
               {
                 autoAlpha: 1,
                 y: 0,
                 filter: "blur(0px)",
-                duration: 0.5,
+                pointerEvents: "auto",
+                duration: 0.42,
                 ease: "power3.out",
               },
-              start + 0.28,
+              "<+0.05",
             )
             .to(
               phone,
               {
                 y: 0,
                 scale: 1,
-                duration: 0.38,
-                ease: "back.out(1.2)",
+                duration: 0.3,
+                ease: "back.out(1.15)",
               },
-              start + 0.28,
+              "<",
             )
-            .to({}, { duration: 0.82 });
-        });
-      }, section);
+            .to({}, { duration: 0.2 });
+        }
 
-      appShowcaseItems.forEach((item) => {
-        const image = new Image();
-        image.src = item.image;
+        const observer = new ResizeObserver(() => ScrollTrigger.refresh());
+        observer.observe(section);
+        requestAnimationFrame(() => ScrollTrigger.refresh());
+
+        return () => {
+          observer.disconnect();
+        };
       });
 
-      resizeObserver = new ResizeObserver(() => {
-        ScrollTrigger.refresh();
+      media.add("(max-width: 900px)", () => {
+        gsap.set([...images, ...copies, phone], { clearProps: "all" });
+        setActiveIndex(0);
       });
 
-      resizeObserver.observe(section);
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+      cleanup = () => media.revert();
     };
 
     init();
 
     return () => {
       cancelled = true;
-      resizeObserver?.disconnect();
-      context?.revert();
+      cleanup?.();
     };
   }, []);
 
@@ -251,7 +240,7 @@ export function AppShowcase() {
                     src={item.image}
                     alt={item.imageAlt}
                     className={styles.screenImage}
-                    loading={index < 2 ? "eager" : "lazy"}
+                    loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                   />
                 ))}
@@ -265,9 +254,6 @@ export function AppShowcase() {
               {appShowcaseItems.map((item, index) => (
                 <span
                   key={item.id}
-                  ref={(element) => {
-                    progressRefs.current[index] = element;
-                  }}
                   className={`${styles.phoneProgressDot} ${
                     index === activeIndex ? styles.phoneProgressDotActive : ""
                   }`}
@@ -277,62 +263,59 @@ export function AppShowcase() {
             </div>
           </div>
 
-          <div className={styles.copyStage}>
-            {appShowcaseItems.map((item, index) => (
-              <div
-                key={item.id}
-                ref={(element) => {
-                  copyRefs.current[index] = element;
-                }}
-                className={styles.copy}
-                aria-hidden={index !== activeIndex}
-              >
-                <span className={styles.stepNumber}>
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+          <div className={styles.contentColumn}>
+            <div className={styles.copyViewport}>
+              {appShowcaseItems.map((item, index) => (
+                <article
+                  key={item.id}
+                  ref={(element) => {
+                    copyRefs.current[index] = element;
+                  }}
+                  className={styles.copy}
+                  aria-hidden={index !== activeIndex}
+                >
+                  <span className={styles.stepNumber}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.stepEyebrow}>{item.eyebrow}</span>
+                  <h2>{item.title}</h2>
+                  <p>{item.description}</p>
+                </article>
+              ))}
+            </div>
 
-                <span className={styles.stepEyebrow}>{item.eyebrow}</span>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
+            <div className={styles.storeBadges}>
+              <span className={styles.storeBadgesLabel}>
+                DISPONÍVEL PARA iOS E ANDROID
+              </span>
+
+              <div className={styles.storeBadgesLinks}>
+                <a
+                  href="https://apps.apple.com/br/app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Baixar na App Store"
+                >
+                  <img
+                    src="/badges/app-store.svg"
+                    alt="Download on the App Store"
+                  />
+                </a>
+
+                <a
+                  href="https://play.google.com/store"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Baixar no Google Play"
+                >
+                  <img
+                    src="/badges/google-play.svg"
+                    alt="Disponível no Google Play"
+                  />
+                </a>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div className={styles.cta}>
-        <div>
-          <span className={styles.kicker}>
-            DISPONÍVEL PARA iOS E ANDROID
-          </span>
-
-          <h3>BAIXE E APROVEITE.</h3>
-        </div>
-
-        <div className={styles.buttons}>
-          <a
-            href="https://apps.apple.com/br/app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Baixar na App Store"
-          >
-            <img
-              src="/badges/app-store.svg"
-              alt="Download on the App Store"
-            />
-          </a>
-
-          <a
-            href="https://play.google.com/store"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Baixar no Google Play"
-          >
-            <img
-              src="/badges/google-play.svg"
-              alt="Disponível no Google Play"
-            />
-          </a>
         </div>
       </div>
     </section>
