@@ -228,7 +228,7 @@
   }
 
   .phone {
-    width: min(320px, 100%, calc((100svh - 128px) * 0.4615));
+    width: min(290px, 100%, calc((100svh - 128px) * 0.4615));
     padding: 9px;
     border-radius: 44px;
   }
@@ -276,17 +276,21 @@
 
   .layout {
     width: min(1180px, calc(100% - 48px));
-    grid-template-columns: 330px minmax(0, 1fr);
+    grid-template-columns: 310px minmax(0, 1fr);
     gap: 32px;
     align-items: center;
   }
 
   .phone {
-    width: 300px;
+    width: 285px;
   }
 
+  .phoneColumn {
+    transform: translateY(-22px);
+}
+
   .copyViewport {
-    min-height: 360px;
+    min-height: 430px;
   }
 
   .copy h2 {
