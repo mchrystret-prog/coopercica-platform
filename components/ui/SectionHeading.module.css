@@ -52,3 +52,8 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (min-width: 901px) and (max-width: 1450px) and (max-height: 820px) {
+  .heading { margin-bottom: 52px; gap: clamp(28px, 5vw, 70px); }
+  .heading p { line-height: 1.6; }
+}

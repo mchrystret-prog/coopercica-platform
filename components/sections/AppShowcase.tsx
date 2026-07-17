@@ -78,9 +78,9 @@ export function AppShowcase() {
           scrollTrigger: {
             trigger: section,
             start: "top top",
-            end: () => `+=${window.innerHeight * 1.85}`,
+            end: () => `+=${window.innerHeight * 2}`,
             pin: stage,
-            scrub: 0.42,
+            scrub: 0.35,
             anticipatePin: 1,
             invalidateOnRefresh: true,
             snap: {
@@ -102,7 +102,7 @@ export function AppShowcase() {
           },
         });
 
-        timeline.to({}, { duration: 0.25 });
+        timeline.to({}, { duration: 0.18 });
 
         for (let index = 1; index < appShowcaseItems.length; index += 1) {
           const previousImage = images[index - 1];
@@ -187,7 +187,7 @@ export function AppShowcase() {
               },
               "<",
             )
-            .to({}, { duration: 0.2 });
+            .to({}, { duration: 0.18 });
         }
 
         const observer = new ResizeObserver(() => ScrollTrigger.refresh());

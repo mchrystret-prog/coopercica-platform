@@ -5,7 +5,7 @@
 
 .stage {
   display: grid;
-  min-height: 100svh;
+  min-height: calc(100svh - 82px);
   align-items: center;
   overflow: hidden;
   background: #ffffff;
@@ -29,7 +29,7 @@
 
 .phone {
   position: relative;
-  width: min(350px, 100%, calc((100svh - 150px) * 0.4615));
+  width: min(350px, 100%, calc((100svh - 190px) * 0.4615));
   aspect-ratio: 9 / 19.5;
   padding: 12px;
   overflow: hidden;
@@ -87,9 +87,7 @@
   will-change: opacity, transform, filter;
 }
 
-.screenImage:first-child {
-  opacity: 1;
-}
+.screenImage:first-child { opacity: 1; }
 
 .phoneProgress {
   display: flex;
@@ -123,21 +121,21 @@
 
 .copyViewport {
   position: relative;
-  min-height: 520px;
+  min-height: 440px;
 }
 
 .copy {
   position: absolute;
-  inset: 50% 0 auto;
+  top: 50%;
+  right: 0;
+  left: 0;
   max-width: 720px;
   opacity: 0;
-  transform: translateY(-50%);
+  translate: 0 -50%;
   will-change: opacity, transform, filter;
 }
 
-.copy:first-child {
-  opacity: 1;
-}
+.copy:first-child { opacity: 1; }
 
 .stepNumber {
   display: block;
@@ -209,9 +207,7 @@
   transition: transform 0.2s ease;
 }
 
-.storeBadgesLinks a:hover {
-  transform: translateY(-2px);
-}
+.storeBadgesLinks a:hover { transform: translateY(-2px); }
 
 .storeBadgesLinks img {
   display: block;
@@ -220,43 +216,89 @@
   object-fit: contain;
 }
 
-@media (min-width: 901px) and (max-height: 820px) {
-
+/* Desktop compacto e notebooks, inclusive 1366 × 768. */
+@media (min-width: 901px) and (max-width: 1450px) {
   .layout {
-    width: min(1180px, calc(100% - 56px));
-    grid-template-columns: 300px minmax(0,1fr);
-    gap:56px;
-}
-
-.phone {
-  width: 300px;
-  max-width: 100%;
-  padding: 9px;
-  border-radius: 44px;
-}
-
-.contentColumn {
-  gap: 24px;
-}
-
-.copyViewport {
-  min-height: 470px;
-}
-
-.copy h2 {
-  max-width: 600px;
-  font-size: clamp(2.2rem, 3.4vw, 3.5rem);
-}
-
-.copy p {
-  max-width: 540px;
-  font-size: 1rem;
-  line-height: 1.6;
-}
-  .storeBadgesLinks img {
-    height: 44px;
+    width: min(1160px, calc(100% - 56px));
+    grid-template-columns: minmax(250px, 290px) minmax(0, 1fr);
+    gap: clamp(42px, 5vw, 68px);
   }
 
+  .phone {
+    width: min(278px, 100%, calc((100svh - 190px) * 0.4615));
+    padding: 9px;
+    border-radius: 44px;
+  }
+
+  .phoneTop {
+    top: 14px;
+    height: 22px;
+  }
+
+  .screen { border-radius: 35px; }
+  .contentColumn { gap: 20px; }
+  .copyViewport { min-height: 410px; }
+
+  .copy h2 {
+    max-width: 610px;
+    font-size: clamp(2.2rem, 3.45vw, 3.55rem);
+  }
+
+  .copy p {
+    max-width: 540px;
+    margin-top: 18px;
+    font-size: 0.98rem;
+    line-height: 1.62;
+  }
+
+  .stepNumber { margin-bottom: 20px; }
+  .storeBadgesLinks img { height: 46px; }
+}
+
+/* Ajustes verticais sem alterar desktops e monitores mais altos. */
+@media (min-width: 901px) and (max-height: 820px) {
+  .stage { min-height: calc(100svh - 82px); }
+
+  .layout {
+    width: min(1120px, calc(100% - 48px));
+    grid-template-columns: minmax(235px, 270px) minmax(0, 1fr);
+    gap: clamp(36px, 4vw, 56px);
+  }
+
+  .phone {
+    width: min(252px, 100%, calc((100svh - 176px) * 0.4615));
+    padding: 8px;
+    border-radius: 40px;
+  }
+
+  .phoneTop {
+    top: 13px;
+    height: 20px;
+  }
+
+  .screen { border-radius: 32px; }
+  .phoneColumn { gap: 12px; }
+  .copyViewport { min-height: 350px; }
+  .contentColumn { gap: 14px; }
+
+  .stepNumber { margin-bottom: 16px; }
+  .stepEyebrow { margin-bottom: 10px; }
+
+  .copy h2 {
+    max-width: 600px;
+    font-size: clamp(2rem, 3.15vw, 3.2rem);
+    line-height: 0.98;
+  }
+
+  .copy p {
+    max-width: 520px;
+    margin-top: 16px;
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+
+  .storeBadges { gap: 9px; }
+  .storeBadgesLinks img { height: 42px; }
 }
 
 @media (max-width: 900px) {
@@ -272,13 +314,8 @@
     gap: 58px;
   }
 
-.phone{
-    width:260px;
-}
-
-  .contentColumn {
-    gap: 34px;
-  }
+  .phone { width: min(310px, 78vw); }
+  .contentColumn { gap: 34px; }
 
   .copyViewport {
     display: grid;
@@ -288,59 +325,35 @@
 
   .copy {
     position: relative;
-    inset: auto;
+    top: auto;
+    right: auto;
+    left: auto;
     max-width: none;
     opacity: 1 !important;
     filter: none !important;
+    translate: none;
     transform: none !important;
   }
 
-  .copy h2 {
-    font-size: clamp(2.2rem, 10vw, 3.5rem);
-  }
-
-  .storeBadges {
-    margin-top: 6px;
-  }
-
-  .storeBadgesLinks {
-    flex-wrap: wrap;
-  }
-
-  .storeBadgesLinks img {
-    height: 46px;
-  }
+  .copy h2 { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+  .storeBadges { margin-top: 6px; }
+  .storeBadgesLinks { flex-wrap: wrap; }
+  .storeBadgesLinks img { height: 46px; }
 }
 
 @media (max-width: 520px) {
-  .stage {
-    padding: 64px 0;
-  }
-
-  .layout {
-    gap: 46px;
-  }
-
-  .phone {
-    width: min(282px, 84vw);
-  }
-
-  .copyViewport {
-    gap: 44px;
-  }
-
-  .copy h2 {
-    font-size: clamp(2rem, 11vw, 3rem);
-  }
+  .stage { padding: 64px 0; }
+  .layout { gap: 46px; }
+  .phone { width: min(282px, 84vw); }
+  .copyViewport { gap: 44px; }
+  .copy h2 { font-size: clamp(2rem, 11vw, 3rem); }
 
   .copy p {
     font-size: 1rem;
     line-height: 1.62;
   }
 
-  .storeBadgesLinks img {
-    height: 42px;
-  }
+  .storeBadgesLinks img { height: 42px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
