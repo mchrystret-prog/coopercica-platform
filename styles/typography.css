@@ -1,0 +1,27 @@
+.ds-eyebrow {
+  display: inline-block;
+  color: var(--brand-red-500);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ds-title {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: clamp(2.55rem, 4.6vw, 4.9rem);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: .96;
+  text-transform: uppercase;
+}
+
+.ds-title span { display: block; }
+
+.ds-copy {
+  color: var(--text-body);
+  font-size: clamp(1rem, 1.2vw, 1.12rem);
+  line-height: 1.72;
+}

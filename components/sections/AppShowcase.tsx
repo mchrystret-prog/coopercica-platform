@@ -76,19 +76,17 @@ export function AppShowcase() {
         const timeline = gsap.timeline({
           defaults: { ease: "power3.inOut" },
           scrollTrigger: {
+            id: "app-showcase-scroll",
             trigger: section,
-            start: "top top",
-            end: () => `+=${window.innerHeight * 2}`,
+            start: "top 82px",
+            end: () =>
+              `+=${window.innerHeight * Math.max(2, appShowcaseItems.length - 1)}`,
             pin: stage,
-            scrub: 0.35,
+            pinSpacing: true,
+            scrub: 0.42,
             anticipatePin: 1,
             invalidateOnRefresh: true,
-            snap: {
-              snapTo: 1 / Math.max(1, appShowcaseItems.length - 1),
-              duration: { min: 0.18, max: 0.42 },
-              delay: 0.05,
-              ease: "power2.inOut",
-            },
+            refreshPriority: 1,
             onUpdate: (self) => {
               const nextIndex = Math.min(
                 appShowcaseItems.length - 1,
@@ -102,7 +100,7 @@ export function AppShowcase() {
           },
         });
 
-        timeline.to({}, { duration: 0.18 });
+        timeline.to({}, { duration: 0.25 });
 
         for (let index = 1; index < appShowcaseItems.length; index += 1) {
           const previousImage = images[index - 1];
@@ -187,15 +185,10 @@ export function AppShowcase() {
               },
               "<",
             )
-            .to({}, { duration: 0.18 });
+            .to({}, { duration: 0.2 });
         }
 
-        const observer = new ResizeObserver(() => ScrollTrigger.refresh());
-        observer.observe(section);
-        requestAnimationFrame(() => ScrollTrigger.refresh());
-
         return () => {
-          observer.disconnect();
         };
       });
 

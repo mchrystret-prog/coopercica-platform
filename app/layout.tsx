@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
 import "./globals.css";
+import { Montserrat } from "next/font/google";
 
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat", display: "swap" });
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+<html lang="pt-BR" className={montserrat.variable}></html>
 
 export const metadata: Metadata = {
   title: { default: "Coopercica | Qualidade com você", template: "%s | Coopercica" },
@@ -10,5 +16,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="pt-BR"><body className={montserrat.variable}>{children}</body></html>;
+  return <html lang="pt-BR"><body>{children}</body></html>;
 }

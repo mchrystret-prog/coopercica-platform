@@ -23,19 +23,15 @@ export function Hero({ items }: HeroProps) {
     return () => window.clearInterval(timer);
   }, [paused, items.length]);
 
-  useEffect(() => {
-    if (current >= items.length) {
-      setCurrent(0);
-    }
-  }, [current, items.length]);
-
   if (!items.length) {
     return null;
   }
 
+  const safeCurrent = current % items.length;
+
   const goToPrevious = () => {
     setCurrent((previous) =>
-      previous === 0 ? items.length - 1 : previous - 1,
+      (previous % items.length) === 0 ? items.length - 1 : (previous % items.length) - 1,
     );
   };
 
@@ -45,7 +41,9 @@ export function Hero({ items }: HeroProps) {
 
   return (
     <section
+      id="home"
       aria-label="Campanhas em destaque"
+      tabIndex={-1}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       style={{
@@ -53,11 +51,11 @@ export function Hero({ items }: HeroProps) {
         width: "100%",
         height: "clamp(420px, 43vw, 820px)",
         overflow: "hidden",
-        backgroundColor: items[current].backgroundColor ?? "#eef7ef",
+        backgroundColor: items[safeCurrent].backgroundColor ?? "#eef7ef",
       }}
     >
       {items.map((campaign, index) => {
-        const isActive = index === current;
+        const isActive = index === safeCurrent;
 
         return (
           <a
@@ -183,16 +181,16 @@ export function Hero({ items }: HeroProps) {
                 key={campaign.id}
                 type="button"
                 aria-label={`Exibir campanha ${campaign.title}`}
-                aria-current={index === current ? "true" : undefined}
+                aria-current={index === safeCurrent ? "true" : undefined}
                 onClick={() => setCurrent(index)}
                 style={{
-                  width: index === current ? 28 : 9,
+                  width: index === safeCurrent ? 28 : 9,
                   height: 9,
                   padding: 0,
                   border: 0,
                   borderRadius: 999,
                   background:
-                    index === current ? "#1c4722" : "#b7ceb9",
+                    index === safeCurrent ? "#1c4722" : "#b7ceb9",
                   cursor: "pointer",
                   transition:
                     "width 250ms ease, background-color 250ms ease",

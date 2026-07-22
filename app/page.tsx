@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { OnePageNavigation } from "@/components/layout/OnePageNavigation";
 
 import { Hero } from "@/components/sections/Hero";
 import { History } from "@/components/sections/History";
@@ -24,22 +25,23 @@ export default async function Home() {
 
   return (
     <>
+      <OnePageNavigation />
       <Header />
 
       <main>
         <Hero items={campaigns} />
 
-        <History />
-
         <AppShowcase />
+
+        <Stores items={stores} />
 
         <Pharmacy />
 
         <Delivery />
 
-        <Stores items={stores} />
-
         <Magazine items={magazines} />
+
+        <History />
       </main>
 
       <Footer />

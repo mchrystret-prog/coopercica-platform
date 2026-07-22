@@ -1,68 +1,20 @@
-"use client";
-
-import Link from "next/link";
+import Image from "next/image";
 import { pharmacy } from "@/data/pharmacy";
+import { Button } from "@/components/ui/Button/Button";
+import { Container } from "@/components/ui/Container/Container";
+import { Section } from "@/components/ui/Section/Section";
+import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import styles from "./Pharmacy.module.css";
 
 export function Pharmacy() {
-  return (
-    <section
-      className={styles.section}
-      aria-labelledby="pharmacy-title"
-    >
-      <div className={styles.shell}>
-        <div className={styles.content}>
-          <span className={styles.eyebrow}>
-            {pharmacy.eyebrow}
-          </span>
-
-          <h2 id="pharmacy-title">
-            {pharmacy.title}
-          </h2>
-
-          <p className={styles.description}>
-            {pharmacy.description}
-          </p>
-
-          <ul
-            className={styles.highlights}
-            aria-label="Destaques da Coopercica Drogaria"
-          >
-            {pharmacy.highlights.map((item) => (
-              <li key={item}>
-                {item}
-              </li>
-            ))}
-          </ul>
-
-          <div className={styles.actions}>
-            <Link
-              href={pharmacy.ctaHref}
-              className="button"
-            >
-              {pharmacy.ctaLabel}
-            </Link>
-          </div>
-        </div>
-
-        <div className={styles.visual}>
-          <div
-            className={styles.image}
-            role="img"
-            aria-label={pharmacy.imageAlt}
-            style={{
-              backgroundImage: `
-                linear-gradient(
-                  180deg,
-                  rgba(13,36,17,.02),
-                  rgba(13,36,17,.18)
-                ),
-                url(${pharmacy.image})
-              `,
-            }}
-          />
-        </div>
+  return <Section id="drogaria" className={styles.section} aria-labelledby="pharmacy-title" tabIndex={-1}>
+    <Container className={styles.shell}>
+      <div className={styles.content}>
+        <SectionHeader id="pharmacy-title" eyebrow={pharmacy.eyebrow} title={["Muito além", "dos medicamentos."]} description={pharmacy.description} stacked />
+        <ul className={styles.highlights} aria-label="Destaques da Coopercica Drogaria">{pharmacy.highlights.map((item)=><li key={item}>{item}</li>)}</ul>
+        <div className={styles.actions}><Button href={pharmacy.ctaHref}>{pharmacy.ctaLabel}</Button></div>
       </div>
-    </section>
-  );
+      <div className={styles.visual}><Image src={pharmacy.image} alt={pharmacy.imageAlt} fill sizes="(max-width: 1100px) 100vw, 42vw" className={styles.image} /></div>
+    </Container>
+  </Section>;
 }

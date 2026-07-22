@@ -1,19 +1,22 @@
-import Link from "next/link";
+import Image from "next/image";
 import styles from "./Footer.module.css";
 
 export function Footer() {
   return (
-    <footer className={styles.footer}>
+    <footer id="footer" className={styles.footer}>
       <div className={`shell ${styles.grid}`}>
         <div className={styles.intro}>
-          <div className={styles.brand}>
-            <span className={styles.brandMark}>C</span>
-            <span>COOPERCICA</span>
-          </div>
+          <a href="#home" className={styles.brand} aria-label="Voltar ao início">
+            <Image
+              src="/images/logo-white.png"
+              alt="Coopercica"
+              width={861}
+              height={145}
+              className={styles.logo}
+            />
+          </a>
 
-          <p>
-            Qualidade, proximidade e cooperação há mais de cinco décadas.
-          </p>
+          <p>Qualidade, proximidade e cooperação há mais de cinco décadas.</p>
 
           <strong className={styles.signature}>
             Cooperar é <span>crescer juntos.</span>
@@ -22,15 +25,15 @@ export function Footer() {
 
         <div className={styles.column}>
           <strong>Institucional</strong>
-          <Link href="/quem-somos">Quem Somos</Link>
-          <Link href="/lojas">Nossas Lojas</Link>
+          <a href="#historia">Quem Somos</a>
+          <a href="#lojas">Nossas Lojas</a>
         </div>
 
         <div className={styles.column}>
           <strong>Serviços</strong>
-          <Link href="/delivery">Delivery</Link>
-          <Link href="/drogaria">Drogaria</Link>
-          <Link href="/revista">Revista</Link>
+          <a href="#delivery">Delivery</a>
+          <a href="#drogaria">Drogaria</a>
+          <a href="#revista">Revista</a>
         </div>
 
         <div className={styles.column}>

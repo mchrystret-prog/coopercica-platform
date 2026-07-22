@@ -1,0 +1,34 @@
+:root {
+  --brand-green-900: #1c4722;
+  --brand-green-700: #205f30;
+  --brand-green-500: #6ab945;
+  --brand-lime-500: #a8cf38;
+  --brand-red-500: #ef4037;
+  --brand-orange-500: #f68b1f;
+
+  --surface-page: #f6faf6;
+  --surface-soft: #edf6ee;
+  --surface-muted: #e5f1e6;
+  --surface-card: #ffffff;
+  --text-heading: #1c4722;
+  --text-body: #536057;
+  --text-muted: #68766b;
+  --border-soft: #d8e5da;
+
+  --container: 1280px;
+  --gutter: clamp(20px, 4vw, 48px);
+  --section-space: clamp(88px, 9vw, 132px);
+  --header-height: 82px;
+
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 36px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 18px 60px rgb(28 71 34 / 9%);
+  --shadow-card: 0 24px 70px rgb(28 71 34 / 13%);
+
+  --motion-fast: 180ms;
+  --motion-normal: 320ms;
+  --ease-brand: cubic-bezier(.2, .8, .2, 1);
+}

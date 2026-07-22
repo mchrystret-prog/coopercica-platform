@@ -1,0 +1,48 @@
+:root {
+  /* Coopercica — cores oficiais */
+  --brand-green-900: #1c4722;
+  --brand-green-700: #205f30;
+  --brand-green-500: #6ab945;
+  --brand-green-300: #a8cf38;
+  --brand-red-500: #ef4037;
+  --brand-orange-500: #f68b1f;
+
+  /* Neutros e superfícies */
+  --color-white: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f6faf6;
+  --color-surface-muted: #edf6ee;
+  --color-text: #38463b;
+  --color-text-muted: #68766b;
+  --color-border: #d8e5da;
+
+  /* Tipografia */
+  --font-brand: var(--font-montserrat), Montserrat, Arial, sans-serif;
+  --font-weight-body: 400;
+  --font-weight-medium: 600;
+  --font-weight-strong: 800;
+  --font-size-eyebrow: 0.75rem;
+  --font-size-body: 1rem;
+  --font-size-body-lg: clamp(1rem, 1.25vw, 1.16rem);
+  --font-size-heading: clamp(2.75rem, 5.2vw, 5.5rem);
+  --line-height-heading: 0.92;
+  --line-height-body: 1.72;
+  --tracking-heading: -0.045em;
+  --tracking-eyebrow: 0.18em;
+
+  /* Layout */
+  --container-max: 1280px;
+  --container-gutter: clamp(1.25rem, 4vw, 4rem);
+  --section-space: clamp(5.5rem, 10vw, 8.25rem);
+  --content-gap: clamp(3rem, 6vw, 6rem);
+
+  /* Forma e movimento */
+  --radius-sm: 1rem;
+  --radius-md: 1.5rem;
+  --radius-lg: 2.25rem;
+  --radius-pill: 999px;
+  --shadow-card: 0 24px 70px rgb(28 71 34 / 12%);
+  --motion-fast: 180ms;
+  --motion-normal: 320ms;
+  --ease-brand: cubic-bezier(.2, .8, .2, 1);
+}

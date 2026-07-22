@@ -1,2 +1,18 @@
 import type { Magazine as MagazineType } from "@/types/content";
-export function Magazine({items}:{items:MagazineType[]}){return <section className="section"><div className="shell"><div className="section-heading"><div><span className="eyebrow">Revista Coopercica</span><h2>Conteúdo para viver melhor.</h2></div><a className="text-link" href="/revista">Ver todas as edições →</a></div><div className="magazine-grid">{items.map((item,index)=><a className="magazine-card" href={item.href} key={item.id}><div className={`cover cover-${index+1}`}>{item.edition}</div><span>{item.edition}</span><h3>{item.title}</h3></a>)}</div></div></section>}
+import { Button } from "@/components/ui/Button/Button";
+import { Container } from "@/components/ui/Container/Container";
+import { Section } from "@/components/ui/Section/Section";
+import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
+import styles from "./Magazine.module.css";
+
+export function Magazine({ items }: { items: MagazineType[] }) {
+  return <Section id="revista" className={styles.section} tabIndex={-1}>
+    <Container>
+      <div className={styles.top}>
+        <SectionHeader className={styles.header} eyebrow="Revista Coopercica" title={["Conteúdo para", "viver melhor."]} stacked />
+        <Button href="/revista" variant="secondary">Ver todas as edições</Button>
+      </div>
+      <div className={styles.grid}>{items.map((item)=><a className={styles.card} href={item.href} key={item.id}><div className={styles.cover}>{item.edition}</div><span className={styles.edition}>{item.edition}</span><h3>{item.title}</h3></a>)}</div>
+    </Container>
+  </Section>;
+}

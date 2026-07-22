@@ -1,0 +1,56 @@
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+  gap: clamp(30px, 6vw, 88px);
+  align-items: end;
+  margin-bottom: clamp(44px, 6vw, 76px);
+}
+
+.stack {
+  display: grid;
+
+  /* ESTA LINHA É A QUE ESTÁ FALTANDO */
+  grid-template-columns: 1fr;
+
+  gap: 24px;
+
+  max-width: 860px;
+
+  align-items: start;
+}
+
+.eyebrow {
+  margin-bottom: 16px;
+}
+
+.title {
+  max-width: 900px;
+}
+
+.description {
+  max-width: 540px;
+  margin: 0;
+}
+
+.stack .description {
+  margin-top: 0;
+  max-width: 620px;
+}
+
+.light .title,
+.light .description {
+  color: #fff;
+}
+
+.light .description {
+  color: rgb(255 255 255 / 74%);
+}
+
+@media (max-width:760px){
+
+  .header{
+    grid-template-columns:1fr;
+    align-items:start;
+  }
+
+}

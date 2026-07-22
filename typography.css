@@ -1,0 +1,30 @@
+.ds-eyebrow {
+  display: inline-block;
+  color: var(--brand-red-500);
+  font-size: var(--font-size-eyebrow);
+  font-weight: var(--font-weight-strong);
+  letter-spacing: var(--tracking-eyebrow);
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.ds-title {
+  margin: 0;
+  color: var(--brand-green-900);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-strong);
+  letter-spacing: var(--tracking-heading);
+  line-height: var(--line-height-heading);
+  text-transform: uppercase;
+}
+
+.ds-title-line { display: block; }
+
+.ds-body {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+  text-transform: none;
+}
