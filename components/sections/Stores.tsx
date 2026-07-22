@@ -306,6 +306,13 @@ function StoreModal({
   );
 }
 
+const cityImages: Record<string, string> = {
+  "Jundiaí": "/images/cities/jundiaí.jpg",
+  "Campo Limpo Paulista": "/images/cities/campolimpo.jpg",
+  "Várzea Paulista": "/images/cities/varzea.jpg",
+  "Itupeva": "/images/cities/itupeva.jpg",
+};
+
 export function Stores({ items }: StoresProps) {
   const activeItems = useMemo(
     () => items.filter((item) => item.active !== false),
@@ -325,7 +332,10 @@ export function Stores({ items }: StoresProps) {
       name,
       stores,
       image:
-        stores.find((store) => store.featured)?.image ?? stores[0]?.image ?? "",
+        cityImages[name] ??
+        stores.find((store) => store.featured)?.image ??
+        stores[0]?.image ??
+        "",
     }));
   }, [activeItems]);
 

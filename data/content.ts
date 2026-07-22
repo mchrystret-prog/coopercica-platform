@@ -108,7 +108,25 @@ export const stores: Store[] = [
 ];
 
 export const magazines: Magazine[] = [
-  { id: "ed-01", title: "Revista Coopercica", edition: "Edição atual", cover: "/magazine/edicao-atual.webp", href: "#" },
-  { id: "ed-02", title: "Receitas e histórias", edition: "Edição anterior", cover: "/magazine/edicao-anterior.webp", href: "#" },
-  { id: "ed-03", title: "Bem-estar e sabores", edition: "Especial", cover: "/magazine/especial.webp", href: "#" }
+  {
+    id: "ed-01",
+    title: "Julho 2026",
+    edition: "Mês do Cooperativismo",
+    cover: "/images/magazines/edicao-atual.png",
+    href: "#",
+  },
+  {
+    id: "ed-02",
+    title: "Junho 2026",
+    edition: "Mês das Mães",
+    cover: "/images/magazines/edicao-anterior.jpeg",
+    href: "#",
+  },
+  {
+    id: "ed-03",
+    title: "Maio 2026",
+    edition: "Arraiá de Ofertas",
+    cover: "/images/magazines/especial.jpg",
+    href: "#",
+  },
 ];
