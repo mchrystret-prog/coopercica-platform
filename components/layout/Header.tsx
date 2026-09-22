@@ -7,7 +7,7 @@ import styles from "./Header.module.css";
 const links = [
   { label: "Quem Somos", href: "#historia", sectionId: "historia" },
   { label: "Nossas Lojas", href: "#lojas", sectionId: "lojas" },
-  { label: "Ofertas", href: "#ofertas", sectionId: "ofertas" },
+  { label: "Ofertas", href: "/folheteria", sectionId: "ofertas" },
   { label: "Delivery", href: "#delivery", sectionId: "delivery" },
   { label: "Drogaria", href: "#drogaria", sectionId: "drogaria" },
   { label: "Revista", href: "#revista", sectionId: "revista" },
