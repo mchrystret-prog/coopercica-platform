@@ -651,3 +651,5 @@
 }
 /* RC1: a timeline termina no último marco; sem botão flutuante de avanço. */
 .nextSection { display: none !important; }
+
+.skipButton{pointer-events:auto;position:absolute;top:42px;right:clamp(24px,6vw,112px);display:inline-flex;align-items:center;gap:9px;padding:11px 16px;border:1px solid rgb(28 71 34 / 14%);border-radius:999px;background:rgb(255 255 255 / 88%);color:#1c4722;font-size:.78rem;font-weight:700;box-shadow:0 10px 28px rgb(28 71 34 / 8%);backdrop-filter:blur(12px)}.skipButton:hover{color:#ef4037;transform:translateY(-2px)}.historyEnd{display:block;position:absolute;bottom:-1px;left:0;width:1px;height:1px}@media(max-width:900px){.skipButton{position:fixed;top:auto;right:18px;bottom:18px;z-index:80}.historyEnd{bottom:0}}
