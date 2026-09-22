@@ -29,8 +29,8 @@ export function Delivery() {
             <li>Qualidade Coopercica</li>
           </ul>
 
-          <Button href="/delivery">
-            Conheça nosso Delivery
+          <Button href="https://www.coopercicadelivery.com.br/" external>
+            Comprar no Delivery
           </Button>
         </div>
 

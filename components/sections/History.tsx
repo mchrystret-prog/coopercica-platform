@@ -38,6 +38,10 @@ export function History() {
     onActiveIndexChange: handleActiveIndexChange,
   });
 
+  const skipHistory = () => {
+    document.getElementById("historia-fim")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <section
       id="historia"
@@ -56,6 +60,7 @@ export function History() {
               cooperação.
             </p>
           </div>
+          <button type="button" className={styles.skipButton} onClick={skipHistory}>Pular história <span aria-hidden="true">↓</span></button>
         </div>
 
         <div ref={trackRef} className={styles.track}>
@@ -122,6 +127,7 @@ export function History() {
           </div>
         </nav>
       </div>
+      <span id="historia-fim" className={styles.historyEnd} aria-hidden="true" />
     </section>
   );
 }
