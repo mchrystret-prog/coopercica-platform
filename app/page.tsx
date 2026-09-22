@@ -9,18 +9,21 @@ import { Pharmacy } from "@/components/sections/Pharmacy";
 import { Delivery } from "@/components/sections/Delivery";
 import { Stores } from "@/components/sections/Stores";
 import { Magazine } from "@/components/sections/Magazine";
+import { Leaflets } from "@/components/sections/Leaflets";
 
 import {
   getCampaigns,
   getMagazines,
   getStores,
 } from "@/lib/content";
+import { getActiveLeaflets } from "@/lib/leaflets";
 
 export default async function Home() {
-  const [campaigns, stores, magazines] = await Promise.all([
+  const [campaigns, stores, magazines, leaflets] = await Promise.all([
     getCampaigns(),
     getStores(),
     getMagazines(),
+    getActiveLeaflets(),
   ]);
 
   return (
@@ -32,6 +35,8 @@ export default async function Home() {
         <Hero items={campaigns} />
 
         <AppShowcase />
+
+        <Leaflets items={leaflets} />
 
         <Stores items={stores} />
 
