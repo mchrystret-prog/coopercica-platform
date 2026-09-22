@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 
@@ -14,6 +15,8 @@ const links = [
 ];
 
 export function Header() {
+  const pathname = usePathname();
+  const onHome = pathname === "/";
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
@@ -47,7 +50,7 @@ export function Header() {
     <header className={styles.header}>
       <div className={`shell ${styles.inner}`}>
         <a
-          href="#home"
+          href={onHome ? "#home" : "/"}
           className={styles.brand}
           aria-label="Coopercica — voltar ao início"
           onClick={closeMenu}
@@ -81,13 +84,13 @@ export function Header() {
           {links.map((link) => (
             <a
               key={link.href}
-              href={link.href}
+              href={link.href.startsWith("#") && !onHome ? `/${link.href}` : link.href}
               onClick={closeMenu}
               className={
-                activeSection === link.sectionId ? styles.active : undefined
+                (link.href === "/folheteria" && pathname.startsWith("/folheteria")) || (onHome && activeSection === link.sectionId) ? styles.active : undefined
               }
               aria-current={
-                activeSection === link.sectionId ? "location" : undefined
+                (link.href === "/folheteria" && pathname.startsWith("/folheteria")) || (onHome && activeSection === link.sectionId) ? "page" : undefined
               }
             >
               {link.label}
