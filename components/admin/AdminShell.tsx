@@ -1,26 +1,8 @@
-import Link from "next/link";
-import type { ReactNode } from "react";
-
-const items = [
-  ["/admin", "Visão geral"],
-  ["/admin/campanhas", "Campanhas"],
-  ["/admin/revistas", "Revistas"],
-  ["/admin/folheteria", "Folheteria Digital"],
-  ["/admin/lojas", "Lojas"],
-  ["/admin/analytics", "Analytics"],
-  ["/admin/configuracoes", "Configurações"],
-] as const;
-
-export function AdminShell({ children }: { children: ReactNode }) {
-  return (
-    <div className="admin-shell">
-      <aside>
-        <Link className="admin-brand" href="/">Coopercica</Link>
-        <span className="admin-kicker">Painel de Marketing</span>
-        <nav>{items.map(([href, label]) => <Link href={href} key={href}>{label}</Link>)}</nav>
-        <Link className="admin-back" href="/">← Voltar ao site</Link>
-      </aside>
-      <main>{children}</main>
-    </div>
-  );
-}
+"use client";
+import Link from"next/link";import type{ReactNode}from"react";import{FormEvent,useEffect,useState}from"react";import{SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL}from"@/lib/leaflets";
+const items=[["/admin","Visão geral"],["/admin/campanhas","Campanhas"],["/admin/revistas","Revistas"],["/admin/folheteria","Folheteria Digital"],["/admin/lojas","Lojas"],["/admin/analytics","Analytics"],["/admin/configuracoes","Configurações"]]as const;
+export function AdminShell({children}:{children:ReactNode}){const[token,setToken]=useState<string|null>(null);const[ready,setReady]=useState(false);const[error,setError]=useState("");
+useEffect(()=>{setToken(sessionStorage.getItem("coopercica_admin_token"));setReady(true)},[]);
+async function login(e:FormEvent<HTMLFormElement>){e.preventDefault();setError("");const fd=new FormData(e.currentTarget);const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:fd.get("email"),password:fd.get("password")})});const j=await r.json();if(!r.ok){setError("Não foi possível entrar.");return}sessionStorage.setItem("coopercica_admin_token",j.access_token);setToken(j.access_token)}
+if(!ready)return null;if(!token)return <div className="admin-shell"><main style={{width:"100%",display:"grid",placeItems:"center",minHeight:"100vh"}}><form className="settings-form" onSubmit={login} style={{maxWidth:520,width:"100%"}}><span className="eyebrow">Painel de Marketing</span><h1>Acesso administrativo</h1><p>Entre uma vez para acessar e gerenciar todo o painel.</p><label>E-mail<input name="email" type="email" required/></label><label>Senha<input name="password" type="password" required/></label><button className="button">Entrar</button>{error?<p>{error}</p>:null}</form></main></div>;
+return <div className="admin-shell"><aside><Link className="admin-brand" href="/">Coopercica</Link><span className="admin-kicker">Painel de Marketing</span><nav>{items.map(([href,label])=><Link href={href} key={href}>{label}</Link>)}</nav><Link className="admin-back" href="/">← Voltar ao site</Link></aside><main>{children}</main></div>}
