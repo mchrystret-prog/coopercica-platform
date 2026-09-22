@@ -6,7 +6,10 @@ export type LeafletProduct = { id:string; sort_order:number; ean:string|null; de
 
 async function rest<T>(path:string):Promise<T>{
   const response=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`},next:{revalidate:60}});
-  if(!response.ok) throw new Error("Falha ao carregar folheteria");
+  if(!response.ok) {
+    console.error(`[folheteria] Supabase respondeu ${response.status} em ${path}`);
+    return [] as T;
+  }
   return response.json();
 }
 export async function getActiveLeaflets(){
