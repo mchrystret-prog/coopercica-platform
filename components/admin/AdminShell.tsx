@@ -5,6 +5,7 @@ const items = [
   ["/admin", "Visão geral"],
   ["/admin/campanhas", "Campanhas"],
   ["/admin/revistas", "Revistas"],
+  ["/admin/folheteria", "Folheteria Digital"],
   ["/admin/lojas", "Lojas"],
   ["/admin/analytics", "Analytics"],
   ["/admin/configuracoes", "Configurações"],
