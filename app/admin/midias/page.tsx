@@ -1,0 +1,1 @@
+import{MediaLibrary}from"@/components/admin/MediaLibrary";export default function Page(){return <section className="admin-page"><header className="admin-header"><div><span className="eyebrow">Arquivos</span><h1>Biblioteca de mídia</h1><p>Consulte imagens e documentos enviados pelos módulos do CMS.</p></div></header><MediaLibrary/></section>}
