@@ -1,0 +1,8 @@
+import{SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL}from"@/lib/leaflets";
+export type SiteIdentity={siteName:string;logo:string;logoWhite:string;favicon?:string;primaryColor:string;secondaryColor:string;accentColor:string;pageColor:string;deliveryUrl:string;contactEmail:string};
+export type SiteSection={id:string;label:string;sort_order:number;active:boolean;content:Record<string,string>};
+const identityFallback:SiteIdentity={siteName:"Coopercica",logo:"/images/logo.png",logoWhite:"/images/logo-white.png",primaryColor:"#1c4722",secondaryColor:"#6ab945",accentColor:"#ef4037",pageColor:"#f6faf6",deliveryUrl:"https://www.coopercicadelivery.com.br/",contactEmail:"faleconosco@coopercica.com.br"};
+async function rows<T>(path:string):Promise<T|null>{try{const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY},cache:"no-store"});if(!r.ok)return null;return await r.json()}catch{return null}}
+export async function getSiteIdentity(){const r=await rows<Array<{value:SiteIdentity}>>("site_settings?key=eq.identity&select=value");return r?.[0]?.value??identityFallback}
+export async function getSiteSections(){return(await rows<SiteSection[]>("site_sections?select=*&order=sort_order.asc"))??[]}
+export async function getSiteSetting<T>(key:string,fallback:T):Promise<T>{const r=await rows<Array<{value:T}>>(`site_settings?key=eq.${encodeURIComponent(key)}&select=value`);return r?.[0]?.value??fallback}
