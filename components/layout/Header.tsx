@@ -14,7 +14,7 @@ const links = [
   { label: "Revista", href: "#revista", sectionId: "revista" },
 ];
 
-export function Header() {
+export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUrl="https://www.coopercicadelivery.com.br/"}:{logo?:string;siteName?:string;deliveryUrl?:string}={}) {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const [open, setOpen] = useState(false);
@@ -56,8 +56,8 @@ export function Header() {
           onClick={closeMenu}
         >
           <Image
-            src="/images/logo.png"
-            alt="Coopercica"
+            src={logo}
+            alt={siteName}
             width={861}
             height={145}
             priority
@@ -99,7 +99,7 @@ export function Header() {
 
           <a
             className={styles.cta}
-            href="https://www.coopercicadelivery.com.br/"
+            href={deliveryUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={closeMenu}
