@@ -1,0 +1,1 @@
+import{SiteCustomization}from"@/components/admin/SiteCustomization";export default function Page(){return <SiteCustomization/>}
