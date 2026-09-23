@@ -97,11 +97,11 @@
   .stage { min-height:100svh; overflow:hidden; padding:28px 0 24px; }
   .layout { width:min(720px,calc(100% - 32px)); grid-template-columns:1fr; gap:22px; align-content:center; }
   .phoneColumn { gap:10px; }
-  .phone { width:min(218px,54vw,calc((100svh - 430px) * .4615)); min-width:170px; border-radius:38px; padding:8px; }
+  .phone { width:clamp(150px,46vw,210px); max-height:42svh; border-radius:38px; padding:8px; }
   .phoneTop { top:12px; height:19px; }
   .screen { border-radius:30px; }
   .contentColumn { gap:18px; }
-  .copyViewport { position:relative; height:230px; }
+  .copyViewport { position:relative; height:clamp(205px,27svh,230px); }
   .copy { position:absolute; inset:0; display:flex; justify-content:flex-start; max-width:none; opacity:0; }
   .copy:first-child { opacity:1; }
   .stepNumber { margin-bottom:8px; font-size:.7rem; }
@@ -116,7 +116,7 @@
 @media (max-width: 520px) {
   .stage { padding:20px 0 18px; }
   .layout { gap:16px; }
-  .phone { width:min(194px,50vw); min-width:158px; border-radius:34px; }
+  .phone { width:clamp(145px,44vw,185px); max-height:39svh; border-radius:34px; }
   .screen { border-radius:27px; }
   .copyViewport { height:220px; }
   .copy h2 { font-size:clamp(1.85rem,8.7vw,2.7rem); }
