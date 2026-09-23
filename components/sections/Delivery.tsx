@@ -13,7 +13,7 @@ export function Delivery({content={}}:{content?:Record<string,string>}) {
 <SectionHeader
   eyebrow={content.eyebrow||"Delivery"}
   stacked
-  title={[content.title1||"A MESMA CONFIANÇA,",content.title2||"AGORA A UM CLIQUE DE VOCÊ."]}
+  title={[content.title1 ?? "A MESMA CONFIANÇA,",content.title2 ?? "AGORA A UM CLIQUE DE VOCÊ."].filter(Boolean)}
   description={content.description||"Faça suas compras pelo site ou aplicativo e receba tudo em casa com a qualidade que você já conhece."}
   className={styles.heading}
 />
