@@ -189,22 +189,24 @@ export function useHorizontalHistory({
           const image = slide.querySelector<HTMLElement>("[data-history-image]");
           const content = slide.querySelector<HTMLElement>("[data-history-content]");
 
-          if (image) gsap.set(image, { autoAlpha: .72, y: 34, scale: 1.035 });
-          if (content) gsap.set(content, { autoAlpha: .65, y: 28 });
+          gsap.set(slide, { autoAlpha: .25, y: 72, scale: .94 });
+          if (image) gsap.set(image, { autoAlpha: .45, y: 34, scale: 1.06 });
+          if (content) gsap.set(content, { autoAlpha: .3, y: 32 });
 
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: slide,
-              start: "top 78%",
-              end: "center 48%",
-              scrub: .45,
+              start: "top 88%",
+              end: "top 32%",
+              scrub: .65,
               onEnter: () => onActiveIndexChange(index),
               onEnterBack: () => onActiveIndexChange(index),
             },
           });
 
-          if (image) tl.to(image, { autoAlpha: 1, y: 0, scale: 1, ease: "power2.out", duration: .7 }, 0);
-          if (content) tl.to(content, { autoAlpha: 1, y: 0, ease: "power2.out", duration: .58 }, .08);
+          tl.to(slide, { autoAlpha: 1, y: 0, scale: 1, ease: "power3.out", duration: .72 }, 0);
+          if (image) tl.to(image, { autoAlpha: 1, y: 0, scale: 1, ease: "power3.out", duration: .72 }, .04);
+          if (content) tl.to(content, { autoAlpha: 1, y: 0, ease: "power2.out", duration: .58 }, .14);
           triggers.push(tl);
         });
 
@@ -217,6 +219,7 @@ export function useHorizontalHistory({
             track.querySelectorAll<HTMLElement>("[data-history-image], [data-history-content]"),
             { clearProps: "transform,filter,opacity,visibility" },
           );
+          gsap.set(slides, { clearProps: "transform,opacity,visibility" });
         };
       });
 
