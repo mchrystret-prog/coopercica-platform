@@ -193,33 +193,46 @@ export function AppShowcase() {
       });
 
       media.add("(max-width: 900px)", () => {
-        gsap.set(images, { autoAlpha: 0, y: 18, scale: 1.01 });
+        gsap.set(images, { autoAlpha: 0, yPercent: 7, scale: 1.018, filter: "blur(5px)" });
         gsap.set(copies, { autoAlpha: 0, y: 18, pointerEvents: "none" });
-        gsap.set(images[0], { autoAlpha: 1, y: 0, scale: 1 });
+        gsap.set(images[0], { autoAlpha: 1, yPercent: 0, scale: 1, filter: "blur(0px)" });
         gsap.set(copies[0], { autoAlpha: 1, y: 0, pointerEvents: "auto" });
 
-        const slides = copies.map((copy, index) => {
-          const trigger = ScrollTrigger.create({
-            trigger: copy,
-            start: "top 72%",
-            onEnter: () => {
-              setActiveIndex(index);
-              gsap.to(images, { autoAlpha: 0, duration: .22, overwrite: true });
-              gsap.to(images[index], { autoAlpha: 1, y: 0, scale: 1, duration: .36, overwrite: true });
+        const timeline = gsap.timeline({
+          defaults: { ease: "power3.inOut" },
+          scrollTrigger: {
+            id: "app-showcase-mobile",
+            trigger: section,
+            start: "top 82px",
+            end: () => `+=${window.innerHeight * Math.max(2, appShowcaseItems.length - 1)}`,
+            pin: stage,
+            pinSpacing: true,
+            scrub: .42,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const nextIndex = Math.min(
+                appShowcaseItems.length - 1,
+                Math.round(self.progress * (appShowcaseItems.length - 1)),
+              );
+              setActiveIndex((current) => current === nextIndex ? current : nextIndex);
             },
-            onEnterBack: () => {
-              setActiveIndex(index);
-              gsap.to(images, { autoAlpha: 0, duration: .22, overwrite: true });
-              gsap.to(images[index], { autoAlpha: 1, y: 0, scale: 1, duration: .36, overwrite: true });
-            },
-          });
-          return trigger;
+          },
         });
 
-        return () => {
-          slides.forEach((trigger) => trigger.kill());
-          gsap.set([...images, ...copies, phone], { clearProps: "all" });
-        };
+        timeline.to({}, { duration: .2 });
+        for (let index = 1; index < appShowcaseItems.length; index += 1) {
+          timeline
+            .to(copies[index - 1], { autoAlpha: 0, y: -16, pointerEvents: "none", duration: .28 })
+            .to(images[index - 1], { autoAlpha: 0, yPercent: -5, scale: .992, filter: "blur(5px)", duration: .3 }, "<")
+            .fromTo(images[index], { autoAlpha: 0, yPercent: 7, scale: 1.018, filter: "blur(5px)" }, { autoAlpha: 1, yPercent: 0, scale: 1, filter: "blur(0px)", duration: .42 }, ">-.06")
+            .fromTo(copies[index], { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, pointerEvents: "auto", duration: .38 }, "<+.03")
+            .to(phone, { scale: .992, duration: .12 }, "<")
+            .to(phone, { scale: 1, duration: .22 })
+            .to({}, { duration: .18 });
+        }
+
+        return () => timeline.kill();
       });
 
       cleanup = () => media.revert();
