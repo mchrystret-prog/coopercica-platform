@@ -13,15 +13,13 @@ type MagazineWithOptionalCover = MagazineType & {
   thumbnail?: string;
 };
 
-type MagazineProps = {
-  items: MagazineType[];
-};
+type MagazineProps = { items: MagazineType[]; content?:Record<string,string>; };
 
 function getCover(item: MagazineWithOptionalCover): string | null {
   return item.cover ?? item.image ?? item.thumbnail ?? null;
 }
 
-export function Magazine({ items }: MagazineProps) {
+export function Magazine({ items,content={} }: MagazineProps) {
   const magazines = useMemo(
     () => items.filter((item) => Boolean(item?.id && item?.href)),
     [items]
@@ -67,8 +65,8 @@ export function Magazine({ items }: MagazineProps) {
       <Container>
         <SectionHeader
           className={styles.header}
-          eyebrow="REVISTA COOPERCICA"
-          title={["TODO MÊS, UMA", "NOVA EDIÇÃO PRA VOCÊ."]}
+          eyebrow={content.eyebrow||"REVISTA COOPERCICA"}
+          title={[content.title1||"TODO MÊS, UMA",content.title2||"NOVA EDIÇÃO PRA VOCÊ."]}
           stacked
         />
 
@@ -156,7 +154,7 @@ export function Magazine({ items }: MagazineProps) {
             </div>
 
             <a className={styles.archiveCta} href="/revista">
-              <span>Ver todas as edições</span>
+              <span>{content.ctaLabel||"Ver todas as edições"}</span>
               <span aria-hidden="true">→</span>
             </a>
           </aside>
