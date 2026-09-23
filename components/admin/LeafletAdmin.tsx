@@ -11,9 +11,9 @@ return <><form className="settings-form" onSubmit={submit}>
 <label>Slug (opcional)<input name="slug" placeholder="ofertas-da-semana"/><small>Deixe vazio para gerar automaticamente.</small></label>
 <label>Início da vigência<input name="starts_at" type="date" required/></label>
 <label>Fim da vigência<input name="ends_at" type="date" required/></label>
-<label>Thumbnail do folheto<input name="cover_file" type="file" accept="image/png,image/jpeg,image/webp" required/><small>Usada na vitrine. Recomendado: imagem vertical, JPG/WebP.</small></label>
-<label>Header da página<input name="header_file" type="file" accept="image/png,image/jpeg,image/webp" required/><small>Usada no topo da landing page. Recomendado: imagem horizontal.</small></label>
+<label>Thumbnail do folheto<input name="cover_file" type="file" accept="image/png,image/jpeg,image/webp" required/><small>Usada na vitrine. Recomendado: 1080 × 1350 px (4:5). JPG, PNG ou WebP. Máximo: 10 MB.</small></label>
+<label>Header da página<input name="header_file" type="file" accept="image/png,image/jpeg,image/webp" required/><small>Usada no topo da landing page. Recomendado: 1920 × 600 px (horizontal). JPG, PNG ou WebP. Máximo: 10 MB.</small></label>
 <label>Status<select name="status" defaultValue="draft"><option value="draft">Salvar como rascunho</option><option value="published">Publicar na vigência</option></select><small>Rascunhos não ficam visíveis no site.</small></label>
-<label className="form-span-full">Planilha de produtos — ERP<input name="file" type="file" accept=".xlsx" required/><small>Use a exportação XLSX com a aba “Tabloide Digital”.</small></label>
+<label className="form-span-full">Planilha de produtos — ERP<input name="file" type="file" accept=".xlsx" required/><small>Use a exportação XLSX com a aba “Tabloide Digital”. Apenas .xlsx. Para evitar travamentos no navegador, recomendamos até 10 MB.</small></label>
 <div className="form-actions"><button className="button" disabled={loading} aria-busy={loading}>{loading?"Importando folheto...":"Criar folheto"}</button></div>
 </form>{message?<div className="form-status" data-state={status==="idle"?undefined:status} role={status==="error"?"alert":"status"}><strong>{message}</strong>{result?.sections?.length?<p>Categorias: {result.sections.join(" · ")}</p>:null}{result?.warnings?.length?<p>Avisos: {result.warnings.length}. {result.warnings.slice(0,3).join(" ")}</p>:null}</div>:null}</>}
