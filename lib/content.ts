@@ -11,7 +11,7 @@ async function publicRows<T>(table:string, order:string):Promise<T[]|null>{
     return await r.json();
   }catch{return null}
 }
-export async function getCampaigns(){return campaigns.filter(c=>c.active).sort((a,b)=>a.order-b.order)}
+export async function getCampaigns(){const rows=await publicRows<any>("site_campaigns","sort_order.asc");if(!rows?.length)return campaigns.filter(c=>c.active).sort((a,b)=>a.order-b.order);return rows.map(r=>({id:r.id,title:r.title,desktopImage:r.desktop_image_url,mobileImage:r.mobile_image_url,href:r.href,target:r.target,active:r.active,order:r.sort_order,backgroundColor:r.background_color||undefined}))}
 export async function getStores():Promise<Store[]>{
   const rows=await publicRows<any>("site_stores","store_number.asc");
   if(!rows?.length)return fallbackStores;
