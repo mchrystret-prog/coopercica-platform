@@ -94,25 +94,34 @@
 }
 
 @media (max-width: 900px) {
-  .stage { min-height:auto; overflow:visible; padding:84px 0; }
-  .layout { width:min(720px,calc(100% - 32px)); grid-template-columns:1fr; gap:52px; }
-  .phone { width:min(300px,78vw); }
-  .contentColumn { gap:42px; }
-  .copyViewport { display:grid; height:auto; gap:54px; }
-  .copy { position:relative; inset:auto; display:block; max-width:none; opacity:1 !important; transform:none !important; filter:none !important; pointer-events:auto !important; }
-  .copy h2 { font-size:clamp(2.45rem,10vw,4rem); }
-  .storeBadges { width:100%; }
+  .stage { min-height:100svh; overflow:hidden; padding:28px 0 24px; }
+  .layout { width:min(720px,calc(100% - 32px)); grid-template-columns:1fr; gap:22px; align-content:center; }
+  .phoneColumn { gap:10px; }
+  .phone { width:min(218px,54vw,calc((100svh - 430px) * .4615)); min-width:170px; border-radius:38px; padding:8px; }
+  .phoneTop { top:12px; height:19px; }
+  .screen { border-radius:30px; }
+  .contentColumn { gap:18px; }
+  .copyViewport { position:relative; height:230px; }
+  .copy { position:absolute; inset:0; display:flex; justify-content:flex-start; max-width:none; opacity:0; }
+  .copy:first-child { opacity:1; }
+  .stepNumber { margin-bottom:8px; font-size:.7rem; }
+  .stepEyebrow { margin-bottom:8px; font-size:.68rem; }
+  .copy h2 { font-size:clamp(2rem,9vw,3.2rem); line-height:1; }
+  .copy p { margin-top:12px; font-size:.94rem; line-height:1.5; }
+  .storeBadges { width:100%; gap:8px; }
   .storeBadgesLinks { flex-wrap:wrap; }
+  .storeBadgesLinks img { height:38px; }
 }
 
 @media (max-width: 520px) {
-  .stage { padding:70px 0; }
-  .layout { gap:42px; }
-  .phone { width:min(274px,82vw); border-radius:46px; }
-  .screen { border-radius:35px; }
-  .copyViewport { gap:44px; }
-  .copy p { font-size:1rem; }
-  .storeBadgesLinks img { height:44px; }
+  .stage { padding:20px 0 18px; }
+  .layout { gap:16px; }
+  .phone { width:min(194px,50vw); min-width:158px; border-radius:34px; }
+  .screen { border-radius:27px; }
+  .copyViewport { height:220px; }
+  .copy h2 { font-size:clamp(1.85rem,8.7vw,2.7rem); }
+  .copy p { font-size:.9rem; }
+  .storeBadgesLinks img { height:35px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
