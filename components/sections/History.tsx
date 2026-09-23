@@ -31,7 +31,7 @@ export function History() {
     }, 520);
   }, []);
 
-  const { goToIndex } = useHorizontalHistory({
+  const { goToIndex, skipToEnd } = useHorizontalHistory({
     viewportRef,
     trackRef,
     progressRef,
@@ -59,20 +59,7 @@ export function History() {
   }, []);
 
   const skipHistory = () => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const isDesktop = window.matchMedia("(min-width: 901px)").matches;
-    if (isDesktop) {
-      const viewport = viewportRef.current;
-      const track = trackRef.current;
-      if (viewport && track) {
-        const rect = viewport.getBoundingClientRect();
-        const pinStart = window.scrollY + rect.top - 82;
-        const distance = Math.max(1, track.scrollWidth - viewport.clientWidth);
-        window.scrollTo({ top: pinStart + distance + window.innerHeight * 0.12, behavior: "smooth" });
-        return;
-      }
-    }
+    if (window.matchMedia("(min-width: 901px)").matches && skipToEnd()) return;
     document.getElementById("historia-fim")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
