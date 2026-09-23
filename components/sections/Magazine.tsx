@@ -66,7 +66,7 @@ export function Magazine({ items,content={} }: MagazineProps) {
         <SectionHeader
           className={styles.header}
           eyebrow={content.eyebrow||"REVISTA COOPERCICA"}
-          title={[content.title1||"TODO MÊS, UMA",content.title2||"NOVA EDIÇÃO PRA VOCÊ."]}
+          title={[content.title1 ?? "TODO MÊS, UMA",content.title2 ?? "NOVA EDIÇÃO PRA VOCÊ."].filter(Boolean)}
           stacked
         />
 
