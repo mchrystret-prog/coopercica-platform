@@ -94,36 +94,42 @@
 }
 
 @media (max-width: 900px) {
-  .stage { min-height:auto; height:auto; overflow:visible; padding:56px 0 72px; }
-  .layout { width:min(720px,calc(100% - 36px)); height:auto; grid-template-columns:1fr; grid-template-rows:auto auto; gap:28px; }
-  .phoneColumn { position:sticky; top:96px; z-index:2; min-height:0; gap:8px; align-self:start; }
-  .phone { width:min(210px,50vw); height:auto; max-width:none; border-radius:36px; padding:7px; }
+  .stage { min-height:calc(100dvh - 82px); height:calc(100dvh - 82px); overflow:hidden; padding:14px 0; }
+  .layout { width:min(720px,calc(100% - 36px)); height:100%; margin-inline:auto; grid-template-columns:1fr; grid-template-rows:minmax(0,43%) minmax(0,57%); gap:8px; align-items:stretch; }
+  .phoneColumn { min-height:0; justify-items:center; align-content:center; gap:7px; }
+  .phone { width:auto; height:min(34dvh,290px); max-width:68vw; border-radius:34px; padding:7px; }
   .phoneTop { top:12px; height:19px; }
-  .screen { border-radius:29px; }
-  .contentColumn { display:grid; min-height:0; gap:0; }
-  .copyViewport { position:relative; height:auto; min-height:0; display:grid; gap:52px; padding-top:8px; }
-  .copy { position:relative; inset:auto; display:flex; min-height:44svh; justify-content:center; max-width:none; opacity:1; overflow:visible; }
-  .stepNumber { margin-bottom:8px; font-size:.7rem; }
-  .stepEyebrow { margin-bottom:8px; font-size:.68rem; }
-  .copy h2 { font-size:clamp(2rem,9vw,3.1rem); line-height:.98; }
-  .copy p { margin-top:12px; font-size:.94rem; line-height:1.5; }
-  .storeBadges { position:relative; z-index:4; width:100%; gap:7px; margin-top:8px; padding:16px 0 0; background:#fff; }
-  .storeBadgesLinks { flex-wrap:nowrap; gap:10px; }
-  .storeBadgesLinks img { height:36px; width:auto; }
+  .screen { border-radius:28px; }
+  .contentColumn { display:grid; min-height:0; grid-template-rows:minmax(0,1fr) auto; gap:8px; align-content:stretch; }
+  .copyViewport { position:relative; width:100%; height:100%; min-height:0; }
+  .copy { position:absolute; inset:0; display:flex; justify-content:center; max-width:none; opacity:0; overflow:hidden; }
+  .copy:first-child { opacity:1; }
+  .stepNumber { margin-bottom:5px; font-size:.68rem; }
+  .stepEyebrow { margin-bottom:6px; font-size:.66rem; }
+  .copy h2 { font-size:clamp(1.72rem,7.7vw,2.65rem); line-height:.98; }
+  .copy p { margin-top:9px; font-size:.87rem; line-height:1.4; }
+  .storeBadges { position:relative; z-index:4; width:100%; gap:5px; padding-top:5px; background:#fff; }
+  .storeBadgesLinks { flex-wrap:nowrap; gap:8px; }
+  .storeBadgesLinks img { height:30px; width:auto; }
 }
 
 @media (max-width: 520px) {
-  .stage { padding:44px 0 64px; }
-  .layout { width:calc(100% - 32px); gap:24px; }
-  .phoneColumn { top:92px; }
-  .phone { width:min(190px,47vw); border-radius:32px; }
-  .screen { border-radius:26px; }
-  .copyViewport { gap:42px; }
-  .copy { min-height:42svh; }
-  .copy h2 { font-size:clamp(1.85rem,8.6vw,2.75rem); }
-  .copy p { font-size:.9rem; line-height:1.45; }
-  .storeBadgesLabel { font-size:.64rem; }
-  .storeBadgesLinks img { height:34px; }
+  .stage { min-height:calc(100dvh - 82px); height:calc(100dvh - 82px); padding:10px 0; }
+  .layout { width:calc(100% - 32px); grid-template-rows:minmax(0,41%) minmax(0,59%); gap:6px; }
+  .phone { height:min(31dvh,265px); max-width:66vw; border-radius:31px; }
+  .screen { border-radius:25px; }
+  .copy h2 { font-size:clamp(1.62rem,7.35vw,2.35rem); }
+  .copy p { font-size:.83rem; line-height:1.36; }
+  .storeBadgesLabel { font-size:.61rem; }
+  .storeBadgesLinks img { height:29px; }
+}
+
+@media (max-width: 380px), (max-height: 700px) and (max-width: 900px) {
+  .layout { grid-template-rows:minmax(0,38%) minmax(0,62%); }
+  .phone { height:min(27dvh,230px); }
+  .copy h2 { font-size:clamp(1.5rem,7vw,2.05rem); }
+  .copy p { margin-top:7px; font-size:.79rem; line-height:1.32; }
+  .storeBadgesLinks img { height:27px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
