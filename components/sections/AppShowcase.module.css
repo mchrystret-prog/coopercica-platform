@@ -94,34 +94,34 @@
 }
 
 @media (max-width: 900px) {
-  .stage { min-height:calc(100svh - 74px); overflow:hidden; padding:18px 0 16px; }
-  .layout { width:min(720px,calc(100% - 40px)); grid-template-columns:1fr; gap:14px; align-content:start; }
-  .phoneColumn { gap:8px; }
-  .phone { width:clamp(142px,41vw,178px); max-height:34svh; border-radius:34px; padding:7px; }
+  .stage { min-height:calc(100svh - 74px); overflow:hidden; padding:12px 0 10px; }
+  .layout { width:min(720px,calc(100% - 40px)); height:calc(100svh - 96px); grid-template-columns:1fr; grid-template-rows:minmax(0,42%) minmax(0,1fr); gap:10px; align-content:stretch; }
+  .phoneColumn { min-height:0; gap:6px; align-content:center; }
+  .phone { width:auto; height:min(35svh,310px); max-width:70vw; border-radius:34px; padding:7px; }
   .phoneTop { top:12px; height:19px; }
   .screen { border-radius:30px; }
-  .contentColumn { gap:12px; }
-  .copyViewport { position:relative; height:clamp(180px,23svh,205px); }
-  .copy { position:absolute; inset:0; display:flex; justify-content:flex-start; max-width:none; opacity:0; }
+  .contentColumn { min-height:0; gap:8px; align-content:start; }
+  .copyViewport { position:relative; height:auto; min-height:0; flex:1; }
+  .copy { position:absolute; inset:0; display:flex; justify-content:flex-start; max-width:none; opacity:0; overflow:visible; }
   .copy:first-child { opacity:1; }
-  .stepNumber { margin-bottom:8px; font-size:.7rem; }
-  .stepEyebrow { margin-bottom:8px; font-size:.68rem; }
-  .copy h2 { font-size:clamp(2rem,9vw,3.2rem); line-height:1; }
-  .copy p { margin-top:12px; font-size:.94rem; line-height:1.5; }
-  .storeBadges { width:100%; gap:6px; margin-top:0; }
+  .stepNumber { margin-bottom:5px; font-size:.68rem; }
+  .stepEyebrow { margin-bottom:6px; font-size:.66rem; }
+  .copy h2 { font-size:clamp(1.85rem,8vw,2.8rem); line-height:.98; }
+  .copy p { margin-top:9px; font-size:.9rem; line-height:1.42; }
+  .storeBadges { width:100%; gap:5px; margin-top:auto; padding-top:8px; background:#fff; }
   .storeBadgesLinks { flex-wrap:nowrap; gap:10px; }
-  .storeBadgesLinks img { height:34px; width:auto; }
+  .storeBadgesLinks img { height:32px; width:auto; }
 }
 
 @media (max-width: 520px) {
-  .stage { min-height:calc(100svh - 70px); padding:14px 0 12px; }
-  .layout { gap:10px; }
-  .phone { width:clamp(136px,39vw,164px); max-height:31svh; border-radius:31px; }
+  .stage { min-height:calc(100svh - 70px); padding:10px 0 8px; }
+  .layout { width:calc(100% - 32px); height:calc(100svh - 90px); grid-template-rows:minmax(0,40%) minmax(0,1fr); gap:8px; }
+  .phone { width:auto; height:min(32svh,270px); max-width:68vw; border-radius:31px; }
   .screen { border-radius:25px; }
-  .copyViewport { height:clamp(174px,22svh,194px); }
-  .copy h2 { font-size:clamp(1.85rem,8.7vw,2.7rem); }
-  .copy p { font-size:.9rem; }
-  .storeBadgesLinks img { height:32px; }
+  .copy h2 { font-size:clamp(1.72rem,7.9vw,2.5rem); }
+  .copy p { font-size:.86rem; line-height:1.38; }
+  .storeBadgesLabel { font-size:.64rem; }
+  .storeBadgesLinks img { height:30px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
