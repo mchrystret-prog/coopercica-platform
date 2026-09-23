@@ -203,7 +203,7 @@ export function AppShowcase() {
           scrollTrigger: {
             id: "app-showcase-mobile",
             trigger: section,
-            start: "top 74px",
+            start: "top 82px",
             end: () => `+=${window.innerHeight * Math.max(2, appShowcaseItems.length * .78)}`,
             pin: stage,
             pinSpacing: true,
