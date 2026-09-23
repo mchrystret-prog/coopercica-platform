@@ -19,36 +19,41 @@ import {
   getStores,
 } from "@/lib/content";
 import { getActiveLeaflets } from "@/lib/leaflets";
+import { getSiteIdentity,getSiteSections } from "@/lib/site";
 
 export default async function Home() {
-  const [campaigns, stores, magazines, leaflets] = await Promise.all([
+  const [campaigns, stores, magazines, leaflets,identity,sections] = await Promise.all([
     getCampaigns(),
     getStores(),
     getMagazines(),
     getActiveLeaflets(),
+    getSiteIdentity(),
+    getSiteSections(),
   ]);
+  const section=(id:string)=>sections.find(s=>s.id===id);
+  const visible=(id:string)=>section(id)?.active!==false;
 
   return (
     <>
       <OnePageNavigation />
-      <Header />
+      <Header logo={identity.logo} siteName={identity.siteName} deliveryUrl={identity.deliveryUrl} />
 
       <main>
         <Hero items={campaigns} />
 
-        <AppShowcase />
+        {visible("app-showcase")?<AppShowcase />:null}
 
-        <Leaflets items={leaflets} />
+        {visible("ofertas")?<Leaflets items={leaflets} content={section("ofertas")?.content}/>:null}
 
-        <Stores items={stores} />
+        {visible("lojas")?<Stores items={stores} />:null}
 
-        <Pharmacy />
+        {visible("drogaria")?<Pharmacy content={section("drogaria")?.content}/>:null}
 
-        <Delivery />
+        {visible("delivery")?<Delivery content={section("delivery")?.content}/>:null}
 
-        <Magazine items={magazines} />
+        {visible("revista")?<Magazine items={magazines} content={section("revista")?.content}/>:null}
 
-        <History />
+        {visible("historia")?<History />:null}
       </main>
 
       <Footer />
