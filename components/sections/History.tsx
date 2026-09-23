@@ -63,16 +63,13 @@ export function History() {
     if (!section) return;
     const isDesktop = window.matchMedia("(min-width: 901px)").matches;
     if (isDesktop) {
-      const trigger = (window as typeof window & { ScrollTrigger?: { getById?: (id: string) => { end?: number } | undefined } }).ScrollTrigger?.getById?.("history-horizontal-v2");
-      if (trigger?.end) {
-        window.scrollTo({ top: trigger.end + 2, behavior: "smooth" });
-        return;
-      }
       const viewport = viewportRef.current;
       const track = trackRef.current;
       if (viewport && track) {
+        const rect = viewport.getBoundingClientRect();
+        const pinStart = window.scrollY + rect.top - 82;
         const distance = Math.max(1, track.scrollWidth - viewport.clientWidth);
-        window.scrollTo({ top: section.offsetTop + distance + 84, behavior: "smooth" });
+        window.scrollTo({ top: pinStart + distance + window.innerHeight * 0.12, behavior: "smooth" });
         return;
       }
     }
