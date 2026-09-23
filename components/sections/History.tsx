@@ -149,7 +149,7 @@ export function History() {
           </div>
         </nav>
       </div>
-      <span id="historia-fim" className={styles.historyEnd} aria-hidden="true" />
+      <span id="historia-fim" className={styles.historyEnd} aria-hidden="true" />\n      <div className={styles.backTopWrap}><button type="button" className={styles.backTopButton} onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} aria-label="Voltar ao topo"><span aria-hidden="true">↑</span> Voltar ao topo</button></div>
     </section>
   );
 }
