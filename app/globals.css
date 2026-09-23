@@ -316,3 +316,5 @@ input,select,button,a{transition:border-color var(--motion-fast) var(--ease-bran
 .cms-save-bar{position:sticky;z-index:35;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:18px;margin:28px -18px -72px;padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-top:1px solid rgba(28,71,34,.1);background:rgba(246,249,245,.94);box-shadow:0 -12px 32px rgba(28,71,34,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.cms-save-bar>div{min-width:0;color:var(--muted);font-size:13px}.cms-save-message{display:block;color:var(--green-700);font-weight:750}.cms-save-bar .button{flex:0 0 auto}
 @media(min-width:901px){.cms-save-bar{margin:32px -55px -55px;padding:16px 55px}}
 @media(max-width:600px){.cms-save-bar{align-items:stretch;flex-direction:column;gap:10px}.cms-save-bar .button{width:100%;min-height:48px}.cms-save-bar>div{text-align:center}}
+
+.cms-folder-status{display:flex;align-items:center;gap:6px;margin-top:10px;padding:10px 12px;border:1px solid rgba(28,71,34,.12);border-radius:11px;background:#f3f8f3;color:var(--green-700);font-size:12px}.cms-folder-status strong{font-size:13px}
