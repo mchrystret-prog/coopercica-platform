@@ -8,7 +8,7 @@ import styles from "./Header.module.css";
 const links = [
   { label: "Quem Somos", href: "#historia", sectionId: "historia" },
   { label: "Nossas Lojas", href: "#lojas", sectionId: "lojas" },
-  { label: "Ofertas", href: "/folheteria", sectionId: "ofertas" },
+  { label: "Ofertas", href: "#ofertas", sectionId: "ofertas" },
   { label: "Delivery", href: "#delivery", sectionId: "delivery" },
   { label: "Drogaria", href: "#drogaria", sectionId: "drogaria" },
   { label: "Revista", href: "#revista", sectionId: "revista" },
@@ -87,10 +87,10 @@ export function Header() {
               href={link.href.startsWith("#") && !onHome ? `/${link.href}` : link.href}
               onClick={closeMenu}
               className={
-                (link.href === "/folheteria" && pathname.startsWith("/folheteria")) || (onHome && activeSection === link.sectionId) ? styles.active : undefined
+                (onHome && activeSection === link.sectionId) ? styles.active : undefined
               }
               aria-current={
-                (link.href === "/folheteria" && pathname.startsWith("/folheteria")) || (onHome && activeSection === link.sectionId) ? "page" : undefined
+                (onHome && activeSection === link.sectionId) ? "page" : undefined
               }
             >
               {link.label}
