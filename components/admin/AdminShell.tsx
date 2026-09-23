@@ -4,7 +4,7 @@ import {usePathname} from "next/navigation";
 import type{ReactNode}from"react";
 import{FormEvent,useEffect,useState}from"react";
 import{SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL}from"@/lib/leaflets";
-const items=[["/admin","Visão geral"],["/admin/campanhas","Campanhas"],["/admin/revistas","Revistas"],["/admin/folheteria","Folheteria"],["/admin/lojas","Lojas"],["/admin/midias","Biblioteca de mídia"],["/admin/usuarios","Usuários"],["/admin/configuracoes","Configurações"]]as const;
+const items=[["/admin","Visão geral"],["/admin/personalizacao","Personalização"],["/admin/campanhas","Campanhas"],["/admin/revistas","Revistas"],["/admin/folheteria","Folheteria"],["/admin/lojas","Lojas"],["/admin/midias","Biblioteca de mídia"],["/admin/usuarios","Usuários"],["/admin/configuracoes","Configurações"]]as const;
 type Member={name:string|null;email:string;role:"admin"|"editor";status:"pending"|"approved"|"rejected"};
 export function AdminShell({children}:{children:ReactNode}){const pathname=usePathname();const[token,setToken]=useState<string|null>(null);const[member,setMember]=useState<Member|null>(null);const[ready,setReady]=useState(false);const[error,setError]=useState("");const[loading,setLoading]=useState(false);const[requestMode,setRequestMode]=useState(false);const[mobileOpen,setMobileOpen]=useState(false);
 async function loadMember(t:string){const user=await getUser(t);const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_member_for_user`,{method:"POST",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${t}`,"Content-Type":"application/json"},body:JSON.stringify({p_user_id:user.id})});if(!r.ok)return null;const rows=await r.json();return rows[0]??null}
