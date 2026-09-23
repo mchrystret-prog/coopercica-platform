@@ -193,8 +193,46 @@ export function AppShowcase() {
       });
 
       media.add("(max-width: 900px)", () => {
-        gsap.set([...images, ...copies, phone], { clearProps: "all" });
-        setActiveIndex(0);
+        gsap.set(images, { autoAlpha: 0, yPercent: 8, scale: 1.015 });
+        gsap.set(copies, { autoAlpha: 0, y: 18, pointerEvents: "none" });
+        gsap.set(images[0], { autoAlpha: 1, yPercent: 0, scale: 1 });
+        gsap.set(copies[0], { autoAlpha: 1, y: 0, pointerEvents: "auto" });
+
+        const timeline = gsap.timeline({
+          defaults: { ease: "power2.inOut" },
+          scrollTrigger: {
+            id: "app-showcase-mobile",
+            trigger: section,
+            start: "top top",
+            end: () => `+=${window.innerHeight * Math.max(2.2, appShowcaseItems.length * .9)}`,
+            pin: stage,
+            pinSpacing: true,
+            scrub: .5,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const nextIndex = Math.min(
+                appShowcaseItems.length - 1,
+                Math.round(self.progress * (appShowcaseItems.length - 1)),
+              );
+              setActiveIndex((current) => current === nextIndex ? current : nextIndex);
+            },
+          },
+        });
+
+        timeline.to({}, { duration: .18 });
+        for (let index = 1; index < appShowcaseItems.length; index += 1) {
+          timeline
+            .to(copies[index - 1], { autoAlpha: 0, y: -14, pointerEvents: "none", duration: .25 })
+            .to(images[index - 1], { autoAlpha: 0, yPercent: -5, scale: .99, duration: .25 }, "<")
+            .fromTo(images[index], { autoAlpha: 0, yPercent: 8, scale: 1.015 }, { autoAlpha: 1, yPercent: 0, scale: 1, duration: .38 }, ">-.05")
+            .fromTo(copies[index], { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, pointerEvents: "auto", duration: .34 }, "<")
+            .to(phone, { scale: .985, duration: .12 }, "<")
+            .to(phone, { scale: 1, duration: .2 })
+            .to({}, { duration: .14 });
+        }
+
+        return () => timeline.kill();
       });
 
       cleanup = () => media.revert();
