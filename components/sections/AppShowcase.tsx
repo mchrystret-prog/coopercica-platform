@@ -193,46 +193,33 @@ export function AppShowcase() {
       });
 
       media.add("(max-width: 900px)", () => {
-        gsap.set(images, { autoAlpha: 0, yPercent: 8, scale: 1.015 });
+        gsap.set(images, { autoAlpha: 0, y: 18, scale: 1.01 });
         gsap.set(copies, { autoAlpha: 0, y: 18, pointerEvents: "none" });
-        gsap.set(images[0], { autoAlpha: 1, yPercent: 0, scale: 1 });
+        gsap.set(images[0], { autoAlpha: 1, y: 0, scale: 1 });
         gsap.set(copies[0], { autoAlpha: 1, y: 0, pointerEvents: "auto" });
 
-        const timeline = gsap.timeline({
-          defaults: { ease: "power2.inOut" },
-          scrollTrigger: {
-            id: "app-showcase-mobile",
-            trigger: section,
-            start: "top 82px",
-            end: () => `+=${window.innerHeight * Math.max(2, appShowcaseItems.length * .78)}`,
-            pin: stage,
-            pinSpacing: true,
-            scrub: .5,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const nextIndex = Math.min(
-                appShowcaseItems.length - 1,
-                Math.round(self.progress * (appShowcaseItems.length - 1)),
-              );
-              setActiveIndex((current) => current === nextIndex ? current : nextIndex);
+        const slides = copies.map((copy, index) => {
+          const trigger = ScrollTrigger.create({
+            trigger: copy,
+            start: "top 72%",
+            onEnter: () => {
+              setActiveIndex(index);
+              gsap.to(images, { autoAlpha: 0, duration: .22, overwrite: true });
+              gsap.to(images[index], { autoAlpha: 1, y: 0, scale: 1, duration: .36, overwrite: true });
             },
-          },
+            onEnterBack: () => {
+              setActiveIndex(index);
+              gsap.to(images, { autoAlpha: 0, duration: .22, overwrite: true });
+              gsap.to(images[index], { autoAlpha: 1, y: 0, scale: 1, duration: .36, overwrite: true });
+            },
+          });
+          return trigger;
         });
 
-        timeline.to({}, { duration: .18 });
-        for (let index = 1; index < appShowcaseItems.length; index += 1) {
-          timeline
-            .to(copies[index - 1], { autoAlpha: 0, y: -14, pointerEvents: "none", duration: .25 })
-            .to(images[index - 1], { autoAlpha: 0, yPercent: -5, scale: .99, duration: .25 }, "<")
-            .fromTo(images[index], { autoAlpha: 0, yPercent: 8, scale: 1.015 }, { autoAlpha: 1, yPercent: 0, scale: 1, duration: .38 }, ">-.05")
-            .fromTo(copies[index], { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, pointerEvents: "auto", duration: .34 }, "<")
-            .to(phone, { scale: .985, duration: .12 }, "<")
-            .to(phone, { scale: 1, duration: .2 })
-            .to({}, { duration: .14 });
-        }
-
-        return () => timeline.kill();
+        return () => {
+          slides.forEach((trigger) => trigger.kill());
+          gsap.set([...images, ...copies, phone], { clearProps: "all" });
+        };
       });
 
       cleanup = () => media.revert();
