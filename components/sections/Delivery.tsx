@@ -5,20 +5,16 @@ import { Section } from "@/components/ui/Section/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import styles from "./Delivery.module.css";
 
-export function Delivery() {
+export function Delivery({content={}}:{content?:Record<string,string>}) {
   return (
     <Section id="delivery" tone="soft" className={styles.section} tabIndex={-1}>
       <Container className={styles.layout}>
         <div className={styles.content}>
 <SectionHeader
-  eyebrow="Delivery"
+  eyebrow={content.eyebrow||"Delivery"}
   stacked
-  title={[
-    "A MESMA CONFIANÇA,",
-    "AGORA A UM",
-    "CLIQUE DE VOCÊ."
-  ]}
-  description="Faça suas compras pelo site ou aplicativo e receba tudo em casa com a qualidade que você já conhece."
+  title={[content.title1||"A MESMA CONFIANÇA,",content.title2||"AGORA A UM CLIQUE DE VOCÊ."]}
+  description={content.description||"Faça suas compras pelo site ou aplicativo e receba tudo em casa com a qualidade que você já conhece."}
   className={styles.heading}
 />
 
@@ -29,14 +25,12 @@ export function Delivery() {
             <li>Qualidade Coopercica</li>
           </ul>
 
-          <Button href="https://www.coopercicadelivery.com.br/" external>
-            Comprar no Delivery
-          </Button>
+          <Button href={content.ctaHref||"https://www.coopercicadelivery.com.br/"} external>{content.ctaLabel||"Comprar no Delivery"}</Button>
         </div>
 
         <div className={styles.visual}>
           <Image
-            src="/delivery/delivery-hero.jpg"
+            src={content.image||"/delivery/delivery-hero.jpg"}
             alt="Entrega Coopercica"
             fill
             className={styles.image}
