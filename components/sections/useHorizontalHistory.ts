@@ -179,6 +179,45 @@ export function useHorizontalHistory({
         activeIndexRef.current = 0;
         onActiveIndexChange(0);
         gsap.set(track, { clearProps: "transform" });
+
+        const slides = Array.from(
+          track.querySelectorAll<HTMLElement>("[data-history-slide]"),
+        );
+        const triggers: any[] = [];
+
+        slides.forEach((slide, index) => {
+          const image = slide.querySelector<HTMLElement>("[data-history-image]");
+          const content = slide.querySelector<HTMLElement>("[data-history-content]");
+
+          if (image) gsap.set(image, { autoAlpha: .72, y: 34, scale: 1.035 });
+          if (content) gsap.set(content, { autoAlpha: .65, y: 28 });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: slide,
+              start: "top 78%",
+              end: "center 48%",
+              scrub: .45,
+              onEnter: () => onActiveIndexChange(index),
+              onEnterBack: () => onActiveIndexChange(index),
+            },
+          });
+
+          if (image) tl.to(image, { autoAlpha: 1, y: 0, scale: 1, ease: "power2.out", duration: .7 }, 0);
+          if (content) tl.to(content, { autoAlpha: 1, y: 0, ease: "power2.out", duration: .58 }, .08);
+          triggers.push(tl);
+        });
+
+        return () => {
+          triggers.forEach((tl) => {
+            tl.scrollTrigger?.kill();
+            tl.kill();
+          });
+          gsap.set(
+            track.querySelectorAll<HTMLElement>("[data-history-image], [data-history-content]"),
+            { clearProps: "transform,filter,opacity,visibility" },
+          );
+        };
       });
 
       cleanup = () => media.revert();
