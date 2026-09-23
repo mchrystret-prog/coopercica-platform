@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { historyItems } from "@/data/history";
 import styles from "./History.module.css";
 import { TimelineCard } from "./TimelineCard";
 import { useHorizontalHistory } from "./useHorizontalHistory";
 
 export function History() {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const progressRef = useRef<HTMLDivElement | null>(null);
@@ -15,6 +16,7 @@ export function History() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [pulseIndex, setPulseIndex] = useState<number | null>(null);
+  const [skipVisible, setSkipVisible] = useState(false);
 
   const handleActiveIndexChange = useCallback((index: number) => {
     setActiveIndex(index);
@@ -38,6 +40,14 @@ export function History() {
     onActiveIndexChange: handleActiveIndexChange,
   });
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => setSkipVisible(entry.isIntersecting), { threshold: 0.04 });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const skipHistory = () => {
     document.getElementById("historia-fim")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -45,6 +55,7 @@ export function History() {
   return (
     <section
       id="historia"
+      ref={sectionRef}
       className={styles.history}
       aria-labelledby="history-title"
       tabIndex={-1}
@@ -60,7 +71,7 @@ export function History() {
               cooperação.
             </p>
           </div>
-          <button type="button" className={styles.skipButton} onClick={skipHistory}>Pular história <span aria-hidden="true">↓</span></button>
+          <button type="button" className={`${styles.skipButton} ${skipVisible ? styles.skipButtonVisible : ""}`} onClick={skipHistory} aria-label="Pular a seção Nossa História">Pular história <span aria-hidden="true">↓</span></button>
         </div>
 
         <div ref={trackRef} className={styles.track}>
