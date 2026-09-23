@@ -43,9 +43,19 @@ export function History() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-    const observer = new IntersectionObserver(([entry]) => setSkipVisible(entry.isIntersecting), { threshold: 0.04 });
-    observer.observe(section);
-    return () => observer.disconnect();
+    const update = () => {
+      const rect = section.getBoundingClientRect();
+      const headerOffset = 82;
+      const inside = rect.top <= headerOffset && rect.bottom > window.innerHeight * .35;
+      setSkipVisible(inside);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   const skipHistory = () => {
