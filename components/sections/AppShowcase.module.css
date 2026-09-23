@@ -94,34 +94,34 @@
 }
 
 @media (max-width: 900px) {
-  .stage { min-height:calc(100svh - 74px); overflow:hidden; padding:12px 0 10px; }
-  .layout { width:min(720px,calc(100% - 40px)); height:calc(100svh - 96px); grid-template-columns:1fr; grid-template-rows:minmax(0,42%) minmax(0,1fr); gap:10px; align-content:stretch; }
-  .phoneColumn { min-height:0; gap:6px; align-content:center; }
-  .phone { width:auto; height:min(35svh,310px); max-width:70vw; border-radius:34px; padding:7px; }
+  .stage { min-height:calc(100svh - 82px); height:calc(100svh - 82px); overflow:hidden; padding:12px 0; }
+  .layout { width:min(720px,calc(100% - 36px)); height:100%; grid-template-columns:1fr; grid-template-rows:auto minmax(0,1fr); gap:10px; align-content:stretch; }
+  .phoneColumn { min-height:0; gap:6px; align-content:start; }
+  .phone { width:auto; height:clamp(250px,35svh,300px); max-width:72vw; border-radius:34px; padding:7px; }
   .phoneTop { top:12px; height:19px; }
-  .screen { border-radius:30px; }
-  .contentColumn { min-height:0; gap:8px; align-content:start; }
-  .copyViewport { position:relative; height:auto; min-height:0; flex:1; }
-  .copy { position:absolute; inset:0; display:flex; justify-content:flex-start; max-width:none; opacity:0; overflow:visible; }
+  .screen { border-radius:28px; }
+  .contentColumn { display:grid; min-height:0; grid-template-rows:minmax(0,1fr) auto; gap:8px; align-content:stretch; }
+  .copyViewport { position:relative; width:100%; height:100%; min-height:0; }
+  .copy { position:absolute; inset:0; display:flex; justify-content:flex-start; max-width:none; opacity:0; overflow:hidden; }
   .copy:first-child { opacity:1; }
-  .stepNumber { margin-bottom:5px; font-size:.68rem; }
-  .stepEyebrow { margin-bottom:6px; font-size:.66rem; }
-  .copy h2 { font-size:clamp(1.85rem,8vw,2.8rem); line-height:.98; }
-  .copy p { margin-top:9px; font-size:.9rem; line-height:1.42; }
-  .storeBadges { width:100%; gap:5px; margin-top:auto; padding-top:8px; background:#fff; }
-  .storeBadgesLinks { flex-wrap:nowrap; gap:10px; }
-  .storeBadgesLinks img { height:32px; width:auto; }
+  .stepNumber { margin-bottom:4px; font-size:.68rem; }
+  .stepEyebrow { margin-bottom:5px; font-size:.66rem; }
+  .copy h2 { font-size:clamp(1.72rem,7.5vw,2.55rem); line-height:.98; }
+  .copy p { margin-top:8px; font-size:.86rem; line-height:1.38; }
+  .storeBadges { position:relative; z-index:4; width:100%; gap:5px; padding-top:6px; background:#fff; }
+  .storeBadgesLinks { flex-wrap:nowrap; gap:8px; }
+  .storeBadgesLinks img { height:30px; width:auto; }
 }
 
 @media (max-width: 520px) {
-  .stage { min-height:calc(100svh - 70px); padding:10px 0 8px; }
-  .layout { width:calc(100% - 32px); height:calc(100svh - 90px); grid-template-rows:minmax(0,40%) minmax(0,1fr); gap:8px; }
-  .phone { width:auto; height:min(32svh,270px); max-width:68vw; border-radius:31px; }
+  .stage { min-height:calc(100svh - 82px); height:calc(100svh - 82px); padding:10px 0; }
+  .layout { width:calc(100% - 32px); gap:8px; }
+  .phone { height:clamp(240px,34svh,286px); max-width:70vw; border-radius:31px; }
   .screen { border-radius:25px; }
-  .copy h2 { font-size:clamp(1.72rem,7.9vw,2.5rem); }
-  .copy p { font-size:.86rem; line-height:1.38; }
-  .storeBadgesLabel { font-size:.64rem; }
-  .storeBadgesLinks img { height:30px; }
+  .copy h2 { font-size:clamp(1.65rem,7.4vw,2.35rem); }
+  .copy p { font-size:.84rem; line-height:1.34; }
+  .storeBadgesLabel { font-size:.61rem; }
+  .storeBadgesLinks img { height:29px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
