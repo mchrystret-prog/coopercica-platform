@@ -1,0 +1,1 @@
+import{CmsUsers}from"@/components/admin/CmsUsers";export default function Page(){return <section className="admin-page"><header className="admin-header"><div><span className="eyebrow">Acessos</span><h1>Usuários</h1><p>Aprove solicitações e defina quem pode editar ou administrar o CMS.</p></div></header><CmsUsers/></section>}
