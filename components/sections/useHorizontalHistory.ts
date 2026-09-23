@@ -261,5 +261,24 @@ export function useHorizontalHistory({
     });
   };
 
-  return { goToIndex };
+  const skipToEnd = () => {
+    const trigger = triggerRef.current;
+    const gsap = gsapRef.current;
+    if (!trigger || !gsap) return false;
+    trigger.refresh?.();
+    const destination = Number(trigger.end) + 4;
+    navigationTweenRef.current?.kill?.();
+    const state = { y: window.scrollY };
+    navigationTweenRef.current = gsap.to(state, {
+      y: destination,
+      duration: .85,
+      ease: "power2.inOut",
+      overwrite: true,
+      onUpdate: () => window.scrollTo(0, state.y),
+      onComplete: () => window.scrollTo(0, destination),
+    });
+    return true;
+  };
+
+  return { goToIndex, skipToEnd };
 }
