@@ -56,7 +56,7 @@ export function useHorizontalHistory(itemCount: number) {
     if (!isAutoPlaying) return;
     const timer = window.setTimeout(() => {
       goToIndex(activeRef.current === itemCount - 1 ? 0 : activeRef.current + 1);
-    }, 6500);
+    }, 3000);
     return () => window.clearTimeout(timer);
   }, [activeIndex, goToIndex, isAutoPlaying, itemCount]);
 
