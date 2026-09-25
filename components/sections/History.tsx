@@ -82,7 +82,7 @@ export function History() {
               cooperação.
             </p>
           </div>
-          <button type="button" className={`${styles.skipButton} ${skipVisible ? styles.skipButtonVisible : ""}`} onClick={skipHistory} aria-label="Pular a seção Nossa História">Pular história <span className={styles.skipIcon} aria-hidden="true">→</span></button>
+          <button type="button" className={`${styles.skipButton} ${skipVisible ? styles.skipButtonVisible : ""}`} onClick={skipHistory} aria-label="Pular a seção Nossa História"><span className={styles.skipText}>Pular história</span><span className={styles.skipIcon} aria-hidden="true">→</span></button>
         </div>
 
         <div ref={trackRef} className={styles.track}>
