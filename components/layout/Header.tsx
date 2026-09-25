@@ -14,7 +14,7 @@ const links = [
   { label: "Revista", href: "#revista", sectionId: "revista" },
 ];
 
-export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUrl="https://www.coopercicadelivery.com.br/"}:{logo?:string;siteName?:string;deliveryUrl?:string}={}) {
+export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUrl="https://www.coopercicadelivery.com.br/",hasOffers=true}:{logo?:string;siteName?:string;deliveryUrl?:string;hasOffers?:boolean}={}) {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const [open, setOpen] = useState(false);
@@ -81,7 +81,7 @@ export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUr
           className={`${styles.nav} ${open ? styles.open : ""}`}
           aria-label="Navegação principal"
         >
-          {links.map((link) => (
+          {links.filter(link=>link.sectionId!=="ofertas"||hasOffers).map((link) => (
             <a
               key={link.href}
               href={link.href.startsWith("#") && !onHome ? `/${link.href}` : link.href}
