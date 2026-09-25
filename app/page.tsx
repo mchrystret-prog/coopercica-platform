@@ -36,7 +36,7 @@ export default async function Home() {
   return (
     <>
       <OnePageNavigation />
-      <Header logo={identity.logo} siteName={identity.siteName} deliveryUrl={identity.deliveryUrl} />
+      <Header logo={identity.logo} siteName={identity.siteName} deliveryUrl={identity.deliveryUrl} hasOffers={leaflets.length>0} />
 
       <main>
         <Hero items={campaigns} />
