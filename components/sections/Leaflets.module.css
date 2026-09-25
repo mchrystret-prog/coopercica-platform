@@ -7,3 +7,7 @@
   .info{padding:18px}
   .all{margin-top:12px}
 }
+/* Carrossel responsivo: mantém escala consistente e evidencia continuidade. */
+.grid{scroll-behavior:smooth;scroll-padding-inline:2px}.arrows button{transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.arrows button:hover,.arrows button:focus-visible{transform:translateY(-2px);box-shadow:0 10px 24px rgb(28 71 34 / 14%);background:#f8fbf8}.arrows button:focus-visible{outline:2px solid #ef4037;outline-offset:2px}
+@media(max-width:900px){.carouselHead{display:flex;margin-top:18px}.arrows{display:flex}.card{flex:0 0 min(42vw,300px)}}
+@media(max-width:560px){.carouselHead{display:flex;justify-content:flex-end;margin-top:14px}.arrows{display:flex}.arrows button{width:40px;height:40px}.card{flex:0 0 min(68vw,270px)}}
