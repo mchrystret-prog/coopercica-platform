@@ -1,10 +1,7 @@
 .history{position:relative;width:100%;background:#f3f8f4;color:#1c4722}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:40px 24px 24px}
+.topbar{padding:40px 24px 24px}
 .heading{margin:0;color:#1c4722;font-size:clamp(2rem,8vw,3.2rem);font-weight:700;line-height:1;letter-spacing:-.045em;text-transform:uppercase}
 .headingSupport{max-width:620px;margin:14px 0 0;color:#5f6962;font-size:.95rem;line-height:1.65}
-.skipButton{flex:0 0 70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:70px;height:70px;padding:10px;border:0;border-radius:50%;background:#1c4722;color:white;box-shadow:0 12px 28px rgb(10 38 16 / 24%),0 0 0 5px rgb(255 255 255 / 60%)}
-.skipText{font-size:.68rem;font-weight:800;line-height:1.1}.skipIcon{font-size:1.15rem;line-height:1}
-.skipButton:hover{background:#245b2c}
 .viewport{position:relative;isolation:isolate}
 .track{display:flex;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;cursor:grab;user-select:none;-webkit-user-select:none}
 .track::-webkit-scrollbar{display:none}
@@ -22,9 +19,12 @@
 .content p{max-width:520px;margin:0;color:#5f6962;font-size:.95rem;line-height:1.65}
 .dark .year,.dark .eyebrow{color:#ff7068}.dark .content h3{color:#fff}.dark .content p{color:rgb(255 255 255 / 80%)}
 .counter{display:inline-block;margin-top:20px;color:#69756d;font-size:.7rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase}.dark .counter{color:rgb(255 255 255 / 70%)}
-.slideArrow{position:absolute;top:calc(24px + (100vw - 48px)*.3125);translate:0 -50%;z-index:5;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgb(28 71 34 / 12%);border-radius:50%;background:rgb(255 255 255 / 96%);color:#1c4722;box-shadow:0 8px 26px rgb(10 38 16 / 20%);font-size:2rem;line-height:1}
-.previous{left:8px}.next{right:8px}.slideArrow:disabled{cursor:default;opacity:.4}.slideArrow:hover:not(:disabled){background:#fff;transform:scale(1.06)}
+.slideArrow{position:absolute;top:calc(24px + (100vw - 48px)*.3125);translate:0 -50%;z-index:5;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1px solid rgb(28 71 34 / 14%);border-radius:50%;background:rgb(255 255 255 / 96%);color:#1c4722;box-shadow:0 8px 26px rgb(10 38 16 / 20%);font-size:2.15rem;font-weight:800;line-height:1;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.previous{left:8px}.next{right:8px;width:56px;height:56px;border:3px solid #fff;background:#1c4722;color:#fff;box-shadow:0 14px 36px rgb(10 38 16 / 34%),0 0 0 5px rgb(28 71 34 / 12%);font-size:2.5rem}.slideArrow:disabled{cursor:default;opacity:.36;box-shadow:none}.slideArrow:hover:not(:disabled){transform:scale(1.08)}.next:hover:not(:disabled){background:#ef4037;box-shadow:0 18px 42px rgb(10 38 16 / 38%),0 0 0 6px rgb(239 64 55 / 18%)}
 .navigationCaption{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px 0;color:#5f6962;font-size:.72rem;line-height:1.5}
+.captionActions{display:flex;align-items:center;gap:14px;min-width:0}
+.autoToggle{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 12px;border:1px solid rgb(28 71 34 / 15%);border-radius:999px;background:#fff;color:#1c4722;font-size:.68rem;font-weight:800;white-space:nowrap;box-shadow:0 5px 16px rgb(28 71 34 / 8%)}
+.autoToggle>span{display:grid;width:15px;place-items:center;color:#ef4037;font-size:.68rem}.autoToggle:hover:not(:disabled){border-color:rgb(28 71 34 / 28%);box-shadow:0 7px 20px rgb(28 71 34 / 13%)}.autoToggle:disabled{cursor:default;opacity:.58}
 .status{flex-shrink:0;color:#1c4722;font-weight:700}
 .journey{position:relative;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#b9cbbd transparent;padding:70px 46px 8px;overscroll-behavior-x:contain}
 .road{position:relative;min-width:704px;height:80px}
@@ -46,23 +46,23 @@
 .backTopWrap{display:flex;justify-content:center;padding:20px 24px 30px}
 .backTopButton{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:0 17px;border:1px solid rgb(28 71 34 / 14%);border-radius:999px;background:#fff;color:#1c4722;font-size:.78rem;font-weight:750;box-shadow:0 10px 28px rgb(28 71 34 / 8%)}
 .historyEnd{height:1px;scroll-margin-top:84px}
-.skipButton:focus-visible,.slideArrow:focus-visible,.milestone:focus-visible,.backTopButton:focus-visible{outline:3px solid #ef4037;outline-offset:4px}
+.slideArrow:focus-visible,.milestone:focus-visible,.backTopButton:focus-visible,.autoToggle:focus-visible{outline:3px solid #ef4037;outline-offset:4px}
 .track:focus-visible{outline:3px solid #ef4037;outline-offset:-3px}
 @keyframes travelerFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-3px) rotate(1deg)}}
 @media(min-width:701px){
   .topbar{padding:40px 48px 28px}.heading{font-size:clamp(2.7rem,4vw,4.5rem)}
   .slide{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);grid-template-rows:auto;gap:32px;padding:28px 56px;align-items:center}
   .media{aspect-ratio:4/3}.year{font-size:clamp(3.4rem,5vw,6rem)}.content h3{font-size:clamp(1.5rem,2.5vw,3rem)}
-  .slideArrow{top:50%;width:48px;height:48px}.previous{left:16px}.next{right:16px}
+  .slideArrow{top:50%;width:50px;height:50px}.previous{left:16px}.next{right:16px;width:62px;height:62px}
   .navigationCaption{padding-inline:48px}.journey{padding-inline:70px}
 }
 @media(min-width:1101px){
   .topbar{padding:40px clamp(56px,6vw,112px) 28px}.headingSupport{font-size:1rem}
-  .skipButton{width:88px;height:88px;flex-basis:88px}.skipText{font-size:.76rem}
   .slide{gap:clamp(40px,5vw,88px);padding:28px clamp(56px,6vw,112px)}
   .media{aspect-ratio:auto;height:clamp(320px,39vw,510px);max-height:48svh;border-radius:32px}
   .year{font-size:clamp(4rem,6vw,7rem)}.content h3{font-size:clamp(2rem,3vw,3.7rem)}.content p{font-size:clamp(.95rem,1.1vw,1.16rem)}
-  .slideArrow{width:52px;height:52px}.previous{left:24px}.next{right:24px}
+  .slideArrow{width:54px;height:54px}.previous{left:24px}.next{right:24px;width:68px;height:68px}
   .navigationCaption{padding-inline:clamp(56px,6vw,112px)}.journey{padding-inline:clamp(56px,6vw,112px)}
 }
 @media(prefers-reduced-motion:reduce){.history *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(max-width:560px){.navigationCaption{align-items:flex-end}.captionActions{display:grid;gap:8px}.autoToggle{width:max-content}.next{right:5px}}

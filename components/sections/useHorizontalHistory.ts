@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FocusEvent, type KeyboardEvent, type PointerEvent } from "react";
 import styles from "./History.module.css";
 
 export function useHorizontalHistory(itemCount: number) {
   const trackRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isInView, setIsInView] = useState(false);
+  const [isTemporarilyPaused, setIsTemporarilyPaused] = useState(false);
+  const [isManuallyPaused, setIsManuallyPaused] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isDocumentVisible, setIsDocumentVisible] = useState(true);
   const drag = useRef({ id: -1, x: 0, y: 0, left: 0, moved: false });
 
   const goToIndex = useCallback((index: number) => {
@@ -19,6 +24,41 @@ export function useHorizontalHistory(itemCount: number) {
       behavior: Math.abs(next - activeRef.current) > 1 || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
     });
   }, [itemCount]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.55),
+      { threshold: [0, 0.55, 1] },
+    );
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setPrefersReducedMotion(media.matches);
+    const updateVisibility = () => setIsDocumentVisible(document.visibilityState === "visible");
+    updateMotionPreference();
+    updateVisibility();
+    media.addEventListener("change", updateMotionPreference);
+    document.addEventListener("visibilitychange", updateVisibility);
+    return () => {
+      media.removeEventListener("change", updateMotionPreference);
+      document.removeEventListener("visibilitychange", updateVisibility);
+    };
+  }, []);
+
+  const isAutoPlaying = isInView && isDocumentVisible && !prefersReducedMotion && !isManuallyPaused && !isTemporarilyPaused;
+
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const timer = window.setTimeout(() => {
+      goToIndex(activeRef.current === itemCount - 1 ? 0 : activeRef.current + 1);
+    }, 6500);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, goToIndex, isAutoPlaying, itemCount]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -50,6 +90,10 @@ export function useHorizontalHistory(itemCount: number) {
     if (event.pointerType === "touch" || !event.isPrimary || event.button !== 0) return;
     drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, left: event.currentTarget.scrollLeft, moved: false };
   };
+  const onFocus = () => setIsTemporarilyPaused(true);
+  const onBlur = (event: FocusEvent<HTMLElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsTemporarilyPaused(false);
+  };
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const state = drag.current;
     if (state.id !== event.pointerId) return;
@@ -77,10 +121,29 @@ export function useHorizontalHistory(itemCount: number) {
     goToIndex(activeRef.current + (event.key === "ArrowRight" ? 1 : -1));
   };
 
-  return { trackRef, activeIndex, goToIndex, trackHandlers: {
+  return {
+    trackRef,
+    activeIndex,
+    goToIndex,
+    isAutoPlaying,
+    isManuallyPaused,
+    prefersReducedMotion,
+    toggleAutoPlay: () => setIsManuallyPaused((paused) => !paused),
+    autoplayHandlers: {
+      onPointerEnter: (event: PointerEvent<HTMLElement>) => {
+        if (event.pointerType === "mouse" || event.pointerType === "pen") setIsTemporarilyPaused(true);
+      },
+      onPointerLeave: (event: PointerEvent<HTMLElement>) => {
+        if (event.pointerType === "mouse" || event.pointerType === "pen") setIsTemporarilyPaused(false);
+      },
+      onFocusCapture: onFocus,
+      onBlurCapture: onBlur,
+    },
+    trackHandlers: {
     onPointerDown, onPointerMove, onPointerUp: endDrag, onPointerCancel: endDrag,
     onLostPointerCapture: endDrag,
     onPointerLeave: (event: PointerEvent<HTMLDivElement>) => { if (!drag.current.moved) endDrag(event); },
     onKeyDown,
-  } };
+    },
+  };
 }

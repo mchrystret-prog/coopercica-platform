@@ -7,9 +7,18 @@ import { TimelineCard } from "./TimelineCard";
 import { useHorizontalHistory } from "./useHorizontalHistory";
 
 export function History() {
-  const { trackRef, activeIndex, goToIndex, trackHandlers } = useHorizontalHistory(historyItems.length);
+  const {
+    trackRef,
+    activeIndex,
+    goToIndex,
+    isAutoPlaying,
+    isManuallyPaused,
+    prefersReducedMotion,
+    toggleAutoPlay,
+    autoplayHandlers,
+    trackHandlers,
+  } = useHorizontalHistory(historyItems.length);
   const journeyRef = useRef<HTMLElement>(null);
-  const endRef = useRef<HTMLDivElement>(null);
   const progress = activeIndex / Math.max(1, historyItems.length - 1);
 
   useEffect(() => {
@@ -23,21 +32,13 @@ export function History() {
     }
   }, [activeIndex]);
 
-  const skipHistory = () => {
-    endRef.current?.focus({ preventScroll: true });
-    endRef.current?.scrollIntoView({ behavior: "instant", block: "start" });
-  };
-
   return (
-    <section id="historia" className={styles.history} aria-labelledby="history-title" tabIndex={-1}>
+    <section id="historia" className={styles.history} aria-labelledby="history-title" tabIndex={-1} {...autoplayHandlers}>
       <div className={styles.topbar}>
         <div>
           <h2 id="history-title" className={styles.heading}>NOSSA HISTÓRIA</h2>
           <p className={styles.headingSupport}>Mais de cinco décadas construídas com pessoas, confiança e cooperação.</p>
         </div>
-        <button type="button" className={styles.skipButton} onClick={skipHistory} aria-label="Pular a seção Nossa História">
-          <span className={styles.skipText}>Pular história</span><span className={styles.skipIcon} aria-hidden="true">↓</span>
-        </button>
       </div>
 
       <div className={styles.viewport} role="region" aria-roledescription="carrossel" aria-label="Capítulos da Nossa História">
@@ -49,8 +50,14 @@ export function History() {
       </div>
 
       <div className={styles.navigationCaption}>
-        <span>Arraste para explorar ou escolha um ano</span>
-        <span className={styles.status} role="status" aria-live="polite" aria-atomic="true">{String(activeIndex + 1).padStart(2, "0")} / {historyItems.length} · {historyItems[activeIndex].year}</span>
+        <div className={styles.captionActions}>
+          <span>Arraste para explorar ou escolha um ano</span>
+          <button type="button" className={styles.autoToggle} onClick={toggleAutoPlay} disabled={prefersReducedMotion} aria-label={prefersReducedMotion ? "Reprodução automática desativada pela preferência de movimento reduzido" : isManuallyPaused ? "Retomar reprodução automática" : "Pausar reprodução automática"}>
+            <span aria-hidden="true">{isManuallyPaused || prefersReducedMotion ? "▶" : "Ⅱ"}</span>
+            Automático
+          </button>
+        </div>
+        <span className={styles.status} role="status" aria-live={isAutoPlaying ? "off" : "polite"} aria-atomic="true">{String(activeIndex + 1).padStart(2, "0")} / {historyItems.length} · {historyItems[activeIndex].year}</span>
       </div>
       <nav ref={journeyRef} className={styles.journey} aria-label="Navegação pela história">
         <div className={styles.road}>
@@ -72,7 +79,7 @@ export function History() {
       <div className={styles.backTopWrap}>
         <button type="button" className={styles.backTopButton} onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })} aria-label="Voltar ao topo"><span aria-hidden="true">↑</span> Voltar ao topo</button>
       </div>
-      <div id="historia-fim" ref={endRef} className={styles.historyEnd} tabIndex={-1} aria-label="Fim da seção Nossa História" />
+      <div id="historia-fim" className={styles.historyEnd} tabIndex={-1} aria-label="Fim da seção Nossa História" />
     </section>
   );
 }
