@@ -5,12 +5,18 @@ interface TimelineCardProps {
   item: HistoryItem;
   index: number;
   total: number;
+  active: boolean;
 }
 
-export function TimelineCard({ item, index, total }: TimelineCardProps) {
+export function TimelineCard({ item, index, total, active }: TimelineCardProps) {
   return (
     <article
       data-history-slide
+      id={`history-${item.id}`}
+      role="group"
+      aria-roledescription="slide"
+      aria-label={`${index + 1} de ${total}: ${item.year}`}
+      aria-hidden={!active}
       className={`${styles.slide} ${styles[item.theme]}`}
     >
       <div className={styles.yearWatermark} aria-hidden="true">
@@ -24,6 +30,7 @@ export function TimelineCard({ item, index, total }: TimelineCardProps) {
           alt={item.imageAlt}
           className={styles.image}
           loading={index < 2 ? "eager" : "lazy"}
+          draggable={false}
         />
       </div>
 

@@ -1,155 +1,78 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { historyItems } from "@/data/history";
 import styles from "./History.module.css";
 import { TimelineCard } from "./TimelineCard";
 import { useHorizontalHistory } from "./useHorizontalHistory";
 
 export function History() {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const progressRef = useRef<HTMLDivElement | null>(null);
-  const travelerRef = useRef<HTMLDivElement | null>(null);
-  const pulseTimerRef = useRef<number | null>(null);
-
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [pulseIndex, setPulseIndex] = useState<number | null>(null);
-  const [skipVisible, setSkipVisible] = useState(false);
-
-  const handleActiveIndexChange = useCallback((index: number) => {
-    setActiveIndex(index);
-    setPulseIndex(index);
-
-    if (pulseTimerRef.current) {
-      window.clearTimeout(pulseTimerRef.current);
-    }
-
-    pulseTimerRef.current = window.setTimeout(() => {
-      setPulseIndex(null);
-    }, 520);
-  }, []);
-
-  const { goToIndex, skipToEnd } = useHorizontalHistory({
-    viewportRef,
-    trackRef,
-    progressRef,
-    travelerRef,
-    itemCount: historyItems.length,
-    onActiveIndexChange: handleActiveIndexChange,
-  });
+  const { trackRef, activeIndex, goToIndex, trackHandlers } = useHorizontalHistory(historyItems.length);
+  const journeyRef = useRef<HTMLElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const progress = activeIndex / Math.max(1, historyItems.length - 1);
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const update = () => {
-      const rect = section.getBoundingClientRect();
-      const headerOffset = 82;
-      const inside = rect.top <= headerOffset && rect.bottom > window.innerHeight * .35;
-      setSkipVisible(inside);
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, []);
+    const journey = journeyRef.current;
+    const marker = journey?.querySelector<HTMLElement>('[aria-current="step"]');
+    if (!journey || !marker) return;
+    const box = marker.getBoundingClientRect();
+    const viewport = journey.getBoundingClientRect();
+    if (box.left < viewport.left + 24 || box.right > viewport.right - 24) {
+      journey.scrollTo({ left: journey.scrollLeft + box.left - viewport.left - journey.clientWidth / 2 + box.width / 2, behavior: "instant" });
+    }
+  }, [activeIndex]);
 
   const skipHistory = () => {
-    if (window.matchMedia("(min-width: 901px)").matches && skipToEnd()) return;
-    document.getElementById("historia-fim")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    endRef.current?.focus({ preventScroll: true });
+    endRef.current?.scrollIntoView({ behavior: "instant", block: "start" });
   };
 
   return (
-    <section
-      id="historia"
-      ref={sectionRef}
-      className={styles.history}
-      aria-labelledby="history-title"
-      tabIndex={-1}
-    >
-      <div ref={viewportRef} className={styles.viewport}>
-        <div className={styles.topbar}>
-          <div>
-            <h2 id="history-title" className={styles.heading}>
-              NOSSA HISTÓRIA
-            </h2>
-            <p className={styles.headingSupport}>
-              Mais de cinco décadas construídas com pessoas, confiança e
-              cooperação.
-            </p>
-          </div>
-          <button type="button" className={`${styles.skipButton} ${skipVisible ? styles.skipButtonVisible : ""}`} onClick={skipHistory} aria-label="Pular a seção Nossa História"><span className={styles.skipText}>Pular história</span><span className={styles.skipIcon} aria-hidden="true">→</span></button>
+    <section id="historia" className={styles.history} aria-labelledby="history-title" tabIndex={-1}>
+      <div className={styles.topbar}>
+        <div>
+          <h2 id="history-title" className={styles.heading}>NOSSA HISTÓRIA</h2>
+          <p className={styles.headingSupport}>Mais de cinco décadas construídas com pessoas, confiança e cooperação.</p>
         </div>
-
-        <div ref={trackRef} className={styles.track}>
-          {historyItems.map((item, index) => (
-            <TimelineCard
-              key={item.id}
-              item={item}
-              index={index}
-              total={historyItems.length}
-            />
-          ))}
-        </div>
-
-        <nav className={styles.journey} aria-label="Navegação pela história">
-          <div className={styles.road}>
-            <div ref={progressRef} className={styles.roadProgress} />
-
-            <div
-              ref={travelerRef}
-              className={`${styles.traveler} ${
-                pulseIndex !== null ? styles.travelerSnapped : ""
-              }`}
-              aria-hidden="true"
-            >
-              <img
-                src="/history/coopercica-c.png"
-                alt=""
-                className={styles.travelerImage}
-              />
-            </div>
-
-            <div className={styles.milestones}>
-              {historyItems.map((item, index) => {
-                const active = index === activeIndex;
-                const reached = index <= activeIndex;
-                const pulsing = index === pulseIndex;
-
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className={`${styles.milestone} ${
-                      reached ? styles.milestoneReached : ""
-                    } ${active ? styles.milestoneActive : ""} ${
-                      pulsing ? styles.milestonePulse : ""
-                    }`}
-                    style={{
-                      left: `${(index / (historyItems.length - 1)) * 100}%`,
-                    }}
-                    onClick={() => goToIndex(index)}
-                    aria-label={`Ir para ${item.year}: ${item.title}`}
-                    aria-current={active ? "step" : undefined}
-                  >
-                    <span className={styles.tooltip}>
-                      <strong>{item.year}</strong>
-                      <small>{item.title}</small>
-                    </span>
-                    <span className={styles.milestoneDot} />
-                    <span className={styles.milestoneYear}>{item.year}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </nav>
+        <button type="button" className={styles.skipButton} onClick={skipHistory} aria-label="Pular a seção Nossa História">
+          <span className={styles.skipText}>Pular história</span><span className={styles.skipIcon} aria-hidden="true">↓</span>
+        </button>
       </div>
-      <span id="historia-fim" className={styles.historyEnd} aria-hidden="true" />\n      <div className={styles.backTopWrap}><button type="button" className={styles.backTopButton} onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} aria-label="Voltar ao topo"><span aria-hidden="true">↑</span> Voltar ao topo</button></div>
+
+      <div className={styles.viewport} role="region" aria-roledescription="carrossel" aria-label="Capítulos da Nossa História">
+        <div id="history-track" ref={trackRef} className={styles.track} tabIndex={0} aria-label="Capítulos: use as setas esquerda e direita para navegar" {...trackHandlers} onDragStart={event => event.preventDefault()}>
+          {historyItems.map((item, index) => <TimelineCard key={item.id} item={item} index={index} total={historyItems.length} active={index === activeIndex} />)}
+        </div>
+        <button type="button" className={`${styles.slideArrow} ${styles.previous}`} onClick={() => goToIndex(activeIndex - 1)} disabled={activeIndex === 0} aria-label="Capítulo anterior" aria-controls="history-track">‹</button>
+        <button type="button" className={`${styles.slideArrow} ${styles.next}`} onClick={() => goToIndex(activeIndex + 1)} disabled={activeIndex === historyItems.length - 1} aria-label="Próximo capítulo" aria-controls="history-track">›</button>
+      </div>
+
+      <div className={styles.navigationCaption}>
+        <span>Arraste para explorar ou escolha um ano</span>
+        <span className={styles.status} role="status" aria-live="polite" aria-atomic="true">{String(activeIndex + 1).padStart(2, "0")} / {historyItems.length} · {historyItems[activeIndex].year}</span>
+      </div>
+      <nav ref={journeyRef} className={styles.journey} aria-label="Navegação pela história">
+        <div className={styles.road}>
+          <div className={styles.roadProgress} style={{ transform: `scaleX(${progress})` }} />
+          <div className={styles.traveler} style={{ left: `${progress * 100}%` }} aria-hidden="true">
+            <img src="/history/coopercica-c.png" alt="" className={styles.travelerImage} width={44} height={44} />
+          </div>
+          <div className={styles.milestones}>
+            {historyItems.map((item, index) => <button key={item.id} type="button"
+              className={`${styles.milestone} ${index <= activeIndex ? styles.milestoneReached : ""} ${index === activeIndex ? styles.milestoneActive : ""}`}
+              style={{ left: `${(index / (historyItems.length - 1)) * 100}%` }}
+              onClick={() => goToIndex(index)} aria-label={`Ir para ${item.year}: ${item.title}`} aria-controls={`history-${item.id}`} aria-current={index === activeIndex ? "step" : undefined}>
+              <span className={styles.tooltip} aria-hidden="true"><strong>{item.year}</strong><small>{item.title}</small></span>
+              <span className={styles.milestoneDot} /><span className={styles.milestoneYear}>{item.year}</span>
+            </button>)}
+          </div>
+        </div>
+      </nav>
+      <div className={styles.backTopWrap}>
+        <button type="button" className={styles.backTopButton} onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })} aria-label="Voltar ao topo"><span aria-hidden="true">↑</span> Voltar ao topo</button>
+      </div>
+      <div id="historia-fim" ref={endRef} className={styles.historyEnd} tabIndex={-1} aria-label="Fim da seção Nossa História" />
     </section>
   );
 }
