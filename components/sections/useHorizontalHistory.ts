@@ -30,8 +30,8 @@ export function useHorizontalHistory(itemCount: number) {
     const track = trackRef.current;
     if (!track) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.55),
-      { threshold: [0, 0.55, 1] },
+      ([entry]) => setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.2),
+      { threshold: [0, 0.2, 0.55, 1] },
     );
     observer.observe(track);
     return () => observer.disconnect();
@@ -57,7 +57,7 @@ export function useHorizontalHistory(itemCount: number) {
     if (!isAutoPlaying) return;
     const timer = window.setTimeout(() => {
       goToIndex(activeRef.current === itemCount - 1 ? 0 : activeRef.current + 1);
-    }, hasAutoAdvanced.current ? 4000 : 1200);
+    }, hasAutoAdvanced.current ? 4000 : 650);
     return () => window.clearTimeout(timer);
   }, [activeIndex, goToIndex, isAutoPlaying, itemCount]);
 
