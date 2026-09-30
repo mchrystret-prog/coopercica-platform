@@ -1,27 +1,12 @@
-.ds-eyebrow {
-  display: inline-block;
-  color: var(--brand-red-500);
-  font-size: .76rem;
-  font-weight: 800;
-  letter-spacing: .16em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.ds-title {
-  margin: 0;
-  color: var(--text-heading);
-  font-size: clamp(2.55rem, 4.6vw, 4.9rem);
-  font-weight: 800;
-  letter-spacing: -.055em;
-  line-height: .96;
-  text-transform: uppercase;
-}
-
-.ds-title span { display: block; }
-
-.ds-copy {
-  color: var(--text-body);
-  font-size: clamp(1rem, 1.2vw, 1.12rem);
-  line-height: 1.72;
-}
+/* Digital hierarchy derived from the brand identity, not measurements from the Brandbook. */
+.ds-display, .ds-h1, .ds-title, .ds-subtitle { margin:0; color:var(--text-heading); font-weight:var(--font-weight-strong); letter-spacing:var(--tracking-heading); line-height:var(--line-height-heading); }
+.ds-display { font-size:var(--font-size-display); }
+.ds-h1 { font-size:var(--font-size-h1); }
+.ds-title { font-size:var(--font-size-h2); text-transform:uppercase; }
+.ds-title span { display:block; }
+.ds-subtitle { font-size:var(--font-size-h3); font-weight:var(--font-weight-bold); }
+.ds-copy, .ds-body-large { color:var(--text-body); font-size:var(--font-size-body-lg); line-height:var(--line-height-body); }
+.ds-body { color:var(--text-body); font-size:var(--font-size-body); line-height:var(--line-height-body); }
+.ds-caption { color:var(--text-muted); font-size:var(--font-size-sm); line-height:1.5; }
+.ds-eyebrow, .eyebrow { display:inline-block; color:var(--text-heading); font-size:var(--font-size-eyebrow); font-weight:var(--font-weight-strong); letter-spacing:var(--tracking-eyebrow); line-height:1.4; text-transform:uppercase; }
+.eyebrow.light { color:var(--text-inverse); }

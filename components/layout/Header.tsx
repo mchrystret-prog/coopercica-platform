@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Button } from "@/components/ui/Button";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
@@ -97,20 +98,7 @@ export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUr
             </a>
           ))}
 
-          <a
-            className={styles.cta}
-            href={deliveryUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMenu}
-          >
-            Comprar online
-            <span className={styles.ctaIcon} aria-hidden="true">
-              <svg viewBox="0 0 20 20" fill="none">
-                <path d="M6 14 14 6M8 6h6v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-          </a>
+          <Button className={styles.cta} href={deliveryUrl} external onClick={closeMenu}>Comprar online</Button>
         </nav>
       </div>
     </header>

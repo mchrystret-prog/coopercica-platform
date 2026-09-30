@@ -1,30 +1,11 @@
-# Coopercica — Design System
+# Regras do sistema visual
 
-## Princípios
-1. Brandbook antes de preferência pessoal.
-2. Títulos institucionais em caixa alta, peso forte e verde `#1C4722`.
-3. Eyebrows em caixa alta e vermelho `#EF4037`.
-4. Textos corridos em sentence case, peso regular e cinza.
-5. Verde de apoio `#6AB945` indica ação; verde `#205F30` é o hover padrão.
+A fonte canônica de valores é `styles/tokens.css`. A documentação de uso está em [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md), e a referência executável está em `/design-system`.
 
-## Componentes base
-- `Container`: largura máxima e gutters oficiais.
-- `Section`: espaçamento vertical e tons de fundo.
-- `SectionHeader`: eyebrow, título com quebras controladas e descrição.
-- `Button`: `primary`, `secondary` e `light`.
-
-## Espaçamento
-Seções usam `--section-space`; componentes internos devem priorizar a escala definida em `styles/tokens.css`.
-
-## Uso de títulos
-Forneça um array ao `SectionHeader` para controlar as quebras:
-
-```tsx
-<SectionHeader eyebrow="Coopercica Drogaria" title={["Muito além", "dos medicamentos."]} />
-```
-
-## Acessibilidade
-- Foco visível obrigatório.
-- Imagens precisam de texto alternativo útil.
-- Links externos devem usar `noopener noreferrer`.
-- Animações devem respeitar `prefers-reduced-motion`.
+- Use `Container`, `Section`, `SectionHeader`, `Button`, `Card`, `Badge` e `Icon` antes de criar outro padrão.
+- Marca: somente os sete valores exatos do Brandbook. Superfícies, neutralidades e feedback são decisões digitais separadas.
+- Primary: branco sobre `#1C4722`; hover `#205F30`. Secondary: contorno e fundo transparente. Ghost: ações discretas. `tone="inverse"` adapta o mesmo componente a fundos escuros.
+- Gotham é oficial; Montserrat é fallback temporário, carregado com `next/font`. Não obter Gotham de fontes não licenciadas.
+- Escala tipográfica, uppercase, gutters, espaçamento, raios e estados são decisões digitais, não medidas prescritas pelo manual.
+- Não transformar, rotacionar, deformar, aplicar transparência ou efeitos à assinatura/símbolo. Indicadores animados devem ser gráficos independentes.
+- Execute `node scripts/check-design-system.mjs` além de build, TypeScript, lint e revisão visual. O scanner não substitui testes em navegador.

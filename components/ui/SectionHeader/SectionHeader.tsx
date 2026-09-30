@@ -1,7 +1,7 @@
 import styles from "./SectionHeader.module.css";
 
 type Props = {
-  eyebrow: string;
+  eyebrow?: string;
   title: string | string[];
   description?: string;
   light?: boolean;
@@ -14,7 +14,7 @@ export function SectionHeader({ eyebrow, title, description, light = false, stac
   const lines = Array.isArray(title) ? title : [title];
   return <div className={`${styles.header} ${stacked ? styles.stack : ""} ${light ? styles.light : ""} ${className}`.trim()}>
     <div>
-      <span className={`ds-eyebrow ${styles.eyebrow}`}>{eyebrow}</span>
+      {eyebrow ? <span className={`ds-eyebrow ${styles.eyebrow}`}>{eyebrow}</span> : null}
       <h2 id={id} className={`ds-title ${styles.title}`}>{lines.map((line) => <span key={line}>{line}</span>)}</h2>
     </div>
     {description ? <p className={`ds-copy ${styles.description}`}>{description}</p> : null}

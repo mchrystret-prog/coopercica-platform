@@ -51,13 +51,13 @@
   border-radius: 50%;
   background: var(--white);
   color: var(--brand-green-900);
-  box-shadow: inset -9px 0 0 var(--brand-red-500);
+  box-shadow:var(--shadow-soft);
 }
 
 .intro p {
   max-width: 420px;
   margin: 25px 0 28px;
-  color: rgb(255 255 255 / 72%);
+  color: var(--text-inverse-muted);
   line-height: 1.7;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .signature span {
-  color: #ff756d;
+  color: var(--brand-lime-500);
 }
 
 .column {
@@ -90,13 +90,13 @@
 
 .column a,
 .column span {
-  color: rgb(255 255 255 / 72%);
+  color: var(--text-inverse-muted);
   text-decoration: none;
   transition: color var(--motion-fast) var(--ease-brand);
 }
 
 .column a:hover {
-  color: #ff756d;
+  color: var(--brand-lime-500);
 }
 
 .bottom {
@@ -107,7 +107,7 @@
   justify-content: space-between;
   gap: 20px;
   border-top: 1px solid rgb(255 255 255 / 14%);
-  color: rgb(255 255 255 / 55%);
+  color: var(--text-inverse-muted);
   font-size: 0.82rem;
 }
 

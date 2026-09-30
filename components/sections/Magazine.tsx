@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button";
 
 import { useEffect, useMemo, useState } from "react";
 import type { Magazine as MagazineType } from "@/types/content";
@@ -65,6 +66,7 @@ export function Magazine({ items,content={} }: MagazineProps) {
       <Container>
         <SectionHeader
           className={styles.header}
+          id="magazine-title"
           eyebrow={content.eyebrow||"REVISTA COOPERCICA"}
           title={[content.title1 ?? "TODO MÊS, UMA",content.title2 ?? "NOVA EDIÇÃO PRA VOCÊ."].filter(Boolean)}
           stacked
@@ -100,14 +102,7 @@ export function Magazine({ items,content={} }: MagazineProps) {
               <span className={styles.coverShadow} aria-hidden="true" />
             </div>
 
-            <a
-              className={styles.readCta}
-              href={selectedMagazine.href}
-              aria-label={`Ler ${selectedMagazine.edition}: ${selectedMagazine.title}`}
-            >
-              <span>Ler edição</span>
-              <span aria-hidden="true">→</span>
-            </a>
+            <Button className={styles.readCta} href={selectedMagazine.href} aria-label={`Ler ${selectedMagazine.edition}: ${selectedMagazine.title}`}>Ler edição</Button>
           </article>
 
           <aside className={styles.gallery} aria-label="Galeria de edições">
@@ -153,10 +148,7 @@ export function Magazine({ items,content={} }: MagazineProps) {
               })}
             </div>
 
-            <a className={styles.archiveCta} href="/revista">
-              <span>{content.ctaLabel||"Ver todas as edições"}</span>
-              <span aria-hidden="true">→</span>
-            </a>
+            <Button variant="secondary" className={styles.archiveCta} href="/revista">{content.ctaLabel||"Ver todas as edições"}</Button>
           </aside>
         </div>
       </Container>

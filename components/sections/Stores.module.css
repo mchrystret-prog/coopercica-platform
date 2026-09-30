@@ -12,12 +12,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap:var(--grid-gap);
   margin-bottom: 24px;
 }
 
 .viewLabel {
-  color: var(--brand-red-500);
+  color: var(--text-heading);
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -41,9 +41,9 @@
   overflow: hidden;
   padding: 0;
   border: 1px solid var(--border-soft);
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 14px 34px rgb(28 71 34 / 8%);
+  border-radius:var(--radius-md);
+  background: var(--surface-card);
+  box-shadow:var(--shadow-soft);
   color: var(--brand-green-900);
   font: inherit;
   text-align: left;
@@ -56,7 +56,7 @@
 
 .cityCard:hover {
   border-color: rgb(106 185 69 / 50%);
-  box-shadow: 0 28px 58px rgb(28 71 34 / 14%);
+  box-shadow:var(--shadow-soft);
   transform: translateY(-7px);
 }
 
@@ -156,7 +156,7 @@
 
 .cityCard:hover .cityAction {
   background: var(--brand-green-900);
-  color: #fff;
+  color: var(--surface-card);
   transform: translateX(3px);
 }
 
@@ -168,32 +168,7 @@
   margin-bottom: clamp(28px, 4vw, 44px);
 }
 
-.backButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  width: fit-content;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--brand-green-900);
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition:
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.backButton:hover {
-  color: var(--brand-green-500);
-  transform: translateX(-4px);
-}
-
-.backButton span {
-  font-size: 1.2rem;
-}
+.backButton { width: fit-content; }
 
 .selectedCityHeading {
   display: grid;
@@ -226,9 +201,9 @@
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--border-soft);
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 14px 34px rgb(28 71 34 / 8%);
+  border-radius:var(--radius-md);
+  background: var(--surface-card);
+  box-shadow:var(--shadow-soft);
   transition:
     transform 240ms ease,
     border-color 240ms ease,
@@ -237,7 +212,7 @@
 
 .storeCard:hover {
   border-color: rgb(106 185 69 / 45%);
-  box-shadow: 0 24px 52px rgb(28 71 34 / 13%);
+  box-shadow:var(--shadow-soft);
   transform: translateY(-5px);
 }
 
@@ -249,7 +224,7 @@
   overflow: hidden;
   border: 0;
   background: var(--brand-green-900);
-  color: #fff;
+  color: var(--surface-card);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -293,7 +268,7 @@
   border: 1px solid rgb(255 255 255 / 20%);
   border-radius: 999px;
   background: rgb(255 255 255 / 12%);
-  color: #fff;
+  color: var(--surface-card);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -315,7 +290,7 @@
 }
 
 .storeSummaryBottom strong {
-  color: #fff;
+  color: var(--surface-card);
   font-size: clamp(1.55rem, 2.15vw, 2.25rem);
   line-height: 1;
   letter-spacing: -0.035em;
@@ -330,7 +305,7 @@
 .storeAction {
   width: 42px;
   height: 42px;
-  background: #fff;
+  background: var(--surface-card);
   color: var(--brand-green-900);
 }
 
@@ -360,9 +335,9 @@
   max-height: min(760px, calc(100vh - 48px));
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 14%);
-  border-radius: 28px;
-  background: #fff;
-  box-shadow: 0 40px 100px rgb(0 0 0 / 34%);
+  border-radius:var(--radius-md);
+  background: var(--surface-card);
+  box-shadow:var(--shadow-soft);
   animation: modalIn 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -377,7 +352,7 @@
   border: 1px solid rgb(255 255 255 / 24%);
   border-radius: 50%;
   background: rgb(9 28 14 / 55%);
-  color: #fff;
+  color: var(--surface-card);
   cursor: pointer;
   backdrop-filter: blur(10px);
   z-index: 3;
@@ -435,7 +410,7 @@
 
 .modalHeading > span,
 .services > span {
-  color: var(--brand-red-500);
+  color: var(--text-heading);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -523,12 +498,7 @@
   font-weight: 700;
 }
 
-.mapsButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 28px;
-}
+.mapsButton { margin-top:var(--space-8); }
 
 @keyframes viewIn {
   from {
@@ -637,7 +607,7 @@
   .modal {
     width: 100%;
     max-height: calc(100vh - 24px);
-    border-radius: 24px;
+    border-radius:var(--radius-md);
   }
 
   .modalContent {

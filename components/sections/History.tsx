@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
+import { Button } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 import { historyItems } from "@/data/history";
 import styles from "./History.module.css";
 import { TimelineCard } from "./TimelineCard";
@@ -35,25 +38,22 @@ export function History() {
   return (
     <section id="historia" className={styles.history} aria-labelledby="history-title" tabIndex={-1} {...autoplayHandlers}>
       <div className={styles.topbar}>
-        <div>
-          <h2 id="history-title" className={styles.heading}>NOSSA HISTÓRIA</h2>
-          <p className={styles.headingSupport}>Mais de cinco décadas construídas com pessoas, confiança e cooperação.</p>
-        </div>
+        <SectionHeader id="history-title" title="NOSSA HISTÓRIA" description="Mais de cinco décadas construídas com pessoas, confiança e cooperação." stacked className={styles.historyHeader} />
       </div>
 
       <div className={styles.viewport} role="region" aria-roledescription="carrossel" aria-label="Capítulos da Nossa História">
         <div id="history-track" ref={trackRef} className={styles.track} tabIndex={0} aria-label="Capítulos: use as setas esquerda e direita para navegar" {...trackHandlers} onDragStart={event => event.preventDefault()}>
           {historyItems.map((item, index) => <TimelineCard key={item.id} item={item} index={index} total={historyItems.length} active={index === activeIndex} />)}
         </div>
-        <button type="button" className={`${styles.slideArrow} ${styles.previous}`} onClick={() => goToIndex(activeIndex - 1)} disabled={activeIndex === 0} aria-label="Capítulo anterior" aria-controls="history-track">‹</button>
-        <button type="button" className={`${styles.slideArrow} ${styles.next}`} onClick={() => goToIndex(activeIndex + 1)} disabled={activeIndex === historyItems.length - 1} aria-label="Próximo capítulo" aria-controls="history-track">›</button>
+        <button type="button" className={`${styles.slideArrow} ${styles.previous}`} onClick={() => goToIndex(activeIndex - 1)} disabled={activeIndex === 0} aria-label="Capítulo anterior" aria-controls="history-track"><Icon name="chevron-left" /></button>
+        <button type="button" className={`${styles.slideArrow} ${styles.next}`} onClick={() => goToIndex(activeIndex + 1)} disabled={activeIndex === historyItems.length - 1} aria-label="Próximo capítulo" aria-controls="history-track"><Icon name="chevron-right" /></button>
       </div>
 
       <div className={styles.navigationCaption}>
         <div className={styles.captionActions}>
           <span>Arraste para explorar ou escolha um ano</span>
           <button type="button" className={styles.autoToggle} onClick={toggleAutoPlay} disabled={prefersReducedMotion} aria-label={prefersReducedMotion ? "Reprodução automática desativada pela preferência de movimento reduzido" : isManuallyPaused ? "Retomar reprodução automática" : "Pausar reprodução automática"}>
-            <span aria-hidden="true">{isManuallyPaused || prefersReducedMotion ? "▶" : "Ⅱ"}</span>
+            <Icon name={isManuallyPaused || prefersReducedMotion ? "play" : "pause"} />
             Automático
           </button>
         </div>
@@ -63,7 +63,7 @@ export function History() {
         <div className={styles.road}>
           <div className={styles.roadProgress} style={{ transform: `scaleX(${progress})` }} />
           <div className={styles.traveler} style={{ left: `${progress * 100}%` }} aria-hidden="true">
-            <img src="/history/coopercica-c.png" alt="" className={styles.travelerImage} width={44} height={44} />
+            <span className={styles.journeyMarker} />
           </div>
           <div className={styles.milestones}>
             {historyItems.map((item, index) => <button key={item.id} type="button"
@@ -77,7 +77,7 @@ export function History() {
         </div>
       </nav>
       <div className={styles.backTopWrap}>
-        <button type="button" className={styles.backTopButton} onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })} aria-label="Voltar ao topo"><span aria-hidden="true">↑</span> Voltar ao topo</button>
+        <Button variant="secondary" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })} aria-label="Voltar ao topo" icon={<Icon name="arrow-up" />}>Voltar ao topo</Button>
       </div>
       <div id="historia-fim" className={styles.historyEnd} tabIndex={-1} aria-label="Fim da seção Nossa História" />
     </section>
