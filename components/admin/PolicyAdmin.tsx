@@ -1,4 +1,4 @@
-"use client";import{FormEvent,useCallback,useEffect,useState}from"react";import{SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL}from"@/lib/leaflets";import type{SitePolicy}from"@/lib/policies";
+"use client";import{type FormEvent,useCallback,useEffect,useState}from"react";import{SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL}from"@/lib/leaflets";import type{SitePolicy}from"@/lib/policies";
 const slugify=(v:string)=>v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 export function PolicyAdmin(){const[items,setItems]=useState<SitePolicy[]>([]),[editing,setEditing]=useState<SitePolicy|null>(null),[busy,setBusy]=useState(false),[msg,setMsg]=useState("");
 const token=()=>sessionStorage.getItem("coopercica_admin_token")||"";const load=useCallback(async()=>{const r=await fetch(`${SUPABASE_URL}/rest/v1/site_policies?select=*&order=sort_order.asc,title.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${token()}`}});if(r.ok)setItems(await r.json())},[]);useEffect(()=>{load()},[load]);
