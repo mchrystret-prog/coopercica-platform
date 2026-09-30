@@ -1,13 +1,13 @@
 .card {
-  padding: var(--space-8);
-  border: 1px solid rgb(28 71 34 / 8%);
+  padding: var(--card-padding);
+  border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  background: var(--surface-card);
+  box-shadow: none;
 }
 
 .soft {
-  background: var(--color-surface-soft);
+  background: var(--surface-soft);
   box-shadow: none;
 }
 

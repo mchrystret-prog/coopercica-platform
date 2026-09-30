@@ -1,18 +1,19 @@
 import Link from "next/link";
-import type { AnchorHTMLAttributes, ReactNode } from "react";
-import styles from "./Button.module.css";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import { Icon } from "../Icon";
 
-type Variant = "primary" | "secondary" | "light";
-type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
-  href: string;
-  variant?: Variant;
-  children: ReactNode;
-  external?: boolean;
-};
-
-export function Button({ href, variant = "primary", children, external, className = "", ...props }: Props) {
-  const content = <>{children}<svg className={styles.icon} viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 14 14 6M8 6h6v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></>;
-  const classes = `${styles.button} ${styles[variant]} ${className}`.trim();
-  if (external) return <a href={href} className={classes} target="_blank" rel="noopener noreferrer" {...props}>{content}</a>;
-  return <Link href={href} className={classes} {...props}>{content}</Link>;
+type Shared = { variant?: "primary" | "secondary" | "ghost"; tone?: "default" | "inverse"; children: ReactNode; icon?: ReactNode | false; disabled?: boolean; className?: string };
+type LinkProps = Shared & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"> & { href: string; external?: boolean };
+type ActionProps = Shared & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> & { href?: never; external?: never };
+export function Button(props: LinkProps | ActionProps) {
+  const { variant = "primary", tone = "default", children, icon, disabled, className = "", href, external, ...rest } = props;
+  const classes = `ds-button ds-button--${variant} ${tone === "inverse" ? "ds-button--inverse" : ""} ${className}`.trim();
+  const content = <>{children}{icon === false ? null : icon ?? (href ? <Icon name={external ? "arrow-up-right" : "arrow-right"} /> : null)}</>;
+  if (href !== undefined) {
+    const attributes = rest as AnchorHTMLAttributes<HTMLAnchorElement>;
+    if (disabled) return <a {...attributes} className={classes} role="link" aria-disabled="true" tabIndex={-1}>{content}</a>;
+    if (external) return <a {...attributes} href={href} className={classes} target="_blank" rel="noopener noreferrer">{content}</a>;
+    return <Link {...attributes} href={href} className={classes}>{content}</Link>;
+  }
+  return <button type="button" {...rest as ButtonHTMLAttributes<HTMLButtonElement>} className={classes} disabled={disabled}>{content}</button>;
 }

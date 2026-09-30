@@ -1,111 +1,76 @@
-# Design System — Coopercica Digital
+# Design System Coopercica Digital
 
-Este sistema foi extraído do projeto existente. O objetivo é organizar e documentar a linguagem visual atual, não redesenhar drasticamente o site.
+## Fonte canônica
 
-## 1. Princípios
+| Responsabilidade | Arquivo |
+|---|---|
+| Valores e nomes semânticos | `styles/tokens.css` |
+| Escala e classes tipográficas | `styles/typography.css` |
+| Container, seções e hero interno | `styles/layout.css` |
+| CTA, links e ícones compartilhados | `styles/components.css` |
+| Reset e imports, sem redefinir tokens | `app/globals.css` |
+| Estilos existentes do CMS isolados | `styles/admin.css` |
+| Composição específica | CSS Modules próximos aos componentes |
 
-1. **Institucional e próximo**: a interface deve transmitir confiança sem parecer fria.
-2. **Clareza antes de ornamentação**: campanhas, lojas e serviços devem ser encontrados rapidamente.
-3. **Consistência**: cores, pesos, raios, sombras e espaçamentos devem vir dos tokens.
-4. **Montserrat como voz digital**: títulos em 700, subtítulos em 600 e textos em 400.
-5. **Acessibilidade**: foco visível, contraste e alvos interativos confortáveis.
+Não adicionar outro arquivo de tokens. Os aliases `--green-*`, `--heading`, `--text`, `--line`, `--white` e `--ux-*` são compatibilidade para o CMS existente e referenciam os valores canônicos; não constituem outra paleta. Sua remoção depende de uma fase específica do CMS.
 
-## 2. Cores
+## Paleta
 
-### Primárias
-- `--color-brand-green-900`: `#1C4722` — identidade, títulos e fundos institucionais.
-- `--color-brand-green-500`: `#6AB945` — CTAs e elementos ativos.
-- `--color-brand-red-500`: `#EF4037` — destaques e campanhas.
+| Token de marca | Valor oficial |
+|---|---|
+| `--brand-green-900` | `#1C4722` |
+| `--brand-green-700` | `#205F30` |
+| `--brand-green-500` | `#6AB945` |
+| `--brand-lime-500` | `#A8CF38` |
+| `--brand-red-500` | `#EF4037` |
+| `--brand-coral-500` | `#EF5F4B` |
+| `--brand-orange-500` | `#F68B1F` |
 
-### Apoio
-- `--color-brand-green-700`: `#205F30`
-- `--color-brand-lime-500`: `#A8CF38`
-- `--color-brand-orange-500`: `#F68B1F`
+`--neutral-*`, `--surface-*`, `--text-*`, `--border-*`, `--feedback-*` e `--action-*` expressam funções digitais, não novas cores oficiais. O vermelho continua nos acentos e anos em tamanho grande. Eyebrows pequenos sobre fundo claro usam verde institucional para contraste. Badges coral/laranja usam neutralidade escura, pois verde institucional nessas superfícies não atinge 4,5:1 para texto pequeno.
 
-### Neutros
-- Fundo: `--color-background`
-- Superfície: `--color-surface`
-- Texto: `--color-text`
-- Texto secundário: `--color-text-muted`
-- Borda: `--color-border`
+## Tipografia
 
-## 3. Tipografia
+Gotham é a fonte do Brandbook. Não há arquivos oficiais licenciados no repositório. Montserrat permanece como fallback temporário, usando `next/font/google`, com a variável aplicada ao `<html>` retornado pelo layout e consumida por `--font-sans`. Arial é fallback de contingência.
 
-A família padrão é Montserrat, carregada via `next/font/google`.
+As medidas abaixo são decisões do sistema digital derivadas da identidade, não prescrições do Brandbook.
 
-| Uso | Peso | Token/classe |
-|---|---:|---|
-| Display/Hero | 700 | `.ds-display` |
-| Título de seção | 700 | `.ds-title` |
-| Subtítulo | 600 | `.ds-subtitle` |
-| Corpo | 400 | `.ds-body` |
-| Legenda | 500 | `.ds-caption` |
-| Eyebrow | 700 | `.ds-eyebrow` |
+| Uso | Token | Escala |
+|---|---|---|
+| Display, somente destaque necessário | `--font-size-display` | `clamp(3rem, 6vw, 5.5rem)` |
+| H1 | `--font-size-h1` | `clamp(2.5rem, 5vw, 4.5rem)` |
+| H2 de seção | `--font-size-h2` | `clamp(2rem, 4vw, 4rem)` |
+| H3 | `--font-size-h3` | `clamp(1.35rem, 2.2vw, 2rem)` |
+| Body Large | `--font-size-body-lg` | `clamp(1rem, 1.2vw, 1.125rem)` |
+| Body | `--font-size-body` | `1rem` |
+| Small | `--font-size-sm` | `.875rem` |
+| Eyebrow | `--font-size-eyebrow` | `.75rem` |
 
-Evitar pesos intermediários inexistentes como 650, 750, 760 ou 850.
+AppShowcase conserva escala compacta nos breakpoints da composição fixada na viewport, para não recortar texto durante o scroll; os tamanhos devem ser tokens de composição e documentados junto ao componente. Anos da História, preço e números de produto são composição editorial/numérica, não H1/H2 alternativos.
 
-## 4. Espaçamento
+## Componentes
 
-A escala base está em `styles/tokens.css`:
+- `Button`: links (`href`) ou ações (`button` nativo); variantes `primary`, `secondary`, `ghost`; `tone="inverse"` para fundo escuro. Primary usa `#1C4722`/branco (10,64:1), hover `#205F30`/branco (7,66:1). Altura mínima 48 px, padding 12/24 px, gap 12 px, radius pill, foco com contorno, active e disabled. Ícone default de direção: interno →, externo ↗. `icon={false}` omite; ícone customizado evita duplicação. O alias CSS `.button` atende ao CMS com os mesmos valores e estados.
+- `SectionHeader`: eyebrow opcional → H2 → descrição; `stacked` muda composição, sem outro sistema de headings; `light` muda apenas o tom. Quebras controladas por array de strings.
+- `Container`: máximo 1280 px; gutter `clamp(20px, 100vw / 24, 80px)`. Referência ao lado longo /24 do manual aplicada horizontalmente, sem dividir altura de página. `.shell` é alias do mesmo seletor para rotas existentes.
+- `Section`: padding `--section-space` e tons `white`, `soft`, `muted`, `green`.
+- `Card`: radius médio, borda, padding canônico; padrão sem sombra, `soft`, `outline`, `elevated` quando há necessidade de elevação. Produtos da folheteria usam o componente com composição compacta própria.
+- `Badge`: tons semânticos com contraste; usado na folheteria e na referência.
+- `Icon`: SVG de traço 1,8; preservados ícones outline existentes das lojas. Ícones de terceiros App Store/Google Play permanecem como assinaturas oficiais de terceiros.
 
-- `--space-1`: 4px
-- `--space-2`: 8px
-- `--space-3`: 12px
-- `--space-4`: 16px
-- `--space-6`: 24px
-- `--space-8`: 32px
-- `--space-12`: 48px
-- `--space-16`: 64px
-- `--space-24`: 96px
-- `--space-32`: 128px
+## Layout e ritmo
 
-## 5. Raios e sombras
+Spacing: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96 e 128 px. Seção: `clamp(64px,7vw,112px)`; heading/conteúdo: `clamp(32px,4vw,64px)`; título/descrição: 24 px; grid: 24 px; cards: 32 px, 24 px em mobile. Raios: controle 12, pequeno 16, médio 24, grande 36 e pill. Sombras por função: soft, card, overlay. Não colocar tudo em cards.
 
-- Pequeno: `--radius-sm`
-- Médio: `--radius-md`
-- Grande: `--radius-lg`
-- Pílula: `--radius-pill`
-- Sombra leve: `--shadow-sm`
-- Card: `--shadow-card`
-- Destaque: `--shadow-lg`
+História conserva o carrossel de largura total, mas texto/imagem usam a mesma margem compositiva do container. AppShowcase conserva o mockup e o scroll fixado, com container canônico. Dimensões físicas do mockup e relações de imagem são exceções de composição, não valores globais.
 
-## 6. Componentes
+## Marca e CMS
 
-### Button
-Arquivo: `components/ui/Button`
+O marcador da História usa uma forma circular independente. O símbolo isolado foi retirado da jornada porque coexistia com a assinatura completa e recebia rotação/drop-shadow.
 
-Variantes:
-- `primary`: CTA principal verde.
-- `secondary`: contorno institucional.
-- `light`: uso sobre fundos escuros.
+O RootLayout não injeta mais `primaryColor`, `secondaryColor`, `accentColor` ou `pageColor` do CMS como redefinições CSS. Os quatro campos ficam desabilitados no frontend; valores existentes e contrato de salvamento são preservados. Isso não valida o backend nem impede gravação via API. Logos e imagens enviados pelo CMS podem conter arquivos incompatíveis, efeitos ou uma assinatura alterada; essa governança permanece pendente. Não houve alteração de banco, RLS, autenticação, Storage ou dados de produção.
 
-### Badge
-Arquivo: `components/ui/Badge`
+## Referência e validação
 
-Variantes:
-- `green`
-- `red`
-- `orange`
-- `outline`
+`/design-system` usa os componentes reais e mostra marca separada das cores funcionais, escala, headings, CTAs, estados, cards, badges, ícones, container e spacing. Estados hover/active são verificados pela interação; Tab evidencia o foco. Não há exemplos com estilos simulados de botão.
 
-### Card
-Arquivo: `components/ui/Card`
-
-Variantes:
-- `default`
-- `soft`
-- `elevated`
-- `outline`
-
-### SectionHeader
-Arquivo: `components/ui/SectionHeader`
-
-Usar para compor eyebrow, título e descrição de seções.
-
-## 7. Página de referência
-
-A rota `/design-system` apresenta cores, tipografia, botões, badges, cards e espaçamentos em uso real.
-
-## 8. Regra de evolução
-
-Antes de criar um novo valor visual, verificar se já existe um token ou variante que resolve o caso. Novos padrões recorrentes devem ser adicionados ao sistema, e não inseridos isoladamente em uma seção.
+`node scripts/check-design-system.mjs` detecta variáveis ausentes e hexadecimais literais no CSS público. Variável de fonte é fornecida por `next/font`; exemplos de spacing são gerados a partir de tokens existentes. Leitura visual e navegação em desktop/mobile continuam obrigatórias.

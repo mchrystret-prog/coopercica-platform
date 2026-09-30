@@ -1,15 +1,7 @@
-# Refatoração — Design System
+# Design System — Fase B, 30/09/2026
 
-## Entregue nesta versão
-- Tokens institucionais centralizados em `styles/tokens.css`.
-- Tipografia, layout e utilitários globais separados.
-- Componentes reutilizáveis `Button`, `Container`, `Section` e `SectionHeader`.
-- Refatoração visual e estrutural de Lojas, Drogaria, Delivery e Revista.
-- CTA do cabeçalho ajustado para o verde de apoio institucional.
-- Configuração ESLint 9 adicionada.
-- Fonte remota removida do build para evitar dependência de rede; Montserrat continua como primeira opção local, com Arial como fallback.
-- `DESIGN_RULES.md` com as regras para evolução do projeto.
+Fonte visual canônica consolidada em styles/, CTAs e hierarquia compartilhados, Montserrat efetivamente aplicada por next/font, paleta oficial protegida no frontend e símbolo da História sem efeitos. /design-system demonstra os componentes reais.
 
-## Validação
-- `npm run build`: aprovado.
-- `npm run lint`: aprovado sem erros; permanecem cinco avisos de otimização de imagens nos componentes animados existentes.
+Build e TypeScript aprovados. Lint permanece com 11 erros e 16 avisos preexistentes. Revisões desktop/mobile realizadas com limitação de acesso aos assets remotos. Sem deploy e sem alterações no Supabase.
+
+Inventário, decisões, arquivos e validações: [docs/FASE_B.md](docs/FASE_B.md). Regras: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).

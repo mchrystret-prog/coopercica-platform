@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 import type { LeafletProduct } from "@/lib/leaflets";
 import styles from "./ProductOfferCard.module.css";
 
@@ -8,12 +10,12 @@ export function ProductOfferCard({ product }: { product: LeafletProduct }) {
   const hasCooper = (product.coopermais_price ?? 0) > 0;
   const hasOffer = (product.offer_all_price ?? 0) > 0;
   const featured = hasCooper ? product.coopermais_price! : hasOffer ? product.offer_all_price! : product.regular_price;
-  return <article className={styles.card}>
+  return <Card className={styles.card}>
     <div className={styles.brand}><Image src="/images/logo.png" alt="Coopercica" width={150} height={26} /></div>
     <div className={styles.visual}>
       {product.image_url ? <img src={product.image_url} alt={product.description} /> : <div className={styles.noImage}>Imagem em breve</div>}
-      {product.super_offer ? <span className={styles.badge}>Super Oferta</span> : null}
-      {product.buy_3_pay_2 ? <span className={styles.badge}>Leve 3 Pague 2</span> : null}
+      {product.super_offer ? <Badge variant="red" className={styles.badge}>Super Oferta</Badge> : null}
+      {product.buy_3_pay_2 ? <Badge variant="red" className={styles.badge}>Leve 3 Pague 2</Badge> : null}
     </div>
     <div className={styles.copy}><strong>{product.description}</strong>{product.complement ? <span>{product.complement}</span> : null}</div>
     <div className={`${styles.priceBox} ${hasCooper ? styles.cooperPriceBox : !hasOffer ? styles.singlePriceBox : ""}`}>
@@ -27,5 +29,5 @@ export function ProductOfferCard({ product }: { product: LeafletProduct }) {
     </div>
     {product.promo_pack ? <div className={styles.warnings}><span>{product.promo_pack}</span></div> : null}
     {product.age_18 ? <div className={styles.warnings}><span>Venda proibida para menores de 18 anos.</span></div> : null}
-  </article>;
+  </Card>;
 }

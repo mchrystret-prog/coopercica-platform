@@ -14,22 +14,22 @@
 }
 
 .green {
-  color: var(--color-brand-green-900);
-  background: var(--color-surface-soft);
+  color: var(--brand-green-900);
+  background: var(--surface-soft);
 }
 
 .red {
-  color: var(--color-white);
-  background: var(--color-brand-red-500);
+  color: var(--text-on-accent);
+  background: var(--brand-coral-500);
 }
 
 .orange {
-  color: var(--color-white);
-  background: var(--color-brand-orange-500);
+  color: var(--text-on-accent);
+  background: var(--brand-orange-500);
 }
 
 .outline {
-  color: var(--color-brand-green-900);
+  color: var(--brand-green-900);
   background: transparent;
   border: 1px solid var(--color-border);
 }

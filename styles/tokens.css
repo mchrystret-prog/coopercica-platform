@@ -1,34 +1,94 @@
+/* Canonical visual values. Brand colors are exact; neutrals/feedback are digital choices. */
 :root {
-  --brand-green-900: #1c4722;
-  --brand-green-700: #205f30;
-  --brand-green-500: #6ab945;
-  --brand-lime-500: #a8cf38;
-  --brand-red-500: #ef4037;
-  --brand-orange-500: #f68b1f;
-
-  --surface-page: #f6faf6;
-  --surface-soft: #edf6ee;
-  --surface-muted: #e5f1e6;
-  --surface-card: #ffffff;
-  --text-heading: #1c4722;
-  --text-body: #536057;
-  --text-muted: #68766b;
-  --border-soft: #d8e5da;
-
+  --brand-green-900: #1C4722;
+  --brand-green-700: #205F30;
+  --brand-green-500: #6AB945;
+  --brand-lime-500: #A8CF38;
+  --brand-red-500: #EF4037;
+  --brand-coral-500: #EF5F4B;
+  --brand-orange-500: #F68B1F;
+  --neutral-white: #FFFFFF;
+  --neutral-1000: #101010;
+  --text-on-accent: var(--neutral-1000);
+  --neutral-900: #38463B;
+  --neutral-700: #536057;
+  --neutral-600: #606E63;
+  --neutral-300: #B9CBBD;
+  --surface-page: #F6FAF6;
+  --surface-soft: #EDF6EE;
+  --surface-muted: #E5F1E6;
+  --surface-card: var(--neutral-white);
+  --surface-device: var(--neutral-1000);
+  --surface-device-dark: #050505;
+  --surface-device-detail: #232323;
+  --surface-catalog: #E2E2E0;
+  --text-heading: var(--brand-green-900);
+  --text-body: var(--neutral-700);
+  --text-muted: var(--neutral-600);
+  --text-inverse: var(--neutral-white);
+  --text-inverse-muted: rgb(255 255 255 / 80%);
+  --border-soft: #D8E5DA;
+  --border-strong: var(--neutral-300);
+  --feedback-error: #A83B34;
+  --feedback-success: var(--brand-green-700);
+  --feedback-warning: #78500C;
+  --action-primary: var(--brand-green-900);
+  --action-hover: var(--brand-green-700);
+  --action-active: var(--brand-green-900);
+  --focus-color: var(--brand-green-900);
+  --font-sans: var(--font-montserrat), Arial, sans-serif;
+  --font-size-display: clamp(3rem, 6vw, 5.5rem);
+  --font-size-h1: clamp(2.5rem, 5vw, 4.5rem);
+  --font-size-h2: clamp(2rem, 4vw, 4rem);
+  --font-size-showcase-title: var(--font-size-h2);
+  --font-size-h3: clamp(1.35rem, 2.2vw, 2rem);
+  --font-size-body-lg: clamp(1rem, 1.2vw, 1.125rem);
+  --font-size-body: 1rem;
+  --font-size-sm: .875rem;
+  --font-size-xs: .75rem;
+  --font-size-eyebrow: .75rem;
+  --font-weight-body: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-strong: 800;
+  --line-height-heading: 1.04;
+  --line-height-body: 1.7;
+  --tracking-heading: -.045em;
+  --tracking-eyebrow: .14em;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-24: 96px; --space-32: 128px;
   --container: 1280px;
-  --gutter: clamp(20px, 4vw, 48px);
-  --section-space: clamp(88px, 9vw, 132px);
+  --gutter: clamp(20px, calc(100vw / 24), 80px);
+  --section-space: clamp(64px, 7vw, 112px);
+  --section-header-gap: var(--space-6);
+  --section-content-gap: clamp(32px, 4vw, 64px);
+  --content-gap: clamp(32px, 5vw, 80px);
+  --grid-gap: var(--space-6);
+  --card-padding: var(--space-8);
   --header-height: 82px;
-
+  --control-height: 48px;
+  --radius-control: 12px;
   --radius-sm: 16px;
   --radius-md: 24px;
   --radius-lg: 36px;
   --radius-pill: 999px;
-
-  --shadow-soft: 0 18px 60px rgb(28 71 34 / 9%);
-  --shadow-card: 0 24px 70px rgb(28 71 34 / 13%);
-
+  --shadow-soft: 0 8px 24px rgb(28 71 34 / 8%);
+  --shadow-card: 0 18px 48px rgb(28 71 34 / 12%);
+  --shadow-overlay: 0 24px 64px rgb(28 71 34 / 20%);
   --motion-fast: 180ms;
   --motion-normal: 320ms;
   --ease-brand: cubic-bezier(.2, .8, .2, 1);
+  /* Compatibility names for the existing CMS only, all referencing the same values. */
+  --green-50: var(--surface-page); --green-100: var(--surface-soft); --green-150: var(--surface-muted);
+  --green-400: var(--brand-green-500); --green-600: var(--brand-green-700);
+  --green-700: var(--brand-green-900); --green-800: var(--brand-green-900);
+  --heading: var(--text-heading); --text: var(--neutral-900); --muted: var(--text-muted);
+  --line: var(--border-soft); --white: var(--neutral-white);
+  --color-body: var(--text-body); --color-border: var(--border-soft);
+  --radius: var(--radius-lg); --shadow: var(--shadow-soft);
+  --ux-control-height: var(--control-height); --ux-focus: 0 0 0 3px var(--border-strong);
 }
+
+/* Compact pinned showcase composition; same hierarchy, constrained viewport. */
+@media(max-width:900px) { :root { --font-size-showcase-title:clamp(1.5rem,7vw,2.35rem); } }

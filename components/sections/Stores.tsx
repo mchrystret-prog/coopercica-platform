@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import styles from "./Stores.module.css";
+import { Icon } from "@/components/ui/Icon";
 
 type StoresProps = {
   items: Store[];
@@ -294,10 +295,10 @@ function StoreModal({
 
           <Button
             className={styles.mapsButton}
+            icon={<PinIcon className={styles.buttonIcon} />}
             href={mapsHref}
             external={mapsHref !== "#"}
           >
-            <PinIcon className={styles.buttonIcon} />
             Como chegar
           </Button>
         </div>
@@ -397,14 +398,14 @@ export function Stores({ items }: StoresProps) {
           ) : selectedCityGroup ? (
             <div className={styles.storesView}>
               <div className={styles.storesHeader}>
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  icon={<Icon name="chevron-left" />}
                   className={styles.backButton}
                   onClick={returnToCities}
                 >
-                  <span aria-hidden="true">←</span>
                   Todas as cidades
-                </button>
+                </Button>
 
                 <div className={styles.selectedCityHeading}>
                   <span className={styles.viewLabel}>Cidade selecionada</span>
