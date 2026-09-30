@@ -12,7 +12,8 @@ export function useHorizontalHistory(itemCount: number) {
   const [isManuallyPaused, setIsManuallyPaused] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isDocumentVisible, setIsDocumentVisible] = useState(true);
-  const drag = useRef({ id: -1, x: 0, y: 0, left: 0, moved: false });\n  const hasAutoAdvanced = useRef(false);
+  const drag = useRef({ id: -1, x: 0, y: 0, left: 0, moved: false });
+  const hasAutoAdvanced = useRef(false);
 
   const goToIndex = useCallback((index: number) => {
     const track = trackRef.current;
