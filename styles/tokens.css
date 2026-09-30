@@ -32,7 +32,7 @@
   --feedback-error: #A83B34;
   --feedback-success: var(--brand-green-700);
   --feedback-warning: #78500C;
-  --action-primary: var(--brand-green-900);
+  --action-primary: var(--brand-green-500);
   --action-hover: var(--brand-green-700);
   --action-active: var(--brand-green-900);
   --focus-color: var(--brand-green-900);

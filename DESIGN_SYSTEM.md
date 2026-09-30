@@ -49,7 +49,7 @@ AppShowcase conserva escala compacta nos breakpoints da composição fixada na v
 
 ## Componentes
 
-- `Button`: links (`href`) ou ações (`button` nativo); variantes `primary`, `secondary`, `ghost`; `tone="inverse"` para fundo escuro. Primary usa `#1C4722`/branco (10,64:1), hover `#205F30`/branco (7,66:1). Altura mínima 48 px, padding 12/24 px, gap 12 px, radius pill, foco com contorno, active e disabled. Ícone default de direção: interno →, externo ↗. `icon={false}` omite; ícone customizado evita duplicação. O alias CSS `.button` atende ao CMS com os mesmos valores e estados.
+- `Button`: links (`href`) ou ações (`button` nativo); variantes `primary`, `secondary`, `ghost`; `tone="inverse"` para fundo escuro. Visual anterior restaurado por solicitação do usuário em 30/09/2026: primary usa `#6AB945`/branco, hover `#205F30`/branco. A combinação de repouso permanece abaixo de 4,5:1. Altura de 50 px (48 px no cabeçalho), padding horizontal 22 px, gap 10 px, radius pill, foco com contorno, active e disabled. Ícone default ↗, como na versão anterior. `icon={false}` omite; ícone customizado evita duplicação. O alias CSS `.button` atende ao CMS com os mesmos valores e estados.
 - `SectionHeader`: eyebrow opcional → H2 → descrição; `stacked` muda composição, sem outro sistema de headings; `light` muda apenas o tom. Quebras controladas por array de strings.
 - `Container`: máximo 1280 px; gutter `clamp(20px, 100vw / 24, 80px)`. Referência ao lado longo /24 do manual aplicada horizontalmente, sem dividir altura de página. `.shell` é alias do mesmo seletor para rotas existentes.
 - `Section`: padding `--section-space` e tons `white`, `soft`, `muted`, `green`.

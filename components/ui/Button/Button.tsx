@@ -8,7 +8,7 @@ type ActionProps = Shared & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "child
 export function Button(props: LinkProps | ActionProps) {
   const { variant = "primary", tone = "default", children, icon, disabled, className = "", href, external, ...rest } = props;
   const classes = `ds-button ds-button--${variant} ${tone === "inverse" ? "ds-button--inverse" : ""} ${className}`.trim();
-  const content = <>{children}{icon === false ? null : icon ?? (href ? <Icon name={external ? "arrow-up-right" : "arrow-right"} /> : null)}</>;
+  const content = <>{children}{icon === false ? null : icon ?? (href ? <Icon name="arrow-up-right" /> : null)}</>;
   if (href !== undefined) {
     const attributes = rest as AnchorHTMLAttributes<HTMLAnchorElement>;
     if (disabled) return <a {...attributes} className={classes} role="link" aria-disabled="true" tabIndex={-1}>{content}</a>;
