@@ -12,7 +12,7 @@ export function useHorizontalHistory(itemCount: number) {
   const [isManuallyPaused, setIsManuallyPaused] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isDocumentVisible, setIsDocumentVisible] = useState(true);
-  const drag = useRef({ id: -1, x: 0, y: 0, left: 0, moved: false });
+  const drag = useRef({ id: -1, x: 0, y: 0, left: 0, moved: false });\n  const hasAutoAdvanced = useRef(false);
 
   const goToIndex = useCallback((index: number) => {
     const track = trackRef.current;
@@ -56,7 +56,7 @@ export function useHorizontalHistory(itemCount: number) {
     if (!isAutoPlaying) return;
     const timer = window.setTimeout(() => {
       goToIndex(activeRef.current === itemCount - 1 ? 0 : activeRef.current + 1);
-    }, 3000);
+    }, hasAutoAdvanced.current ? 4000 : 1200);
     return () => window.clearTimeout(timer);
   }, [activeIndex, goToIndex, isAutoPlaying, itemCount]);
 

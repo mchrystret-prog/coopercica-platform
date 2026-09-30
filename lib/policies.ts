@@ -1,0 +1,3 @@
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
+export type SitePolicy={id:string;title:string;slug:string;description:string|null;file_url:string;sort_order:number;active:boolean;created_at:string;updated_at:string};
+export async function getPolicies():Promise<SitePolicy[]>{try{const r=await fetch(`${SUPABASE_URL}/rest/v1/site_policies?select=*&active=eq.true&order=sort_order.asc,title.asc`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY},cache:"no-store"});if(!r.ok)return[];return r.json()}catch{return[]}}
