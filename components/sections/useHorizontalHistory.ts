@@ -68,6 +68,7 @@ export function useHorizontalHistory(itemCount: number) {
       frame = 0;
       const index = Math.max(0, Math.min(itemCount - 1, Math.round(track.scrollLeft / Math.max(1, track.clientWidth))));
       if (activeRef.current !== index) {
+        hasAutoAdvanced.current = true;
         activeRef.current = index;
         setActiveIndex(index);
       }
@@ -130,12 +131,6 @@ export function useHorizontalHistory(itemCount: number) {
     prefersReducedMotion,
     toggleAutoPlay: () => setIsManuallyPaused((paused) => !paused),
     autoplayHandlers: {
-      onPointerEnter: (event: PointerEvent<HTMLElement>) => {
-        if (event.pointerType === "mouse" || event.pointerType === "pen") setIsTemporarilyPaused(true);
-      },
-      onPointerLeave: (event: PointerEvent<HTMLElement>) => {
-        if (event.pointerType === "mouse" || event.pointerType === "pen") setIsTemporarilyPaused(false);
-      },
       onFocusCapture: onFocus,
       onBlurCapture: onBlur,
     },
