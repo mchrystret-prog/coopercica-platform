@@ -7,7 +7,6 @@ export function useHorizontalHistory(itemCount: number) {
   const trackRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isInView, setIsInView] = useState(false);
   const [startRequested, setStartRequested] = useState(false);
   const [isTemporarilyPaused, setIsTemporarilyPaused] = useState(false);
   const [isManuallyPaused, setIsManuallyPaused] = useState(false);
@@ -33,7 +32,6 @@ export function useHorizontalHistory(itemCount: number) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         const visible = entry.isIntersecting && entry.intersectionRatio >= 0.05;
-        setIsInView(visible);
         if (visible) setStartRequested(true);
       },
       { threshold: [0, 0.05, 0.2, 0.55, 1] },
