@@ -8,6 +8,7 @@ export function useHorizontalHistory(itemCount: number) {
   const activeRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isInView, setIsInView] = useState(false);
+  const [startRequested, setStartRequested] = useState(false);
   const [isTemporarilyPaused, setIsTemporarilyPaused] = useState(false);
   const [isManuallyPaused, setIsManuallyPaused] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -30,8 +31,12 @@ export function useHorizontalHistory(itemCount: number) {
     const track = trackRef.current;
     if (!track) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.2),
-      { threshold: [0, 0.2, 0.55, 1] },
+      ([entry]) => {
+        const visible = entry.isIntersecting && entry.intersectionRatio >= 0.05;
+        setIsInView(visible);
+        if (visible) setStartRequested(true);
+      },
+      { threshold: [0, 0.05, 0.2, 0.55, 1] },
     );
     observer.observe(track);
     return () => observer.disconnect();
@@ -51,13 +56,13 @@ export function useHorizontalHistory(itemCount: number) {
     };
   }, []);
 
-  const isAutoPlaying = isInView && isDocumentVisible && !prefersReducedMotion && !isManuallyPaused && !isTemporarilyPaused;
+  const isAutoPlaying = startRequested && isDocumentVisible && !prefersReducedMotion && !isManuallyPaused && !isTemporarilyPaused;
 
   useEffect(() => {
     if (!isAutoPlaying) return;
     const timer = window.setTimeout(() => {
       goToIndex(activeRef.current === itemCount - 1 ? 0 : activeRef.current + 1);
-    }, hasAutoAdvanced.current ? 4000 : 650);
+    }, hasAutoAdvanced.current ? 4000 : 350);
     return () => window.clearTimeout(timer);
   }, [activeIndex, goToIndex, isAutoPlaying, itemCount]);
 
