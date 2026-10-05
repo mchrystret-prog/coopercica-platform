@@ -1,2 +1,4 @@
 node_modules
 .next/
+# Temporary compiled leaflet test files
+.leaflet-test/

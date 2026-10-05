@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:leaflets": "tsc lib/leaflet-import.ts lib/leaflet-presentation.ts lib/leaflets.ts --target ES2020 --module commonjs --esModuleInterop --skipLibCheck --outDir .leaflet-test && node --test tests/leaflet-import.test.cjs"
   },
   "dependencies": {
     "gsap": "^3.13.0",

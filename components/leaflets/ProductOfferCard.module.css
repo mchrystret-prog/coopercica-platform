@@ -6,3 +6,5 @@
 .cooperRegular small{font-size:.5rem;font-weight:800}.cooperRegular b{font-size:.9rem}
 .cooperPriceBox .featured>div{flex-wrap:wrap;row-gap:6px}.cooperPriceBox .featured b{font-size:clamp(1.5rem,2.5vw,2.25rem)}
 @media(max-width:600px){.cooperPriceBox{grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:8px 4px;padding:9px 6px 0}.cooperRegular{margin-inline:-6px;gap:4px}.cooperRegular small{font-size:.38rem}.cooperRegular b{font-size:.72rem}.cooperPriceBox .featured b{font-size:clamp(1.15rem,5vw,1.55rem)}}
+
+.seals{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-top:16px}.seals img{display:block;height:auto;object-fit:contain}.ageSeal{width:64px;max-width:100%}.warningSeal{width:100%;max-width:340px}.warningFallback{margin-top:12px;font-size:.875rem;line-height:1.4}
