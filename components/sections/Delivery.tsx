@@ -25,7 +25,7 @@ export function Delivery({content={}}:{content?:Record<string,string>}) {
             <li>Qualidade Coopercica</li>
           </ul>
 
-          <Button href={content.ctaHref||"https://www.coopercicadelivery.com.br/"} external>{content.ctaLabel||"Comprar no Delivery"}</Button>
+          <Button data-analytics-id="cta:delivery" data-analytics-label="Comprar no Delivery" href={content.ctaHref||"https://www.coopercicadelivery.com.br/"} external>{content.ctaLabel||"Comprar no Delivery"}</Button>
         </div>
 
         <div className={styles.visual}>

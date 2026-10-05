@@ -77,7 +77,7 @@ export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: 
       <div className={styles.carousel} role="region" aria-label="Folhetos disponíveis" aria-roledescription="carrossel">
         <button type="button" className={`${styles.slideArrow} ${styles.prev}`} aria-label="Folhetos anteriores" aria-controls="leaflets-track" disabled={edges.start} onClick={() => move(-1)}><Icon name="chevron-left" /></button>
         <div id="leaflets-track" className={styles.grid} ref={track} onPointerDown={down} onPointerMove={pointerMove} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag} onPointerLeave={event => { if (!drag.current.moved) endDrag(event); }} onClickCapture={preventClick} onDragStart={event => event.preventDefault()}>
-          {items.map(item => <Link className={styles.card} href={`/folheteria/${item.slug}`} key={item.id} draggable={false}>
+          {items.map(item => <Link data-analytics-id={`leaflet:${item.id}`} data-analytics-label={`Folheto: ${item.name}`} className={styles.card} href={`/folheteria/${item.slug}`} key={item.id} draggable={false}>
             <div className={styles.cover}>{item.cover_url ? <img src={item.cover_url} alt="" draggable={false} /> : <div className={styles.placeholder}><span>COOPERCICA</span><strong>{item.name}</strong></div>}</div>
             <div className={styles.info}><div><strong>{item.name}</strong><small>Válido até {new Date(item.ends_at + "T12:00:00").toLocaleDateString("pt-BR")}</small></div><span aria-hidden="true">→</span></div>
           </Link>)}

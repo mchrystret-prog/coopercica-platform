@@ -2,3 +2,9 @@ node_modules
 .next/
 # Temporary compiled leaflet test files
 .leaflet-test/
+
+# Local analytics tooling and secrets
+.analytics-test/
+supabase/.temp/
+supabase/functions/.env
+.env.local

@@ -1,0 +1,6 @@
+
+[functions.site-analytics-collect]
+enabled = true
+verify_jwt = false
+import_map = "./functions/site-analytics-collect/deno.json"
+entrypoint = "./functions/site-analytics-collect/index.ts"
