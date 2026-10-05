@@ -1,1 +1,4 @@
-import{LeafletAdmin}from"@/components/admin/LeafletAdmin";import{ContentManager}from"@/components/admin/ContentManager";export default function Page(){return <ContentManager kind="leaflet" title="Folhetos" createTitle="Novo folheto" description="Gerencie os folhetos digitais, vigências e produtos publicados no site."><LeafletAdmin/></ContentManager>}
+import { LeafletWorkspace } from "@/components/admin/LeafletWorkspace";
+export default function Page() {
+  return <LeafletWorkspace />;
+}
