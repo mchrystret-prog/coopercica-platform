@@ -54,19 +54,21 @@ export default async function LeafletPage({
               .
             </p>
           </div>
-          {groups.map((group, index) => (
-            <section
-              key={group.code}
-              className={group.code ? styles.box : styles.offers}
-              aria-labelledby={group.code ? `leaflet-box-${index}` : undefined}
-              style={
-                group.background
-                  ? {
-                      backgroundImage: `url(${JSON.stringify(group.background.imageUrl)})`,
-                    }
-                  : undefined
-              }
-            >
+        </div>
+        {groups.map((group, index) => (
+          <section
+            key={group.code}
+            className={group.code ? styles.box : styles.offers}
+            aria-labelledby={group.code ? `leaflet-box-${index}` : undefined}
+            style={
+              group.background
+                ? {
+                    backgroundImage: `url(${JSON.stringify(group.background.imageUrl)})`,
+                  }
+                : undefined
+            }
+          >
+            <div className="shell">
               {group.code ? (
                 <ProductCarousel
                   title={group.title}
@@ -92,9 +94,9 @@ export default async function LeafletPage({
                   ))}
                 </div>
               )}
-            </section>
-          ))}
-        </div>
+            </div>
+          </section>
+        ))}
       </main>
       <Footer />
     </>
