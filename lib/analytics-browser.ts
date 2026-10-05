@@ -23,6 +23,20 @@ type Session = {
   referrer_host: string;
 };
 
+// Three clicks within two seconds and a 40 px region signal possible frustration.
+export function createRageDetector() {
+  let recent: { at: number; x: number; y: number }[] = [];
+  return (at: number, x: number, y: number) => {
+    recent = recent.filter(
+      (p) => at - p.at <= 2000 && Math.hypot(x - p.x, y - p.y) <= 40,
+    );
+    recent.push({ at, x, y });
+    if (recent.length < 3) return false;
+    recent = [];
+    return true;
+  };
+}
+
 export function getConsent(): Consent {
   if (typeof window === "undefined") return "unknown";
   if (
@@ -135,7 +149,9 @@ export function startAnalytics(
     disposed = false,
     sending = false,
     retryAt = 0,
-    clickCount = 0;
+    clickCount = 0,
+    sequence = 0;
+  const rage = createRageDetector();
   const device = () =>
     innerWidth < 768
       ? ("mobile" as const)
@@ -172,6 +188,8 @@ export function startAnalytics(
       x: null,
       y: null,
       value: 0,
+      occurred_at: new Date().toISOString(),
+      page_sequence: ++sequence,
       ...dimensions(),
       ...detail,
     });
@@ -249,14 +267,14 @@ export function startAnalytics(
       event_type = "download";
     else if (anchor) event_type = "link_click";
     const section =
-      element?.closest("section[id],footer[id],nav[id]")?.id ||
+      event.target.closest("section[id],footer[id],nav[id]")?.id ||
       (element?.closest("header") ? "header" : "page");
     const hasPosition =
       event.detail !== 0 &&
       !event.target.closest('[data-analytics-fixed],[role="dialog"]') &&
       ++clickCount <= 200;
     const height = dimensions().document_height;
-    emit(event_type, {
+    const detail: Partial<AnalyticsEvent> = {
       target_id: (
         element?.dataset.analyticsId ||
         `${section}:${element?.tagName.toLowerCase() || "area"}`
@@ -280,7 +298,24 @@ export function startAnalytics(
       y: hasPosition
         ? Math.max(0, Math.min(1, (event.clientY + scrollY) / height))
         : null,
-    });
+    };
+    const interactive =
+      (element &&
+        (anchor ||
+          element.tagName === "BUTTON" ||
+          element.hasAttribute("role") ||
+          element.hasAttribute("tabindex"))) ||
+      event.target.closest(
+        '[role="button"],[role="link"],label,summary,video,audio',
+      );
+    if (!interactive && !element?.dataset.analyticsKind)
+      event_type = "non_interactive_click";
+    emit(event_type, detail);
+    if (
+      hasPosition &&
+      rage(Date.now(), event.clientX + scrollX, event.clientY + scrollY)
+    )
+      emit("rage_click", detail);
   };
   document.addEventListener("click", onClick);
 

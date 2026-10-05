@@ -5,7 +5,7 @@
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
-  gap:var(--content-gap);
+  gap: var(--content-gap);
   align-items: center;
 }
 
@@ -55,7 +55,7 @@
   overflow: hidden;
 
   border-radius: var(--radius-lg);
-  box-shadow:var(--shadow-soft);
+  box-shadow: var(--shadow-soft);
 }
 
 .image {
@@ -81,5 +81,34 @@
     grid-template-columns: 1fr;
     gap: 16px;
     margin-top: 24px;
+  }
+}
+/* Actions follow the image on mobile while staying below desktop copy. */
+.layout {
+  grid-template-areas: "copy image" "actions image";
+  row-gap: 24px;
+}
+.content {
+  grid-area: copy;
+  align-self: end;
+}
+.visual {
+  grid-area: image;
+}
+.actions {
+  grid-area: actions;
+  align-self: start;
+  margin-top: 0;
+}
+@media (max-width: 900px) {
+  .layout {
+    grid-template-areas: "copy" "image" "actions";
+    row-gap: 28px;
+  }
+  .content {
+    align-self: auto;
+  }
+  .actions {
+    justify-self: start;
   }
 }
