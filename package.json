@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:leaflets": "tsc lib/leaflet-import.ts lib/leaflet-presentation.ts lib/leaflets.ts --target ES2020 --module commonjs --esModuleInterop --skipLibCheck --outDir .leaflet-test && node --test tests/leaflet-import.test.cjs"
+    "test:leaflets": "tsc lib/leaflet-import.ts lib/leaflet-presentation.ts lib/leaflets.ts --target ES2020 --module commonjs --esModuleInterop --skipLibCheck --outDir .leaflet-test && node --test tests/leaflet-import.test.cjs",
+    "test:analytics": "tsc lib/analytics-browser.ts lib/analytics-report.ts supabase/functions/_shared/analytics.ts --target ES2022 --module commonjs --esModuleInterop --skipLibCheck --outDir .analytics-test && node --test tests/analytics.test.cjs tests/analytics-browser.test.cjs"
   },
   "dependencies": {
     "gsap": "^3.13.0",

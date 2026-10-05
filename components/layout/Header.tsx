@@ -48,7 +48,7 @@ export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUr
   const closeMenu = () => setOpen(false);
 
   return (
-    <header className={styles.header}>
+    <header data-analytics-fixed className={styles.header}>
       <div className={`shell ${styles.inner}`}>
         <a
           href={onHome ? "#home" : "/"}
@@ -85,6 +85,8 @@ export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUr
           {links.filter(link=>link.sectionId!=="ofertas"||hasOffers).map((link) => (
             <a
               key={link.href}
+              data-analytics-id={`navigation:${link.sectionId}`}
+              data-analytics-label={`Menu: ${link.label}`}
               href={link.href.startsWith("#") && !onHome ? `/${link.href}` : link.href}
               onClick={closeMenu}
               className={
@@ -98,7 +100,7 @@ export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUr
             </a>
           ))}
 
-          <Button className={styles.cta} href={deliveryUrl} external onClick={closeMenu}>Comprar online</Button>
+          <Button data-analytics-id="cta:delivery-header" data-analytics-label="Comprar online" className={styles.cta} href={deliveryUrl} external onClick={closeMenu}>Comprar online</Button>
         </nav>
       </div>
     </header>

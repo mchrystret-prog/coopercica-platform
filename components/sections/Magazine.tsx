@@ -78,6 +78,9 @@ export function Magazine({ items,content={} }: MagazineProps) {
           <article className={styles.featured}>
             <div className={styles.coverStage}>
               <a
+                data-analytics-kind="download"
+                data-analytics-id={`magazine:${selectedMagazine.id}`}
+                data-analytics-label={`Revista: ${selectedMagazine.edition}`}
                 className={styles.coverLink}
                 href={selectedMagazine.href}
                 aria-label={`Ler ${selectedMagazine.edition}: ${selectedMagazine.title}`}
@@ -102,7 +105,7 @@ export function Magazine({ items,content={} }: MagazineProps) {
               <span className={styles.coverShadow} aria-hidden="true" />
             </div>
 
-            <Button className={styles.readCta} href={selectedMagazine.href} aria-label={`Ler ${selectedMagazine.edition}: ${selectedMagazine.title}`}>Ler edição</Button>
+            <Button data-analytics-kind="download" data-analytics-id={`magazine:${selectedMagazine.id}`} data-analytics-label={`Revista: ${selectedMagazine.edition}`} className={styles.readCta} href={selectedMagazine.href} aria-label={`Ler ${selectedMagazine.edition}: ${selectedMagazine.title}`}>Ler edição</Button>
           </article>
 
           <aside className={styles.gallery} aria-label="Galeria de edições">

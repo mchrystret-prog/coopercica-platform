@@ -56,6 +56,10 @@ export function Hero({ items }: HeroProps) {
         return (
           <a
             key={campaign.id}
+            data-analytics-kind="banner"
+            data-analytics-id={`banner:${campaign.id}`}
+            data-analytics-label={campaign.title}
+            data-analytics-active={isActive ? "true" : "false"}
             href={campaign.href}
             target={campaign.target ?? "_self"}
             rel={
