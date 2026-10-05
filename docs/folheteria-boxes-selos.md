@@ -31,17 +31,19 @@ As URLs das artes são guardadas junto de cada produto. Substituir um arquivo na
 
 ## Carrossel e dimensões do fundo
 
-Produtos com `BOX` aparecem em uma única faixa horizontal dentro da seção. O fundo permanece parado enquanto os produtos deslizam. Use as setas, a barra de rolagem, o deslize no celular ou as teclas esquerda/direita (Home/End para início/fim) com a lista focada. Não há reprodução automática. Até quatro produtos ficam visíveis no desktop, três ou dois no tablet e um com parte do próximo no celular. Com poucos produtos, as setas ficam desabilitadas quando não há mais conteúdo naquela direção.
+Produtos com `BOX` aparecem em uma única faixa horizontal. Quando há fundo cadastrado, seu primeiro quarto ocupa uma coluna fixa à esquerda, com a mesma largura de um card. Essa coluna fica fora da lista de produtos e não se move ao usar as setas. No desktop há um espaço para o selo e até três produtos visíveis; nos tablets há um espaço para o selo e dois ou um produto. Até 600 px, o selo aparece acima da faixa, e o carrossel mantém um produto e parte do próximo visíveis.
 
-Referência para criar a arte:
+Use as setas, a barra de rolagem, o deslize no celular ou as teclas esquerda/direita (Home/End para início/fim) com a lista focada. Não há reprodução automática. As setas ficam desabilitadas ao alcançar os limites da lista. A coluna da arte não entra na contagem nem no cálculo do avanço. Boxes sem fundo continuam usando toda a largura disponível para os produtos.
 
-| Área                    | Desktop (acima de 600 px)        | Celular (até 600 px)             |
-| ----------------------- | -------------------------------- | -------------------------------- |
-| Card dentro do box      | Altura mínima de 560 px          | Altura mínima de 440 px          |
-| Seção inteira do box    | Altura mínima de 720 px          | Altura mínima de 600 px          |
-| Espaço interno da seção | 32 px; 24 px em telas até 760 px | 16 px vertical, 10 px horizontal |
+Para fundos como os exemplos de Açougue e Padaria, use **1920 × 505 px**. Coloque o selo inteiro nos primeiros **480 px** (25% da largura), com margem, e mantenha a cor uniforme no restante da imagem. O site exibe esse primeiro quarto na coluna da arte, preservando a proporção do selo. A região direita do arquivo preenche o fundo da seção com `cover`, alinhado à direita, para acompanhar a altura do conteúdo sem ampliar ou cortar o selo à esquerda. O arquivo original é usado inteiro, sem alteração da imagem ou upload de recortes.
 
-Recomendação: fundo **1280 × 720 px**, sem título nem produtos embutidos. O site insere o título e os cards. A imagem preenche a seção (`cover`) com recorte central conforme a largura da tela; evite textos na arte e mantenha elementos importantes longe das bordas. No celular o recorte horizontal é maior. As dimensões são mínimas, não alturas fixas: descrições longas, múltiplos selos, imagens de selo altas e ampliação de texto podem aumentar a altura para preservar todo o conteúdo. Todos os cards do mesmo carrossel acompanham a altura do maior card.
+| Área            | Desktop (acima de 600 px)           | Celular (até 600 px)                                             |
+| --------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| Card de produto | Altura mínima de 560 px             | Altura mínima de 440 px                                          |
+| Selo do box     | Uma coluna com a largura de um card | Acima dos produtos, com área de 200 a 280 px de altura           |
+| Seção inteira   | Altura mínima de 720 px             | Altura mínima de 600 px, crescendo para acomodar arte e produtos |
+
+A altura de 505 px é a altura do arquivo enviado, não a altura final da seção. Descrições longas, múltiplos selos, imagens de advertência altas e ampliação de texto podem aumentar a altura para preservar todo o conteúdo. Todos os cards do mesmo carrossel acompanham a altura do maior card.
 
 Na página publicada medida antes da mudança, os cards comuns tinham aproximadamente 501 a 505 px no desktop (1363 px de largura da janela). A grade comum continua com altura definida pelo conteúdo.
 
@@ -51,4 +53,4 @@ A biblioteca usa uma chave por arquivo em `site_settings`, gravada pelo RPC exis
 
 Execute `npm run test:leaflets` para verificar agrupamento, selos, campos legados, seleção por folheto, preservação das artes e validações de entrada. Execute também `npx tsc --noEmit` e `npm run build`.
 
-Validação do carrossel: testes de importação e agrupamento, TypeScript, build de produção, renderização da página com nove produtos (dois boxes e uma grade comum) e verificação dos controles com uma superfície de rolagem simulada. Foram conferidos ordem, preços, fundos, selos, limites das setas, teclado, movimento reduzido e limpeza dos listeners. A altura anterior dos cards foi medida no navegador na página publicada. A validação visual do carrossel com um folheto contendo boxes ainda precisa ser realizada no preview antes do merge.
+Validação do carrossel: testes de importação e agrupamento, TypeScript, build de produção, renderização da página com nove produtos (dois boxes e uma grade comum) e verificação dos controles com uma superfície de rolagem simulada. Foram conferidos ordem, preços, fundos, selos, limites das setas, teclado, movimento reduzido e limpeza dos listeners. A altura anterior dos cards foi medida no navegador na página publicada. Para a coluna fixa, foram conferidos também os dois fundos de 1920 × 505 px, a renderização de duas artes fora das listas, a equivalência entre largura da coluna e do card e a região direita usada para preencher o fundo. A abertura da fixture local no navegador foi bloqueada pela política de URLs do navegador remoto. A validação visual do carrossel com um folheto contendo boxes permanece pendente no preview antes do merge.

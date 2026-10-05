@@ -15,10 +15,12 @@ import styles from "./ProductCarousel.module.css";
 export function ProductCarousel({
   title,
   headingId,
+  artworkUrl,
   children,
 }: {
   title: string;
   headingId: string;
+  artworkUrl?: string;
   children: ReactNode;
 }) {
   const products = Children.toArray(children);
@@ -86,7 +88,7 @@ export function ProductCarousel({
 
   return (
     <div
-      className={styles.carousel}
+      className={`${styles.carousel} ${artworkUrl ? styles.withArtwork : ""}`}
       role="group"
       aria-roledescription="carrossel"
       aria-labelledby={headingId}
@@ -116,23 +118,32 @@ export function ProductCarousel({
           </button>
         </div>
       </div>
-      <ul
-        id={trackId}
-        ref={track}
-        className={styles.track}
-        tabIndex={0}
-        aria-label={`Produtos de ${title}`}
-        onKeyDown={onKeyDown}
-      >
-        {products.map((product, index) => (
-          <li
-            className={styles.item}
-            key={isValidElement(product) ? product.key : index}
-          >
-            {product}
-          </li>
-        ))}
-      </ul>
+      <div className={styles.body}>
+        {artworkUrl ? (
+          <div
+            className={styles.artwork}
+            aria-hidden="true"
+            style={{ backgroundImage: `url(${JSON.stringify(artworkUrl)})` }}
+          />
+        ) : null}
+        <ul
+          id={trackId}
+          ref={track}
+          className={styles.track}
+          tabIndex={0}
+          aria-label={`Produtos de ${title}`}
+          onKeyDown={onKeyDown}
+        >
+          {products.map((product, index) => (
+            <li
+              className={styles.item}
+              key={isValidElement(product) ? product.key : index}
+            >
+              {product}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

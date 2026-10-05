@@ -71,6 +71,7 @@ export default async function LeafletPage({
                 <ProductCarousel
                   title={group.title}
                   headingId={`leaflet-box-${index}`}
+                  artworkUrl={group.background?.imageUrl}
                 >
                   {group.products.map(({ product, presentation }) => (
                     <ProductOfferCard
