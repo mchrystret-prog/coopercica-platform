@@ -205,7 +205,7 @@ export function LeafletAssetLibrary() {
             PNG, JPG ou WebP, até 10 MB. Use PNG ou WebP transparente para
             selos.{" "}
             {kind === "box"
-              ? "Fundo recomendado: 1280 × 720 px. O box tem altura mínima de 720 px no desktop e 600 px no celular. A arte preenche a seção com recorte central; mantenha elementos importantes longe das bordas. Título e produtos são inseridos pelo site."
+              ? "Fundo com selo à esquerda: use 1920 × 505 px, com o selo inteiro nos primeiros 480 px e cor uniforme no restante. Essa área ocupa um card fixo antes dos produtos no desktop; no celular, aparece acima do carrossel. A seção cresce para acomodar os cards e selos de advertência."
               : "Transcreva o texto completo do selo no texto alternativo."}
           </small>
         </label>

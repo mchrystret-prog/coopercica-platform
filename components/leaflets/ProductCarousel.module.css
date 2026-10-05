@@ -2,6 +2,26 @@
   min-width: 0;
 }
 
+.body {
+  min-width: 0;
+}
+
+/* The first slot stays outside the scrolling track, at the same width as a card. */
+.withArtwork .body {
+  display: grid;
+  grid-template-columns: calc((100% - 60px) / 4) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.artwork {
+  min-width: 0;
+  min-height: 560px;
+  background-repeat: no-repeat;
+  background-position: left center;
+  /* Show the left quarter of the uploaded strip without stretching the seal. */
+  background-size: 400% auto;
+}
+
 .heading {
   display: flex;
   align-items: center;
@@ -52,6 +72,7 @@
 }
 
 .track {
+  min-width: 0;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: calc((100% - 60px) / 4);
@@ -65,6 +86,10 @@
   scroll-snap-type: x mandatory;
   scrollbar-width: thin;
   scrollbar-color: var(--brand-green-900) var(--surface-soft);
+}
+
+.withArtwork .track {
+  grid-auto-columns: calc((100% - 40px) / 3);
 }
 
 .item {
@@ -88,11 +113,23 @@
   .track {
     grid-auto-columns: calc((100% - 40px) / 3);
   }
+  .withArtwork .body {
+    grid-template-columns: calc((100% - 40px) / 3) minmax(0, 1fr);
+  }
+  .withArtwork .track {
+    grid-auto-columns: calc((100% - 20px) / 2);
+  }
 }
 
 @media (max-width: 900px) {
   .track {
     grid-auto-columns: calc((100% - 20px) / 2);
+  }
+  .withArtwork .body {
+    grid-template-columns: calc((100% - 20px) / 2) minmax(0, 1fr);
+  }
+  .withArtwork .track {
+    grid-auto-columns: 100%;
   }
 }
 
@@ -104,11 +141,22 @@
   .title {
     padding: 10px 14px;
   }
-  .track {
+  .track,
+  .withArtwork .track {
     grid-auto-columns: min(85%, 320px);
     gap: 12px;
   }
   .item > article {
     min-height: 440px;
+  }
+  .withArtwork .body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .artwork {
+    justify-self: center;
+    width: min(85%, 320px);
+    height: clamp(200px, 65vw, 280px);
+    min-height: 0;
   }
 }
