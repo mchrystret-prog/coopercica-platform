@@ -7,6 +7,8 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
   type ReactNode,
 } from "react";
 import { Icon } from "@/components/ui/Icon";
@@ -25,6 +27,12 @@ export function ProductCarousel({
 }) {
   const products = Children.toArray(children);
   const track = useRef<HTMLUListElement>(null);
+  const drag = useRef({
+    pointerId: -1,
+    startX: 0,
+    scrollLeft: 0,
+    moved: false,
+  });
   const trackId = `${headingId}-products`;
   const [edges, setEdges] = useState({ start: true, end: true });
 
@@ -86,6 +94,71 @@ export function ProductCarousel({
     }
   }
 
+  function startDrag(event: PointerEvent<HTMLUListElement>) {
+    drag.current.moved = false;
+    const element = event.currentTarget;
+    if (
+      event.pointerType === "touch" ||
+      event.button !== 0 ||
+      !event.isPrimary ||
+      element.scrollWidth <= element.clientWidth + 2
+    )
+      return;
+    drag.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      scrollLeft: element.scrollLeft,
+      moved: false,
+    };
+  }
+
+  function moveDrag(event: PointerEvent<HTMLUListElement>) {
+    const state = drag.current;
+    if (state.pointerId !== event.pointerId) return;
+    const delta = event.clientX - state.startX;
+    if (!state.moved && Math.abs(delta) <= 6) return;
+    const element = event.currentTarget;
+    if (!state.moved) {
+      state.moved = true;
+      element.setPointerCapture(event.pointerId);
+      element.classList.add(styles.dragging);
+    }
+    element.scrollLeft = state.scrollLeft - delta;
+  }
+
+  function endDrag(event: PointerEvent<HTMLUListElement>) {
+    const state = drag.current;
+    if (state.pointerId !== event.pointerId) return;
+    const element = event.currentTarget;
+    const offset = element.scrollLeft;
+    state.pointerId = -1;
+    element.classList.remove(styles.dragging);
+    if (element.hasPointerCapture(event.pointerId)) {
+      element.releasePointerCapture(event.pointerId);
+    }
+    if (state.moved) {
+      const cardWidth =
+        element.firstElementChild?.getBoundingClientRect().width ??
+        element.clientWidth;
+      const step =
+        cardWidth + (parseFloat(getComputedStyle(element).columnGap) || 0);
+      element.scrollTo({
+        left: Math.round(offset / step) * step,
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
+    }
+  }
+
+  function preventDragClick(event: MouseEvent<HTMLUListElement>) {
+    if (drag.current.moved && event.detail !== 0) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    drag.current.moved = false;
+  }
+
   return (
     <div
       className={`${styles.carousel} ${artworkUrl ? styles.withArtwork : ""}`}
@@ -129,10 +202,20 @@ export function ProductCarousel({
         <ul
           id={trackId}
           ref={track}
-          className={styles.track}
+          className={`${styles.track} ${edges.start && edges.end ? styles.staticTrack : ""}`}
           tabIndex={0}
           aria-label={`Produtos de ${title}`}
           onKeyDown={onKeyDown}
+          onPointerDown={startDrag}
+          onPointerMove={moveDrag}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onLostPointerCapture={endDrag}
+          onPointerLeave={(event) => {
+            if (!drag.current.moved) endDrag(event);
+          }}
+          onClickCapture={preventDragClick}
+          onDragStart={(event) => event.preventDefault()}
         >
           {products.map((product, index) => (
             <li

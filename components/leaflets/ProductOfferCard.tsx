@@ -18,6 +18,8 @@ export function ProductOfferCard({
   product: LeafletProduct;
   seals?: LeafletAsset[];
 }) {
+  const ageSeal = seals.find((seal) => seal.code === "+18");
+  const warningSeals = seals.filter((seal) => seal.code !== "+18");
   const hasCooper = (product.coopermais_price ?? 0) > 0;
   const hasOffer = (product.offer_all_price ?? 0) > 0;
   const featured = hasCooper
@@ -35,12 +37,28 @@ export function ProductOfferCard({
           height={26}
         />
       </div>
-      <div className={styles.visual}>
+      <div
+        className={`${styles.visual} ${ageSeal ? styles.visualWithAgeSeal : ""}`}
+      >
         {product.image_url ? (
-          <img src={product.image_url} alt={product.description} />
+          <img
+            className={styles.productImage}
+            src={product.image_url}
+            alt={product.description}
+          />
         ) : (
           <div className={styles.noImage}>Imagem em breve</div>
         )}
+        {ageSeal ? (
+          <Image
+            unoptimized
+            width={48}
+            height={48}
+            className={styles.ageSeal}
+            src={ageSeal.imageUrl}
+            alt={ageSeal.alt}
+          />
+        ) : null}
         {product.super_offer ? (
           <Badge variant="red" className={styles.badge}>
             Super Oferta
@@ -97,16 +115,14 @@ export function ProductOfferCard({
           <span>{product.promo_pack}</span>
         </div>
       ) : null}
-      {seals.length ? (
+      {warningSeals.length ? (
         <div className={styles.seals}>
-          {seals.map((seal) => (
+          {warningSeals.map((seal) => (
             <Image
               unoptimized
               width={800}
               height={200}
-              className={
-                seal.code === "+18" ? styles.ageSeal : styles.warningSeal
-              }
+              className={styles.warningSeal}
               src={seal.imageUrl}
               alt={seal.alt}
               key={seal.code}
