@@ -14,9 +14,11 @@ const money = (value: number) =>
 export function ProductOfferCard({
   product,
   seals = [],
+  inBox = false,
 }: {
   product: LeafletProduct;
   seals?: LeafletAsset[];
+  inBox?: boolean;
 }) {
   const ageSeal = seals.find((seal) => seal.code === "+18");
   const warningSeals = seals.filter((seal) => seal.code !== "+18");
@@ -28,7 +30,7 @@ export function ProductOfferCard({
       ? product.offer_all_price!
       : product.regular_price;
   return (
-    <Card className={styles.card}>
+    <Card className={`${styles.card} ${inBox ? styles.boxCard : ""}`}>
       <div className={styles.brand}>
         <Image
           src="/images/logo.png"

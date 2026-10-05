@@ -77,6 +77,7 @@ export default async function LeafletPage({
                 >
                   {group.products.map(({ product, presentation }) => (
                     <ProductOfferCard
+                      inBox
                       product={product}
                       seals={presentation.seals}
                       key={product.id}

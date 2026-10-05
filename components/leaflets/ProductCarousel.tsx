@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
@@ -35,6 +36,51 @@ export function ProductCarousel({
   });
   const trackId = `${headingId}-products`;
   const [edges, setEdges] = useState({ start: true, end: true });
+  const [lightTextArtwork, setLightTextArtwork] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!artworkUrl) return;
+    const image = new window.Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      try {
+        // Box backgrounds use a uniform color in the rightmost 75%.
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = 1;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        if (!context) return;
+        context.drawImage(
+          image,
+          image.naturalWidth - 1,
+          Math.floor(image.naturalHeight / 2),
+          1, 1, 0, 0, 1, 1,
+        );
+        const [r, g, b, alpha] = context.getImageData(0, 0, 1, 1).data;
+        if (alpha < 255) return;
+        const linear = (channel: number) => {
+          const value = channel / 255;
+          return value <= 0.04045
+            ? value / 12.92
+            : ((value + 0.055) / 1.055) ** 2.4;
+        };
+        const luminance =
+          0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+        const greenLuminance =
+          0.2126 * linear(28) + 0.7152 * linear(71) + 0.0722 * linear(34);
+        const whiteContrast = 1.05 / (luminance + 0.05);
+        const greenContrast =
+          (Math.max(luminance, greenLuminance) + 0.05) /
+          (Math.min(luminance, greenLuminance) + 0.05);
+        setLightTextArtwork(whiteContrast > greenContrast ? artworkUrl : null);
+      } catch {
+        // Images without CORS permission retain the standard green text.
+      }
+    };
+    image.src = artworkUrl;
+    return () => {
+      image.onload = null;
+    };
+  }, [artworkUrl]);
 
   useEffect(() => {
     const element = track.current;
@@ -162,6 +208,14 @@ export function ProductCarousel({
   return (
     <div
       className={`${styles.carousel} ${artworkUrl ? styles.withArtwork : ""}`}
+      style={
+        artworkUrl && lightTextArtwork === artworkUrl
+          ? ({
+              "--box-product-text": "var(--text-inverse)",
+              "--box-product-logo-filter": "brightness(0) invert(1)",
+            } as CSSProperties)
+          : undefined
+      }
       role="group"
       aria-roledescription="carrossel"
       aria-labelledby={headingId}
