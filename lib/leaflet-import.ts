@@ -3,6 +3,7 @@ import {
   normalize,
   enabled,
   resolvePresentation,
+  boxCode,
   type LeafletAsset,
 } from "./leaflet-presentation";
 
@@ -28,17 +29,48 @@ export function spreadsheetRecords(rows: unknown[][]) {
     throw new Error(
       `Exportação incompatível. Colunas ausentes: ${missing.join(", ")}.`,
     );
-  const used = headers.filter((header) => normalize(header));
-  if (new Set(used.map(normalize)).size !== used.length)
-    throw new Error("A planilha contém nomes de colunas repetidos.");
+  const columns = new Map<string, number[]>();
+  headers.forEach((header, index) => {
+    const code = normalize(header);
+    if (code) columns.set(code, [...(columns.get(code) || []), index]);
+  });
+  const repeated = [...columns.entries()].filter(
+    ([code, indexes]) => code !== "box" && indexes.length > 1,
+  );
+  if (repeated.length)
+    throw new Error(
+      `A planilha contém nomes de colunas repetidos: ${repeated
+        .map(([, indexes]) => headers[indexes[0]])
+        .join(", ")}.`,
+    );
+  const boxColumns = columns.get("box") || [];
   const records = rows
     .slice(1)
-    .map((row, index) => ({
-      row: Object.fromEntries(
-        headers.map((header, i) => [header, row[i] ?? ""]),
-      ),
-      line: index + 2,
-    }))
+    .map((row, index) => {
+      const boxes = boxColumns
+        .map((column) => row[column] ?? "")
+        .filter((value) => String(value).trim());
+      if (new Set(boxes.map(boxCode)).size > 1)
+        throw new Error(
+          `Linha ${index + 2}: as colunas BOX indicam boxes diferentes (${boxes
+            .map((value) => `“${String(value).trim()}”`)
+            .join(
+              " e ",
+            )}). Mantenha uma única indicação de box para esse produto.`,
+        );
+      return {
+        row: Object.fromEntries(
+          headers.flatMap((header, column) => {
+            if (normalize(header) === "box" && boxColumns.length > 1) {
+              // ERP exports BOX even when empty; a manually added Box may carry the section.
+              return column === boxColumns[0] ? [[header, boxes[0] ?? ""]] : [];
+            }
+            return [[header, row[column] ?? ""]];
+          }),
+        ),
+        line: index + 2,
+      };
+    })
     .filter(({ row }) =>
       Object.values(row).some((value) => String(value ?? "").trim()),
     );
