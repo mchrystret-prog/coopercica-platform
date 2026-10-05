@@ -8,3 +8,23 @@
 @media(max-width:600px){.cooperPriceBox{grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:8px 4px;padding:9px 6px 0}.cooperRegular{margin-inline:-6px;gap:4px}.cooperRegular small{font-size:.38rem}.cooperRegular b{font-size:.72rem}.cooperPriceBox .featured b{font-size:clamp(1.15rem,5vw,1.55rem)}}
 
 .seals{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-top:16px}.seals img{display:block;height:auto;object-fit:contain}.visualWithAgeSeal{grid-template-columns:minmax(0,1fr) 40px;gap:8px;align-items:start}.visualWithAgeSeal .noImage{display:grid;place-items:center;width:100%;height:100%}.ageSeal{display:block;width:40px;height:40px;object-fit:contain;align-self:start;margin-top:6px}.visualWithAgeSeal .badge{top:auto;bottom:6px}.warningSeal{width:100%;max-width:340px}.warningFallback{margin-top:12px;font-size:.875rem;line-height:1.4}
+
+/* Only products in boxes inherit the artwork's contrasting text color. */
+.card.boxCard {
+  background: transparent;
+  border: 1px solid var(--brand-green-900);
+  color: var(--box-product-text, var(--text-heading));
+}
+
+.boxCard .brand img {
+  filter: var(--box-product-logo-filter, none);
+}
+
+.boxCard .noImage,
+.boxCard .warnings {
+  color: inherit;
+}
+
+.boxCard .copy {
+  overflow-wrap: anywhere;
+}
