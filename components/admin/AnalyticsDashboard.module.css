@@ -419,3 +419,96 @@
     font-size: 0.65rem;
   }
 }
+
+.sessionButton,
+.pagination button,
+.player button {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface-soft);
+  color: var(--text-heading);
+  font-weight: 700;
+  cursor: pointer;
+}
+.sessionButton[aria-pressed="true"] {
+  background: var(--brand-green-900);
+  color: var(--text-inverse);
+}
+.pagination,
+.player,
+.journeyHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+.pagination span,
+.journeyHeading > div {
+  margin-right: auto;
+}
+.currentEvent {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  border-left: 4px solid var(--brand-green-500);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  overflow-wrap: anywhere;
+}
+.currentEvent strong {
+  font-size: 1.25rem;
+}
+.currentEvent .sessionButton {
+  justify-self: start;
+}
+.timeline {
+  display: grid;
+  gap: 8px;
+  max-height: 400px;
+  overflow: auto;
+  padding-left: 28px;
+}
+.timeline button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--surface-page);
+  color: var(--text-heading);
+  cursor: pointer;
+}
+.timeline small {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+.timeline [aria-current="step"] button {
+  border-color: var(--brand-green-900);
+  background: var(--surface-soft);
+}
+.scrollOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.scrollBand {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.scrollBand span {
+  position: sticky;
+  display: inline-block;
+  top: 0;
+  max-width: 100%;
+  padding: 5px 10px;
+  background: var(--surface-card);
+  color: var(--text-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+}

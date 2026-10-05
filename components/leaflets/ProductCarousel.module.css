@@ -112,7 +112,6 @@
 
 .item > article {
   width: 100%;
-  min-height: 0;
 }
 
 .track:focus-visible,

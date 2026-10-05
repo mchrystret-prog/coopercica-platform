@@ -13,47 +13,65 @@ import { Stores } from "@/components/sections/Stores";
 import { Magazine } from "@/components/sections/Magazine";
 import { Leaflets } from "@/components/sections/Leaflets";
 
-import {
-  getCampaigns,
-  getMagazines,
-  getStores,
-} from "@/lib/content";
+import { getCampaigns, getMagazines, getStores } from "@/lib/content";
 import { getActiveLeaflets } from "@/lib/leaflets";
-import { getSiteIdentity,getSiteSections } from "@/lib/site";
+import { getSiteIdentity, getSiteSections, getSiteSetting } from "@/lib/site";
 
 export default async function Home() {
-  const [campaigns, stores, magazines, leaflets,identity,sections] = await Promise.all([
+  const [
+    campaigns,
+    stores,
+    magazines,
+    leaflets,
+    identity,
+    sections,
+    historyImages,
+  ] = await Promise.all([
     getCampaigns(),
     getStores(),
     getMagazines(),
     getActiveLeaflets(),
     getSiteIdentity(),
     getSiteSections(),
+    getSiteSetting<Record<string, string>>("history_images", {}),
   ]);
-  const section=(id:string)=>sections.find(s=>s.id===id);
-  const visible=(id:string)=>section(id)?.active!==false;
+  const section = (id: string) => sections.find((s) => s.id === id);
+  const visible = (id: string) => section(id)?.active !== false;
 
   return (
     <>
       <OnePageNavigation />
-      <Header logo={identity.logo} siteName={identity.siteName} deliveryUrl={identity.deliveryUrl} hasOffers={leaflets.length>0} />
+      <Header
+        logo={identity.logo}
+        siteName={identity.siteName}
+        deliveryUrl={identity.deliveryUrl}
+        hasOffers={leaflets.length > 0}
+      />
 
       <main>
         <Hero items={campaigns} />
 
-        {visible("app-showcase")?<AppShowcase />:null}
+        {visible("app-showcase") ? <AppShowcase /> : null}
 
-        {visible("ofertas")?<Leaflets items={leaflets} content={section("ofertas")?.content}/>:null}
+        {visible("ofertas") ? (
+          <Leaflets items={leaflets} content={section("ofertas")?.content} />
+        ) : null}
 
-        {visible("lojas")?<Stores items={stores} />:null}
+        {visible("lojas") ? <Stores items={stores} /> : null}
 
-        {visible("drogaria")?<Pharmacy content={section("drogaria")?.content}/>:null}
+        {visible("drogaria") ? (
+          <Pharmacy content={section("drogaria")?.content} />
+        ) : null}
 
-        {visible("delivery")?<Delivery content={section("delivery")?.content}/>:null}
+        {visible("delivery") ? (
+          <Delivery content={section("delivery")?.content} />
+        ) : null}
 
-        {visible("revista")?<Magazine items={magazines} content={section("revista")?.content}/>:null}
+        {visible("revista") ? (
+          <Magazine items={magazines} content={section("revista")?.content} />
+        ) : null}
 
-        {visible("historia")?<History />:null}
+        {visible("historia") ? <History images={historyImages} /> : null}
       </main>
 
       <Footer />

@@ -28,3 +28,17 @@
 .boxCard .copy {
   overflow-wrap: anywhere;
 }
+
+@media (max-width: 600px) {
+  .card.boxCard { min-height: 440px; padding: 20px; }
+  .boxCard .visual { height: 200px; }
+  .boxCard .copy { min-height: 58px; }
+  .boxCard .copy strong, .boxCard .copy span { font-size: 1rem; line-height: 1.15; }
+}
+
+@media (max-width: 600px) {
+  .boxCard .featured b { font-size: 1.85rem; }
+  .boxCard .cooperPriceBox .featured b { font-size: clamp(1.55rem, 7vw, 1.85rem); }
+  .boxCard .regular b, .boxCard .cooperRegular b { font-size: .9rem; }
+  .boxCard .cooperRegular small { font-size: .5rem; }
+}

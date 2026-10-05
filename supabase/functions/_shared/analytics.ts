@@ -7,6 +7,8 @@ export const EVENT_TYPES = [
   "scroll_depth",
   "engagement",
   "click",
+  "rage_click",
+  "non_interactive_click",
 ] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
 export type Device = "mobile" | "tablet" | "desktop";
@@ -29,6 +31,8 @@ export type AnalyticsEvent = {
   viewport_width: number;
   document_height: number;
   value: number;
+  occurred_at?: string;
+  page_sequence?: number;
 };
 
 const PUBLIC_PATH =
@@ -108,8 +112,27 @@ export function parseAnalyticsBatch(input: unknown): AnalyticsEvent[] {
   return batch.events.map((item: unknown) => {
     if (!item || typeof item !== "object") throw new Error("invalid_event");
     const e = item as Record<string, unknown>;
-    if (Object.keys(e).length !== keys.length || keys.some((k) => !(k in e)))
+    if (
+      keys.some((k) => !(k in e)) ||
+      Object.keys(e).some(
+        (k) =>
+          !keys.includes(k) && !["occurred_at", "page_sequence"].includes(k),
+      )
+    )
       throw new Error("invalid_event");
+    if ((e.occurred_at === undefined) !== (e.page_sequence === undefined))
+      throw new Error("invalid_timing");
+    if (
+      e.occurred_at !== undefined &&
+      (typeof e.occurred_at !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(e.occurred_at) ||
+        !Number.isFinite(Date.parse(e.occurred_at)) ||
+        Math.abs(Date.now() - Date.parse(e.occurred_at)) > 86400000 ||
+        !Number.isInteger(e.page_sequence) ||
+        Number(e.page_sequence) < 1 ||
+        Number(e.page_sequence) > 1000000)
+    )
+      throw new Error("invalid_timing");
     for (const key of ["event_id", "session_id", "page_view_id"])
       if (typeof e[key] !== "string" || !UUID.test(e[key]))
         throw new Error("invalid_id");
@@ -142,9 +165,14 @@ export function parseAnalyticsBatch(input: unknown): AnalyticsEvent[] {
         throw new Error("invalid_position");
     if ((e.x === null) !== (e.y === null)) throw new Error("invalid_position");
     if (
-      !["click", "link_click", "banner_click", "download"].includes(
-        String(e.event_type),
-      ) &&
+      ![
+        "click",
+        "link_click",
+        "banner_click",
+        "download",
+        "rage_click",
+        "non_interactive_click",
+      ].includes(String(e.event_type)) &&
       e.x !== null
     )
       throw new Error("invalid_position");

@@ -45,7 +45,7 @@ test('form input, prevented drags and synthetic clicks are excluded',async()=>{
 });
 test('keyboard clicks and fixed menus count without heatmap coordinates',async()=>{
  const s=setup();const stop=s.analytics.startAnalytics('/');s.click(new FakeElement({tagName:'BUTTON'}),{detail:0});s.click(new FakeElement({fixed:true}));stop();
- const clicks=(await s.events()).filter(e=>e.event_type==='click');assert.equal(clicks.length,2);assert(clicks.every(e=>e.x===null&&e.y===null));
+ const clicks=(await s.events()).filter(e=>['click','non_interactive_click'].includes(e.event_type));assert.equal(clicks.length,2);assert(clicks.every(e=>e.x===null&&e.y===null));
 });
 test('banner impressions require active visibility and are deduplicated per page',async()=>{
  const s=setup();const stop=s.analytics.startAnalytics('/');const notify=()=>s.intersection()([{target:s.banner,intersectionRatio:0.8}]);
@@ -60,4 +60,17 @@ test('revoking consent discards queued events and clears the session',async()=>{
 });
 test('same tab preserves attribution across routes',async()=>{
  const s=setup();s.analytics.startAnalytics('/')();location=new URL('https://coopercica-platform.vercel.app/revista');s.analytics.startAnalytics('/revista')();const events=await s.events();const views=events.filter(e=>e.event_type==='page_view');assert.equal(views.length,2);assert.equal(views[0].session_id,views[1].session_id);assert.equal(views[1].source,'meta');assert.notEqual(views[0].page_view_id,views[1].page_view_id);
+});
+
+test('timestamps and sequence preserve real event order within delivery batches',async()=>{
+ const s=setup();const stop=s.analytics.startAnalytics('/');s.click(new FakeElement({tagName:'BUTTON'}));stop();const events=await s.events();assert(events.every(e=>Number.isFinite(Date.parse(e.occurred_at))));assert.deepEqual(events.map(e=>e.page_sequence),events.map((e,i)=>i+1));
+});
+test('three positional clicks emit one rage signal without duplicating ordinary clicks',async()=>{
+ const s=setup();const stop=s.analytics.startAnalytics('/');for(let i=0;i<3;i++)s.click(new FakeElement({tagName:'BUTTON'}));stop();const events=await s.events();assert.equal(events.filter(e=>e.event_type==='rage_click').length,1);assert.equal(events.filter(e=>e.event_type==='click').length,3);
+});
+test('static areas are classified separately from links and controls',async()=>{
+ const s=setup();const stop=s.analytics.startAnalytics('/');s.click(new FakeElement());s.click(new FakeElement({tagName:'BUTTON'}));stop();const events=await s.events();assert.equal(events.filter(e=>e.event_type==='non_interactive_click').length,1);assert.equal(events.filter(e=>e.event_type==='click').length,1);
+});
+test('rage detector resets on distance, time, and after an emitted group',()=>{
+ const {createRageDetector}=setup().analytics;const detect=createRageDetector();assert.equal(detect(0,0,0),false);assert.equal(detect(10,0,0),false);assert.equal(detect(20,0,0),true);assert.equal(detect(30,0,0),false);assert.equal(detect(5000,0,0),false);assert.equal(detect(5010,100,100),false);assert.equal(detect(5020,100,100),false);assert.equal(detect(5030,100,100),true);
 });

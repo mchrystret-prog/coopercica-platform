@@ -45,7 +45,7 @@ Para fundos como os exemplos de Açougue e Padaria, use **1920 × 505 px**. Colo
 | Selo do box     | Uma coluna com a largura de um card | Acima dos produtos, com área de 200 a 280 px de altura           |
 | Seção inteira   | Altura mínima de 720 px             | Altura mínima de 600 px, crescendo para acomodar arte e produtos |
 
-A altura de 505 px é a altura do arquivo enviado, não a altura final da seção. Descrições longas, múltiplos selos, imagens de advertência altas e ampliação de texto podem aumentar a altura para preservar todo o conteúdo. Todos os cards do mesmo carrossel acompanham a altura do maior card. Os cards e a coluna da arte não impõem altura mínima: isso elimina o espaço extra criado pelas antigas alturas de 560 px e 440 px.
+A altura de 505 px é a altura do arquivo enviado, não a altura final da seção. Descrições longas, múltiplos selos, imagens de advertência altas e ampliação de texto podem aumentar a altura para preservar todo o conteúdo. Todos os cards do mesmo carrossel acompanham a altura do maior card. No desktop, os cards e a coluna da arte não impõem altura mínima. No celular, os cards dos boxes têm mínimo de 440 px para manter a imagem e os preços legíveis; a seção acompanha a altura do conteúdo.
 
 Na página publicada medida antes da mudança, os cards comuns tinham aproximadamente 501 a 505 px no desktop (1363 px de largura da janela). A grade comum continua com altura definida pelo conteúdo.
 
@@ -64,3 +64,7 @@ Validação do carrossel: testes de importação e agrupamento, TypeScript, buil
 Validação dos ajustes de largura, arraste e +18: 11 testes de importação, TypeScript, ESLint dos TSX alterados (sem erros; avisos preexistentes de imagens) e build de produção aprovados. A renderização confirmou seções diretamente em `main`, conteúdo em containers internos, +18 junto à foto e os demais selos abaixo do preço. Os handlers de arraste foram exercitados com uma superfície de rolagem simulada, incluindo limiar, captura, deslocamento, alinhamento ao soltar, cancelamento, clique após arraste, toque nativo e bloqueio do arraste de imagens. A conferência visual no navegador permanece pendente.
 
 Validação dos cards transparentes: TypeScript, ESLint dos componentes (zero erros e dois avisos preexistentes de imagens) e build de produção aprovados. A renderização confirmou o estilo somente nos oito produtos de boxes da fixture, preservando o produto da grade comum, preços e selos. A simulação de imagem/canvas com os pixels dos fundos enviados confirmou texto branco no Açougue e verde na Padaria, tratamento de transparência e falha de CORS, troca de URL e limpeza do callback. Controles e arraste continuaram aprovados na superfície simulada. Conferência visual no navegador pendente.
+
+## Cards dos boxes no celular
+
+Até 600 px, os cards têm altura mínima de 440 px, área de imagem de 200 px e descrição de 1 rem. A altura cresce se o produto ou advertência exigir espaço. A largura continua limitada a 85% do carrossel / 320 px para mostrar parte do próximo card. Permanecem transparentes, com contorno verde e contraste ajustado ao fundo.

@@ -10,6 +10,7 @@ import {
   type AnalyticsFilters,
   type AnalyticsReport,
 } from "@/lib/analytics-report";
+import { AnalyticsSessions } from "./AnalyticsSessions";
 import { AnalyticsHeatmap } from "./AnalyticsHeatmap";
 import styles from "./AnalyticsDashboard.module.css";
 
@@ -34,7 +35,7 @@ export function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [tab, setTab] = useState<
-    "overview" | "banners" | "interactions" | "heatmap"
+    "overview" | "banners" | "interactions" | "heatmap" | "sessions"
   >("overview");
   const periodDays =
     (Date.parse(filters.to) - Date.parse(filters.from)) / 86400000;
@@ -195,6 +196,7 @@ export function AnalyticsDashboard() {
         {(
           [
             ["overview", "Visão geral"],
+            ["sessions", "Sessões e comportamento"],
             ["banners", "Banners"],
             ["interactions", "Cliques e rolagem"],
             ["heatmap", "Mapa de calor"],
@@ -210,6 +212,17 @@ export function AnalyticsDashboard() {
           </button>
         ))}
       </nav>
+      {tab === "sessions" && valid ? (
+        <AnalyticsSessions
+          key={`${filters.from}:${filters.to}:${filters.path}:${filters.device}`}
+          filters={filters}
+          revision={revision}
+          onMap={(path, device) => {
+            setFilters((current) => ({ ...current, path, device }));
+            setTab("heatmap");
+          }}
+        />
+      ) : null}
       {tab === "heatmap" && valid ? (
         <AnalyticsHeatmap
           filters={filters}
@@ -217,7 +230,7 @@ export function AnalyticsDashboard() {
           revision={revision}
         />
       ) : null}
-      {report && !error && tab !== "heatmap" ? (
+      {report && !error && tab !== "heatmap" && tab !== "sessions" ? (
         <div aria-busy={loading} className={loading ? styles.loading : ""}>
           <div className={styles.metrics}>
             {[

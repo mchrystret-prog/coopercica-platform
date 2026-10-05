@@ -52,3 +52,9 @@ test('escapes CSV cells and spreadsheet formulas',()=>{
 test('period presets include exactly the requested local dates',()=>{
  for(const days of [7,30,90]){const r=analyticsRange(days);assert.equal((Date.parse(r.to)-Date.parse(r.from))/86400000,days-1);}
 });
+
+test('new timing fields are optional for legacy collectors and strictly validated',()=>{
+ const timing={occurred_at:new Date().toISOString(),page_sequence:1};assert.equal(parseAnalyticsBatch(batch({...event(),...timing}))[0].page_sequence,1);
+ for(const changes of [{...timing,page_sequence:0},{...timing,page_sequence:1.5},{occurred_at:new Date().toISOString()},{...timing,occurred_at:'yesterday'},{...timing,occurred_at:'2020-01-01T00:00:00.000Z'}])assert.throws(()=>parseAnalyticsBatch(batch({...event(),...changes})));
+ for(const event_type of ['rage_click','non_interactive_click'])assert.equal(parseAnalyticsBatch(batch({...event(),event_type,x:0.1,y:0.2}))[0].event_type,event_type);
+});
