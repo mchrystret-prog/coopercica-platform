@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ProductOfferCard } from "@/components/leaflets/ProductOfferCard";
+import { ProductCarousel } from "@/components/leaflets/ProductCarousel";
 import { getLeaflet, getLeafletProducts } from "@/lib/leaflets";
 import { getLeafletAssets } from "@/lib/leaflet-assets";
 import { groupProducts } from "@/lib/leaflet-presentation";
@@ -67,19 +68,29 @@ export default async function LeafletPage({
               }
             >
               {group.code ? (
-                <h2 id={`leaflet-box-${index}`} className={styles.boxTitle}>
-                  {group.title}
-                </h2>
-              ) : null}
-              <div className={styles.grid}>
-                {group.products.map(({ product, presentation }) => (
-                  <ProductOfferCard
-                    product={product}
-                    seals={presentation.seals}
-                    key={product.id}
-                  />
-                ))}
-              </div>
+                <ProductCarousel
+                  title={group.title}
+                  headingId={`leaflet-box-${index}`}
+                >
+                  {group.products.map(({ product, presentation }) => (
+                    <ProductOfferCard
+                      product={product}
+                      seals={presentation.seals}
+                      key={product.id}
+                    />
+                  ))}
+                </ProductCarousel>
+              ) : (
+                <div className={styles.grid}>
+                  {group.products.map(({ product, presentation }) => (
+                    <ProductOfferCard
+                      product={product}
+                      seals={presentation.seals}
+                      key={product.id}
+                    />
+                  ))}
+                </div>
+              )}
             </section>
           ))}
         </div>
