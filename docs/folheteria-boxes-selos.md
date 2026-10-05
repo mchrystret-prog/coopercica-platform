@@ -4,7 +4,7 @@ No CMS, abra **Folheteria → Fundos e selos**. Cadastre cada arte como fundo de
 
 ## Planilha
 
-Mantenha a aba `Tabloide Digital` e as colunas atuais do ERP. Acrescente `BOX` e `Selos`:
+Mantenha a aba `Tabloide Digital` e as colunas atuais do ERP. Preencha a coluna `BOX` já existente na exportação; adicione-a somente se estiver ausente. Para códigos adicionais de advertência, acrescente `Selos`:
 
 | Descritivo Marketing   | BOX         | Selos         |
 | ---------------------- | ----------- | ------------- |
@@ -16,7 +16,9 @@ Mantenha a aba `Tabloide Digital` e as colunas atuais do ERP. Acrescente `BOX` e
 
 Cadastre fundos com os códigos `padaria` e `bebidas` para o exemplo. `Padaria` e `Box padaria` representam o mesmo box. Maiúsculas, acentos e espaços extras são normalizados. Selos adicionais podem usar qualquer código cadastrado. Não há inferência pelo nome do produto: o site respeita as indicações da planilha.
 
-O código `aleitamento` também reconhece `leite`, `amamentação` e `Ministério da Saúde`. As colunas `Selo 18 Top Ofertas / Cooperado`, `Selo +18` e `Advertência leite` aceitam `Sim`, `X`, `1` ou `true`. A coluna antiga de +18 permanece compatível.
+Se o arquivo contiver `BOX` e `Box`, o CMS consolida as indicações por produto: usa o valor preenchido ou aceita valores equivalentes, como `Box padaria` e `Padaria`. Se os valores indicarem boxes diferentes, bloqueia a leitura e informa a linha. As outras colunas repetidas continuam bloqueadas, e o erro informa seus nomes.
+
+O código `aleitamento` também reconhece `leite`, `amamentação` e `Ministério da Saúde`. As colunas `Selo 18 Top Ofertas / Cooperado`, `Selo +18` e `Advertência leite` aceitam `Sim`, `X`, `1` ou `true`; para +18, o valor `18` também é reconhecido. A coluna antiga de +18 permanece compatível.
 
 ## Importação
 

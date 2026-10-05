@@ -30,6 +30,59 @@ const records = (rows, columns = ["BOX", "Selos"]) =>
     ...rows,
   ]);
 
+test("BOX vazio do ERP e Box preenchido manualmente são consolidados sem perder produtos", () => {
+  const input = records(
+    [
+      ["1", "Acém", 40.99, "", "Açougue", ""],
+      ["2", "Bolo", 12, "Padaria", "", ""],
+      ["3", "Cerveja", 5, "", "", 18],
+    ],
+    ["BOX", "Box", "Selo 18 Top Ofertas / Cooperado"],
+  );
+  const products = importProducts(input, [...library, asset("box", "acougue")]);
+  assert.equal(products.length, 3);
+  assert.deepEqual(
+    products.map((product) => product.box),
+    ["Açougue", "Padaria", null],
+  );
+  assert.equal(
+    products[0].erp_payload._leaflet_presentation.box.code,
+    "acougue",
+  );
+  assert.equal(products[0].regular_price, 40.99);
+  assert.equal(products[2].age_18, true);
+  assert.equal(
+    products[2].erp_payload._leaflet_presentation.seals[0].code,
+    "+18",
+  );
+  assert.equal(input[0].row.Box, undefined);
+});
+
+test("BOX repetido aceita indicações equivalentes e cabeçalhos idênticos", () => {
+  const input = records(
+    [
+      ["1", "Pão", 5, " Box PADARIA ", "Padaria"],
+      ["2", "Bolo", 12, "Padaria", ""],
+    ],
+    ["BOX", "BOX"],
+  );
+  const products = importProducts(input, library);
+  assert.deepEqual(
+    products.map(
+      (product) => product.erp_payload._leaflet_presentation.box.code,
+    ),
+    ["padaria", "padaria"],
+  );
+});
+
+test("BOX conflitante bloqueia a leitura com a linha real sem escolher um box silenciosamente", () => {
+  assert.throws(
+    () =>
+      records([[], ["1", "Produto", 5, "Padaria", "Açougue"]], ["BOX", "Box"]),
+    /Linha 3:.*boxes diferentes.*Padaria.*Açougue/,
+  );
+});
+
 test("BOX padaria normaliza caixa, espaços e acentos sem alterar produtos sem box", () => {
   const products = importProducts(
     records([
