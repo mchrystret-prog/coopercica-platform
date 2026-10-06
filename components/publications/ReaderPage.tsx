@@ -9,5 +9,5 @@ export async function ReaderPage({ id, kind }: { id: string; kind: PublicationKi
   const item = await getPublication(id);
   if (!item || item.kind !== kind || !item.pdfFile) notFound();
   const others = (await getPublications(kind)).filter((entry) => entry.id !== id && entry.pdfFile).slice(0, 6);
-  return <><Header /><main><PdfReader id={item.id} kind={kind} title={item.title} /><section className="publication-section shell"><h2>Outras publicações</h2><div className="publication-actions">{others.map((other) => <Link key={other.id} href={publicationPath(other)}>{other.title}</Link>)}<Link href={kind === "folheto" ? "/folheteria" : "/revista"}>Ver todas</Link></div></section></main><Footer /></>;
+  return <><Header /><main><PdfReader id={item.id} kind={kind} title={item.title} edition={item.edition} /><section className="publication-section shell"><h2>Outras publicações</h2><div className="publication-actions">{others.map((other) => <Link key={other.id} href={publicationPath(other)}>{other.title}</Link>)}<Link href={kind === "folheto" ? "/folheteria" : "/revista"}>Ver todas</Link></div></section></main><Footer /></>;
 }
