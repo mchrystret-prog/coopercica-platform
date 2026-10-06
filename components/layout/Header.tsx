@@ -13,9 +13,20 @@ const links = [
   { label: "Delivery", href: "#delivery", sectionId: "delivery" },
   { label: "Drogaria", href: "#drogaria", sectionId: "drogaria" },
   { label: "Revista", href: "#revista", sectionId: "revista" },
+  { label: "Vagas", href: "/vagas", sectionId: "vagas" },
 ];
 
-export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUrl="https://www.coopercicadelivery.com.br/",hasOffers=true}:{logo?:string;siteName?:string;deliveryUrl?:string;hasOffers?:boolean}={}) {
+export function Header({
+  logo = "/images/logo.png",
+  siteName = "Coopercica",
+  deliveryUrl = "https://www.coopercicadelivery.com.br/",
+  hasOffers = true,
+}: {
+  logo?: string;
+  siteName?: string;
+  deliveryUrl?: string;
+  hasOffers?: boolean;
+} = {}) {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const [open, setOpen] = useState(false);
@@ -82,25 +93,46 @@ export function Header({logo="/images/logo.png",siteName="Coopercica",deliveryUr
           className={`${styles.nav} ${open ? styles.open : ""}`}
           aria-label="Navegação principal"
         >
-          {links.filter(link=>link.sectionId!=="ofertas"||hasOffers).map((link) => (
-            <a
-              key={link.href}
-              data-analytics-id={`navigation:${link.sectionId}`}
-              data-analytics-label={`Menu: ${link.label}`}
-              href={link.href.startsWith("#") && !onHome ? `/${link.href}` : link.href}
-              onClick={closeMenu}
-              className={
-                (onHome && activeSection === link.sectionId) ? styles.active : undefined
-              }
-              aria-current={
-                (onHome && activeSection === link.sectionId) ? "page" : undefined
-              }
-            >
-              {link.label}
-            </a>
-          ))}
+          {links
+            .filter((link) => link.sectionId !== "ofertas" || hasOffers)
+            .map((link) => (
+              <a
+                key={link.href}
+                data-analytics-id={`navigation:${link.sectionId}`}
+                data-analytics-label={`Menu: ${link.label}`}
+                href={
+                  link.href.startsWith("#") && !onHome
+                    ? `/${link.href}`
+                    : link.href
+                }
+                onClick={closeMenu}
+                className={
+                  (onHome && activeSection === link.sectionId) ||
+                  (link.sectionId === "vagas" && pathname.startsWith("/vagas"))
+                    ? styles.active
+                    : undefined
+                }
+                aria-current={
+                  (onHome && activeSection === link.sectionId) ||
+                  (link.sectionId === "vagas" && pathname.startsWith("/vagas"))
+                    ? "page"
+                    : undefined
+                }
+              >
+                {link.label}
+              </a>
+            ))}
 
-          <Button data-analytics-id="cta:delivery-header" data-analytics-label="Comprar online" className={styles.cta} href={deliveryUrl} external onClick={closeMenu}>Comprar online</Button>
+          <Button
+            data-analytics-id="cta:delivery-header"
+            data-analytics-label="Comprar online"
+            className={styles.cta}
+            href={deliveryUrl}
+            external
+            onClick={closeMenu}
+          >
+            Comprar online
+          </Button>
         </nav>
       </div>
     </header>
