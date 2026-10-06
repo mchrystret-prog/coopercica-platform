@@ -406,8 +406,9 @@ export function LeafletAdmin({
               required
             />
             <small>
-              Usada na vitrine. Recomendado: 1080 × 1350 px (4:5). JPG, PNG ou
-              WebP. Máximo: 10 MB.
+              Usada na vitrine. Recomendado: 1080 × 1440 px (3:4). JPG, PNG ou
+              WebP. Máximo: 10 MB. Mantenha títulos e informações importantes
+              longe das bordas: o recorte é central e pode variar no celular.
             </small>
           </label>
           <label>
