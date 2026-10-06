@@ -1,5 +1,9 @@
 node_modules
 .next/
+public/vendor/
+.vercel/
+.env*
+!.env.example
 # Temporary compiled leaflet test files
 .leaflet-test/
 

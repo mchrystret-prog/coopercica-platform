@@ -5,6 +5,7 @@ export type Leaflet = {
   id: string;
   name: string;
   slug: string;
+  pdf_url?: string | null;
   cover_url: string | null;
   header_url: string | null;
   display_from: string | null;
@@ -50,7 +51,7 @@ async function rest<T>(path: string): Promise<T> {
   return response.json();
 }
 export async function getActiveLeaflets() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
   return rest<Leaflet[]>(
     `digital_leaflets?select=*&status=eq.published&display_from=lte.${today}&ends_at=gte.${today}&order=ends_at.asc`,
   );

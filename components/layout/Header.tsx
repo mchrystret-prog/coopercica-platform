@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 
 const links = [
+  { label: "Vídeos", href: "/videos", sectionId: "videos" },
   { label: "Quem Somos", href: "#historia", sectionId: "historia" },
   { label: "Nossas Lojas", href: "#lojas", sectionId: "lojas" },
   { label: "Ofertas", href: "#ofertas", sectionId: "ofertas" },
@@ -19,7 +20,6 @@ const links = [
 export function Header({
   logo = "/images/logo.png",
   siteName = "Coopercica",
-  deliveryUrl = "https://www.coopercicadelivery.com.br/",
   hasOffers = true,
 }: {
   logo?: string;
@@ -124,14 +124,14 @@ export function Header({
             ))}
 
           <Button
-            data-analytics-id="cta:delivery-header"
-            data-analytics-label="Comprar online"
+            data-analytics-id="cta:coopermais-header"
+            data-analytics-label="Seja Coopermais"
             className={styles.cta}
-            href={deliveryUrl}
+            href="https://soucoopermais.com.br/"
             external
             onClick={closeMenu}
           >
-            Comprar online
+            Seja Coopermais
           </Button>
         </nav>
       </div>

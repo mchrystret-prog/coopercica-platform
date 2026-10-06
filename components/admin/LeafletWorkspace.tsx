@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { ContentManager } from "./ContentManager";
-import { LeafletAdmin } from "./LeafletAdmin";
+import { LeafletCreate } from "./LeafletCreate";
 import { LeafletAssetLibrary } from "./LeafletAssetLibrary";
 export function LeafletWorkspace() {
   const [tab, setTab] = useState<"leaflets" | "assets">("leaflets");
@@ -34,7 +34,7 @@ export function LeafletWorkspace() {
           createTitle="Novo folheto"
           description="Gerencie os folhetos digitais, vigências e produtos publicados no site."
         >
-          <LeafletAdmin libraryRevision={revision} />
+          <LeafletCreate libraryRevision={revision} />
         </ContentManager>
       </div>
       {tab === "assets" ? <LeafletAssetLibrary /> : null}

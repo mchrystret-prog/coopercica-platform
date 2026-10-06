@@ -10,7 +10,7 @@ export async function Footer() {
       <div className={`shell ${styles.grid}`}>
         <div className={styles.intro}>
           <a
-            href="#home"
+            href="/#home"
             className={styles.brand}
             aria-label="Voltar ao início"
           >
@@ -29,15 +29,16 @@ export async function Footer() {
         </div>
         <div className={styles.column}>
           <strong>Institucional</strong>
-          <a href="#historia">Quem Somos</a>
-          <a href="#lojas">Nossas Lojas</a>
+          <a href="/#historia">Quem Somos</a>
+          <a href="/#lojas">Nossas Lojas</a>
           <Link href="/vagas">Portal de Vagas</Link>
         </div>
         <div className={styles.column}>
           <strong>Serviços</strong>
-          <a href="#delivery">Delivery</a>
-          <a href="#drogaria">Drogaria</a>
-          <a href="#revista">Revista</a>
+          <Link href="/videos">Vídeos</Link>
+          <a href="/#delivery">Delivery</a>
+          <a href="/#drogaria">Drogaria</a>
+          <a href="/#revista">Revista</a>
         </div>
         <div className={styles.column}>
           <strong>Atendimento</strong>
