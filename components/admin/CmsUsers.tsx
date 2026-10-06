@@ -19,7 +19,7 @@ async function fetchMembers(): Promise<{ items: Member[]; self: string }> {
   };
   const [members, user] = await Promise.all([
     fetch(
-      `${SUPABASE_URL}/rest/v1/cms_members?select=*&order=created_at.desc`,
+      `${SUPABASE_URL}/rest/v1/cms_members?select=*&status=neq.rejected&order=created_at.desc`,
       { headers },
     ),
     fetch(`${SUPABASE_URL}/auth/v1/user`, { headers }),
@@ -78,7 +78,9 @@ export function CmsUsers() {
       );
       if (!r.ok || !(await r.json()).length) throw new Error("denied");
       setMsg(
-        "Acesso atualizado. O usuário deve sair e entrar novamente para atualizar seu menu.",
+        status === "rejected"
+          ? "Usuário removido da lista e acesso ao CMS bloqueado. A conta e o acesso ao Hub foram preservados."
+          : "Acesso atualizado. O usuário deve sair e entrar novamente para atualizar seu menu.",
       );
       await load();
     } catch {
