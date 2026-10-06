@@ -2,6 +2,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
+import { CareersHeroEditor } from "./CareersHeroEditor";
 type Json = Record<string, string>;
 type Section = {
   id: string;
@@ -22,7 +23,9 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization() {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history">("identity"),
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers">(
+      "identity",
+    ),
     [msg, setMsg] = useState(""),
     [busy, setBusy] = useState(false);
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
@@ -62,6 +65,16 @@ export function SiteCustomization() {
   }
   async function saveAll() {
     if (!data) return;
+    if (
+      data.settings.careers_hero?.image &&
+      !data.settings.careers_hero.alt?.trim()
+    ) {
+      setTab("careers");
+      setMsg(
+        "Adicione uma descrição da foto do Portal de Vagas para acessibilidade.",
+      );
+      return;
+    }
     setBusy(true);
     setMsg("");
     try {
@@ -126,19 +139,37 @@ export function SiteCustomization() {
     setBusy(true);
     try {
       if (
-        target.startsWith("history:") &&
+        (target.startsWith("history:") || target.startsWith("careers:")) &&
         !["image/jpeg", "image/png", "image/webp"].includes(file.type)
       )
         throw new Error("Use uma imagem JPG, PNG ou WebP.");
       const url = await upload(
         file,
-        target.startsWith("history:")
-          ? "history"
-          : target.startsWith("section:")
-            ? "sections"
-            : "identity",
+        target.startsWith("careers:")
+          ? "careers"
+          : target.startsWith("history:")
+            ? "history"
+            : target.startsWith("section:")
+              ? "sections"
+              : "identity",
       );
-      if (target.startsWith("history:")) {
+      if (target.startsWith("careers:")) {
+        const field = target.slice(8);
+        setData((current) =>
+          current
+            ? {
+                ...current,
+                settings: {
+                  ...current.settings,
+                  careers_hero: {
+                    ...current.settings.careers_hero,
+                    [field]: url,
+                  },
+                },
+              }
+            : current,
+        );
+      } else if (target.startsWith("history:")) {
         const id = target.slice(8);
         setData((current) =>
           current
@@ -200,6 +231,12 @@ export function SiteCustomization() {
           onClick={() => setTab("history")}
         >
           Nossa História
+        </button>
+        <button
+          data-active={tab === "careers"}
+          onClick={() => setTab("careers")}
+        >
+          Portal de Vagas
         </button>
       </div>
       {msg ? (
@@ -314,6 +351,31 @@ export function SiteCustomization() {
             ) : null}
           </label>
         </div>
+      ) : tab === "careers" ? (
+        <CareersHeroEditor
+          value={data.settings.careers_hero || {}}
+          busy={busy}
+          onUpload={(e, field) => media(e, `careers:${field}`)}
+          onChange={(patch) => {
+            setData((current) =>
+              current
+                ? {
+                    ...current,
+                    settings: {
+                      ...current.settings,
+                      careers_hero: {
+                        ...current.settings.careers_hero,
+                        ...patch,
+                      },
+                    },
+                  }
+                : current,
+            );
+            setMsg(
+              "Foto de destaque alterada. Salve as alterações para publicar.",
+            );
+          }}
+        />
       ) : tab === "history" ? (
         <HistoryImageEditor
           images={data.settings.history_images || {}}
