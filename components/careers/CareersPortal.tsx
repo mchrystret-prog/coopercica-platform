@@ -24,14 +24,10 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
     <>
       <Section id="oportunidades" aria-labelledby="opportunities-title">
         <Container>
-          <SectionHeader
-            id="opportunities-title"
-            eyebrow="Seu próximo passo"
-            title={["Encontre seu lugar", "na Coopercica."]}
-            description="Explore as oportunidades e faça parte de uma história construída por pessoas."
-          />
           <div className={styles.filterHeading}>
-            <span className="ds-eyebrow">Oportunidades</span>
+            <h2 id="opportunities-title" className="ds-subtitle">
+              Oportunidades
+            </h2>
             <Badge>
               {jobs.length}{" "}
               {jobs.length === 1 ? "vaga aberta" : "vagas abertas"}
