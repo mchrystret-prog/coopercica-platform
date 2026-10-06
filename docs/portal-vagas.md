@@ -8,6 +8,12 @@
 - Candidaturas: filtre por vaga/situação, consulte o currículo, altere a etapa e registre observações internas. Encerrar uma vaga impede novos envios e preserva o histórico.
 - Documentos: RH pode cadastrar/editar políticas e enviar novos PDFs pela seção **Políticas e documentos**. O limite desse módulo é 15 MB.
 
+## Foto do header
+
+Em **CMS → Personalização → Portal de Vagas**, envie a foto principal (recomendado 1600 × 1200 px, 4:3), descreva a imagem para acessibilidade e escolha o enquadramento. JPG, PNG ou WebP, até 15 MB. A versão mobile é opcional (1080 × 810 px); sem ela, o celular usa a foto principal. Clique em **Salvar alterações** para publicar.
+
+No computador a foto aparece ao lado do texto sobre o fundo verde; no celular, abaixo do texto. Remover a foto principal também remove a versão mobile e restaura o header somente com texto. A configuração é `site_settings.careers_hero` e usa os RPCs e permissões existentes de Personalização (admin/editor).
+
 ## Permissões e dados
 
 RH acessa somente vagas, candidaturas e documentos/políticas no CMS. O banco também verifica as permissões; ocultar o menu não é a única proteção. Administradores têm acesso a esses módulos; editores comuns não recebem acesso às candidaturas.

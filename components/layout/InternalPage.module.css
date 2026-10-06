@@ -1,0 +1,29 @@
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--content-gap);
+  align-items: center;
+}
+.copy {
+  min-width: 0;
+}
+.media {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--brand-green-700);
+}
+.media img {
+  object-fit: cover;
+}
+@media (max-width: 760px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  .media {
+    border-radius: var(--radius-md);
+  }
+}
