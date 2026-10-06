@@ -4,3 +4,9 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/site-analytics-collect/deno.json"
 entrypoint = "./functions/site-analytics-collect/index.ts"
+
+[functions.careers-apply]
+enabled = true
+verify_jwt = false
+import_map = "./functions/careers-apply/deno.json"
+entrypoint = "./functions/careers-apply/index.ts"
