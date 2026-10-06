@@ -9,6 +9,7 @@ import { Section } from "@/components/ui/Section/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import type { Leaflet } from "@/lib/leaflets";
 import styles from "./Leaflets.module.css";
+import cityStyles from "./Stores.module.css";
 
 export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: Record<string, string> }) {
   const track = useRef<HTMLDivElement>(null);
@@ -77,9 +78,9 @@ export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: 
       <div className={styles.carousel} role="region" aria-label="Folhetos disponíveis" aria-roledescription="carrossel">
         <button type="button" className={`${styles.slideArrow} ${styles.prev}`} aria-label="Folhetos anteriores" aria-controls="leaflets-track" disabled={edges.start} onClick={() => move(-1)}><Icon name="chevron-left" /></button>
         <div id="leaflets-track" className={styles.grid} ref={track} onPointerDown={down} onPointerMove={pointerMove} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag} onPointerLeave={event => { if (!drag.current.moved) endDrag(event); }} onClickCapture={preventClick} onDragStart={event => event.preventDefault()}>
-          {items.map(item => <Link data-analytics-id={`leaflet:${item.id}`} data-analytics-label={`Folheto: ${item.name}`} className={styles.card} href={`/folheteria/${item.slug}`} key={item.id} draggable={false}>
-            <div className={styles.cover}>{item.cover_url ? <img src={item.cover_url} alt="" draggable={false} /> : <div className={styles.placeholder}><span>COOPERCICA</span><strong>{item.name}</strong></div>}</div>
-            <div className={styles.info}><div><strong>{item.name}</strong><small>Válido até {new Date(item.ends_at + "T12:00:00").toLocaleDateString("pt-BR")}</small></div><span aria-hidden="true">→</span></div>
+          {items.map(item => <Link data-analytics-id={`leaflet:${item.id}`} data-analytics-label={`Folheto: ${item.name}`} className={`${cityStyles.cityCard} ${styles.card}`} href={`/folheteria/${item.slug}`} key={item.id} draggable={false}>
+            <span className={`${cityStyles.cityVisual} ${styles.cover}`}>{item.cover_url ? <img className={cityStyles.cityImage} src={item.cover_url} alt="" draggable={false} /> : <span className={styles.placeholder}><span>COOPERCICA</span><strong>{item.name}</strong></span>}</span>
+            <span className={cityStyles.cityInfo}><span><strong>{item.name}</strong><small>Válido até {new Date(item.ends_at + "T12:00:00").toLocaleDateString("pt-BR")}</small></span><span className={cityStyles.cityAction} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span></span>
           </Link>)}
         </div>
         <button type="button" className={`${styles.slideArrow} ${styles.next}`} aria-label="Próximos folhetos" aria-controls="leaflets-track" disabled={edges.end} onClick={() => move(1)}><Icon name="chevron-right" /></button>
