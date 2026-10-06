@@ -2,6 +2,9 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { SUPABASE_URL } from "@/lib/leaflets";
+import { Button } from "@/components/ui/Button/Button";
+import { Card } from "@/components/ui/Card/Card";
+import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import styles from "./Careers.module.css";
 export function ApplicationForm({
   jobId,
@@ -51,22 +54,29 @@ export function ApplicationForm({
     }
   }
   return (
-    <section
+    <Card
+      as="section"
       className={styles.application}
       id="candidatura"
       aria-labelledby="application-title"
     >
-      <span className="eyebrow">Vamos nos conhecer</span>
-      <h2 id="application-title">Candidate-se à vaga</h2>
-      <p>{title}</p>
+      <SectionHeader
+        id="application-title"
+        eyebrow="Vamos nos conhecer"
+        title="Candidate-se à vaga"
+        description={title}
+        stacked
+      />
       {sent ? (
         <div className={styles.success} role="status">
-          <h3>Candidatura recebida!</h3>
+          <h3 className="ds-subtitle">Candidatura recebida!</h3>
           <p>
             Obrigado por seu interesse. O RH entrará em contato se houver
             continuidade no processo.
           </p>
-          <Link href="/vagas">Explorar outras oportunidades →</Link>
+          <Button href="/vagas" variant="secondary">
+            Explorar outras oportunidades
+          </Button>
         </div>
       ) : (
         <form onSubmit={submit} className={styles.form} data-analytics-ignore>
@@ -150,6 +160,7 @@ export function ApplicationForm({
                 esta candidatura e entrar em contato durante o processo
                 seletivo. Consulte nossas{" "}
                 <Link
+                  className="ds-link"
                   href="/politicas"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -165,9 +176,9 @@ export function ApplicationForm({
                   {error}
                 </p>
               ) : null}
-              <button className="button" disabled={busy}>
+              <Button type="submit" disabled={busy}>
                 {busy ? "Enviando candidatura…" : "Enviar candidatura"}
-              </button>
+              </Button>
               <p className={styles.note}>
                 Seus dados e currículo serão acessados somente pela equipe
                 autorizada de recrutamento.
@@ -176,6 +187,6 @@ export function ApplicationForm({
           </fieldset>
         </form>
       )}
-    </section>
+    </Card>
   );
 }
