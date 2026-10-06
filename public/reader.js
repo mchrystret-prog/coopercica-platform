@@ -17,7 +17,8 @@ $('download').href = `${pdfUrl}?download=1`;
 pdfjs.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.mjs';
 let pdf, flip, current = 0, total = 0, ratio = 1.414, zoom = 1, sound = false, audio;
 let disposed = false, renderQueue = Promise.resolve(), firstFlip = true;
-const rendered = new Map(), pending = new Set(), pageElements = [], thumbImages = [];
+const rendered = new Map(), renderedAt = new Map(), pending = new Set(), pageElements = [], thumbImages = [];
+let pageCssWidth = 600, renderTimer;
 const notice = (text) => { $('notice').textContent = text; };
 const start = Math.max(0, Number(params.get('page') || 1) - 1);
 
@@ -35,12 +36,18 @@ function fit() {
   const bookWidth = Math.max(150, Math.min(width, height / ratio * (narrow ? 1 : 2)));
   flip.getSettings().minWidth = narrow ? 100000 : 1;
   $('book-wrap').style.width = `${bookWidth * zoom}px`;
+  pageCssWidth = bookWidth * zoom / (narrow ? 1 : 2);
   flip.getUI().update();
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(() => { if (!disposed && flip) ensurePages(); }, 250);
 }
+// Resolução alvo acompanha o tamanho real da página (inclui zoom), com teto para não estourar memória.
+function targetWidth() { return Math.round(Math.min(2000, Math.max(900, pageCssWidth * Math.min(devicePixelRatio || 1, 2)))); }
+function keepRadius() { return targetWidth() > 1600 ? 4 : 8; }
 async function renderPage(index, width) {
   const page = await pdf.getPage(index + 1);
   const base = page.getViewport({ scale: 1 });
-  const viewport = page.getViewport({ scale: Math.min(width / base.width, 2200 / base.height) });
+  const viewport = page.getViewport({ scale: Math.min(width / base.width, 2800 / base.height) });
   const canvas = document.createElement('canvas');
   canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
   await page.render({ canvas, viewport }).promise;
@@ -51,19 +58,29 @@ async function renderPage(index, width) {
   return URL.createObjectURL(blob);
 }
 function ensurePages() {
-  const needed = [];
-  for (let i = Math.max(0, current - 2); i < Math.min(total, current + 4); i++) if (!rendered.has(i) && !pending.has(i)) needed.push(i);
+  const want = targetWidth(), keep = keepRadius(), needed = [];
+  for (let i = Math.max(0, current - 2); i < Math.min(total, current + 4); i++) {
+    if (pending.has(i)) continue;
+    const have = renderedAt.get(i);
+    // Renderiza o que falta e refaz páginas cuja resolução ficou baixa (zoom) ou alta demais (memória).
+    if (!rendered.has(i) || have < want * .85 || have > want * 1.6) needed.push(i);
+  }
   // A small working set avoids decoding an entire large magazine into full-size images.
-  for (const [i, url] of rendered) if (Math.abs(i - current) > 8) { URL.revokeObjectURL(url); pageElements[i].querySelector('img')?.remove(); rendered.delete(i); }
+  for (const [i, url] of rendered) if (Math.abs(i - current) > keep) { URL.revokeObjectURL(url); pageElements[i].querySelector('img')?.remove(); rendered.delete(i); renderedAt.delete(i); }
   needed.sort((a, b) => Math.abs(a - current) - Math.abs(b - current));
   for (const index of needed) {
     pending.add(index);
     renderQueue = renderQueue.then(async () => {
-      if (disposed || Math.abs(index - current) > 8) return;
-      const url = await renderPage(index, Math.min(1600, 1000 * (devicePixelRatio || 1)));
+      if (disposed || Math.abs(index - current) > keepRadius()) return;
+      const width = targetWidth();
+      const url = await renderPage(index, width);
       if (disposed) { URL.revokeObjectURL(url); return; }
-      const img = document.createElement('img'); img.src = url; img.alt = `Página ${index + 1} de ${title}`;
-      pageElements[index].append(img); rendered.set(index, url);
+      let img = pageElements[index].querySelector('img');
+      if (!img) { img = document.createElement('img'); img.alt = `Página ${index + 1} de ${title}`; pageElements[index].append(img); }
+      const old = rendered.get(index);
+      img.src = url;
+      if (old) URL.revokeObjectURL(old);
+      rendered.set(index, url); renderedAt.set(index, width);
     }).catch(() => { if (!disposed) notice('Não foi possível mostrar uma página. Você pode abrir o PDF original.'); }).finally(() => pending.delete(index));
   }
 }
@@ -138,7 +155,9 @@ document.addEventListener('keydown', (event) => {
   if (event.target.closest('input,textarea,select') || event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.key === 'ArrowLeft') { event.preventDefault(); flip?.flipPrev(); }
   if (event.key === 'ArrowRight') { event.preventDefault(); flip?.flipNext(); }
-  if (event.key === '+') setZoom(zoom + .5); if (event.key === '-') setZoom(zoom - .5);
+  if (event.key === '+' || event.key === '=') setZoom(zoom + .5);
+  if (event.key === '-') setZoom(zoom - .5);
+  if (event.key === '0') setZoom(1);
   if (event.key === 'Escape') { $('share-menu').hidden = true; $('share').setAttribute('aria-expanded', 'false'); }
 });
 window.addEventListener('pagehide', () => { disposed = true; flip?.destroy(); void pdf?.destroy(); void audio?.close(); for (const url of [...rendered.values(), ...thumbImages]) if (url) URL.revokeObjectURL(url); });
