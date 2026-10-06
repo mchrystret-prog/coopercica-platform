@@ -1,0 +1,87 @@
+/* Leitor de PDF — tema escuro.
+   Valores espelham os tokens de styles/tokens.css (o iframe não carrega o CSS do Next):
+   --surface-device #101010, --brand-green-500 #6AB945, --brand-green-700 #205F30, --brand-orange-500 #F68B1F. */
+:root {
+  color-scheme: dark;
+  font-family: Arial, sans-serif;
+  --bg: #101010;
+  --panel: #1b211c;
+  --panel-hover: #29322b;
+  --line: #36423a;
+  --text: #eef4ee;
+  --muted: #a8b7ab;
+  --accent: #6ab945;
+  --accent-deep: #205f30;
+  --focus: #f68b1f;
+  color: var(--text);
+  background: var(--bg);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); }
+button, a, input { font: inherit; }
+button, a { touch-action: manipulation; border-radius: 8px; }
+button { cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: inherit; padding: 10px 13px; }
+button:disabled { opacity: .35; cursor: default; }
+a { color: inherit; text-decoration: none; }
+a:hover, button:hover:not(:disabled) { background: var(--panel-hover); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+[hidden] { display: none !important; }
+* { scrollbar-color: #3a463d var(--bg); }
+
+#reader {
+  height: 100dvh; min-height: 440px; display: flex; flex-direction: column; gap: 10px; padding: 14px;
+  background: radial-gradient(120% 90% at 50% 42%, #1a221b 0%, var(--bg) 68%);
+}
+header { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+header p { font-size: 10px; font-weight: 700; letter-spacing: .15em; margin: 0 0 6px; color: var(--accent); }
+h1 { font-size: clamp(16px, 2.4vw, 23px); margin: 0; color: var(--text); }
+header a { font-size: 13px; text-decoration: underline; white-space: nowrap; color: var(--muted); }
+header a:hover { background: none; color: var(--text); }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; }
+.toolbar a { background: var(--panel); padding: 11px 13px; border: 1px solid var(--line); font-size: 13px; }
+.toolbar button { font-size: 13px; }
+.toolbar button[aria-pressed="true"], .toolbar button[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.toolbar output { min-width: 48px; text-align: center; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+#share-menu { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; background: var(--panel); border: 1px solid var(--line); padding: 10px; border-radius: 10px; }
+#share-menu a { padding: 8px; }
+#share-url { width: min(100%, 380px); border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 8px; padding: 8px; }
+#notice { margin: 0; text-align: center; font-size: 13px; color: var(--muted); }
+#notice:empty { display: none; }
+
+.reading-area { flex: 1; min-height: 0; display: flex; gap: 6px; align-items: stretch; }
+.reading-area > button { align-self: center; flex: 0 0 38px; padding: 6px; font-size: 30px; line-height: 1; background: var(--accent-deep); color: #fff; border: 0; }
+.reading-area > button:hover:not(:disabled) { background: var(--accent); color: var(--bg); }
+#scroller { position: relative; flex: 1; min-width: 0; overflow: auto; display: flex; align-items: flex-start; justify-content: flex-start; padding: 6px; }
+#book-wrap { flex-shrink: 0; margin: auto; }
+#book { margin: auto; }
+#loading { position: absolute; inset: 30% 0 auto; text-align: center; color: var(--muted); }
+
+/* A página continua branca (é o papel); o resto da interface é escuro para não ofuscar. */
+.pdf-page { background: #fff; overflow: hidden; box-shadow: 0 0 0 1px rgb(255 255 255 / 8%); }
+.pdf-page img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.pdf-page span { position: absolute; bottom: 8px; left: 10px; font-size: 10px; color: #606a60; }
+
+footer { text-align: center; font-size: 12px; color: var(--muted); }
+footer p { font-weight: 700; margin: 0 0 5px; color: var(--text); }
+
+#thumbs { display: flex; gap: 10px; overflow: auto; flex: 0 0 124px; padding: 5px; }
+#thumbs button { flex: 0 0 76px; padding: 4px; display: flex; flex-direction: column; gap: 3px; align-items: center; font-size: 10px; color: var(--muted); }
+#thumbs button[aria-current] { outline: 3px solid var(--accent); outline-offset: -2px; color: var(--text); }
+#thumbs img { height: 90px; max-width: 65px; object-fit: contain; background: #fff; }
+
+#reader:fullscreen { height: 100dvh; }
+#reader:fullscreen #scroller { min-height: 200px; }
+
+@media (max-width: 600px) {
+  #reader { padding: 8px; gap: 6px; }
+  .toolbar { gap: 4px; }
+  .toolbar a, .toolbar button { font-size: 11px; padding: 8px; }
+  .reading-area > button { flex-basis: 26px; font-size: 24px; }
+  header a { font-size: 11px; }
+  footer span { font-size: 10px; }
+  #thumbs { flex-basis: 110px; }
+  #thumbs img { height: 76px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }

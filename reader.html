@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Folhear publicação — Coopercica</title><link rel="stylesheet" href="/reader.css"></head>
+<body><main id="reader" aria-label="Leitor de PDF">
+<header><div><p>COOPERCICA · LEITURA DIGITAL</p><h1 id="title">Publicação</h1></div><a id="back" target="_parent" href="/revista">Voltar ao acervo</a></header>
+<div class="toolbar" role="toolbar" aria-label="Ferramentas do leitor">
+<button id="thumbs-toggle" aria-expanded="false" aria-controls="thumbs">Mostrar páginas</button>
+<button id="zoom-out" aria-label="Diminuir zoom" disabled>−</button><output id="zoom">100%</output><button id="zoom-in" aria-label="Ampliar zoom">+</button>
+<button id="sound" aria-pressed="false">Som de página</button><button id="share" aria-expanded="false" aria-controls="share-menu">Compartilhar</button>
+<a id="open-pdf" target="_blank" rel="noopener">Abrir PDF</a><a id="download">Baixar PDF</a><button id="fullscreen">Tela cheia</button>
+</div>
+<div id="share-menu" hidden><button id="copy">Copiar link</button><a id="whatsapp" target="_blank" rel="noopener">WhatsApp</a><a id="facebook" target="_blank" rel="noopener">Facebook</a><input id="share-url" aria-label="Link para compartilhar" readonly></div>
+<p id="notice" role="status" aria-live="polite"></p>
+<div class="reading-area"><button id="previous" aria-label="Página anterior" disabled>‹</button><div id="scroller"><div id="book-wrap"><div id="book"></div></div><p id="loading" role="status">Carregando o PDF…</p></div><button id="next" aria-label="Próxima página" disabled>›</button></div>
+<footer><p id="count" aria-live="polite"></p><span>Arraste o canto da página, deslize ou use as setas do teclado.</span></footer><nav id="thumbs" aria-label="Páginas do PDF" hidden></nav>
+</main><script type="module" src="/reader.js"></script></body></html>
