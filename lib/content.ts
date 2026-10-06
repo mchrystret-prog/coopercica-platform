@@ -20,5 +20,5 @@ export async function getStores():Promise<Store[]>{
 export async function getMagazines():Promise<Magazine[]>{
   const rows=await publicRows<any>("site_magazines","published_at.desc");
   if(!rows?.length)return fallbackMagazines;
-  return rows.map(r=>({id:r.id,title:r.title,edition:r.edition,cover:r.cover_url||"",href:r.pdf_url}));
+  return rows.map(r=>({id:r.id,title:r.title,edition:r.edition,cover:r.cover_url||"",href:r.pdf_url && r.pdf_url !== "#" ? `/revista/${r.id}/folhear` : "/revista"}));
 }

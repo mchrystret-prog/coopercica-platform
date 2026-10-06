@@ -1,0 +1,25 @@
+export const videos = [
+  { id: "5OSt_rpLsrI", title: "Como fazer uma sobremesa na grelha" },
+  { id: "q4fbx2FSRsA", title: "Aniversário Coopercica 57 anos" },
+  { id: "rLJruhxNTag", title: "Receita de fraldinha à la pizza" },
+  { id: "chjpUtLfLbo", title: "Surpresa de uva na travessa" },
+  { id: "mxAVp7RlO2A", title: "Manjar branco com calda de damasco" },
+  { id: "F8vQfeTVJ10", title: "O jeito certo de assar linguiça na churrasqueira" },
+  { id: "ZR4Ogvim2fc", title: "Alimentos da estação são mais nutritivos e baratos?" },
+  { id: "YX6ignHLg5M", title: "Risoto de kabocha com calabresa" },
+  { id: "d1hgvf3NlHo", title: "Como calcular a porção de carne por pessoa" },
+  { id: "bj6EA6xt3rs", title: "Ômega 3: para que serve e onde encontrar" },
+  { id: "mXbHHqutOAg", title: "Guia de alimentos que podem ou não ser congelados" },
+  { id: "V5a3me_nwYU", title: "Torta fria de pão de forma" },
+];
+export const playlists = [
+  { title: "Receitas salgadas", id: "PLSSvXcn3LQpXaHbor4n9ng5fHX2rXYXsL" },
+  { title: "Receitas doces", id: "PLSSvXcn3LQpXrB8xyzru8din10-_msQ4V" },
+  { title: "Churrasco", id: "PLSSvXcn3LQpUzPvG9e1xHTv1D3itvUvY_" },
+  { title: "Dicas de nutrição", id: "PLSSvXcn3LQpX4T5ZulYqB5jA1jNDNx6bA" },
+  { title: "Dicas de café", id: "PLSSvXcn3LQpW5tL_Eyt3YYVs32z-clDXg" },
+  { title: "Coopercica em movimento", id: "PLSSvXcn3LQpVkd3OV9i2PwmDVNoU0SXtp" },
+  { title: "Vivendo a história", id: "PLSSvXcn3LQpV7c0a2zjYZUtYPWG2LiyUo" },
+  { title: "Nossa loja, nosso bairro", id: "PLSSvXcn3LQpVdeg9C2WqBm6omj_vw-XRz" },
+  { title: "Por dentro da Coopercica", id: "PLSSvXcn3LQpXyVdvBb16YHLuvjM3Lsx6G" },
+];

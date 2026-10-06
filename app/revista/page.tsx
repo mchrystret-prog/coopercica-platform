@@ -1,2 +1,5 @@
-import { InternalPage } from "@/components/layout/InternalPage";import { Magazine } from "@/components/sections/Magazine";import { getMagazines } from "@/lib/content";
-export default async function Page(){const items=await getMagazines();return <InternalPage eyebrow="Revista" title="Histórias, receitas e inspiração." intro="Acompanhe as últimas edições da Revista Coopercica."><Magazine items={items}/></InternalPage>}
+import { InternalPage } from "@/components/layout/InternalPage";
+import { PublicationGrid } from "@/components/publications/PublicationGrid";
+import { getPublications } from "@/lib/publications";
+export const dynamic = "force-dynamic";
+export default async function Page() { return <InternalPage eyebrow="Revista" title="Histórias, receitas e inspiração." intro="Folheie as edições da Revista Coopercica."><section className="publication-section shell"><PublicationGrid items={await getPublications("revista")} /></section></InternalPage>; }

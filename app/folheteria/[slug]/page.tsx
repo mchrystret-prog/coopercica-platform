@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -42,6 +43,7 @@ export default async function LeafletPage({
         <div className="shell">
           <div className={styles.meta}>
             <h1>{leaflet.name}</h1>
+            {leaflet.pdf_url ? <Link className="button" href={`/folhetos/${leaflet.id}/folhear`}>Folhear PDF</Link> : null}
             <p>
               Ofertas válidas de{" "}
               {new Date(leaflet.starts_at + "T12:00:00").toLocaleDateString(

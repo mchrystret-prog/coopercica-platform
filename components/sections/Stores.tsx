@@ -1,7 +1,7 @@
 "use client";
 
 import type { Store } from "@/data/stores";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/Button/Button";
 import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
@@ -9,6 +9,10 @@ import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import styles from "./Stores.module.css";
 import { Icon } from "@/components/ui/Icon";
 
+import { openingHoursFromText, storeStatus } from "@/lib/store-hours";
+const clockSubscribe = (callback: () => void) => { const timer = setInterval(callback, 30000); return () => clearInterval(timer); };
+const clockSnapshot = () => Math.floor(Date.now() / 30000) * 30000;
+const clockServer = () => 0;
 type StoresProps = {
   items: Store[];
 };
@@ -315,10 +319,10 @@ const cityImages: Record<string, string> = {
 };
 
 export function Stores({ items }: StoresProps) {
-  const activeItems = useMemo(
-    () => items.filter((item) => item.active !== false),
-    [items],
-  );
+  const [onlyOpen, setOnlyOpen] = useState(false);
+  const [onlyPharmacy, setOnlyPharmacy] = useState(false);
+  const now = useSyncExternalStore(clockSubscribe, clockSnapshot, clockServer);
+  const activeItems = useMemo(() => items.filter((item) => item.active !== false && (!onlyPharmacy || item.services.some((service) => /drogaria|farmácia/i.test(service))) && (!onlyOpen || (now > 0 && storeStatus(openingHoursFromText(item.hours), new Date(now)).open))), [items, onlyOpen, onlyPharmacy, now]);
 
   const cityGroups = useMemo<CityGroup[]>(() => {
     const grouped = new Map<string, Store[]>();
@@ -349,7 +353,8 @@ export function Stores({ items }: StoresProps) {
     [cityGroups, selectedCity],
   );
 
-  if (cityGroups.length === 0) return null;
+  const count = selectedCity ? activeItems.filter((item) => item.city === selectedCity).length : activeItems.length;
+  const clearFilters = () => { setOnlyOpen(false); setOnlyPharmacy(false); };
 
   function selectCity(cityName: string) {
     setSelectedCity(cityName);
@@ -382,6 +387,8 @@ export function Stores({ items }: StoresProps) {
             }
           />
 
+          <div className="store-filters" role="group" aria-label="Filtrar lojas"><label><input type="checkbox" checked={onlyOpen} onChange={(event) => setOnlyOpen(event.target.checked)} />Aberto agora</label><label><input type="checkbox" checked={onlyPharmacy} onChange={(event) => setOnlyPharmacy(event.target.checked)} />Lojas com Drogaria</label>{onlyOpen || onlyPharmacy ? <button type="button" onClick={clearFilters}>Limpar filtros</button> : null}</div><p className="store-filter-status" role="status">{count} {count === 1 ? "loja encontrada" : "lojas encontradas"}. Horário de Brasília; pode mudar em feriados.</p>
+          {!count ? <div className="store-filter-empty"><p>Nenhuma loja corresponde aos filtros{selectedCity ? ` em ${selectedCity}` : ""}.</p><button type="button" onClick={() => { clearFilters(); returnToCities(); }}>Ver todas as lojas</button></div> : null}
           {view === "cities" ? (
             <div className={styles.citiesView}>
               <div className={styles.viewHeading}>
