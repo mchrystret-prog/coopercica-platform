@@ -118,6 +118,7 @@ export function History({ images = {} }: { images?: Record<string, string> }) {
           <button
             type="button"
             className={styles.autoToggle}
+            data-history-autoplay-control
             onClick={toggleAutoPlay}
             disabled={prefersReducedMotion}
             aria-label={

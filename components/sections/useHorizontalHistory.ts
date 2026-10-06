@@ -60,7 +60,7 @@ export function useHorizontalHistory(itemCount: number) {
     if (!isAutoPlaying) return;
     const timer = window.setTimeout(() => {
       goToIndex(activeRef.current === itemCount - 1 ? 0 : activeRef.current + 1);
-    }, 4000);
+    }, 3000);
     return () => window.clearTimeout(timer);
   }, [activeIndex, goToIndex, isAutoPlaying, itemCount]);
 
@@ -95,7 +95,16 @@ export function useHorizontalHistory(itemCount: number) {
     if (event.pointerType === "touch" || !event.isPrimary || event.button !== 0) return;
     drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, left: event.currentTarget.scrollLeft, moved: false };
   };
-  const onFocus = () => setIsTemporarilyPaused(true);
+  const onFocus = (event: FocusEvent<HTMLElement>) => {
+    // Menu navigation focuses the section itself. Only keyboard interaction
+    // with carousel controls should temporarily pause playback.
+    const target = event.target as HTMLElement;
+    setIsTemporarilyPaused(
+      target !== event.currentTarget &&
+      !target.closest("[data-history-autoplay-control]") &&
+      target.matches(":focus-visible"),
+    );
+  };
   const onBlur = (event: FocusEvent<HTMLElement>) => {
     if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsTemporarilyPaused(false);
   };

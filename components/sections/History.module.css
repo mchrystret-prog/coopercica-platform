@@ -43,7 +43,7 @@
 .tooltip{position:absolute;bottom:calc(100% + 4px);left:50%;display:grid;width:max-content;max-width:190px;gap:3px;padding:9px 12px;border:1px solid rgb(28 71 34 / 10%);border-radius:12px;background:var(--surface-card);color:var(--brand-green-900);box-shadow:var(--shadow-soft);opacity:0;transform:translate(-50%,6px);transition:opacity .18s ease,transform .18s ease;pointer-events:none}
 .tooltip strong{font-size:.8rem}.tooltip small{font-size:.7rem;line-height:1.35}.milestone:first-child .tooltip{left:0;transform:translate(0,6px)}.milestone:last-child .tooltip{left:auto;right:0;transform:translate(0,6px)}
 .milestone:hover .tooltip,.milestone:focus-visible .tooltip{opacity:1;translate:0 -6px}
-.backTopWrap{display:flex;justify-content:center;padding:20px 24px 30px}
+.backTopWrap{display:flex;justify-content:center;padding:var(--space-12) var(--space-6) var(--space-16)}
 
 .historyEnd{height:1px;scroll-margin-top:84px}
 .slideArrow:focus-visible,.milestone:focus-visible,.track:focus-visible{outline:3px solid var(--brand-red-500);outline-offset:-3px}
@@ -131,9 +131,6 @@
   }
   .road {
     height: 64px;
-  }
-  .backTopWrap {
-    padding-block: var(--space-3) var(--space-4);
   }
 }
 @media (min-width: 701px) and (max-width: 900px) and (max-height: 820px) {
