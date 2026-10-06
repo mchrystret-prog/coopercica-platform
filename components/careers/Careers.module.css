@@ -1,61 +1,35 @@
-.portal {
-  background: var(--surface-page);
-}
-.intro {
+.filterHeading,
+.results,
+.cardTop,
+.cardBottom,
+.actions {
   display: flex;
-  justify-content: space-between;
-  gap: 32px;
+  flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 36px;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
-.intro h2,
-.values h2 {
-  font-size: clamp(1.9rem, 3.5vw, 3rem);
-  line-height: 1.1;
-  letter-spacing: -0.04em;
-  margin: 12px 0;
-}
-.intro p,
-.values p {
-  max-width: 640px;
-  color: var(--text-muted);
-  line-height: 1.7;
-}
-.count {
-  display: grid;
-  gap: 4px;
-  text-align: center;
-  min-width: 130px;
-  padding: 22px;
-  border: 1px solid var(--border-soft);
-  border-radius: 20px;
-  background: var(--surface-card);
-}
-.count strong {
-  font-size: 3rem;
-  line-height: 1;
-  color: var(--brand-green-900);
-}
-.count span {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+.filterHeading {
+  margin-bottom: var(--space-4);
 }
 .filters {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 18px;
-  padding: 24px;
-  background: var(--surface-card);
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap);
+  padding: var(--card-padding);
+  background: var(--surface-soft);
   border: 1px solid var(--border-soft);
-  border-radius: 20px;
+  border-radius: var(--radius-md);
 }
 .filters label,
 .form label {
   display: grid;
-  gap: 9px;
-  font-weight: 700;
+  min-width: 0;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
   color: var(--text-heading);
-  font-size: 0.875rem;
+  line-height: var(--line-height-body);
 }
 .filters input,
 .filters select,
@@ -63,270 +37,238 @@
 .form textarea {
   width: 100%;
   min-width: 0;
-  min-height: 48px;
+  min-height: var(--control-height);
+  padding: var(--space-3);
   border: 1px solid var(--border-strong);
-  border-radius: 10px;
-  padding: 12px;
-  font: inherit;
+  border-radius: var(--radius-control);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
   color: var(--text-body);
-  background: var(--surface-page);
+  background: var(--surface-card);
 }
-.filters input:focus-visible,
-.filters select:focus-visible,
-.form input:focus-visible,
-.form textarea:focus-visible,
-.results button:focus-visible {
-  outline: 3px solid var(--brand-green-500);
-  outline-offset: 2px;
+.filters input::placeholder,
+.form input::placeholder,
+.form textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
 }
 .results {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin: 24px 0;
+  margin-block: var(--space-6);
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
-.results button {
-  border: 0;
-  background: none;
-  color: var(--brand-green-900);
-  font-weight: 700;
-  cursor: pointer;
-  min-height: 44px;
+.results p {
+  margin: 0;
 }
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+  gap: var(--grid-gap);
 }
 .jobCard {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 28px;
-  background: var(--surface-card);
-  border: 1px solid var(--border-soft);
-  border-radius: 20px;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  transition: border-color var(--motion-fast) var(--ease-brand);
 }
-.jobCard:hover {
-  border-color: var(--brand-green-500);
-  box-shadow: var(--shadow-soft);
+.jobCard:hover,
+.jobCard:focus-within {
+  border-color: var(--brand-green-900);
 }
 .cardTop {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.75rem;
   color: var(--text-muted);
+  font-size: var(--font-size-xs);
 }
 .department {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 50px;
-  background: var(--surface-soft);
-  color: var(--brand-green-900);
-  font-weight: 800;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
 }
 .jobCard h3 {
-  font-size: 1.55rem;
-  line-height: 1.2;
-  margin: 20px 0 12px;
+  margin-block: var(--space-6) var(--space-3);
   overflow-wrap: anywhere;
 }
-.jobCard h3 a {
-  text-decoration: none;
-  color: var(--text-heading);
+.jobCard h3 a:hover {
+  color: var(--brand-green-700);
 }
 .jobCard p {
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
+  color: var(--text-body);
+  line-height: var(--line-height-body);
+}
+.location {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  overflow-wrap: anywhere;
+}
+.location svg {
+  margin-top: var(--space-1);
 }
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-}
-.tags span {
-  padding: 6px 10px;
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  color: var(--text-heading);
-  font-size: 0.75rem;
-  font-weight: 700;
+  gap: var(--space-2);
 }
 .jobCard .summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
-  margin: 20px 0 24px;
+  margin-block: var(--space-6);
 }
 .cardBottom {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  padding-top: 20px;
+  padding-top: var(--space-6);
   margin-top: auto;
   border-top: 1px solid var(--border-soft);
 }
 .cardBottom small {
   color: var(--text-muted);
-}
-.cardBottom a,
-.values a {
-  font-weight: 800;
-  color: var(--brand-green-900);
-  text-decoration: none;
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
 }
 .empty {
-  padding: 56px 24px;
   text-align: center;
-  border: 1px dashed var(--border-strong);
-  border-radius: 20px;
-  background: var(--surface-card);
+  padding-block: var(--space-12);
+}
+.empty h3 {
+  max-width: 720px;
+  margin-inline: auto;
 }
 .empty p {
-  color: var(--text-muted);
-}
-.values {
-  margin-top: 64px;
-  padding: 44px;
-  background: var(--surface-soft);
-  border-radius: 24px;
+  margin-bottom: 0;
+  color: var(--text-body);
+  line-height: var(--line-height-body);
 }
 .detailLayout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 40px;
+  gap: var(--content-gap);
   align-items: start;
 }
 .back {
-  display: inline-block;
-  margin-bottom: 28px;
-  color: var(--brand-green-900);
-  font-weight: 700;
+  margin-bottom: var(--section-content-gap);
 }
-.detail h2 {
-  font-size: 1.65rem;
-  margin: 34px 0 16px;
+.detail {
+  min-width: 0;
+}
+.detail > section + section {
+  margin-top: var(--space-10);
+}
+.detail > section > h2 {
+  margin-bottom: var(--space-4);
 }
 .text {
   white-space: pre-line;
   overflow-wrap: anywhere;
-  line-height: 1.85;
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-body);
   color: var(--text-body);
 }
 .aside {
-  padding: 26px;
-  border: 1px solid var(--border-soft);
-  border-radius: 20px;
-  background: var(--surface-card);
   position: sticky;
-  top: 110px;
+  top: calc(var(--header-height) + var(--space-6));
+  min-width: 0;
 }
 .aside dl {
   display: grid;
-  gap: 20px;
-  margin: 0 0 24px;
+  gap: var(--space-6);
+  margin: 0 0 var(--space-8);
 }
 .aside dt {
-  font-size: 0.75rem;
-  font-weight: 700;
   color: var(--text-muted);
-  margin-bottom: 5px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-1);
 }
 .aside dd {
   margin: 0;
   color: var(--text-heading);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   overflow-wrap: anywhere;
+  line-height: 1.5;
 }
 .aside a {
   width: 100%;
-  justify-content: center;
 }
 .application {
-  margin-top: 48px;
-  padding: 32px;
-  border: 1px solid var(--border-soft);
-  border-radius: 20px;
-  background: var(--surface-card);
-  scroll-margin-top: 110px;
+  margin-top: var(--section-content-gap);
+  scroll-margin-top: calc(var(--header-height) + var(--space-6));
 }
 .application h2 {
-  margin: 12px 0;
-  font-size: 2rem;
-}
-.application > p {
-  color: var(--text-muted);
+  overflow-wrap: anywhere;
 }
 .form fieldset {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap);
   border: 0;
   padding: 0;
-  margin: 28px 0 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  margin: 0;
   min-width: 0;
 }
 .full {
-  grid-column: 1/-1;
+  grid-column: 1 / -1;
 }
 .form small {
   color: var(--text-muted);
-  font-weight: 400;
-  line-height: 1.6;
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
 }
 .form textarea {
   resize: vertical;
 }
+.form input[type="file"] {
+  font-size: var(--font-size-sm);
+}
+.form input::file-selector-button {
+  padding: var(--space-2) var(--space-3);
+  margin-right: var(--space-3);
+  border: 1px solid var(--brand-green-900);
+  border-radius: var(--radius-pill);
+  color: var(--text-heading);
+  background: var(--surface-soft);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
 .form .consent {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  line-height: 1.65;
-  font-weight: 400;
+  gap: var(--space-3);
+  font-weight: var(--font-weight-body);
 }
 .consent input {
-  margin-top: 5px;
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  margin-top: var(--space-1);
   accent-color: var(--brand-green-900);
 }
-.consent a {
-  color: var(--brand-green-900);
-}
 .note {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: var(--line-height-body);
 }
 .error {
-  padding: 14px;
+  padding: var(--space-4);
+  border: 1px solid var(--feedback-error);
+  border-radius: var(--radius-control);
   color: var(--feedback-error);
-  background: #fff1ee;
-  border-radius: 10px;
+  background: color-mix(in srgb, var(--feedback-error) 6%, var(--surface-card));
+  line-height: var(--line-height-body);
 }
 .success {
-  padding: 24px;
+  padding: var(--card-padding);
   background: var(--surface-soft);
-  border-radius: 14px;
-  line-height: 1.7;
+  border-radius: var(--radius-sm);
+  line-height: var(--line-height-body);
 }
-.success a {
-  color: var(--brand-green-900);
-  font-weight: 700;
+.success p {
+  color: var(--text-body);
+}
+.actions {
+  justify-content: flex-start;
 }
 .honeypot {
   position: absolute;
@@ -347,47 +289,29 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@media (max-width: 700px) {
-  .intro {
-    align-items: flex-start;
-    gap: 18px;
-  }
-  .count {
-    min-width: 90px;
-    padding: 16px;
-  }
-  .count strong {
-    font-size: 2.5rem;
-  }
+@media (max-width: 760px) {
   .filters,
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .filters {
-    padding: 18px;
-  }
-  .jobCard {
-    padding: 22px;
-  }
-  .values {
-    padding: 28px;
-    margin-top: 40px;
-  }
-  .application {
-    padding: 22px;
-  }
+  .grid,
   .form fieldset {
     grid-template-columns: 1fr;
-    gap: 20px;
   }
   .aside dl {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .detailLayout {
-    gap: 24px;
+}
+@media (max-width: 480px) {
+  .cardBottom {
+    align-items: stretch;
+    flex-direction: column;
   }
-  .intro h2 {
-    font-size: 1.8rem;
+  .cardBottom a {
+    width: 100%;
+  }
+  .form button[type="submit"] {
+    width: 100%;
+  }
+  .aside dl {
+    grid-template-columns: 1fr;
   }
 }
 @media (prefers-reduced-motion: reduce) {

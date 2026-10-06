@@ -1,4 +1,8 @@
-import Link from "next/link";
+import { Button } from "@/components/ui/Button/Button";
+import { Card } from "@/components/ui/Card/Card";
+import { Container } from "@/components/ui/Container/Container";
+import { Icon } from "@/components/ui/Icon";
+import { Section } from "@/components/ui/Section/Section";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { InternalPage } from "@/components/layout/InternalPage";
@@ -40,11 +44,16 @@ export default async function Page({
         .filter(Boolean)
         .join(" · ")}
     >
-      <section className="section">
-        <div className="shell">
-          <Link className={styles.back} href="/vagas">
-            ← Todas as oportunidades
-          </Link>
+      <Section>
+        <Container>
+          <Button
+            variant="ghost"
+            className={styles.back}
+            href="/vagas"
+            icon={<Icon name="chevron-left" />}
+          >
+            Todas as oportunidades
+          </Button>
           <div className={styles.detailLayout}>
             <div className={styles.detail}>
               {[
@@ -56,41 +65,46 @@ export default async function Page({
                 .filter(([, value]) => value)
                 .map(([heading, value]) => (
                   <section key={heading}>
-                    <h2>{heading}</h2>
+                    <h2 className="ds-subtitle">{heading}</h2>
                     <div className={styles.text}>{value}</div>
                   </section>
                 ))}
               <ApplicationForm jobId={job.id} title={job.title} />
             </div>
             <aside className={styles.aside} aria-label="Resumo da vaga">
-              <dl>
-                {[
-                  ["Setor", job.department],
-                  ["Local", [job.city, job.unit].filter(Boolean).join(" · ")],
-                  ["Contrato", employmentNames[job.employment_type]],
-                  ["Modelo", workModeNames[job.work_mode]],
-                  ["Posições", String(job.openings)],
-                  ["Remuneração", job.salary || "Informada durante o processo"],
-                  [
-                    "Inscrições",
-                    job.closes_on
-                      ? `Até ${new Date(job.closes_on + "T12:00:00Z").toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}`
-                      : "Abertas",
-                  ],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <dt>{label}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                ))}
-              </dl>
-              <a className="button" href="#candidatura">
-                Quero me candidatar
-              </a>
+              <Card as="div" variant="soft">
+                <dl>
+                  {[
+                    ["Setor", job.department],
+                    ["Local", [job.city, job.unit].filter(Boolean).join(" · ")],
+                    ["Contrato", employmentNames[job.employment_type]],
+                    ["Modelo", workModeNames[job.work_mode]],
+                    ["Posições", String(job.openings)],
+                    [
+                      "Remuneração",
+                      job.salary || "Informada durante o processo",
+                    ],
+                    [
+                      "Inscrições",
+                      job.closes_on
+                        ? `Até ${new Date(job.closes_on + "T12:00:00Z").toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}`
+                        : "Abertas",
+                    ],
+                  ].map(([label, value]) => (
+                    <div key={label}>
+                      <dt>{label}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <Button href="#candidatura" icon={<Icon name="arrow-right" />}>
+                  Quero me candidatar
+                </Button>
+              </Card>
             </aside>
           </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
     </InternalPage>
   );
 }
