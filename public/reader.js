@@ -10,6 +10,9 @@ const validId = /^[a-zA-Z0-9-]{1,80}$/.test(id);
 const pdfUrl = `/api/publications/${encodeURIComponent(id)}/pdf`;
 const shareBase = new URL(`/${kind}/${encodeURIComponent(id)}/folhear`, location.origin);
 $('title').textContent = title;
+const edition = params.get('edition') || '';
+if (edition) { $('edition-text').textContent = edition; $('edition').hidden = false; }
+$('back-label').textContent = kind === 'folhetos' ? 'Folhetos' : 'Revista';
 document.title = `${title} — Folhear`;
 $('back').href = `/${kind}`;
 $('open-pdf').href = pdfUrl;
@@ -150,7 +153,7 @@ $('sound').onclick = () => { sound = !sound; $('sound').setAttribute('aria-press
 $('share').onclick = () => { updateShare(); $('share-menu').hidden = !$('share-menu').hidden; $('share').setAttribute('aria-expanded', String(!$('share-menu').hidden)); };
 $('copy').onclick = async () => { try { await navigator.clipboard.writeText(shareUrl()); notice('Link copiado.'); } catch { $('share-url').focus(); $('share-url').select(); notice('Selecione e copie o link exibido.'); } };
 $('fullscreen').onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $('reader').requestFullscreen(); } catch { notice('Tela cheia indisponível neste navegador.'); } };
-document.addEventListener('fullscreenchange', () => { $('fullscreen').textContent = document.fullscreenElement ? 'Sair da tela cheia' : 'Tela cheia'; fit(); });
+document.addEventListener('fullscreenchange', () => { const label = document.fullscreenElement ? 'Sair da tela cheia' : 'Tela cheia'; $('fullscreen').setAttribute('aria-label', label); $('fullscreen').title = label; fit(); });
 document.addEventListener('keydown', (event) => {
   if (event.target.closest('input,textarea,select') || event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.key === 'ArrowLeft') { event.preventDefault(); flip?.flipPrev(); }

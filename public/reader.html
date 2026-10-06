@@ -1,15 +1,27 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Folhear publicação — Coopercica</title><link rel="stylesheet" href="/reader.css"></head>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Folhear publicação — Coopercica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/reader.css"></head>
 <body><main id="reader" aria-label="Leitor de PDF">
-<header><div><p>COOPERCICA · LEITURA DIGITAL</p><h1 id="title">Publicação</h1></div><a id="back" target="_parent" href="/revista">Voltar ao acervo</a></header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="keep-red" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1.4 -1.4 0 0 0"/></filter></svg>
+<div class="art" aria-hidden="true"></div><div class="art art-stripes" aria-hidden="true"></div>
+<header>
+<a id="back" class="pill" target="_parent" href="/revista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span id="back-label">Revista</span></a>
+<div class="heading"><h1 id="title">Publicação</h1><p id="edition" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg><span id="edition-text"></span></p></div>
 <div class="toolbar" role="toolbar" aria-label="Ferramentas do leitor">
-<button id="thumbs-toggle" aria-expanded="false" aria-controls="thumbs">Mostrar páginas</button>
-<button id="zoom-out" aria-label="Diminuir zoom" disabled>−</button><output id="zoom">100%</output><button id="zoom-in" aria-label="Ampliar zoom">+</button>
-<button id="sound" aria-pressed="false">Som de página</button><button id="share" aria-expanded="false" aria-controls="share-menu">Compartilhar</button>
-<a id="open-pdf" target="_blank" rel="noopener">Abrir PDF</a><a id="download">Baixar PDF</a><button id="fullscreen">Tela cheia</button>
+<button id="thumbs-toggle" class="tool" title="Mostrar páginas" aria-label="Mostrar páginas" aria-expanded="false" aria-controls="thumbs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></button>
+<span class="zoom-group"><button id="zoom-out" class="tool" title="Diminuir zoom" aria-label="Diminuir zoom" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/></svg></button><output id="zoom">100%</output><button id="zoom-in" class="tool" title="Ampliar zoom" aria-label="Ampliar zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg></button></span>
+<button id="sound" class="tool" title="Som de página" aria-label="Som de página" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.7 6.7 9H3v6h3.7l4.3 4.3z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></button>
+<button id="share" class="tool" title="Compartilhar" aria-label="Compartilhar" aria-expanded="false" aria-controls="share-menu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/></svg></button>
+<a id="open-pdf" class="tool" target="_blank" rel="noopener" title="Abrir PDF" aria-label="Abrir PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></a>
+<a id="download" class="tool" title="Baixar PDF" aria-label="Baixar PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></a>
+<button id="fullscreen" class="tool" title="Tela cheia" aria-label="Tela cheia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
 </div>
+</header>
 <div id="share-menu" hidden><button id="copy">Copiar link</button><a id="whatsapp" target="_blank" rel="noopener">WhatsApp</a><a id="facebook" target="_blank" rel="noopener">Facebook</a><input id="share-url" aria-label="Link para compartilhar" readonly></div>
 <p id="notice" role="status" aria-live="polite"></p>
-<div class="reading-area"><button id="previous" aria-label="Página anterior" disabled>‹</button><div id="scroller"><div id="book-wrap"><div id="book"></div></div><p id="loading" role="status">Carregando o PDF…</p></div><button id="next" aria-label="Próxima página" disabled>›</button></div>
+<div class="reading-area"><button id="previous" class="arrow" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div id="scroller"><div id="book-wrap"><div id="book"></div></div><p id="loading" role="status">Carregando o PDF…</p></div><button id="next" class="arrow" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
 <footer><p id="count" aria-live="polite"></p><span>Arraste o canto da página, deslize ou use as setas do teclado.</span></footer><nav id="thumbs" aria-label="Páginas do PDF" hidden></nav>
+<div class="stripes" aria-hidden="true"></div>
 </main><script type="module" src="/reader.js"></script></body></html>
