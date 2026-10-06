@@ -69,3 +69,76 @@
 .topbar { width:min(var(--container),calc(100% - var(--gutter) * 2)); margin-inline:auto; padding-inline:0; }
 .historyHeader { margin-bottom:0; }
 .journeyMarker { display:block; width:var(--space-6); height:var(--space-6); margin:10px; border:3px solid var(--surface-card); border-radius:50%; background:var(--brand-green-900); }
+
+/* Compact composition for notebook viewports, including browser bars and zoom. */
+@media (min-width: 701px) and (max-height: 820px) {
+  .topbar {
+    padding-block: var(--space-4) var(--space-3);
+  }
+  .topbar .historyHeader {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    max-width: none;
+    align-items: center;
+  }
+  .historyHeader h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  .historyHeader p {
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+  }
+  .slide {
+    padding-block: var(--space-3);
+    gap: var(--space-8);
+  }
+  .media {
+    height: clamp(160px, 32svh, 270px);
+    max-height: none;
+    aspect-ratio: auto;
+    border-radius: var(--radius-md);
+  }
+  .eyebrow {
+    margin-bottom: var(--space-2);
+  }
+  .year {
+    font-size: clamp(2.5rem, 4vw, 3rem);
+    margin-bottom: var(--space-2);
+  }
+  .content h3 {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    margin-bottom: var(--space-3);
+  }
+  .content p {
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+  }
+  .counter {
+    margin-top: var(--space-3);
+  }
+  .previous,
+  .next {
+    width: 48px;
+    height: 48px;
+  }
+  .navigationCaption {
+    padding-top: var(--space-2);
+  }
+  .journey {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-1);
+  }
+  .road {
+    height: 64px;
+  }
+  .backTopWrap {
+    padding-block: var(--space-3) var(--space-4);
+  }
+}
+@media (min-width: 701px) and (max-width: 900px) and (max-height: 820px) {
+  .topbar .historyHeader {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+}
