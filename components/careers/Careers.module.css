@@ -321,3 +321,36 @@
 }
 
 .opportunities { scroll-margin-top: calc(var(--header-height) + var(--space-6)); }
+
+/* This motion is scoped to vacancy cards, never the application form. */
+.jobCard {
+  border-top: 3px solid var(--brand-lime-500);
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--motion-normal) var(--ease-brand),
+    box-shadow var(--motion-normal) var(--ease-brand),
+    border-color var(--motion-normal) var(--ease-brand);
+}
+.jobCard:focus-within {
+  box-shadow: var(--shadow-card);
+}
+.filters input,
+.filters select {
+  transition: border-color var(--motion-fast) var(--ease-brand),
+    box-shadow var(--motion-fast) var(--ease-brand);
+}
+.filters input:focus-visible,
+.filters select:focus-visible {
+  border-color: var(--brand-green-900);
+  box-shadow: 0 0 0 3px var(--surface-muted);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .jobCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jobCard,
+  .filters input,
+  .filters select { transition: none; transform: none; }
+}
