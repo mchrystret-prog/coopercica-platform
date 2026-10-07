@@ -1,5 +1,5 @@
 import { PageFlip } from '/vendor/page-flip/page-flip.module.js';
-import * as pdfjs from '/vendor/pdfjs/pdf.min.mjs';
+import * as pdfjs from '/vendor/pdfjs/pdf.legacy.min.mjs';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -17,8 +17,8 @@ document.title = `${title} — Folhear`;
 $('back').href = `/${kind}`;
 $('open-pdf').href = pdfUrl;
 $('download').href = `${pdfUrl}?download=1`;
-pdfjs.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.mjs';
-let pdf, flip, current = 0, total = 0, ratio = 1.414, zoom = 1, sound = false, audio;
+pdfjs.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.legacy.min.mjs';
+let loadingTask, resizeObserver, pdf, flip, current = 0, total = 0, ratio = 1.414, zoom = 1, sound = false, audio;
 let disposed = false, renderQueue = Promise.resolve(), firstFlip = true;
 const rendered = new Map(), renderedAt = new Map(), pending = new Set(), pageElements = [], thumbImages = [];
 let pageCssWidth = 600, renderTimer;
@@ -84,7 +84,7 @@ function ensurePages() {
       img.src = url;
       if (old) URL.revokeObjectURL(old);
       rendered.set(index, url); renderedAt.set(index, width);
-    }).catch(() => { if (!disposed) notice('Não foi possível mostrar uma página. Você pode abrir o PDF original.'); }).finally(() => pending.delete(index));
+    }).catch((error) => { if (!disposed) { console.error('Falha ao renderizar página do PDF', index + 1, error); notice('Não foi possível mostrar uma página. Você pode abrir o PDF original.'); } }).finally(() => pending.delete(index));
   }
 }
 function update() {
@@ -126,7 +126,8 @@ async function thumbnails() {
 }
 async function init() {
   if (!validId) throw new Error('Publicação inválida.');
-  pdf = await pdfjs.getDocument({ url: pdfUrl, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true, standardFontDataUrl: '/vendor/pdfjs/standard_fonts/', wasmUrl: '/vendor/pdfjs/wasm/', isEvalSupported: false }).promise;
+  loadingTask = pdfjs.getDocument({ url: pdfUrl, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true, standardFontDataUrl: '/vendor/pdfjs/standard_fonts/', wasmUrl: '/vendor/pdfjs/wasm/', isEvalSupported: false });
+  pdf = await loadingTask.promise;
   total = pdf.numPages;
   const first = await pdf.getPage(1), viewport = first.getViewport({ scale: 1 });
   ratio = viewport.height / viewport.width;
@@ -143,7 +144,8 @@ async function init() {
   flip.on('flip', update); flip.on('changeOrientation', () => { if (flip.getPageCount()) update(); });
   flip.loadFromHTML(pageElements);
   fit(); update();
-  new ResizeObserver(fit).observe($('scroller'));
+  resizeObserver = new ResizeObserver(fit);
+  resizeObserver.observe($('scroller'));
 }
 $('previous').onclick = () => flip?.flipPrev(); $('next').onclick = () => flip?.flipNext();
 function setZoom(value) { zoom = Math.max(1, Math.min(3, value)); $('zoom').textContent = `${zoom * 100}%`; $('zoom-out').disabled = zoom === 1; $('zoom-in').disabled = zoom === 3; fit(); }
@@ -163,5 +165,5 @@ document.addEventListener('keydown', (event) => {
   if (event.key === '0') setZoom(1);
   if (event.key === 'Escape') { $('share-menu').hidden = true; $('share').setAttribute('aria-expanded', 'false'); }
 });
-window.addEventListener('pagehide', () => { disposed = true; flip?.destroy(); void pdf?.destroy(); void audio?.close(); for (const url of [...rendered.values(), ...thumbImages]) if (url) URL.revokeObjectURL(url); });
-init().catch(() => { $('loading').textContent = 'Não foi possível abrir o PDF. Tente atualizar ou use “Abrir PDF”.'; });
+window.addEventListener('pagehide', () => { disposed = true; clearTimeout(renderTimer); resizeObserver?.disconnect(); flip?.destroy(); void loadingTask?.destroy(); void audio?.close(); for (const url of [...rendered.values(), ...thumbImages]) if (url) URL.revokeObjectURL(url); });
+init().catch((error) => { if (disposed) return; console.error('Falha ao abrir PDF', error); $('loading').textContent = 'Não foi possível abrir o PDF. Tente atualizar ou use “Abrir PDF”.'; });

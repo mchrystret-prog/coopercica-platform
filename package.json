@@ -13,6 +13,7 @@
     "prepare:pdf": "node scripts/prepare-pdf-assets.mjs",
     "predev": "npm run prepare:pdf",
     "prebuild": "npm run prepare:pdf",
+    "test:pdf-reader": "npm run prepare:pdf && node --test tests/pdf-reader.test.cjs",
     "test:publications": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:offers": "tsc lib/home-offers.ts lib/leaflets.ts --target ES2022 --module commonjs --esModuleInterop --skipLibCheck --outDir .offers-test && node --test tests/home-offers.test.cjs",
     "test:seo": "tsc lib/seo.ts --target ES2022 --module commonjs --esModuleInterop --skipLibCheck --outDir .seo-test && node --test tests/seo.test.cjs"
