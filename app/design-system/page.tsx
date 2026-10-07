@@ -1,3 +1,4 @@
+export const metadata = { title: "Design System", robots: { index: false, follow: false } };
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { Badge } from "@/components/ui/Badge";

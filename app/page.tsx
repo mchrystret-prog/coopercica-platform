@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 import { Header } from "@/components/layout/Header";
@@ -54,6 +56,10 @@ export default async function Home() {
 
       <main>
         <Hero items={campaigns} />
+        <section className="shell" style={{ paddingBlock: "32px" }} aria-labelledby="brand-title">
+          <h1 id="brand-title" className="ds-subtitle">Coopercica: qualidade com você desde 1969.</h1>
+          <p>Uma cooperativa de consumo presente em Jundiaí, Itupeva, Campo Limpo Paulista e Várzea Paulista. <Link href="/quem-somos">Conheça nossa história.</Link></p>
+        </section>
 
         {visible("app-showcase") ? <AppShowcase /> : null}
 
@@ -82,3 +88,5 @@ export default async function Home() {
     </>
   );
 }
+
+export const metadata = pageMetadata("Supermercados em Jundiaí e região", "Coopercica desde 1969: conheça as lojas em Jundiaí, Itupeva, Campo Limpo Paulista e Várzea Paulista, folhetos, Delivery, Drogaria e oportunidades.", "/");

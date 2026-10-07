@@ -1,3 +1,6 @@
+import { cache } from "react";
+import { pageMetadata, breadcrumbs } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/StructuredData";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,6 +12,15 @@ import { getLeaflet, getLeafletProducts } from "@/lib/leaflets";
 import { getLeafletAssets } from "@/lib/leaflet-assets";
 import { groupProducts } from "@/lib/leaflet-presentation";
 import styles from "./page.module.css";
+const findLeaflet = cache(getLeaflet);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const leaflet = await findLeaflet((await params).slug);
+  if (!leaflet) return { title: "Folheto não encontrado", robots: { index: false } };
+  const metadata = pageMetadata(leaflet.name, `Consulte os produtos e condições do folheto ${leaflet.name}, com validade de ${leaflet.starts_at} a ${leaflet.ends_at}.`, `/folheteria/${leaflet.slug}`);
+  const now = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  if (leaflet.ends_at < now || (leaflet.display_from && leaflet.display_from > now)) metadata.robots = { index: false, follow: true };
+  return metadata;
+}
 
 export default async function LeafletPage({
   params,
@@ -16,7 +28,7 @@ export default async function LeafletPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const leaflet = await getLeaflet(slug);
+  const leaflet = await findLeaflet(slug);
   if (!leaflet) notFound();
   const [products, assets] = await Promise.all([
     getLeafletProducts(leaflet.id),
@@ -30,6 +42,7 @@ export default async function LeafletPage({
     <>
       <Header />
       <main className={styles.main}>
+        <StructuredData value={breadcrumbs([{ name: "Home", path: "/" }, { name: "Folheteria", path: "/folheteria" }, { name: leaflet.name, path: `/folheteria/${leaflet.slug}` }])} />
         {leaflet.header_url ? (
           <div className={styles.hero}>
             <img src={leaflet.header_url} alt={leaflet.name} />
@@ -37,7 +50,7 @@ export default async function LeafletPage({
         ) : (
           <div className={styles.fallbackHero}>
             <span>FOLHETERIA DIGITAL</span>
-            <h1>{leaflet.name}</h1>
+            <p>{leaflet.name}</p>
           </div>
         )}
         <div className="shell">
