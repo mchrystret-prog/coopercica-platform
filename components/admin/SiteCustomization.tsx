@@ -4,6 +4,8 @@ import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
 import { CoopermaisBannerEditor } from "./CoopermaisBannerEditor";
 import { VideosHeaderEditor } from "./VideosHeaderEditor";
+import { HomeVideosEditor } from "./HomeVideosEditor";
+import { validateHomeVideos } from "@/lib/home-videos";
 import { CareersHeroEditor } from "./CareersHeroEditor";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 type Json = Record<string, string>;
@@ -68,6 +70,8 @@ export function SiteCustomization() {
   }
   async function saveAll() {
     if (!data) return;
+    const videosError = validateHomeVideos(data.settings.home_videos || {});
+    if (videosError) { setTab("videos"); setMsg(videosError); return; }
     const offersError = validateOffersSettings(data.settings);
     if (offersError) { setTab("offers"); setMsg(offersError); return; }
     if (
@@ -383,6 +387,11 @@ export function SiteCustomization() {
           </label>
         </div>
       ) : tab === "videos" ? (
+        <>
+        <HomeVideosEditor value={data.settings.home_videos || {}} busy={busy} onChange={patch => {
+          setData(current => current ? { ...current, settings: { ...current.settings, home_videos: { ...current.settings.home_videos, ...patch } } } : current);
+          setMsg("Vídeos da home alterados. Salve as alterações para publicar.");
+        }} />
         <VideosHeaderEditor value={data.settings.videos_header || {}} busy={busy}
           onUpload={(e, field) => media(e, `videos:${field}`)}
           onChange={patch => {
@@ -391,6 +400,7 @@ export function SiteCustomization() {
             } } : current);
             setMsg("Cabeçalho de Vídeos alterado. Salve as alterações para publicar.");
           }} />
+        </>
       ) : tab === "coopermais" ? (
         <CoopermaisBannerEditor value={data.settings.coopermais_banner || {}} busy={busy}
           onUpload={(e, field) => media(e, `coopermais:${field}`)}

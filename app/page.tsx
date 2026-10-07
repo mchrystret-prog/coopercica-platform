@@ -1,4 +1,6 @@
 import { CoopermaisBanner } from "@/components/sections/CoopermaisBanner";
+import { HomeVideos } from "@/components/sections/HomeVideos";
+import { getHomeVideos } from "@/lib/home-videos-server";
 import { pageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
@@ -31,6 +33,7 @@ export default async function Home() {
     deliveryOffers,
     pharmacyOffers,
     coopermaisBanner,
+    homeVideos,
   ] = await Promise.all([
     getCampaigns(),
     getStores(),
@@ -42,7 +45,9 @@ export default async function Home() {
     getSiteSetting<Record<string, string>>("offers_delivery", {}),
     getSiteSetting<Record<string, string>>("offers_pharmacy", {}),
     getSiteSetting<Record<string, string>>("coopermais_banner", {}),
+    getSiteSetting<Record<string, string>>("home_videos", {}),
   ]);
+  const videoFeed = homeVideos.enabled === "false" ? null : await getHomeVideos(homeVideos);
   const section = (id: string) => sections.find((s) => s.id === id);
   const visible = (id: string) => section(id)?.active !== false;
 
@@ -81,6 +86,8 @@ export default async function Home() {
         {visible("revista") ? (
           <Magazine items={magazines} content={section("revista")?.content} />
         ) : null}
+
+        {videoFeed ? <HomeVideos feed={videoFeed} /> : null}
 
         {visible("historia") ? <History images={historyImages} /> : null}
       </main>
