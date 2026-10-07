@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node tests load compiled TypeScript modules. */
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { offersConfig, normalizeOffers, publicHttps, atPath } = require('../.offers-test/home-offers.js');
@@ -36,4 +37,33 @@ test('integrações começam desativadas e limites inválidos são normalizados'
   assert.equal(defaults.enabled, false);
   assert.equal(offersConfig({ limit: '-1' }, 'pharmacy').limit, 12);
   assert.equal(offersConfig({ limit: '1000' }, 'delivery').limit, 40);
+});
+
+const { previewOffers } = require('../.offers-test/home-offers-preview.js');
+test('Delivery e Drogaria preservam o preço exclusivo da API sem atribuir Coopermais a ofertas comuns', () => {
+  for (const channel of ['delivery', 'pharmacy']) {
+    const config = offersConfig({ field_coopermais_price: 'prices.club' }, channel);
+    const products = normalizeOffers([
+      item({ ean: '1', prices: { club: '14,90' } }),
+      item({ ean: '2', offer_all_price: 15 }),
+      item({ ean: '3', prices: { club: 0 } }),
+      item({ ean: '4', prices: { club: 25 } }),
+    ], config);
+    assert.equal(products[0].coopermais_price, 14.9);
+    assert.equal(products[0].regular_price, 20);
+    assert.deepEqual(products.slice(1).map(product => product.coopermais_price), [null, null, null]);
+    assert.equal(products[1].offer_all_price, 15);
+  }
+});
+test('preview dos dois canais demonstra Coopermais e oferta comum sem links de compra', () => {
+  for (const channel of ['delivery', 'pharmacy']) {
+    const products = previewOffers(channel);
+    assert.equal(products.length, 5);
+    assert.ok(products.some(product => product.coopermais_price > 0));
+    assert.ok(products.some(product => product.coopermais_price === null));
+    for (const product of products) {
+      assert.equal(product.delivery_url, null);
+      if (product.coopermais_price !== null) assert.ok(product.coopermais_price < product.offer_all_price);
+    }
+  }
 });
