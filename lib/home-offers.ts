@@ -8,7 +8,7 @@ export const offerFields = {
 } as const;
 export type OfferField = keyof typeof offerFields;
 export type OffersConfig = {
-  enabled: boolean; endpoint: string; title: string; limit: number; productsPath: string;
+  enabled: boolean; preview: boolean; endpoint: string; title: string; limit: number; productsPath: string;
   fields: Record<OfferField, string>; useToken: boolean;
 };
 export function offersConfig(value: unknown, channel: OffersChannel): OffersConfig {
@@ -16,7 +16,7 @@ export function offersConfig(value: unknown, channel: OffersChannel): OffersConf
   const text = (key: string, fallback = "") => typeof data[key] === "string" ? data[key].trim().slice(0, 2000) : fallback;
   const requested = Number(data.limit);
   return {
-    enabled: data.enabled === "true", endpoint: text("endpoint"),
+    enabled: data.enabled === "true", preview: data.preview !== "false", endpoint: text("endpoint"),
     title: text("title") || (channel === "delivery" ? "Ofertas do Delivery" : "Ofertas da Drogaria"),
     limit: Number.isFinite(requested) && requested >= 1 ? Math.min(40, Math.floor(requested)) : 12,
     productsPath: text("productsPath"), useToken: data.useToken === "true",

@@ -21,7 +21,7 @@ export function HomeOffersEditor({ settings, busy, onChange }: {
     finally { setTesting(null); }
   }
   return <div className="cms-section-editor">
-    <p>As ofertas aparecem dentro de Delivery e Drogaria na Home e usam o mesmo card da folheteria. Configure a API, salve e teste. Sem ativação, as seções continuam exibindo apenas o conteúdo institucional.</p>
+    <p>As ofertas aparecem dentro de Delivery e Drogaria na Home e usam o mesmo card da folheteria. Configure a API, salve e teste. Sem ativação da API, o preview de apresentação aparece por padrão e pode ser desativado abaixo. Os produtos reais sempre têm prioridade.</p>
     {(["delivery", "pharmacy"] as const).map(channel => {
       const key = `offers_${channel}`, value = settings[key] || {};
       const config = offersConfig(value, channel);
@@ -30,6 +30,7 @@ export function HomeOffersEditor({ settings, busy, onChange }: {
         <div className="cms-section-card-head"><h2>{channel === "delivery" ? "Delivery" : "Drogaria"} · ofertas via API</h2></div>
         <div className="settings-form">
           <label>Exibir carrossel<select disabled={busy} value={value.enabled || "false"} onChange={e => patch({ enabled: e.target.value })}><option value="false">Desativado</option><option value="true">Ativado</option></select></label>
+          <label>Preview de apresentação<select disabled={busy} value={value.preview || "true"} onChange={e => patch({ preview: e.target.value })}><option value="true">Mostrar enquanto a API estiver desativada</option><option value="false">Não mostrar demonstração</option></select><small>Exibe cinco produtos com preços ilustrativos e aviso de preview. Os cards de demonstração não abrem páginas de compra.</small></label>
           <label>Título<input disabled={busy} maxLength={150} value={value.title ?? config.title} onChange={e => patch({ title: e.target.value })} /></label>
           <label>Endpoint HTTPS · GET JSON<input type="url" disabled={busy} value={value.endpoint || ""} onChange={e => patch({ endpoint: e.target.value })} placeholder="https://api.seu-fornecedor.com.br/ofertas" /><small>Não inclua senhas ou tokens na URL. Hosts do Delivery, Drogaria e sicomprasafe.yourintegration.top são permitidos. Para outro fornecedor, o T.I configura OFFERS_API_ALLOWED_HOSTS no servidor.</small></label>
           <label>Quantidade de produtos<input type="number" min={1} max={40} disabled={busy} value={value.limit ?? "12"} onChange={e => patch({ limit: e.target.value })} /></label>
