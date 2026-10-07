@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { careersDefaults } from "@/lib/careers-content";
 import type { ChangeEvent } from "react";
 import { getCareersHeroImage } from "@/lib/careers-hero";
 export function CareersHeroEditor({
@@ -120,6 +121,23 @@ export function CareersHeroEditor({
             Remover foto do header
           </button>
         ) : null}
+      </article>
+      <article className="cms-section-card">
+        <div className="cms-section-card-head"><div><small>Carreiras Coopercica</small><h2>Manifesto e cultura</h2></div></div>
+        <p>Os textos de Missão, Visão e Valores usam a redação oficial do site institucional. Revise aqui a abertura e o manifesto. Campos vazios usam o texto padrão. Salve as alterações para publicar.</p>
+        <div className="settings-form">
+          {([
+            ["heroTitle", "Título principal"],
+            ["heroIntro", "Convite de abertura"],
+            ["manifestoTitle", "Título do manifesto"],
+            ["manifesto", "Manifesto · separe parágrafos com uma linha em branco"],
+            ["mission", "Missão"],
+            ["vision", "Visão"],
+            ["respect", "Valor · Respeito"],
+            ["ethics", "Valor · Ética"],
+            ["cooperation", "Valor · Cooperação"],
+          ] as const).map(([field, label]) => <label key={field}>{label}<textarea disabled={busy} rows={field === "manifesto" ? 8 : field === "vision" ? 5 : 3} maxLength={5000} value={value[field] ?? careersDefaults[field]} onChange={(e) => onChange({ [field]: e.target.value })} /></label>)}
+        </div>
       </article>
     </div>
   );

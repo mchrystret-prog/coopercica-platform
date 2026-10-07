@@ -13,7 +13,6 @@ import { Card } from "@/components/ui/Card/Card";
 import { Container } from "@/components/ui/Container/Container";
 import { Icon } from "@/components/ui/Icon";
 import { Section } from "@/components/ui/Section/Section";
-import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import styles from "./Careers.module.css";
 export function CareersPortal({ jobs }: { jobs: Job[] }) {
   const [search, setSearch] = useState(""),
@@ -22,7 +21,7 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
   const filtered = filterJobs(jobs, { search, department, city });
   return (
     <>
-      <Section id="oportunidades" aria-labelledby="opportunities-title">
+      <Section id="oportunidades" className={styles.opportunities} aria-labelledby="opportunities-title">
         <Container>
           <div className={styles.filterHeading}>
             <h2 id="opportunities-title" className="ds-subtitle">
@@ -153,19 +152,7 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
           )}
         </Container>
       </Section>
-      <Section tone="soft" aria-labelledby="cooperation-title">
-        <Container>
-          <SectionHeader
-            id="cooperation-title"
-            eyebrow="Uma cooperativa feita por pessoas"
-            title={["Cooperar é", "crescer juntos."]}
-            description="Qualidade, confiança e proximidade fazem parte da nossa história. Venha construir os próximos capítulos com a gente."
-          />
-          <Button href="/quem-somos" variant="secondary">
-            Conheça nossa história
-          </Button>
-        </Container>
-      </Section>
+
     </>
   );
 }
