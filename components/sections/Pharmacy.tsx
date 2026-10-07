@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { HomeOffers } from "@/components/offers/HomeOffers";
+import { offersConfig } from "@/lib/home-offers";
 import { pharmacy } from "@/data/pharmacy";
 import { Button } from "@/components/ui/Button/Button";
 import { Container } from "@/components/ui/Container/Container";
@@ -8,9 +10,12 @@ import styles from "./Pharmacy.module.css";
 
 export function Pharmacy({
   content = {},
+  offers = {},
 }: {
   content?: Record<string, string>;
+  offers?: Record<string, string>;
 }) {
+  const config = offersConfig(offers, "pharmacy");
   return (
     <Section
       id="drogaria"
@@ -58,6 +63,7 @@ export function Pharmacy({
           </Button>
         </div>
       </Container>
+      {config.enabled ? <Container><HomeOffers channel="pharmacy" title={config.title} /></Container> : null}
     </Section>
   );
 }
