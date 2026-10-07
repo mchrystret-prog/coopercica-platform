@@ -3,7 +3,7 @@
 .link { display: block; }
 .link:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: -5px; }
 .image { display: block; width: 100%; height: auto; }
-.pause { position: absolute; bottom: 8px; left: 8px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--brand-green-900); border-radius: var(--radius-pill); background: rgb(255 255 255 / 90%); color: var(--brand-green-900); cursor: pointer; }
+.pause { opacity: 0; pointer-events: none; position: absolute; bottom: 8px; left: 8px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--brand-green-900); border-radius: var(--radius-pill); background: rgb(255 255 255 / 90%); color: var(--brand-green-900); cursor: pointer; }
 .pause:hover { background: white; }
-.pause:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 2px; }
+.pause:focus-visible { opacity: 1; pointer-events: auto; outline: 3px solid var(--brand-green-900); outline-offset: 2px; }
 .pause:disabled { cursor: default; }

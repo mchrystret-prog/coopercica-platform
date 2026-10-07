@@ -28,7 +28,7 @@ function BannerMedia({ media }: { media: ReturnType<typeof getCoopermaisBanner> 
   const pauseLabel = reducedMotion ? "Animação pausada" : stopped ? "Reproduzir vídeo" : "Pausar vídeo";
   return <>
     <a className={styles.link} href={media.ctaHref} target="_blank" rel="noopener noreferrer" aria-label={`${media.ctaLabel} (abre em nova aba)`} data-analytics-id="cta:coopermais-banner" data-analytics-label={media.ctaLabel}>
-    {media.video && !failed ? <video ref={video} className={styles.image} src={media.video} poster={media.image} width={2880} height={432} muted loop playsInline preload="metadata" aria-label={media.alt} onError={() => setFailed(true)} /> : <Image src={media.image} alt={media.alt} width={2880} height={432} sizes="(max-width: 1280px) 100vw, 1280px" className={styles.image} />}
+    {media.video && !failed ? <video ref={video} className={styles.image} src={media.video} poster={media.image} width={2880} height={432} autoPlay={!stopped} muted loop playsInline controls={false} disablePictureInPicture disableRemotePlayback preload="metadata" aria-label={media.alt} onError={() => setFailed(true)} /> : <Image src={media.image} alt={media.alt} width={2880} height={432} sizes="(max-width: 1280px) 100vw, 1280px" className={styles.image} />}
     </a>
     {media.video && !failed ? <button type="button" className={styles.pause} disabled={reducedMotion} aria-label={pauseLabel} title={pauseLabel} onClick={() => setPaused(value => !value)}>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">{stopped ? <path d="M4 2v12l10-6z" /> : <><rect x="3" y="2" width="4" height="12" rx="1" /><rect x="9" y="2" width="4" height="12" rx="1" /></>}</svg>
