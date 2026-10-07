@@ -1,68 +1,75 @@
 "use client";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { useMemo, useRef, useState, type PointerEvent } from "react";
+import { Icon } from "@/components/ui/Icon";
 import type { Magazine as MagazineType } from "@/types/content";
+import { magazineEditorials, emptyMagazineEditorial } from "@/lib/magazine-editorial";
 import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
-import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import styles from "./Magazine.module.css";
-type MagazineWithCover = MagazineType & { cover?: string; image?: string; thumbnail?: string };
+
+function MagazineCover({ item, featured = false }: { item: MagazineType; featured?: boolean }) {
+  const [failed, setFailed] = useState(false);
+  return item.cover && !failed ? <Image unoptimized src={item.cover} alt={featured ? `Capa da ${item.title}` : ""} width={360} height={480} className={styles.coverImage} draggable={false} loading={featured ? "eager" : "lazy"} onError={() => setFailed(true)} /> : <span className={styles.coverFallback}><span>REVISTA<br />COOPERCICA</span><strong>{item.edition}</strong><small>{item.title}</small></span>;
+}
 export function Magazine({ items, content = {} }: { items: MagazineType[]; content?: Record<string, string> }) {
-  const magazines = useMemo(() => items.filter(item => Boolean(item?.id && item?.href)), [items]);
-  const [index, setIndex] = useState(0);
-  const deck = useRef<HTMLDivElement>(null);
-  const gesture = useRef<{ id: number; x: number; y: number; dx: number; horizontal: boolean } | null>(null);
-  const suppressClick = useRef(false);
-  const current = Math.min(index, Math.max(0, magazines.length - 1));
-  const selected = magazines[current];
+  const magazines = items.filter(item => Boolean(item?.id && item?.href)).map(item => item.href === "#" ? { ...item, href: "/revista" } : item);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = magazines.find(item => item.id === selectedId) ?? magazines.find(item => item.id === content.featuredId) ?? magazines[0];
+  const rail = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ id: number; x: number; left: number; moved: boolean } | null>(null);
+  const suppressClickUntil = useRef(0);
+  const [edges, setEdges] = useState({ start: true, end: true });
+  const [dragging, setDragging] = useState(false);
+  useEffect(() => {
+    const element = rail.current;
+    if (!element) return;
+    const sync = () => setEdges({ start: element.scrollLeft <= 2, end: element.scrollLeft + element.clientWidth >= element.scrollWidth - 2 });
+    sync();
+    const observer = new ResizeObserver(sync);
+    observer.observe(element);
+    element.addEventListener("scroll", sync, { passive: true });
+    return () => { observer.disconnect(); element.removeEventListener("scroll", sync); };
+  }, [items]);
   if (!selected) return null;
-  const change = (direction: number) => setIndex((current + direction + magazines.length) % magazines.length);
-  function start(event: PointerEvent<HTMLDivElement>) {
-    if (!event.isPrimary || event.button !== 0 || magazines.length < 2) return;
-    suppressClick.current = false;
-    gesture.current = { id: event.pointerId, x: event.clientX, y: event.clientY, dx: 0, horizontal: false };
+  const editorial = magazineEditorials(content)[selected.id] ?? emptyMagazineEditorial;
+  const highlights = editorial.highlights.filter(item => item.text.trim());
+  function slide(direction: number) {
+    const element = rail.current;
+    if (!element) return;
+    element.scrollBy({ left: direction * element.clientWidth * .8, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
-  function move(event: PointerEvent<HTMLDivElement>) {
-    const value = gesture.current;
-    if (!value || value.id !== event.pointerId) return;
-    const dx = event.clientX - value.x, dy = event.clientY - value.y;
-    if (!value.horizontal && Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { gesture.current = null; return; }
-    if (!value.horizontal && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
-      value.horizontal = true;
-      event.currentTarget.setPointerCapture(event.pointerId);
-    }
-    if (value.horizontal) {
-      event.preventDefault();
-      value.dx = dx;
-      suppressClick.current = true;
-      deck.current?.style.setProperty("--drag", `${Math.max(-100, Math.min(100, dx))}px`);
-      deck.current?.setAttribute("data-dragging", "true");
-    }
+  function endDrag() {
+    if (drag.current?.moved) suppressClickUntil.current = Date.now() + 350;
+    drag.current = null;
+    setDragging(false);
   }
-  function finish(event: PointerEvent<HTMLDivElement>, cancelled = false) {
-    const value = gesture.current;
-    if (!value || value.id !== event.pointerId) return;
-    gesture.current = null;
-    deck.current?.style.setProperty("--drag", "0px");
-    deck.current?.removeAttribute("data-dragging");
-    if (!cancelled && value.horizontal && Math.abs(value.dx) >= 40) change(value.dx < 0 ? 1 : -1);
-  }
-  return <Section id="revista" className={styles.section} tabIndex={-1} aria-labelledby="magazine-title"><Container className={styles.layout}>
-    <SectionHeader className={styles.header} id="magazine-title" eyebrow={content.eyebrow || "REVISTA COOPERCICA"} title={[content.title1 ?? "TODO MÊS, UMA", content.title2 ?? "NOVA EDIÇÃO PRA VOCÊ."].filter(Boolean)} stacked />
-    <div className={styles.carousel} role="region" aria-roledescription="carrossel" aria-label="Edições da Revista Coopercica">
-      <div ref={deck} className={styles.deck} tabIndex={0} aria-label="Deslize ou use as setas para trocar a revista" onPointerDown={start} onPointerMove={move} onPointerUp={event => finish(event)} onPointerCancel={event => finish(event, true)} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation(); } }} onKeyDown={event => { if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); change(event.key === "ArrowRight" ? 1 : -1); } }}>
-        {magazines.map((item, position) => {
-          const distance = (position - current + magazines.length) % magazines.length;
-          const layer = distance === 0 ? "current" : distance === 1 ? "next" : distance === magazines.length - 1 ? "previous" : "hidden";
-          const cover = (item as MagazineWithCover).cover ?? (item as MagazineWithCover).image ?? (item as MagazineWithCover).thumbnail;
-          return <a key={item.id} className={styles.coverLink} data-position={layer} href={item.href} tabIndex={distance === 0 ? 0 : -1} aria-hidden={distance !== 0} aria-label={`Ler ${item.edition}: ${item.title}`} data-analytics-kind="download" data-analytics-id={`magazine:${item.id}`} data-analytics-label={`Revista: ${item.edition}`} draggable={false}>
-            {cover ? <Image unoptimized src={cover} alt={`Capa da ${item.edition}`} width={360} height={480} className={styles.coverImage} draggable={false} loading={distance === 0 ? "eager" : "lazy"} /> : <div className={styles.coverFallback}><span>REVISTA COOPERCICA</span><strong>{item.edition}</strong><small>{item.title}</small></div>}
-          </a>;
-        })}
+  return <Section id="revista" className={styles.section} tabIndex={-1} aria-labelledby="magazine-title"><Container>
+    <div className={styles.feature}>
+      <a className={styles.featuredCover} href={selected.href} aria-label={`Folhear ${selected.title}`} data-analytics-kind="download" data-analytics-id={`magazine:${selected.id}`} data-analytics-label={`Revista: ${selected.edition}`}>
+        <span className={styles.book} key={`${selected.id}:${selected.cover}`}><MagazineCover item={selected} featured /></span>
+      </a>
+      <div className={styles.editorial}>
+        <p className={styles.eyebrow}>{content.eyebrow || "Revista Coopercica"}<span aria-hidden="true"> · </span>{selected.edition}</p>
+        <h2 id="magazine-title">{editorial.headline.trim() || selected.title}</h2>
+        <p className={styles.summary}>{editorial.summary.trim() || content.description?.trim() || "Uma nova edição para acompanhar você. Folheie a revista e descubra as histórias, dicas e novidades da Coopercica."}</p>
+        {highlights.length ? <ul className={styles.highlights}>{highlights.map((item, index) => <li key={index}>{item.label.trim() ? <span>{item.label}</span> : null}<p>{item.text}</p></li>)}</ul> : null}
+        <div className={styles.actions}><Button href={selected.href} data-analytics-kind="download" data-analytics-id={`magazine:${selected.id}`}>Folhear esta edição</Button><Button variant="secondary" href="/revista">{content.ctaLabel || "Ver acervo completo"}</Button></div>
       </div>
-      <div className={styles.navigation}><button type="button" onClick={() => change(-1)} disabled={magazines.length < 2} aria-label="Revista anterior">←</button><span aria-live="polite" aria-atomic="true">{current + 1} de {magazines.length} · {selected.edition}</span><button type="button" onClick={() => change(1)} disabled={magazines.length < 2} aria-label="Próxima revista">→</button></div>
-      <div className={styles.info}><h3>{selected.title}</h3><div className={styles.actions}><Button href={selected.href} data-analytics-kind="download" data-analytics-id={`magazine:${selected.id}`}>Ler edição</Button><Button variant="secondary" href="/revista">{content.ctaLabel || "Ver todas as edições"}</Button></div></div>
+    </div>
+    <div className={styles.archive}>
+      <div className={styles.archiveHeader}><h3 id="magazine-archive-title">Todas as edições</h3>{!edges.start || !edges.end ? <div className={styles.controls}><button type="button" aria-label="Edições anteriores" aria-controls="magazine-editions" disabled={edges.start} onClick={() => slide(-1)}><Icon name="chevron-left" /></button><button type="button" aria-label="Próximas edições" aria-controls="magazine-editions" disabled={edges.end} onClick={() => slide(1)}><Icon name="chevron-right" /></button></div> : null}</div>
+      <p className={styles.archiveHint}>Escolha uma edição para conhecer os destaques.</p>
+      <div id="magazine-editions" ref={rail} className={styles.rail} data-dragging={dragging} role="group" aria-labelledby="magazine-archive-title" tabIndex={0}
+        onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); slide(event.key === "ArrowLeft" ? -1 : 1); } }}
+        onPointerDown={event => { if (event.pointerType !== "mouse" || !event.isPrimary || event.button !== 0) return; suppressClickUntil.current = 0; drag.current = { id: event.pointerId, x: event.clientX, left: event.currentTarget.scrollLeft, moved: false }; }}
+        onPointerMove={event => { const state = drag.current; if (!state || state.id !== event.pointerId) return; const dx = event.clientX - state.x; if (!state.moved && Math.abs(dx) > 6) { state.moved = true; event.currentTarget.setPointerCapture(event.pointerId); setDragging(true); } if (state.moved) { event.preventDefault(); event.currentTarget.scrollLeft = state.left - dx; } }}
+        onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag} onPointerLeave={() => { if (drag.current && !drag.current.moved) endDrag(); }} onDragStart={event => event.preventDefault()}
+        onClickCapture={event => { if (event.detail !== 0 && Date.now() < suppressClickUntil.current) { event.preventDefault(); event.stopPropagation(); } }}>
+        {magazines.map(item => <button type="button" key={item.id} className={styles.edition} aria-pressed={selected.id === item.id} aria-label={`Mostrar destaques de ${item.title}`} onClick={() => setSelectedId(item.id)}><span className={styles.thumbnail}><MagazineCover key={item.cover} item={item} /></span><strong>{item.title}</strong><small>{item.edition}</small></button>)}
+      </div>
+      <span className={styles.srOnly} role="status">Edição em destaque: {selected.title}</span>
     </div>
   </Container></Section>;
 }

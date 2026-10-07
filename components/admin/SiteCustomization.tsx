@@ -5,6 +5,8 @@ import { HistoryImageEditor } from "./HistoryImageEditor";
 import { CoopermaisBannerEditor } from "./CoopermaisBannerEditor";
 import { VideosHeaderEditor } from "./VideosHeaderEditor";
 import { PartnersEditor } from "./PartnersEditor";
+import { MagazineEditorialEditor } from "./MagazineEditorialEditor";
+import type { Magazine } from "@/types/content";
 import { validatePartners } from "@/lib/home-partners";
 import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
@@ -28,9 +30,9 @@ const labels: Record<string, string> = {
   ctaHref: "Destino do botão",
   image: "Imagem da seção",
 };
-export function SiteCustomization() {
+export function SiteCustomization({ magazines = [] }: { magazines?: Magazine[] }) {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine">(
       "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -275,6 +277,7 @@ export function SiteCustomization() {
           Portal de Vagas
         </button>
         <button data-active={tab === "partners"} onClick={() => setTab("partners")}>Parceiros</button>
+        <button data-active={tab === "magazine"} onClick={() => setTab("magazine")}>Revista</button>
         <button data-active={tab === "videos"} onClick={() => setTab("videos")}>Vídeos</button>
         <button data-active={tab === "coopermais"} onClick={() => setTab("coopermais")}>Coopermais</button>
         <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
@@ -391,6 +394,13 @@ export function SiteCustomization() {
             ) : null}
           </label>
         </div>
+      ) : tab === "magazine" ? (
+        <MagazineEditorialEditor magazines={magazines} value={data.sections.find(section => section.id === "revista")?.content || {}} busy={busy} onChange={patch => {
+          const section = data.sections.find(item => item.id === "revista");
+          if (!section) { setMsg("A seção Revista não foi encontrada na configuração da Home."); return; }
+          setSection(section.id, { content: { ...section.content, ...patch } });
+          setMsg("Conteúdo da revista alterado. Salve as alterações para publicar.");
+        }} />
       ) : tab === "partners" ? (
         <PartnersEditor value={data.settings.home_partners || {}} busy={busy} onChange={patch => {
           setData(current => current ? { ...current, settings: { ...current.settings, home_partners: { ...current.settings.home_partners, ...patch } } } : current);
@@ -487,7 +497,7 @@ export function SiteCustomization() {
               </div>
               <div className="settings-form">
                 {Object.entries(s.content)
-                  .filter(([k]) => k !== "image")
+                  .filter(([k]) => k !== "image" && k !== "editionDetails" && k !== "featuredId" && !(s.id === "revista" && ["title1", "title2"].includes(k)))
                   .map(([k, v]) => (
                     <label key={k}>
                       {labels[k] || k}
