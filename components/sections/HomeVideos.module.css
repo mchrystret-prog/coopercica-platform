@@ -4,9 +4,9 @@
 .eyebrow { color: var(--brand-lime-500); text-transform: uppercase; letter-spacing: var(--tracking-eyebrow); font-size: var(--font-size-eyebrow); font-weight: var(--font-weight-bold); }
 .heading h2 { color: inherit; font-size: var(--font-size-h2); line-height: 1.08; margin: 14px 0; }
 .heading p { color: var(--text-inverse-muted); margin: 0; }
-.featured { position: relative; min-height: 200px; aspect-ratio: 16 / 9; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-device-dark); box-shadow: var(--shadow-overlay); scroll-margin-top: calc(var(--header-height) + 16px); }
+.featured { width: min(100%, 1000px, calc((100svh - var(--header-height) - 180px) * 1.7778)); min-width: min(100%, 360px); margin-inline: auto; position: relative; min-height: 200px; aspect-ratio: 16 / 9; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-device-dark); box-shadow: var(--shadow-overlay); scroll-margin-top: calc(var(--header-height) + 16px); }
 .featured iframe { width: 100%; height: 100%; border: 0; }
-.featuredTitle { font-weight: var(--font-weight-semibold); color: var(--text-inverse-muted); margin: 16px 0 32px; }
+.featuredTitle { max-width: 1000px; margin-inline: auto; overflow-wrap: anywhere; font-weight: var(--font-weight-semibold); color: var(--text-inverse-muted); margin-block: 16px 32px; }
 .railGroup + .railGroup { margin-top: 40px; }
 .railHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .railHeading h3 { color: inherit; font-size: var(--font-size-body-lg); margin: 0; }
@@ -26,3 +26,8 @@
 @media (max-width: 1000px) { .rail { grid-auto-columns: calc((100% - 48px) / 3); } }
 @media (max-width: 600px) { .rail { grid-auto-columns: 78%; gap: 16px; } .heading { align-items: start; } .featured { border-radius: var(--radius-md); } .railHeading h3 { font-size: var(--font-size-body); } }
 @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+
+.heading > div, .railGroup, .rail, .railHeading { min-width: 0; }
+.heading h2, .railHeading h3, .cardTitle { overflow-wrap: anywhere; }
+.arrows { flex-shrink: 0; }
+@media (max-width: 600px) { .featured { width: 100%; min-width: 0; } .section { padding-block: 40px; } .heading { gap: 18px; } }
