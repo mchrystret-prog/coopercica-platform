@@ -25,7 +25,7 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
             <span className={styles.photoCaption}>Uma história feita por pessoas.</span>
           </div> : null}
             <div className={styles.actions} data-careers-reveal data-careers-delay="140">
-              <Button href="#oportunidades" tone="inverse">Encontre sua oportunidade</Button>
+              <Button href="#oportunidades">Encontre sua oportunidade</Button>
               <a className={styles.textLink} href="#nossa-cultura">Conheça o que nos move <span aria-hidden="true">↓</span></a>
             </div>
         </div>
@@ -36,7 +36,7 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
       <Container>
         <div className={styles.editorialGrid}>
           <div data-careers-reveal><span className="eyebrow">Nossa essência</span><h2 id="manifesto-title" className={styles.title}>{content.manifestoTitle}</h2><span className={styles.year}>1969 <span>O começo de uma história coletiva.</span></span></div>
-          <div className={styles.manifestoCopy} data-careers-reveal data-careers-delay="70">{content.manifesto.split(/\n\s*\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}<Button href="/quem-somos" variant="secondary">Conheça nossa história</Button></div>
+          <div className={styles.manifestoCopy} data-careers-reveal data-careers-delay="70">{content.manifesto.split(/\n\s*\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}<Button href="/quem-somos">Conheça nossa história</Button></div>
         </div>
       </Container>
     </Section>
@@ -58,6 +58,6 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
         ].map(([title, description], index) => <article key={title} data-careers-reveal data-careers-delay={index * 70}><span className={styles.valueIndex} aria-hidden="true">0{index + 1}</span><h3>{title}</h3><p>{description}</p></article>)}</div>
       </Container>
     </Section>
-    <section className={styles.invitation} aria-labelledby="invitation-title"><Container><div className={styles.invitationGrid} data-careers-reveal><div><span className={styles.eyebrow}>Seu próximo passo</span><h2 id="invitation-title">Faça parte dos próximos capítulos.</h2><p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p></div><Button href="#oportunidades" tone="inverse">Quero fazer parte</Button></div></Container></section>
+    <section className={styles.invitation} aria-labelledby="invitation-title"><Container><div className={styles.invitationGrid} data-careers-reveal><div><span className={styles.eyebrow}>Seu próximo passo</span><h2 id="invitation-title">Faça parte dos próximos capítulos.</h2><p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p></div><Button href="#oportunidades">Quero fazer parte</Button></div></Container></section>
   </>;
 }
