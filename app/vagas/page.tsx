@@ -1,6 +1,7 @@
 import { pageMetadata, jobIsCurrent } from "@/lib/seo";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { CareersMotion } from "@/components/careers/CareersMotion";
 import { CareersStory } from "@/components/careers/CareersStory";
 import { getCareersContent } from "@/lib/careers-content";
 import { CareersPortal } from "@/components/careers/CareersPortal";
@@ -18,8 +19,10 @@ export default async function Page() {
     <>
       <Header />
       <main>
+        <CareersMotion>
         <CareersStory content={getCareersContent(hero)} image={getCareersHeroImage(hero)} />
         <CareersPortal jobs={jobs.filter(job => jobIsCurrent(job))} />
+        </CareersMotion>
       </main>
       <Footer />
     </>

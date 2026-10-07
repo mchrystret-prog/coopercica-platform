@@ -23,7 +23,7 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
     <>
       <Section id="oportunidades" className={styles.opportunities} aria-labelledby="opportunities-title">
         <Container>
-          <div className={styles.filterHeading}>
+          <div className={styles.filterHeading} data-careers-reveal>
             <h2 id="opportunities-title" className="ds-subtitle">
               Oportunidades
             </h2>
@@ -32,7 +32,7 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
               {jobs.length === 1 ? "vaga aberta" : "vagas abertas"}
             </Badge>
           </div>
-          <div className={styles.filters}>
+          <div className={styles.filters} data-careers-reveal data-careers-delay="70">
             <label>
               Buscar vaga
               <input
@@ -95,8 +95,8 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
           </div>
           {filtered.length ? (
             <div className={styles.grid}>
-              {filtered.map((j) => (
-                <Card className={styles.jobCard} key={j.id}>
+              {filtered.map((j, index) => (
+                <Card className={styles.jobCard} key={j.id} data-careers-reveal data-careers-delay={Math.min(index, 3) * 70}>
                   <div className={styles.cardTop}>
                     <Badge className={styles.department}>{j.department}</Badge>
                     <span>
