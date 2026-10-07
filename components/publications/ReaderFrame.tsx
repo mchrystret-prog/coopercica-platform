@@ -47,5 +47,5 @@ export default function ReaderFrame({ id, kind, title, edition }: { id: string; 
     };
   }, [id]);
   if (page === null) return <p role="status">Preparando o leitor…</p>;
-  return <iframe ref={frame} className="pdf-reader-frame" title={`Folhear: ${title}`} src={`/reader.html?${new URLSearchParams({ id, kind, title, edition: edition ?? "", page: String(page) })}`} allow="fullscreen; clipboard-write" allowFullScreen />;
+  return <iframe ref={frame} className="pdf-reader-frame" title={`Folhear: ${title}`} src={`/reader.html?${new URLSearchParams({ id, kind, title, edition: edition ?? "", page: String(page), v: "20261007-focus" })}`} allow="fullscreen; clipboard-write" allowFullScreen />;
 }

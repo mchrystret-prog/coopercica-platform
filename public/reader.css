@@ -96,6 +96,17 @@ footer p { margin: 0 0 4px; font-size: 16px; font-weight: 800; color: #fff; }
 #reader:fullscreen { height: 100dvh; }
 #reader:fullscreen #scroller { min-height: 200px; }
 #reader.expanded { height: 100dvh; min-height: 0; padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+#reader.reading-focus header { grid-template-columns: 1fr; }
+#reader.reading-focus #back,
+#reader.reading-focus .heading,
+#reader.reading-focus footer span { display: none; }
+#reader.reading-focus .toolbar { grid-column: 1; justify-content: center; }
+#reader.reading-focus .reading-area { position: relative; }
+@media (max-width: 600px) {
+  #reader.reading-focus .arrow { position: absolute; bottom: 8px; z-index: 3; width: 36px; height: 36px; opacity: .9; }
+  #reader.reading-focus #previous { left: 8px; }
+  #reader.reading-focus #next { right: 8px; }
+}
 
 @media (max-width: 900px) {
   header { grid-template-columns: auto minmax(0, 1fr); }

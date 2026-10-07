@@ -157,6 +157,7 @@ $('copy').onclick = async () => { try { await navigator.clipboard.writeText(shar
 let expanded = false;
 function fullscreenLabel() {
   const active = Boolean(document.fullscreenElement || expanded);
+  $('reader').classList.toggle('reading-focus', active);
   const label = active ? 'Sair da tela cheia' : 'Tela cheia';
   $('fullscreen').setAttribute('aria-label', label);
   $('fullscreen').setAttribute('aria-pressed', String(active));
@@ -164,12 +165,10 @@ function fullscreenLabel() {
   fit();
 }
 function requestExpanded(value) {
+  expanded = value;
+  $('reader').classList.toggle('expanded', expanded);
+  fullscreenLabel();
   if (parent !== window) parent.postMessage({ type: 'coopercica-reader-expand', id, expanded: value }, location.origin);
-  else {
-    expanded = value;
-    $('reader').classList.toggle('expanded', expanded);
-    fullscreenLabel();
-  }
 }
 window.addEventListener('message', event => {
   if (event.origin !== location.origin || event.source !== parent || event.data?.type !== 'coopercica-reader-expanded' || event.data.id !== id || typeof event.data.expanded !== 'boolean') return;
@@ -181,7 +180,7 @@ $('fullscreen').onclick = async () => {
   if (expanded) { requestExpanded(false); return; }
   if (document.fullscreenElement) { await document.exitFullscreen().catch(() => {}); return; }
   if (document.fullscreenEnabled && typeof $('reader').requestFullscreen === 'function') {
-    try { await $('reader').requestFullscreen(); return; } catch { /* Expand within the page when native fullscreen is unavailable. */ }
+    try { await $('reader').requestFullscreen(); if (document.fullscreenElement) return; } catch { /* Expand within the page when native fullscreen is unavailable. */ }
   }
   requestExpanded(true);
 };

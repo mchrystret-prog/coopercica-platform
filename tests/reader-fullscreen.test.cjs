@@ -37,10 +37,16 @@ test('native fullscreen rejection falls back to expanded reading', async () => {
 });
 test('supported native fullscreen retains native behavior', async () => {
   let entered = false;
-  const r = reader(async () => { entered = true; }, true);
+  const r = reader(async () => { entered = true; r.document.fullscreenElement = r.element('reader'); }, true);
   await r.element('fullscreen').onclick();
   assert.equal(entered, true);
   assert.equal(r.messages.length, 0);
+});
+test('a native request that does not enter fullscreen still expands the reader', async () => {
+  const r = reader(async () => {}, true);
+  await r.element('fullscreen').onclick();
+  assert.equal(r.element('fullscreen').attributes['aria-label'], 'Sair da tela cheia');
+  assert.equal(r.messages[0].data.expanded, true);
 });
 test('foreign messages cannot change fullscreen state; Escape exits expanded mode', () => {
   const r = reader(undefined);
