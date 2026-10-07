@@ -372,7 +372,7 @@ export function SiteCustomization() {
                 : current,
             );
             setMsg(
-              "Foto de destaque alterada. Salve as alterações para publicar.",
+              "Portal de Vagas alterado. Salve as alterações para publicar.",
             );
           }}
         />
