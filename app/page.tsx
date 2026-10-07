@@ -1,3 +1,4 @@
+import { CoopermaisBanner } from "@/components/sections/CoopermaisBanner";
 import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
@@ -74,7 +75,10 @@ export default async function Home() {
         ) : null}
 
         {visible("delivery") ? (
-          <Delivery content={section("delivery")?.content} offers={deliveryOffers} />
+          <>
+            <Delivery content={section("delivery")?.content} offers={deliveryOffers} />
+            <CoopermaisBanner />
+          </>
         ) : null}
 
         {visible("revista") ? (

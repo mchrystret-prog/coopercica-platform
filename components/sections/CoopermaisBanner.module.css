@@ -1,0 +1,29 @@
+.section {
+  position: relative;
+  width: 100%;
+  background: var(--brand-lime-500);
+  isolation: isolate;
+}
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.cta {
+  position: absolute;
+  z-index: 1;
+  right: clamp(16px, 4vw, 80px);
+  bottom: 20%;
+  box-shadow: var(--shadow-soft);
+}
+@media (max-width: 680px) {
+  .cta {
+    right: 8px;
+    bottom: 8px;
+    min-height: 32px;
+    padding: 7px 10px;
+    gap: 5px;
+    font-size: 11px;
+  }
+  .cta svg { width: 13px; height: 13px; }
+}
