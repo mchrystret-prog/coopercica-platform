@@ -61,7 +61,7 @@ export function Delivery({
           </Button>
         </div>
       </Container>
-      {config.enabled ? <Container><HomeOffers channel="delivery" title={config.title} /></Container> : null}
+      {config.enabled || config.preview ? <Container><HomeOffers key={config.enabled ? "api" : "preview"} channel="delivery" title={config.title} preview={!config.enabled && config.preview} /></Container> : null}
     </Section>
   );
 }

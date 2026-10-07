@@ -63,7 +63,7 @@ export function Pharmacy({
           </Button>
         </div>
       </Container>
-      {config.enabled ? <Container><HomeOffers channel="pharmacy" title={config.title} /></Container> : null}
+      {config.enabled || config.preview ? <Container><HomeOffers key={config.enabled ? "api" : "preview"} channel="pharmacy" title={config.title} preview={!config.enabled && config.preview} /></Container> : null}
     </Section>
   );
 }

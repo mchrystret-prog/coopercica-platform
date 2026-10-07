@@ -1,6 +1,8 @@
 # Ofertas na Home
 
-CMS → Personalização → Ofertas via API configura Delivery e Drogaria separadamente. As integrações iniciam desativadas. Não há endpoint real presumido nem preços de demonstração publicados.
+CMS → Personalização → Ofertas via API configura Delivery e Drogaria separadamente. As integrações iniciam desativadas. Não há endpoint real presumido. O preview solicitado para apresentação exibe cinco produtos por canal com preços ilustrativos, fotos do catálogo de referência e aviso explícito de demonstração. Não há links de compra nos exemplos.
+
+O campo **Preview de apresentação** pode ocultar a demonstração por canal. Ativar a API sempre substitui o preview por produtos reais; falhas da API não voltam aos exemplos.
 
 1. Obtenha do fornecedor um endpoint GET HTTPS que devolva JSON e ofertas vigentes.
 2. Configure endpoint, caminho da lista, campos e quantidade (1–40).
