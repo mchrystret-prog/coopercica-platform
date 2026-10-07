@@ -2,6 +2,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
+import { VideosHeaderEditor } from "./VideosHeaderEditor";
 import { CareersHeroEditor } from "./CareersHeroEditor";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 type Json = Record<string, string>;
@@ -24,7 +25,7 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization() {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos">(
       "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -77,6 +78,9 @@ export function SiteCustomization() {
         "Adicione uma descrição da foto do Portal de Vagas para acessibilidade.",
       );
       return;
+    }
+    if (data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
+      setTab("videos"); setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
     }
     setBusy(true);
     setMsg("");
@@ -142,13 +146,15 @@ export function SiteCustomization() {
     setBusy(true);
     try {
       if (
-        (target.startsWith("history:") || target.startsWith("careers:")) &&
+        (target.startsWith("history:") || target.startsWith("careers:") || target.startsWith("videos:")) &&
         !["image/jpeg", "image/png", "image/webp"].includes(file.type)
       )
         throw new Error("Use uma imagem JPG, PNG ou WebP.");
       const url = await upload(
         file,
-        target.startsWith("careers:")
+        target.startsWith("videos:")
+          ? "videos"
+          : target.startsWith("careers:")
           ? "careers"
           : target.startsWith("history:")
             ? "history"
@@ -156,7 +162,13 @@ export function SiteCustomization() {
               ? "sections"
               : "identity",
       );
-      if (target.startsWith("careers:")) {
+      if (target.startsWith("videos:")) {
+        const field = target.slice(7);
+        setData(current => current ? { ...current, settings: { ...current.settings,
+          videos_header: { ...current.settings.videos_header, [field]: url,
+            alt: current.settings.videos_header?.alt || "Mais conteúdo pra você. Família reunida assistindo ao canal da Coopercica." }
+        } } : current);
+      } else if (target.startsWith("careers:")) {
         const field = target.slice(8);
         setData((current) =>
           current
@@ -241,6 +253,7 @@ export function SiteCustomization() {
         >
           Portal de Vagas
         </button>
+        <button data-active={tab === "videos"} onClick={() => setTab("videos")}>Vídeos</button>
         <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
       </div>
       {msg ? (
@@ -355,6 +368,15 @@ export function SiteCustomization() {
             ) : null}
           </label>
         </div>
+      ) : tab === "videos" ? (
+        <VideosHeaderEditor value={data.settings.videos_header || {}} busy={busy}
+          onUpload={(e, field) => media(e, `videos:${field}`)}
+          onChange={patch => {
+            setData(current => current ? { ...current, settings: { ...current.settings,
+              videos_header: { ...current.settings.videos_header, ...patch }
+            } } : current);
+            setMsg("Cabeçalho de Vídeos alterado. Salve as alterações para publicar.");
+          }} />
       ) : tab === "offers" ? (
         <HomeOffersEditor settings={data.settings} busy={busy} onChange={(key, patch) => {
           setData(current => current ? { ...current, settings: { ...current.settings, [key]: { ...current.settings[key], ...patch } } } : current);

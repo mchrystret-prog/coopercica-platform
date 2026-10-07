@@ -1,0 +1,19 @@
+.banner {
+  width: 100%;
+  background: var(--brand-green-900);
+}
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.intro {
+  padding-top: var(--space-10);
+}
+.intro h1 {
+  margin: 0 0 var(--space-4);
+}
+.intro p {
+  margin: 0;
+  color: var(--text-body);
+}
