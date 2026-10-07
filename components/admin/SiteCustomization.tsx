@@ -3,6 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
 import { CareersHeroEditor } from "./CareersHeroEditor";
+import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 type Json = Record<string, string>;
 type Section = {
   id: string;
@@ -23,7 +24,7 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization() {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers">(
       "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -65,6 +66,8 @@ export function SiteCustomization() {
   }
   async function saveAll() {
     if (!data) return;
+    const offersError = validateOffersSettings(data.settings);
+    if (offersError) { setTab("offers"); setMsg(offersError); return; }
     if (
       data.settings.careers_hero?.image &&
       !data.settings.careers_hero.alt?.trim()
@@ -238,6 +241,7 @@ export function SiteCustomization() {
         >
           Portal de Vagas
         </button>
+        <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
       </div>
       {msg ? (
         <div className="form-status">
@@ -351,6 +355,11 @@ export function SiteCustomization() {
             ) : null}
           </label>
         </div>
+      ) : tab === "offers" ? (
+        <HomeOffersEditor settings={data.settings} busy={busy} onChange={(key, patch) => {
+          setData(current => current ? { ...current, settings: { ...current.settings, [key]: { ...current.settings[key], ...patch } } } : current);
+          setMsg("Configuração de ofertas alterada. Salve as alterações para publicar.");
+        }} />
       ) : tab === "careers" ? (
         <CareersHeroEditor
           value={data.settings.careers_hero || {}}

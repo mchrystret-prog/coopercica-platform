@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { HomeOffers } from "@/components/offers/HomeOffers";
+import { offersConfig } from "@/lib/home-offers";
 import { Button } from "@/components/ui/Button/Button";
 import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
@@ -7,9 +9,12 @@ import styles from "./Delivery.module.css";
 
 export function Delivery({
   content = {},
+  offers = {},
 }: {
   content?: Record<string, string>;
+  offers?: Record<string, string>;
 }) {
+  const config = offersConfig(offers, "delivery");
   return (
     <Section id="delivery" tone="soft" className={styles.section} tabIndex={-1}>
       <Container className={styles.layout}>
@@ -56,6 +61,7 @@ export function Delivery({
           </Button>
         </div>
       </Container>
+      {config.enabled ? <Container><HomeOffers channel="delivery" title={config.title} /></Container> : null}
     </Section>
   );
 }
