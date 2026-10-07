@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { indexingEnabled } from "./site-indexing";
+export { isPreview, indexingEnabled } from "./site-indexing";
 import type { Store } from "../data/stores";
 import type { Job } from "./jobs";
 import { openingHoursFromText } from "./store-hours";
@@ -9,11 +11,10 @@ export function siteOrigin(value = process.env.SITE_URL || "https://coopercica-p
   return url.origin;
 }
 export const absoluteUrl = (path: string) => new URL(path, `${siteOrigin()}/`).href;
-export const isPreview = () => process.env.VERCEL_ENV === "preview" || process.env.VERCEL_ENV === "development" || process.env.NODE_ENV === "development";
 export function pageMetadata(title: string, description: string, path: string): Metadata {
   return {
     title, description, alternates: { canonical: absoluteUrl(path) },
-    robots: isPreview() ? { index: false, follow: false } : { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
+    robots: !indexingEnabled() ? { index: false, follow: false, noarchive: true, nosnippet: true } : { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
     openGraph: { type: "website", locale: "pt_BR", siteName: "Coopercica", title: `${title} | Coopercica`, description, url: absoluteUrl(path), images: [{ url: absoluteUrl("/opengraph-image"), width: 1200, height: 630, alt: "Coopercica — qualidade com você" }] },
     twitter: { card: "summary_large_image", title: `${title} | Coopercica`, description, images: [absoluteUrl("/opengraph-image")] },
   };

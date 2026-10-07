@@ -1,10 +1,18 @@
 # SEO e descoberta em buscas com IA
 
+## Estado de teste: indexação desligada por padrão
+
+Não configure nada para manter o bloqueio. Sem `SITE_INDEXING_ENABLED=true`, inclusive em produção, todas as respostas do site recebem `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet`; páginas públicas recebem metadados de não indexação; robots.txt solicita que rastreadores não acessem o site; e sitemap.xml fica vazio. O bloqueio só entra em vigor no site publicado após merge e deploy.
+
+Isso não torna o site privado nem remove resultados já indexados imediatamente. Quem tiver o link ainda consegue acessar e ver preços de teste. Para impedir esse acesso, é necessário restringir o ambiente de teste com autenticação/proteção de deployment. Arquivos hospedados diretamente em serviços externos, como Storage, não recebem os cabeçalhos deste site.
+
+Apenas no lançamento, depois de revisar preços e conteúdo, defina `SITE_INDEXING_ENABLED=true` no ambiente de produção e faça novo deploy. Previews e desenvolvimento permanecem bloqueados mesmo com a variável ligada. Só então envie o sitemap aos buscadores.
+
 ## O que está implementado
 
 - Títulos, descrições, URLs canônicas, Open Graph e Twitter por página, com imagem social de 1200 × 630.
 - `/sitemap.xml` inclui páginas públicas, lojas ativas, folhetos vigentes, vídeos e vagas abertas dentro do prazo. Datas de atualização só são emitidas quando vêm do conteúdo.
-- `/robots.txt` permite rastreamento público, inclusive OAI-SearchBot, e exclui CMS, API e design system. Previews e desenvolvimento ficam fora da indexação. Autenticação continua obrigatória no CMS; robots não é controle de acesso.
+- Quando a indexação for ativada, `/robots.txt` permite rastreamento público, inclusive OAI-SearchBot, e exclui CMS, API e design system. Previews e desenvolvimento ficam fora da indexação. Autenticação continua obrigatória no CMS; robots não é controle de acesso.
 - JSON-LD de Organization, WebSite, GroceryStore, BreadcrumbList e JobPosting com dados existentes e serialização segura de texto do CMS.
 - Cada loja ganha `/lojas/[slug]`, com endereço, horários, telefone e serviços em texto, ligada pelo diretório de lojas. Links do rodapé levam às páginas públicas.
 - A home e Quem Somos expõem fatos institucionais em texto, incluindo fundação, cidades e missão, visão e valores. Isso ajuda mecanismos de busca a compreender e citar a organização.
@@ -18,7 +26,7 @@ Defina `SITE_URL` com a origem HTTPS do domínio público definitivo, sem caminh
 
 Opcionalmente, configure `GOOGLE_SITE_VERIFICATION` e `BING_SITE_VERIFICATION` com os tokens de verificação de propriedade fornecidos pelas respectivas ferramentas. Esses tokens são metadados públicos, não chaves de API. Propriedades verificadas por DNS não precisam desses tokens.
 
-Após o deploy:
+Após o lançamento com indexação habilitada:
 1. Abra `/robots.txt` e `/sitemap.xml` no domínio definitivo e confirme que as URLs usam esse domínio.
 2. Cadastre o sitemap no Google Search Console e Bing Webmaster Tools usando as contas da empresa.
 3. Use a inspeção de URL e Rich Results Test nas páginas de uma loja e de uma vaga vigente. Verifique o HTML renderizado, canônica e JSON-LD.

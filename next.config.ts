@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
+import { indexingHeaders } from "./lib/site-indexing";
 const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
   async headers() {
-    return [{ source: "/api/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
+    return indexingHeaders();
   },
   images: {
     formats: ["image/avif", "image/webp"],

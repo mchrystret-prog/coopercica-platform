@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { siteOrigin, brandDescription, isPreview, organizationGraph } from "@/lib/seo";
+import { siteOrigin, brandDescription, indexingEnabled, organizationGraph } from "@/lib/seo";
 import { StructuredData } from "@/components/seo/StructuredData";
 import "./globals.css";
 import { Montserrat } from "next/font/google";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
   description: brandDescription,
   applicationName: "Coopercica",
-  robots: isPreview() ? { index: false, follow: false } : { index: true, follow: true },
+  robots: !indexingEnabled() ? { index: false, follow: false, noarchive: true, nosnippet: true } : { index: true, follow: true },
   verification: {
     ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
     ...(process.env.BING_SITE_VERIFICATION ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } } : {}),

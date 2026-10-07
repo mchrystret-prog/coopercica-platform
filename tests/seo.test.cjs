@@ -11,12 +11,14 @@ test('canonical origin rejects credentials, HTTP and paths', () => {
 });
 test('page metadata resolves distinct canonical URLs and previews cannot index', () => {
  const previous = process.env.VERCEL_ENV;
+ const previousFlag = process.env.SITE_INDEXING_ENABLED;
  try {
   process.env.VERCEL_ENV = 'production';
+  process.env.SITE_INDEXING_ENABLED = 'true';
   assert.notEqual(seo.pageMetadata('Lojas', 'Lojas', '/lojas').alternates.canonical, seo.pageMetadata('Carreiras', 'Vagas', '/vagas').alternates.canonical);
   process.env.VERCEL_ENV = 'preview';
-  assert.deepEqual(seo.pageMetadata('Lojas', 'Lojas', '/lojas').robots, { index: false, follow: false });
- } finally { if (previous === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = previous; }
+  assert.deepEqual(seo.pageMetadata('Lojas', 'Lojas', '/lojas').robots, { index: false, follow: false, noarchive: true, nosnippet: true });
+ } finally { if (previous === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = previous; if (previousFlag === undefined) delete process.env.SITE_INDEXING_ENABLED; else process.env.SITE_INDEXING_ENABLED = previousFlag; }
 });
 test('CMS text cannot terminate JSON-LD script; values survive encoding', () => {
  const data = { text: '</script><script>alert(1)</script>&\u2028\u2029' };
@@ -59,4 +61,28 @@ test('entity identifiers and breadcrumbs share the public canonical origin', () 
  const crumbs = seo.breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Lojas', path: '/lojas' }]);
  assert.deepEqual(crumbs.itemListElement.map(c => c.position), [1, 2]);
  assert.equal(crumbs.itemListElement[1].item, seo.absoluteUrl('/lojas'));
+});
+
+const { indexingEnabled, indexingHeaders } = require('../.seo-test/lib/site-indexing.js');
+test('unconfigured production blocks indexing across pages, APIs and local PDFs', () => {
+ const previous = { flag: process.env.SITE_INDEXING_ENABLED, vercel: process.env.VERCEL_ENV };
+ try {
+  process.env.VERCEL_ENV = 'production';
+  for (const flag of [undefined, 'false', '1', 'TRUE', '']) {
+   if (flag === undefined) delete process.env.SITE_INDEXING_ENABLED;
+   else process.env.SITE_INDEXING_ENABLED = flag;
+   assert.equal(indexingEnabled(), false);
+   assert.equal(indexingHeaders()[0].source, '/:path*');
+   assert.match(indexingHeaders()[0].headers[0].value, /noindex/);
+  }
+  process.env.SITE_INDEXING_ENABLED = 'true';
+  assert.equal(indexingEnabled(), true);
+  assert.equal(indexingHeaders()[0].source, '/api/:path*');
+  process.env.VERCEL_ENV = 'preview';
+  assert.equal(indexingEnabled(), false);
+  assert.equal(indexingHeaders()[0].source, '/:path*');
+ } finally {
+  if (previous.flag === undefined) delete process.env.SITE_INDEXING_ENABLED; else process.env.SITE_INDEXING_ENABLED = previous.flag;
+  if (previous.vercel === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = previous.vercel;
+ }
 });
