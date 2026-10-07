@@ -5,6 +5,3 @@
 .productLink:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 3px; }
 .note, .status { color: var(--text-muted); font-size: var(--font-size-sm); line-height: var(--line-height-body); }
 .status { padding: 24px; border: 1px solid var(--border-soft); border-radius: var(--radius-control); }
-
-.previewNote { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; color: var(--text-heading); font-size: var(--font-size-sm); line-height: var(--line-height-body); border: 1px dashed var(--brand-green-700); border-radius: var(--radius-control); padding: 14px 18px; margin-bottom: 24px; }
-.previewNote strong { background: var(--brand-lime-500); padding: 4px 12px; border-radius: var(--radius-pill); }

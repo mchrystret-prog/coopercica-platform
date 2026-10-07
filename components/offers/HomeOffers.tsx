@@ -27,7 +27,6 @@ export function HomeOffers({ channel, title, preview = false }: { channel: Offer
     return () => { observer.disconnect(); controller.abort(); };
   }, [channel, preview]);
   return <div ref={root} className={styles.offers} data-nosnippet={preview ? "" : undefined}>
-    {preview ? <p className={styles.previewNote}><strong>Preview do projeto</strong> Produtos e preços ilustrativos para demonstrar o carrossel. Não são ofertas vigentes.</p> : null}
     {state.status === "ready" && state.products.length ? <>
       <ProductCarousel title={title} headingId={`${channel}-offers-title`}>
         {state.products.map(product => product.delivery_url ? <a className={styles.productLink} href={product.delivery_url} target="_blank" rel="noopener noreferrer" key={product.id} aria-label={`Ver ${product.description} ${channel === "delivery" ? "no Delivery" : "na Drogaria"}`} data-analytics-id={`offer:${channel}:${product.ean || product.id}`} data-analytics-label={product.description}><ProductOfferCard product={product} seals={productPresentation(product, state.seals || []).seals} /></a> : <ProductOfferCard key={product.id} product={product} seals={productPresentation(product, state.seals || []).seals} />)}
