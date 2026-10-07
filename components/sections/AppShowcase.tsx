@@ -198,14 +198,15 @@ export function AppShowcase() {
         gsap.set(images[0], { autoAlpha: 1, yPercent: 0, scale: 1, filter: "blur(0px)" });
         gsap.set(copies[0], { autoAlpha: 1, y: 0, pointerEvents: "auto" });
 
+        const fitsViewport = stage.offsetHeight <= window.innerHeight - 82;
         const timeline = gsap.timeline({
           defaults: { ease: "power3.inOut" },
           scrollTrigger: {
             id: "app-showcase-mobile",
             trigger: section,
             start: "top 82px",
-            end: () => `+=${window.innerHeight * Math.max(2, appShowcaseItems.length - 1)}`,
-            pin: stage,
+            end: () => fitsViewport ? `+=${window.innerHeight * 1.2}` : "bottom top+=82",
+            pin: fitsViewport ? stage : false,
             pinSpacing: true,
             scrub: .42,
             anticipatePin: 1,

@@ -95,6 +95,7 @@ footer p { margin: 0 0 4px; font-size: 16px; font-weight: 800; color: #fff; }
 
 #reader:fullscreen { height: 100dvh; }
 #reader:fullscreen #scroller { min-height: 200px; }
+#reader.expanded { height: 100dvh; min-height: 0; padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
 
 @media (max-width: 900px) {
   header { grid-template-columns: auto minmax(0, 1fr); }

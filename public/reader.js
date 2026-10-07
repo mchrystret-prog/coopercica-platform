@@ -154,8 +154,38 @@ $('thumbs-toggle').onclick = () => { $('thumbs').hidden = !$('thumbs').hidden; $
 $('sound').onclick = () => { sound = !sound; $('sound').setAttribute('aria-pressed', String(sound)); playSound(); };
 $('share').onclick = () => { updateShare(); $('share-menu').hidden = !$('share-menu').hidden; $('share').setAttribute('aria-expanded', String(!$('share-menu').hidden)); };
 $('copy').onclick = async () => { try { await navigator.clipboard.writeText(shareUrl()); notice('Link copiado.'); } catch { $('share-url').focus(); $('share-url').select(); notice('Selecione e copie o link exibido.'); } };
-$('fullscreen').onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $('reader').requestFullscreen(); } catch { notice('Tela cheia indisponível neste navegador.'); } };
-document.addEventListener('fullscreenchange', () => { const label = document.fullscreenElement ? 'Sair da tela cheia' : 'Tela cheia'; $('fullscreen').setAttribute('aria-label', label); $('fullscreen').title = label; fit(); });
+let expanded = false;
+function fullscreenLabel() {
+  const active = Boolean(document.fullscreenElement || expanded);
+  const label = active ? 'Sair da tela cheia' : 'Tela cheia';
+  $('fullscreen').setAttribute('aria-label', label);
+  $('fullscreen').setAttribute('aria-pressed', String(active));
+  $('fullscreen').title = label;
+  fit();
+}
+function requestExpanded(value) {
+  if (parent !== window) parent.postMessage({ type: 'coopercica-reader-expand', id, expanded: value }, location.origin);
+  else {
+    expanded = value;
+    $('reader').classList.toggle('expanded', expanded);
+    fullscreenLabel();
+  }
+}
+window.addEventListener('message', event => {
+  if (event.origin !== location.origin || event.source !== parent || event.data?.type !== 'coopercica-reader-expanded' || event.data.id !== id || typeof event.data.expanded !== 'boolean') return;
+  expanded = event.data.expanded;
+  $('reader').classList.toggle('expanded', expanded);
+  fullscreenLabel();
+});
+$('fullscreen').onclick = async () => {
+  if (expanded) { requestExpanded(false); return; }
+  if (document.fullscreenElement) { await document.exitFullscreen().catch(() => {}); return; }
+  if (document.fullscreenEnabled && typeof $('reader').requestFullscreen === 'function') {
+    try { await $('reader').requestFullscreen(); return; } catch { /* Expand within the page when native fullscreen is unavailable. */ }
+  }
+  requestExpanded(true);
+};
+document.addEventListener('fullscreenchange', fullscreenLabel);
 document.addEventListener('keydown', (event) => {
   if (event.target.closest('input,textarea,select') || event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.key === 'ArrowLeft') { event.preventDefault(); flip?.flipPrev(); }
@@ -163,7 +193,7 @@ document.addEventListener('keydown', (event) => {
   if (event.key === '+' || event.key === '=') setZoom(zoom + .5);
   if (event.key === '-') setZoom(zoom - .5);
   if (event.key === '0') setZoom(1);
-  if (event.key === 'Escape') { $('share-menu').hidden = true; $('share').setAttribute('aria-expanded', 'false'); }
+  if (event.key === 'Escape') { if (expanded) requestExpanded(false); $('share-menu').hidden = true; $('share').setAttribute('aria-expanded', 'false'); }
 });
 window.addEventListener('pagehide', () => { disposed = true; clearTimeout(renderTimer); resizeObserver?.disconnect(); flip?.destroy(); void loadingTask?.destroy(); void audio?.close(); for (const url of [...rendered.values(), ...thumbImages]) if (url) URL.revokeObjectURL(url); });
 init().catch((error) => { if (disposed) return; console.error('Falha ao abrir PDF', error); $('loading').textContent = 'Não foi possível abrir o PDF. Tente atualizar ou use “Abrir PDF”.'; });
