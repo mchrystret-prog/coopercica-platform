@@ -126,7 +126,6 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
                         : "Inscrições abertas"}
                     </small>
                     <Button
-                      variant="secondary"
                       href={`/vagas/${j.slug}`}
                       aria-label={`Ver vaga: ${j.title}`}
                     >
