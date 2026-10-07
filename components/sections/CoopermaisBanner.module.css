@@ -1,10 +1,9 @@
 .section { padding-block: clamp(32px, 4vw, 64px); background: var(--brand-green-900); }
-.badge { overflow: hidden; border-radius: var(--radius-lg); background: var(--brand-lime-500); }
+.badge { position: relative; overflow: hidden; border-radius: var(--radius-lg); background: var(--brand-lime-500); }
+.link { display: block; }
+.link:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: -5px; }
 .image { display: block; width: 100%; height: auto; }
-.actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; padding: 16px 24px; }
-.badge .cta { background: var(--surface-card); border-color: var(--surface-card); color: var(--brand-green-900); font-size: 14px; box-shadow: var(--shadow-soft); }
-.badge .cta:hover { background: var(--brand-green-900); border-color: var(--brand-green-900); color: var(--surface-card); }
-.pause { min-height: 44px; padding: 8px 12px; border: 1px solid var(--brand-green-900); border-radius: var(--radius-pill); background: transparent; color: var(--brand-green-900); font: inherit; font-size: 12px; cursor: pointer; }
-.pause:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 3px; }
+.pause { position: absolute; bottom: 8px; left: 8px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--brand-green-900); border-radius: var(--radius-pill); background: rgb(255 255 255 / 90%); color: var(--brand-green-900); cursor: pointer; }
+.pause:hover { background: white; }
+.pause:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 2px; }
 .pause:disabled { cursor: default; }
-@media (max-width: 680px) { .actions { padding: 12px; gap: 8px; } }
