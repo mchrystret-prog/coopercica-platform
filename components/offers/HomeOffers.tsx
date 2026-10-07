@@ -26,7 +26,7 @@ export function HomeOffers({ channel, title, preview = false }: { channel: Offer
     if (root.current) observer.observe(root.current);
     return () => { observer.disconnect(); controller.abort(); };
   }, [channel, preview]);
-  return <div ref={root} className={styles.offers}>
+  return <div ref={root} className={styles.offers} data-nosnippet={preview ? "" : undefined}>
     {preview ? <p className={styles.previewNote}><strong>Preview do projeto</strong> Produtos e preços ilustrativos para demonstrar o carrossel. Não são ofertas vigentes.</p> : null}
     {state.status === "ready" && state.products.length ? <>
       <ProductCarousel title={title} headingId={`${channel}-offers-title`}>

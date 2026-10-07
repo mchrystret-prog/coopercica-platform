@@ -1,3 +1,6 @@
+import { cache } from "react";
+import { pageMetadata, jobSchema, jobIsCurrent, breadcrumbs } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/StructuredData";
 import { Button } from "@/components/ui/Button/Button";
 import { Card } from "@/components/ui/Card/Card";
 import { Container } from "@/components/ui/Container/Container";
@@ -10,18 +13,16 @@ import { ApplicationForm } from "@/components/careers/ApplicationForm";
 import { getJob, employmentNames, workModeNames } from "@/lib/jobs";
 import styles from "@/components/careers/Careers.module.css";
 export const dynamic = "force-dynamic";
+const findJob = cache(getJob);
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const job = await getJob(slug);
-  return {
-    title: job
-      ? `${job.title} | Vagas Coopercica`
-      : "Vaga indisponível | Coopercica",
-  };
+  const job = await findJob(slug);
+  if (!job || !jobIsCurrent(job)) return { title: "Vaga indisponível", robots: { index: false } };
+  return pageMetadata(job.title, `${job.title} na Coopercica · ${job.city}. ${job.description}`.slice(0, 165), `/vagas/${job.slug}`);
 }
 export default async function Page({
   params,
@@ -29,8 +30,8 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const job = await getJob(slug);
-  if (!job) notFound();
+  const job = await findJob(slug);
+  if (!job || !jobIsCurrent(job)) notFound();
   return (
     <InternalPage
       eyebrow={job.department}
@@ -44,6 +45,8 @@ export default async function Page({
         .filter(Boolean)
         .join(" · ")}
     >
+      <StructuredData value={jobSchema(job)} />
+      <StructuredData value={breadcrumbs([{ name: "Home", path: "/" }, { name: "Carreiras", path: "/vagas" }, { name: job.title, path: `/vagas/${job.slug}` }])} />
       <Section>
         <Container>
           <Button

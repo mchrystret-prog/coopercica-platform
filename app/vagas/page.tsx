@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata, jobIsCurrent } from "@/lib/seo";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CareersStory } from "@/components/careers/CareersStory";
@@ -8,11 +8,7 @@ import { getJobs } from "@/lib/jobs";
 import { getSiteSetting } from "@/lib/site";
 import { getCareersHeroImage } from "@/lib/careers-hero";
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Portal de Vagas | Coopercica",
-  description:
-    "Conheça a história, o propósito e os valores da Coopercica. Encontre sua oportunidade e venha fazer parte.",
-};
+export const metadata = pageMetadata("Carreiras e vagas", "Conheça a história, o propósito e os valores da Coopercica. Encontre vagas abertas e venha fazer parte da nossa cooperativa.", "/vagas");
 export default async function Page() {
   const [jobs, hero] = await Promise.all([
     getJobs(),
@@ -23,7 +19,7 @@ export default async function Page() {
       <Header />
       <main>
         <CareersStory content={getCareersContent(hero)} image={getCareersHeroImage(hero)} />
-        <CareersPortal jobs={jobs} />
+        <CareersPortal jobs={jobs.filter(job => jobIsCurrent(job))} />
       </main>
       <Footer />
     </>

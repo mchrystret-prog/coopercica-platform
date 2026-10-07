@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { siteOrigin, brandDescription, indexingEnabled, organizationGraph } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/StructuredData";
 import "./globals.css";
 import { Montserrat } from "next/font/google";
 import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
@@ -12,9 +14,16 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: { default: "Coopercica | Qualidade com você", template: "%s | Coopercica" },
-  description: "Coopercica: tradição, proximidade, lojas, Delivery, Drogaria e Revista.",
+  metadataBase: new URL(siteOrigin()),
+  description: brandDescription,
+  applicationName: "Coopercica",
+  robots: !indexingEnabled() ? { index: false, follow: false, noarchive: true, nosnippet: true } : { index: true, follow: true },
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(process.env.BING_SITE_VERIFICATION ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } } : {}),
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="pt-BR" className={montserrat.variable}><body>{children}<SiteAnalytics /></body></html>;
+  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph()} />{children}<SiteAnalytics /></body></html>;
 }
