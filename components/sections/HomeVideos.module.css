@@ -2,7 +2,7 @@
 .section::before { content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 88% 12%, rgb(168 207 56 / 24%), transparent 48%), radial-gradient(ellipse at 5% 85%, rgb(106 185 69 / 18%), transparent 50%); }
 .heading { display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; }
 .eyebrow { color: var(--brand-lime-500); text-transform: uppercase; letter-spacing: var(--tracking-eyebrow); font-size: var(--font-size-eyebrow); font-weight: var(--font-weight-bold); }
-.heading h2 { color: inherit; font-size: var(--font-size-h2); line-height: 1.08; margin: 14px 0; }
+.heading h2 { text-transform: uppercase; overflow-wrap: anywhere; color: inherit; font-size: var(--font-size-h2); line-height: 1.08; margin: 14px 0; }
 .heading p { color: var(--text-inverse-muted); margin: 0; }
 .featured { width: min(100%, 1000px, calc((100svh - var(--header-height) - 180px) * 1.7778)); min-width: min(100%, 360px); margin-inline: auto; position: relative; min-height: 200px; aspect-ratio: 16 / 9; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-device-dark); box-shadow: var(--shadow-overlay); scroll-margin-top: calc(var(--header-height) + 16px); }
 .featured iframe { width: 100%; height: 100%; border: 0; }

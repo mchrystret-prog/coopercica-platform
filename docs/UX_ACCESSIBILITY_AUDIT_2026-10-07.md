@@ -83,3 +83,11 @@ Esta revisão fez uma varredura das rotas, componentes e módulos de suporte, co
 - W3C, [Tamanho do alvo mínimo — 2.5.8](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum).
 
 Critérios de movimento, contraste e interação orientam esta revisão; sua aplicação completa depende do contexto e dos testes acima.
+
+## Complemento após revisão dos prints — 07/10/2026
+
+A auditoria estática inicial deixou passar um problema de composição da seção Revista: cabeçalho em uma faixa inteira, carrossel centralizado abaixo e espaço lateral sem função. O print enviado pelo usuário confirma esse achado visual. Também evidencia títulos de Vídeos e Parceiros sem a caixa alta do restante da Home, além da linha zebrada decorativa em Parceiros.
+
+Correções: Revista em duas colunas no desktop, texto alinhado verticalmente ao conjunto e carrossel à direita; abaixo de 900 px, uma coluna. Vídeos e Parceiros com título em caixa alta; removida a linha zebrada de Parceiros. Gestos e abertura das revistas foram preservados.
+
+A evidência veio dos prints reais, não de renderização visual pós-ajuste. A próxima validação deve conferir a nova composição em desktop, notebook e celular, incluindo títulos longos. Isso reforça a necessidade de complementar revisão de código com inspeção visual das páginas completas.

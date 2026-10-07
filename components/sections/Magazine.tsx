@@ -48,7 +48,7 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
     deck.current?.removeAttribute("data-dragging");
     if (!cancelled && value.horizontal && Math.abs(value.dx) >= 40) change(value.dx < 0 ? 1 : -1);
   }
-  return <Section id="revista" className={styles.section} tabIndex={-1} aria-labelledby="magazine-title"><Container>
+  return <Section id="revista" className={styles.section} tabIndex={-1} aria-labelledby="magazine-title"><Container className={styles.layout}>
     <SectionHeader className={styles.header} id="magazine-title" eyebrow={content.eyebrow || "REVISTA COOPERCICA"} title={[content.title1 ?? "TODO MÊS, UMA", content.title2 ?? "NOVA EDIÇÃO PRA VOCÊ."].filter(Boolean)} stacked />
     <div className={styles.carousel} role="region" aria-roledescription="carrossel" aria-label="Edições da Revista Coopercica">
       <div ref={deck} className={styles.deck} tabIndex={0} aria-label="Deslize ou use as setas para trocar a revista" onPointerDown={start} onPointerMove={move} onPointerUp={event => finish(event)} onPointerCancel={event => finish(event, true)} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation(); } }} onKeyDown={event => { if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); change(event.key === "ArrowRight" ? 1 : -1); } }}>
