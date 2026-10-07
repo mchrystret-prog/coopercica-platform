@@ -116,3 +116,24 @@
   .purposeGrid article,
   .valuesGrid article { transition: none; transform: none; }
 }
+
+/* The next card naturally slides over the pinned card as the page scrolls. */
+@media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
+  .purposeGrid[data-stack-ready="true"],
+  .valuesGrid[data-stack-ready="true"] {
+    isolation: isolate;
+    align-items: start;
+    gap: 28vh;
+    gap: 28svh;
+    padding-bottom: 12vh;
+    padding-bottom: 12svh;
+  }
+  .purposeGrid[data-stack-ready="true"] > article,
+  .valuesGrid[data-stack-ready="true"] > article {
+    position: sticky;
+    top: calc(var(--header-height) + 16px);
+    z-index: 1;
+    box-shadow: var(--shadow-card);
+    background: var(--surface-card);
+  }
+}

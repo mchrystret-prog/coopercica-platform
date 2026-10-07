@@ -44,7 +44,7 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
       <Container>
         <span className="eyebrow">Nosso propósito</span>
         <h2 data-careers-reveal id="purpose-title" className={styles.title}>O trabalho ganha sentido<br />quando a gente coopera.</h2>
-        <div className={styles.purposeGrid}>
+        <div className={styles.purposeGrid} data-careers-stack>
           <article data-careers-reveal><span className={styles.number} aria-hidden="true">01</span><h3>Missão</h3><p>{content.mission}</p></article>
           <article data-careers-reveal data-careers-delay="70"><span className={styles.number} aria-hidden="true">02</span><h3>Visão</h3><p>{content.vision}</p></article>
         </div>
@@ -53,7 +53,7 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
     <Section aria-labelledby="values-title">
       <Container>
         <div className={styles.valuesHeading} data-careers-reveal><div><span className="eyebrow">Nossos valores</span><h2 id="values-title" className={styles.title}>É assim que seguimos juntos.</h2></div><p>Princípios que orientam a nossa relação com quem trabalha, compra e coopera com a gente.</p></div>
-        <div className={styles.valuesGrid}>{[
+        <div className={styles.valuesGrid} data-careers-stack>{[
           ["Respeito", content.respect], ["Ética", content.ethics], ["Cooperação", content.cooperation],
         ].map(([title, description], index) => <article key={title} data-careers-reveal data-careers-delay={index * 70}><span className={styles.valueIndex} aria-hidden="true">0{index + 1}</span><h3>{title}</h3><p>{description}</p></article>)}</div>
       </Container>

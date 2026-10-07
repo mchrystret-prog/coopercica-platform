@@ -6,6 +6,42 @@ export function CareersMotion({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const node = root.current;
+    if (!node || !("ResizeObserver" in window)) return;
+    const mobile = window.matchMedia("(max-width: 760px)");
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const groups = Array.from(node.querySelectorAll<HTMLElement>("[data-careers-stack]"));
+    let frame = 0;
+    const measure = () => {
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-height")) || 82;
+      const available = (window.visualViewport?.height ?? window.innerHeight) - header - 48;
+      const enabled = groups.map(group => mobile.matches && !motion.matches && Array.from(group.children).every(card => card.getBoundingClientRect().height <= available));
+      groups.forEach((group, index) => {
+        group.dataset.stackReady = String(enabled[index]);
+      });
+    };
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    };
+    const observer = new ResizeObserver(schedule);
+    groups.forEach(group => Array.from(group.children).forEach(card => observer.observe(card)));
+    mobile.addEventListener("change", schedule);
+    motion.addEventListener("change", schedule);
+    window.addEventListener("resize", schedule);
+    window.visualViewport?.addEventListener("resize", schedule);
+    measure();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      mobile.removeEventListener("change", schedule);
+      motion.removeEventListener("change", schedule);
+      window.removeEventListener("resize", schedule);
+      window.visualViewport?.removeEventListener("resize", schedule);
+      groups.forEach(group => delete group.dataset.stackReady);
+    };
+  }, []);
+  useEffect(() => {
+    const node = root.current;
     if (!node) return;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let stop = () => {};
