@@ -4,6 +4,8 @@ import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
 import { CoopermaisBannerEditor } from "./CoopermaisBannerEditor";
 import { VideosHeaderEditor } from "./VideosHeaderEditor";
+import { PartnersEditor } from "./PartnersEditor";
+import { validatePartners } from "@/lib/home-partners";
 import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
 import { CareersHeroEditor } from "./CareersHeroEditor";
@@ -28,7 +30,7 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization() {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners">(
       "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -70,6 +72,8 @@ export function SiteCustomization() {
   }
   async function saveAll() {
     if (!data) return;
+    const partnersError = validatePartners(data.settings.home_partners || {});
+    if (partnersError) { setTab("partners"); setMsg(partnersError); return; }
     const videosError = validateHomeVideos(data.settings.home_videos || {});
     if (videosError) { setTab("videos"); setMsg(videosError); return; }
     const offersError = validateOffersSettings(data.settings);
@@ -270,6 +274,7 @@ export function SiteCustomization() {
         >
           Portal de Vagas
         </button>
+        <button data-active={tab === "partners"} onClick={() => setTab("partners")}>Parceiros</button>
         <button data-active={tab === "videos"} onClick={() => setTab("videos")}>Vídeos</button>
         <button data-active={tab === "coopermais"} onClick={() => setTab("coopermais")}>Coopermais</button>
         <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
@@ -386,6 +391,11 @@ export function SiteCustomization() {
             ) : null}
           </label>
         </div>
+      ) : tab === "partners" ? (
+        <PartnersEditor value={data.settings.home_partners || {}} busy={busy} onChange={patch => {
+          setData(current => current ? { ...current, settings: { ...current.settings, home_partners: { ...current.settings.home_partners, ...patch } } } : current);
+          setMsg("Parceiros alterados. Salve as alterações para publicar.");
+        }} />
       ) : tab === "videos" ? (
         <>
         <HomeVideosEditor value={data.settings.home_videos || {}} busy={busy} onChange={patch => {

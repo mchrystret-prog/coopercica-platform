@@ -1,3 +1,4 @@
+import { Partners } from "@/components/sections/Partners";
 import { CoopermaisBanner } from "@/components/sections/CoopermaisBanner";
 import { HomeVideos } from "@/components/sections/HomeVideos";
 import { getHomeVideos } from "@/lib/home-videos-server";
@@ -34,6 +35,7 @@ export default async function Home() {
     pharmacyOffers,
     coopermaisBanner,
     homeVideos,
+    homePartners,
   ] = await Promise.all([
     getCampaigns(),
     getStores(),
@@ -46,6 +48,7 @@ export default async function Home() {
     getSiteSetting<Record<string, string>>("offers_pharmacy", {}),
     getSiteSetting<Record<string, string>>("coopermais_banner", {}),
     getSiteSetting<Record<string, string>>("home_videos", {}),
+    getSiteSetting<Record<string, string>>("home_partners", {}),
   ]);
   const videoFeed = homeVideos.enabled === "false" ? null : await getHomeVideos(homeVideos);
   const section = (id: string) => sections.find((s) => s.id === id);
@@ -88,6 +91,8 @@ export default async function Home() {
         ) : null}
 
         {videoFeed ? <HomeVideos feed={videoFeed} /> : null}
+
+        <Partners content={homePartners} />
 
         {visible("historia") ? <History images={historyImages} /> : null}
       </main>
