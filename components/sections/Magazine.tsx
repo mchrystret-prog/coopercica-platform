@@ -53,8 +53,11 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
       <div className={styles.editorial}>
         <p className={styles.eyebrow}>{content.eyebrow || "Revista Coopercica"}<span aria-hidden="true"> · </span>{selected.edition}</p>
         <h2 id="magazine-title">{editorial.headline.trim() || selected.title}</h2>
-        <p className={styles.summary}>{editorial.summary.trim() || content.description?.trim() || "Uma nova edição para acompanhar você. Folheie a revista e descubra as histórias, dicas e novidades da Coopercica."}</p>
-        {highlights.length ? <ul className={styles.highlights}>{highlights.map((item, index) => <li key={index}>{item.label.trim() ? <span>{item.label}</span> : null}<p>{item.text}</p></li>)}</ul> : null}
+        <section className={styles.editionContent} aria-labelledby="magazine-summary-title">
+          <h3 id="magazine-summary-title">Nessa edição</h3>
+          <p className={styles.summary}>{editorial.summary.trim() || content.description?.trim() || "Folheie esta edição para conhecer todas as matérias e novidades da Revista Coopercica."}</p>
+          {highlights.length ? <ul className={styles.highlights} aria-label="Assuntos desta edição">{highlights.map((item, index) => <li key={index}>{item.label.trim() ? <span>{item.label}</span> : null}<p>{item.text}</p></li>)}</ul> : null}
+        </section>
         <div className={styles.actions}><Button href={selected.href} data-analytics-kind="download" data-analytics-id={`magazine:${selected.id}`}>Folhear esta edição</Button><Button variant="secondary" href="/revista">{content.ctaLabel || "Ver acervo completo"}</Button></div>
       </div>
     </div>

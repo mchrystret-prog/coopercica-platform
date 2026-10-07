@@ -30,10 +30,10 @@ const labels: Record<string, string> = {
   ctaHref: "Destino do botão",
   image: "Imagem da seção",
 };
-export function SiteCustomization({ magazines = [] }: { magazines?: Magazine[] }) {
+export function SiteCustomization({ magazines = [], initialTab }: { magazines?: Magazine[]; initialTab?: "magazine" }) {
   const [data, setData] = useState<Payload | null>(null),
     [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine">(
-      "identity",
+      initialTab || "identity",
     ),
     [msg, setMsg] = useState(""),
     [busy, setBusy] = useState(false);

@@ -11,6 +11,10 @@
 .editorial { min-width: 0; }
 .editorial h2 { margin: 0 0 20px; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; font-weight: var(--font-weight-strong); text-transform: uppercase; color: var(--text-heading); overflow-wrap: anywhere; }
 .summary { margin: 0 0 24px; max-width: 65ch; color: var(--text-body); line-height: 1.7; white-space: pre-line; }
+.editionContent { margin-block: 24px 28px; }
+.editionContent h3 { margin: 0 0 14px; color: var(--text-heading); font-size: 16px; font-weight: var(--font-weight-bold); letter-spacing: .04em; text-transform: uppercase; }
+.editionContent .summary:last-child { margin-bottom: 0; }
+.editionContent .highlights { margin-bottom: 0; }
 .highlights { list-style: none; padding: 0; margin: 0 0 28px; }
 .highlights li { display: flex; gap: 12px; align-items: baseline; padding-block: 12px; border-bottom: 1px solid var(--border-soft); }
 .highlights span { flex-shrink: 0; max-width: 45%; padding: 4px 8px; border-radius: 6px; background: var(--brand-green-900); color: var(--text-inverse); font-size: 12px; font-weight: var(--font-weight-bold); overflow-wrap: anywhere; }

@@ -13,13 +13,13 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
     onChange({ editionDetails: JSON.stringify({ ...entries, [edition.id]: { ...editorial, ...patch } }) });
   }
   return <article className="cms-section-card">
-    <div className="cms-section-card-head"><div><small>Página inicial · Revista</small><h2>Capa, resumo e destaques por edição</h2></div></div>
+    <div className="cms-section-card-head"><div><small>Página inicial · Revista</small><h2>Nessa edição · resumo e destaques</h2></div></div>
     <p>As capas e PDFs continuam no menu Revistas. Aqui você escolhe a edição em destaque e descreve o conteúdo real de cada revista. Clique em Salvar alterações para publicar.</p>
     {edition ? <fieldset disabled={busy}><legend>Conteúdo editorial</legend><div className="settings-form">
       <label>Edição em destaque<select value={value.featuredId || ""} onChange={event => onChange({ featuredId: event.target.value })}><option value="">Mais recente automaticamente</option>{magazines.map(item => <option key={item.id} value={item.id}>{item.title} · {item.edition}</option>)}</select><small>Se a edição escolhida sair do ar, a próxima edição publicada aparece automaticamente.</small></label>
       <label>Edição para editar<select value={edition.id} onChange={event => setEditionId(event.target.value)}>{magazines.map(item => <option key={item.id} value={item.id}>{item.title} · {item.edition}</option>)}</select></label>
       <label className="form-span-full">Título editorial<input value={editorial.headline} maxLength={140} placeholder={edition.title} onChange={event => update({ headline: event.target.value })} /><small>Ex.: Cooperar é cuidar. Se ficar vazio, usamos o título cadastrado na revista.</small></label>
-      <label className="form-span-full">Resumo desta edição<textarea rows={4} maxLength={700} value={editorial.summary} onChange={event => update({ summary: event.target.value })} /><small>Apresente o conteúdo desta edição. Sem resumo cadastrado, aparece uma chamada geral da seção.</small></label>
+      <label className="form-span-full">Resumo para “Nessa edição”<textarea rows={4} maxLength={700} value={editorial.summary} onChange={event => update({ summary: event.target.value })} /><small>Apresente o conteúdo real desta revista. Abaixo, adicione os assuntos com categoria, como no índice da edição. Sem resumo cadastrado, aparece uma chamada geral da seção.</small></label>
       {editorial.highlights.map((item, index) => <div className="form-span-full settings-form" key={index}>
         <label>Categoria do destaque {index + 1}<input maxLength={60} value={item.label} placeholder="Ex.: Receitas" onChange={event => update({ highlights: editorial.highlights.map((row, i) => i === index ? { ...row, label: event.target.value } : row) })} /></label>
         <label>Conteúdo do destaque {index + 1}<input maxLength={200} value={item.text} placeholder="Título ou assunto da matéria" onChange={event => update({ highlights: editorial.highlights.map((row, i) => i === index ? { ...row, text: event.target.value } : row) })} /></label>

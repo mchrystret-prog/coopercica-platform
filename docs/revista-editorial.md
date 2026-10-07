@@ -5,10 +5,13 @@ A Home destaca uma edição com capa à esquerda, título editorial, resumo e at
 ## Cadastro no CMS
 
 - **Revistas**: cadastro da publicação, capa, data e PDF.
+- **Revistas → Editar resumo e destaques**: atalho que abre diretamente a aba editorial de Personalização.
 - **Personalização → Revista**: edição principal (mais recente automaticamente ou escolha manual), edição para editar, título editorial, resumo e destaques com categoria/assunto.
 - **Personalização → Seções da Home → Revista**: exibição da seção, chamada superior, descrição geral de fallback e texto do botão do acervo.
 
 O resumo deve descrever a edição real. Se não houver texto específico, a seção usa a descrição geral; nenhum assunto é inventado automaticamente. Destaques sem conteúdo ficam ocultos. Uma edição principal retirada do ar dá lugar à mais recente publicada.
+
+O resumo e a lista de assuntos formam o bloco **Nessa edição**, identificado por um subtítulo próprio ao lado da capa. Trocar a miniatura atualiza esse bloco junto com a edição escolhida.
 
 O conteúdo é armazenado por ID da revista em `site_sections.content.editionDetails` (JSON serializado) e `featuredId`, usando o fluxo de personalização já existente. Não requer novas colunas, tabelas, migrations, permissões ou buckets. Não foram alterados dados em produção.
 
