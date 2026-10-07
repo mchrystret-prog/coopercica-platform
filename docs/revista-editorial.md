@@ -15,6 +15,18 @@ O resumo e a lista de assuntos formam o bloco **Nessa edição**, identificado p
 
 O conteúdo é armazenado por ID da revista em `site_sections.content.editionDetails` (JSON serializado) e `featuredId`, usando o fluxo de personalização já existente. Não requer novas colunas, tabelas, migrations, permissões ou buckets. Não foram alterados dados em produção.
 
+## Leitura automática do PDF
+
+Em **Personalização → Revista**, selecione a edição e clique em **Ler PDF e sugerir conteúdo**. O CMS lê o PDF cadastrado, reconstrói as linhas e procura nomes de quadros e os títulos próximos. A sugestão mostra o resumo, até oito destaques e a página de origem de cada título. Confira essas páginas e clique em **Aplicar sugestão ao resumo e destaques**. Isso substitui esses dois campos da edição selecionada, preservando o título editorial. Ajuste os textos e use **Salvar alterações** para publicar. Descartar ou cancelar não altera os campos existentes.
+
+A leitura acontece no navegador com PDF.js carregado sob demanda, sem serviço externo de IA, chave de API ou alteração no banco. O botão só fica disponível para PDFs válidos cadastrados em Revistas. Não há geração automática na Home nem em cada visita ao leitor.
+
+O reconhecimento inicial procura os quadros Dicas da nutri, Deu água na boca, Do momento, Fique bem, É dia, Receitas, Saúde e bem-estar, Bem-estar, Sustentabilidade, Cooperar e Nossa gente. Usa linhas do índice ou títulos destacados próximos, separa colunas e elimina repetições. É uma heurística, não uma interpretação completa da revista: mudanças de diagramação, quadros com outros nomes e textos fragmentados podem exigir preenchimento manual. Todo resultado precisa de revisão.
+
+Limites: 15 MB, primeiras 60 páginas e dois minutos por tentativa. A sugestão informa quantas páginas foram lidas; PDFs protegidos por senha recebem mensagem específica. PDFs escaneados, imagem ou com letras convertidas em desenho precisam de OCR, que não está incluído nesta versão. A ausência de texto ou de quadros reconhecidos retorna orientação para preenchimento manual, sem inventar assuntos.
+
+Testes do reconhecimento: quatro cenários aprovados, incluindo PDF gerado e lido pelo motor real PDF.js, título em duas linhas, colunas independentes, índice com páginas, deduplicação, limites e falhas sem texto/quadros. Não foi possível obter uma revista publicada para validar a heurística com a diagramação real. A interação autenticada do CMS ainda deve ser validada no preview; nenhum resumo foi gravado em produção nesta sessão.
+
 ## Aparência e acessibilidade
 
 Montserrat, cores e tokens compartilhados do site, títulos principais em caixa alta, ícones em linha e sem ornamento zebrado. A animação fica restrita ao hover de mouse/foco e é desativada com movimento reduzido. O acervo usa `aria-pressed`, foco visível e anúncio da edição escolhida. Arraste não abre nem seleciona uma edição por acidente; clique de teclado continua permitido. Capa que falha usa fallback textual.

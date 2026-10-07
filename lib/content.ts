@@ -3,6 +3,7 @@ import { stores as fallbackStores, type Store } from "@/data/stores";
 import { magazines as fallbackMagazines } from "@/data/content";
 import type { Magazine } from "@/types/content";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
+import { validPublicationPdf } from "@/lib/publications";
 
 async function publicRows<T>(table:string, order:string):Promise<T[]|null>{
   try{
@@ -20,5 +21,5 @@ export async function getStores():Promise<Store[]>{
 export async function getMagazines():Promise<Magazine[]>{
   const rows=await publicRows<any>("site_magazines","published_at.desc");
   if(!rows?.length)return fallbackMagazines;
-  return rows.map(r=>({id:r.id,title:r.title,edition:r.edition,cover:r.cover_url||"",href:r.pdf_url && r.pdf_url !== "#" ? `/revista/${r.id}/folhear` : "/revista"}));
+  return rows.map(r=>({id:r.id,title:r.title,edition:r.edition,cover:r.cover_url||"",href:r.pdf_url && r.pdf_url !== "#" ? `/revista/${r.id}/folhear` : "/revista",pdfHref:validPublicationPdf(r.pdf_url)?`/api/publications/${r.id}/pdf`:undefined}));
 }

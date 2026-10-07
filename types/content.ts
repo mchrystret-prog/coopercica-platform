@@ -29,4 +29,5 @@ export type Magazine = {
   edition: string;
   cover: string;
   href: string;
+  pdfHref?: string;
 };
