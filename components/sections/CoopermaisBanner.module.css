@@ -1,47 +1,10 @@
-.section {
-  padding-block: clamp(32px, 4vw, 64px);
-  background: var(--brand-green-900);
-}
-.badge {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: var(--brand-lime-500);
-  isolation: isolate;
-}
-.image {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.badge .cta {
-  position: absolute;
-  z-index: 1;
-  right: clamp(16px, 2vw, 32px);
-  top: 50%;
-  transform: translateY(-50%);
-  padding-inline: 18px;
-  background: var(--surface-card);
-  border-color: var(--surface-card);
-  color: var(--brand-green-900);
-  font-size: 14px;
-  box-shadow: var(--shadow-soft);
-}
-.badge .cta:hover {
-  background: var(--brand-green-900);
-  border-color: var(--brand-green-900);
-  color: var(--surface-card);
-}
-@media (max-width: 900px) {
-  .badge .cta {
-    position: relative;
-    display: flex;
-    width: fit-content;
-    max-width: calc(100% - 32px);
-    top: auto;
-    right: auto;
-    transform: none;
-    margin: 16px 16px 16px auto;
-    min-height: 44px;
-  }
-}
+.section { padding-block: clamp(32px, 4vw, 64px); background: var(--brand-green-900); }
+.badge { overflow: hidden; border-radius: var(--radius-lg); background: var(--brand-lime-500); }
+.image { display: block; width: 100%; height: auto; }
+.actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; padding: 16px 24px; }
+.badge .cta { background: var(--surface-card); border-color: var(--surface-card); color: var(--brand-green-900); font-size: 14px; box-shadow: var(--shadow-soft); }
+.badge .cta:hover { background: var(--brand-green-900); border-color: var(--brand-green-900); color: var(--surface-card); }
+.pause { min-height: 44px; padding: 8px 12px; border: 1px solid var(--brand-green-900); border-radius: var(--radius-pill); background: transparent; color: var(--brand-green-900); font: inherit; font-size: 12px; cursor: pointer; }
+.pause:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 3px; }
+.pause:disabled { cursor: default; }
+@media (max-width: 680px) { .actions { padding: 12px; gap: 8px; } }

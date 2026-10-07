@@ -31,6 +31,7 @@ export default async function Home() {
     historyImages,
     deliveryOffers,
     pharmacyOffers,
+    coopermaisBanner,
   ] = await Promise.all([
     getCampaigns(),
     getStores(),
@@ -41,6 +42,7 @@ export default async function Home() {
     getSiteSetting<Record<string, string>>("history_images", {}),
     getSiteSetting<Record<string, string>>("offers_delivery", {}),
     getSiteSetting<Record<string, string>>("offers_pharmacy", {}),
+    getSiteSetting<Record<string, string>>("coopermais_banner", {}),
   ]);
   const section = (id: string) => sections.find((s) => s.id === id);
   const visible = (id: string) => section(id)?.active !== false;
@@ -77,7 +79,7 @@ export default async function Home() {
         {visible("delivery") ? (
           <>
             <Delivery content={section("delivery")?.content} offers={deliveryOffers} />
-            <CoopermaisBanner />
+            <CoopermaisBanner content={coopermaisBanner} />
           </>
         ) : null}
 

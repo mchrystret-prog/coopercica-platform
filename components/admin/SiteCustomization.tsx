@@ -2,6 +2,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
+import { CoopermaisBannerEditor } from "./CoopermaisBannerEditor";
 import { VideosHeaderEditor } from "./VideosHeaderEditor";
 import { CareersHeroEditor } from "./CareersHeroEditor";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
@@ -25,7 +26,7 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization() {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais">(
       "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -81,6 +82,10 @@ export function SiteCustomization() {
     }
     if (data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
       setTab("videos"); setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
+    }
+    if (data.settings.coopermais_banner?.ctaHref) {
+      try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
+      catch { setTab("coopermais"); setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
     }
     setBusy(true);
     setMsg("");
@@ -150,9 +155,14 @@ export function SiteCustomization() {
         !["image/jpeg", "image/png", "image/webp"].includes(file.type)
       )
         throw new Error("Use uma imagem JPG, PNG ou WebP.");
+      if (target.startsWith("coopermais:")) {
+        const field = target.slice(11);
+        const accepted = field === "video" ? ["video/mp4", "video/webm"] : ["image/jpeg", "image/png", "image/webp"];
+        if (!accepted.includes(file.type)) throw new Error(field === "video" ? "Use MP4 ou WebM." : "Use JPG, PNG ou WebP.");
+      }
       const url = await upload(
         file,
-        target.startsWith("videos:")
+        target.startsWith("coopermais:") ? "sections" : target.startsWith("videos:")
           ? "videos"
           : target.startsWith("careers:")
           ? "careers"
@@ -162,7 +172,10 @@ export function SiteCustomization() {
               ? "sections"
               : "identity",
       );
-      if (target.startsWith("videos:")) {
+      if (target.startsWith("coopermais:")) {
+        const field = target.slice(11);
+        setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, [field]: url, ...(field === "video" ? { mode: "video" } : {}) } } } : current);
+      } else if (target.startsWith("videos:")) {
         const field = target.slice(7);
         setData(current => current ? { ...current, settings: { ...current.settings,
           videos_header: { ...current.settings.videos_header, [field]: url,
@@ -254,6 +267,7 @@ export function SiteCustomization() {
           Portal de Vagas
         </button>
         <button data-active={tab === "videos"} onClick={() => setTab("videos")}>Vídeos</button>
+        <button data-active={tab === "coopermais"} onClick={() => setTab("coopermais")}>Coopermais</button>
         <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
       </div>
       {msg ? (
@@ -376,6 +390,13 @@ export function SiteCustomization() {
               videos_header: { ...current.settings.videos_header, ...patch }
             } } : current);
             setMsg("Cabeçalho de Vídeos alterado. Salve as alterações para publicar.");
+          }} />
+      ) : tab === "coopermais" ? (
+        <CoopermaisBannerEditor value={data.settings.coopermais_banner || {}} busy={busy}
+          onUpload={(e, field) => media(e, `coopermais:${field}`)}
+          onChange={patch => {
+            setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, ...patch } } } : current);
+            setMsg("Badge Coopermais alterado. Salve as alterações para publicar.");
           }} />
       ) : tab === "offers" ? (
         <HomeOffersEditor settings={data.settings} busy={busy} onChange={(key, patch) => {
