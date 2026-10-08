@@ -2,6 +2,7 @@
 import { FormEvent, useState } from "react";
 import { LeafletAdmin } from "./LeafletAdmin";
 import { uploadPublicationPdf } from "@/lib/publication-upload";
+import { getCmsAccessToken } from "@/lib/cms-session";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 export function LeafletCreate({ libraryRevision }: { libraryRevision: number }) {
   const [mode, setMode] = useState("sheet");
@@ -18,7 +19,8 @@ function PdfLeafletForm() {
       const starts = String(data.get("starts_at")), ends = String(data.get("ends_at")), display = String(data.get("display_from"));
       if (starts > ends || display > ends) throw new Error("Confira as datas de exibição e vigência.");
       const pdfUrl = await uploadPublicationPdf(data.get("pdf"), token, "leaflets");
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_create_pdf_leaflet`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ p_data: { name: data.get("name"), display_from: display, starts_at: starts, ends_at: ends, status: data.get("status"), pdf_url: pdfUrl } }) });
+      const currentToken = await getCmsAccessToken();
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_create_pdf_leaflet`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" }, body: JSON.stringify({ p_data: { name: data.get("name"), display_from: display, starts_at: starts, ends_at: ends, status: data.get("status"), pdf_url: pdfUrl } }) });
       if (!response.ok) throw new Error("Não foi possível cadastrar o folheto. Confira sua sessão e as datas.");
       form.reset(); setMessage("Folheto cadastrado. A publicação respeita o status e as datas escolhidas.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível cadastrar."); }

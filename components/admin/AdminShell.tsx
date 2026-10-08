@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { FormEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { canAccessCms, cmsRoleName, type CmsRole } from "@/lib/cms-access";
+import { clearCmsSession, CmsSessionExpired, getCmsAccessToken, saveCmsSession } from "@/lib/cms-session";
 const items = [
   ["/admin", "Visão geral"],
   ["/admin/personalizacao", "Personalização"],
@@ -65,21 +66,46 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const setMobileOpen = (open: boolean) =>
     setMobilePath(open ? pathname : null);
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const t = sessionStorage.getItem("coopercica_admin_token");
-      if (t)
+      if (sessionStorage.getItem("coopercica_admin_token"))
         try {
+          const t = await getCmsAccessToken();
           const m = await loadMember(t);
+          if (cancelled) return;
           if (m?.status === "approved") {
             setToken(t);
             setMember(m);
-          } else sessionStorage.removeItem("coopercica_admin_token");
-        } catch {
-          sessionStorage.removeItem("coopercica_admin_token");
+          } else clearCmsSession();
+        } catch (cause) {
+          if (cancelled) return;
+          if (cause instanceof CmsSessionExpired) clearCmsSession();
+          setError(cause instanceof Error ? cause.message : "Não foi possível verificar sua sessão.");
         }
-      setReady(true);
+      if (!cancelled) setReady(true);
     })();
+    return () => { cancelled = true; };
   }, []);
+  const authenticated = Boolean(token);
+  useEffect(() => {
+    if (!authenticated) return;
+    let cancelled = false;
+    async function renew() {
+      if (document.hidden) return;
+      try {
+        const fresh = await getCmsAccessToken();
+        if (!cancelled) setToken(fresh);
+      } catch (cause) {
+        if (!cancelled && cause instanceof CmsSessionExpired) {
+          clearCmsSession(); setToken(null); setMember(null); setError(cause.message);
+        }
+      }
+    }
+    const timer = window.setInterval(renew, 30_000);
+    window.addEventListener("focus", renew);
+    document.addEventListener("visibilitychange", renew);
+    return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener("focus", renew); document.removeEventListener("visibilitychange", renew); };
+  }, [authenticated]);
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -121,7 +147,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
-    sessionStorage.setItem("coopercica_admin_token", j.access_token);
+    saveCmsSession(j.access_token, j.refresh_token);
     setToken(j.access_token);
     setMember(m);
     setLoading(false);
@@ -165,7 +191,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     );
   }
   function logout() {
-    sessionStorage.removeItem("coopercica_admin_token");
+    clearCmsSession();
     setMobileOpen(false);
     setToken(null);
     setMember(null);
