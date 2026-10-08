@@ -56,3 +56,24 @@ test('storage 400 expired JWT is explained separately from size and permission f
   assert.match((await publicationUploadError(Response.json({ message: 'new row violates row-level security policy' }, { status: 403 }), 'O PDF')).message, /permissão/);
   assert.match((await publicationUploadError(new Response('not JSON', { status: 413 }), 'O PDF')).message, /15 MB/);
 });
+
+test('saving magazine editorial preserves other editions and sends only the Revista section', async () => {
+  const { saveMagazineEditorial } = require('../.cms-session-test/magazine-editorial-save.js');
+  session.saveCmsSession(token(3600), 'fake-refresh-editorial');
+  const older = { headline: 'Anterior', summary: 'Texto existente', highlights: [{ label: 'Receitas', text: 'Bolo' }] };
+  const current = { headline: '', summary: 'Nova sugestão revisada', highlights: [{ label: 'Fique bem', text: 'Cuidados no verão' }] };
+  let saveBody;
+  global.fetch = async (url, options) => {
+    if (url.endsWith('cms_get_site_customization')) return Response.json({ settings: { identity: { name: 'Coopercica' } }, sections: [{ id: 'revista', content: { eyebrow: 'Revista Coopercica', editionDetails: JSON.stringify({ older }) } }, { id: 'delivery', content: { title: 'Preservado' } }] });
+    saveBody = JSON.parse(options.body);
+    return Response.json(true);
+  };
+  await saveMagazineEditorial('new-id', current);
+  assert.deepEqual(saveBody.p_settings, {});
+  assert.equal(saveBody.p_sections.length, 1);
+  assert.equal(saveBody.p_sections[0].id, 'revista');
+  assert.equal(saveBody.p_sections[0].content.eyebrow, 'Revista Coopercica');
+  assert.deepEqual(JSON.parse(saveBody.p_sections[0].content.editionDetails), { older, 'new-id': current });
+  global.fetch = async url => url.endsWith('cms_get_site_customization') ? Response.json({ sections: [{ id: 'revista', content: {} }] }) : Response.json(false);
+  await assert.rejects(saveMagazineEditorial('new-id', current), /Tente salvar novamente/);
+});

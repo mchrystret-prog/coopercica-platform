@@ -42,3 +42,20 @@
 @media (max-width: 800px) { .feature { grid-template-columns: minmax(0, 1fr); gap: 28px; } .featuredCover { padding: 16px; } .book { width: min(76vw, 300px); } .editorial h2 { font-size: clamp(1.75rem, 6vw, 2.5rem); } .edition { flex-basis: 145px; } }
 @media (max-width: 480px) { .highlights li { flex-wrap: wrap; gap: 8px; } .highlights span { max-width: 100%; } .actions { flex-direction: column; align-items: stretch; } .actions a { justify-content: center; } }
 @media (prefers-reduced-motion: reduce) { .book, .thumbnail { transform: none !important; transition: none; } }
+
+/* Scattered covers preserve the full cover artwork and the editorial column. */
+.stack { min-width: 0; }
+.stackStage { position: relative; width: 100%; max-width: 440px; margin-inline: auto; aspect-ratio: 1 / 1.15; isolation: isolate; touch-action: pan-y pinch-zoom; cursor: grab; user-select: none; -webkit-user-select: none; }
+.stackStage[data-dragging="true"] { cursor: grabbing; }
+.stackCard { position: absolute; left: 50%; top: 6%; width: 70%; border-radius: 4px 12px 12px 4px; transform: translateX(-50%) translateX(calc(var(--stack-position) * 12%)) translateY(calc(var(--stack-position) * 8px)) rotate(calc(var(--stack-position) * 7deg)) scale(calc(1 - var(--stack-position) * var(--stack-position) * .04)); transform-origin: 50% 85%; transition: transform 400ms var(--ease-brand); }
+.stackCard .book { width: 100%; transform: none; }
+.stackCard[data-front="true"] { transform: translateX(-50%) translateX(var(--drag-offset, 0px)) rotate(-3deg); }
+.stackStage[data-dragging="true"] .stackCard { transition: none; }
+.stackCard:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 5px; }
+.stackNavigation { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+.stackNavigation p { margin: 0; color: var(--text-body); font-size: var(--font-size-sm); }
+@media (hover: hover) and (pointer: fine) { .stackCard[data-front="true"]:hover .book { transform: translateY(-6px); } }
+@media (max-width: 800px) { .stackStage { max-width: 380px; } .stackCard .book { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .stackCard { transition: none; } .stackCard[data-front="true"] { transform: translateX(-50%) translateX(var(--drag-offset, 0px)); } }
+
+.stackStage[data-multiple="false"] { cursor: default; }

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import type { Magazine as MagazineType } from "@/types/content";
@@ -22,6 +22,9 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
   const suppressClickUntil = useRef(0);
   const [edges, setEdges] = useState({ start: true, end: true });
   const [dragging, setDragging] = useState(false);
+  const stackDrag = useRef<{ id: number; x: number; y: number; dx: number; moved: boolean } | null>(null);
+  const stackSuppressClick = useRef(0);
+  const [stackOffset, setStackOffset] = useState(0);
   useEffect(() => {
     const element = rail.current;
     if (!element) return;
@@ -35,6 +38,20 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
   if (!selected) return null;
   const editorial = magazineEditorials(content)[selected.id] ?? emptyMagazineEditorial;
   const highlights = editorial.highlights.filter(item => item.text.trim());
+  const selectedIndex = magazines.findIndex(item => item.id === selected.id);
+  function selectAdjacent(direction: number) {
+    setSelectedId(magazines[(selectedIndex + direction + magazines.length) % magazines.length].id);
+  }
+  function finishStackDrag(event: PointerEvent<HTMLDivElement>, cancelled = false) {
+    const state = stackDrag.current;
+    if (!state || state.id !== event.pointerId) return;
+    if (state.moved) {
+      stackSuppressClick.current = Date.now() + 350;
+      if (!cancelled && Math.abs(state.dx) > 45) selectAdjacent(state.dx < 0 ? 1 : -1);
+    }
+    stackDrag.current = null; setStackOffset(0);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+  }
   function slide(direction: number) {
     const element = rail.current;
     if (!element) return;
@@ -47,9 +64,22 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
   }
   return <Section id="revista" className={styles.section} tabIndex={-1} aria-labelledby="magazine-title"><Container>
     <div className={styles.feature}>
-      <a className={styles.featuredCover} href={selected.href} aria-label={`Folhear ${selected.title}`} data-analytics-kind="download" data-analytics-id={`magazine:${selected.id}`} data-analytics-label={`Revista: ${selected.edition}`}>
-        <span className={styles.book} key={`${selected.id}:${selected.cover}`}><MagazineCover item={selected} featured /></span>
-      </a>
+      <div className={styles.stack}>
+        <div id="magazine-stack" className={styles.stackStage} data-multiple={magazines.length > 1} role="group" aria-roledescription="carrossel" aria-label="Capas das revistas. Arraste para trocar a edição." data-dragging={stackOffset !== 0} style={{ "--drag-offset": `${stackOffset}px` } as CSSProperties}
+          onPointerDown={event => { if (magazines.length < 2 || !event.isPrimary || event.button !== 0) return; stackSuppressClick.current = 0; stackDrag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, dx: 0, moved: false }; }}
+          onPointerMove={event => { const state = stackDrag.current; if (!state || state.id !== event.pointerId) return; const dx = event.clientX - state.x, dy = event.clientY - state.y; if (!state.moved && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) { stackDrag.current = null; return; } if (!state.moved && Math.abs(dx) > 8) { state.moved = true; event.currentTarget.setPointerCapture(event.pointerId); } if (state.moved) { event.preventDefault(); state.dx = dx; setStackOffset(Math.max(-110, Math.min(110, dx))); } }}
+          onPointerUp={event => finishStackDrag(event)} onPointerCancel={event => finishStackDrag(event, true)} onLostPointerCapture={event => finishStackDrag(event, true)} onPointerLeave={() => { if (stackDrag.current && !stackDrag.current.moved) stackDrag.current = null; }} onDragStart={event => event.preventDefault()}
+          onClickCapture={event => { if (event.detail !== 0 && Date.now() < stackSuppressClick.current) { event.preventDefault(); event.stopPropagation(); } }}>
+          {magazines.map((item, index) => {
+            let offset = (index - selectedIndex + magazines.length) % magazines.length;
+            if (offset > magazines.length / 2) offset -= magazines.length;
+            if (Math.abs(offset) > 2) return null;
+            const style = { "--stack-position": offset, zIndex: 5 - Math.abs(offset) } as CSSProperties;
+            return <a key={item.id} className={styles.stackCard} data-front={offset === 0} href={item.href} style={style} aria-label={offset === 0 ? `Folhear ${item.title}` : `Destacar ${item.title}`} onClick={event => { if (offset !== 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) { event.preventDefault(); setSelectedId(item.id); } }} data-analytics-kind={offset === 0 ? "download" : undefined} data-analytics-id={`magazine:${item.id}`}><span className={styles.book}><MagazineCover key={item.cover} item={item} featured={offset === 0} /></span></a>;
+          })}
+        </div>
+        {magazines.length > 1 && <div className={styles.stackNavigation}><div className={styles.controls}><button type="button" aria-label="Destacar edição anterior" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(-1)}><Icon name="chevron-left" /></button><button type="button" aria-label="Destacar próxima edição" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(1)}><Icon name="chevron-right" /></button></div><p>{selectedIndex + 1} / {magazines.length} · Arraste para trocar</p></div>}
+      </div>
       <div className={styles.editorial}>
         <p className={styles.eyebrow}>{content.eyebrow || "Revista Coopercica"}<span aria-hidden="true"> · </span>{selected.edition}</p>
         <h2 id="magazine-title">{editorial.headline.trim() || selected.title}</h2>

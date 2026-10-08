@@ -1,9 +1,14 @@
 import { suggestMagazineEditorial, type PdfTextPage, type PdfText } from "./magazine-pdf-summary";
 
 /** Loaded on demand by the CMS, using the same compatible engine as the reader. */
-export async function readMagazinePdf(url: string, signal: AbortSignal, onProgress: (message: string) => void) {
+export async function readMagazinePdf(source: string | File, signal: AbortSignal, onProgress: (message: string) => void) {
   const maxBytes = 15 * 1024 * 1024;
-  const response = await fetch(url, { signal });
+  let data: Uint8Array;
+  if (typeof source !== "string") {
+    if (source.size > maxBytes) throw new Error("A leitura automática aceita PDFs de até 15 MB.");
+    data = new Uint8Array(await source.arrayBuffer());
+  } else {
+  const response = await fetch(source, { signal });
   if (!response.ok) throw new Error("Não foi possível abrir o PDF desta edição. Confira o arquivo no menu Revistas.");
   if (Number(response.headers.get("content-length")) > maxBytes) throw new Error("A leitura automática aceita PDFs de até 15 MB.");
   const reader = response.body?.getReader();
@@ -20,9 +25,11 @@ export async function readMagazinePdf(url: string, signal: AbortSignal, onProgre
     }
   } finally { await reader.cancel().catch(() => {}); reader.releaseLock(); }
   signal.throwIfAborted();
-  const data = new Uint8Array(size);
+  data = new Uint8Array(size);
   let offset = 0;
   for (const chunk of chunks) { data.set(chunk, offset); offset += chunk.length; }
+  }
+  if (new TextDecoder().decode(data.slice(0, 5)) !== "%PDF-") throw new Error("Selecione um PDF válido para a leitura automática.");
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   signal.throwIfAborted();
   pdfjs.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.legacy.min.mjs";
