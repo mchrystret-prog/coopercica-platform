@@ -4,6 +4,8 @@ import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
 import { CoopermaisBannerEditor } from "./CoopermaisBannerEditor";
 import { VideosHeaderEditor } from "./VideosHeaderEditor";
+import { FooterContactEditor } from "./FooterContactEditor";
+import { validateFooterContact } from "@/lib/footer-contact";
 import { PartnersEditor } from "./PartnersEditor";
 import { MagazineEditorialEditor } from "./MagazineEditorialEditor";
 import type { Magazine } from "@/types/content";
@@ -32,7 +34,7 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization({ magazines = [], initialTab }: { magazines?: Magazine[]; initialTab?: "magazine" }) {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact">(
       initialTab || "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -74,6 +76,8 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
   }
   async function saveAll() {
     if (!data) return;
+    const contactError = validateFooterContact(data.settings.footer_contact || {});
+    if (contactError) { setTab("contact"); setMsg(contactError); return; }
     const partnersError = validatePartners(data.settings.home_partners || {});
     if (partnersError) { setTab("partners"); setMsg(partnersError); return; }
     const videosError = validateHomeVideos(data.settings.home_videos || {});
@@ -281,6 +285,7 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
         <button data-active={tab === "videos"} onClick={() => setTab("videos")}>Vídeos</button>
         <button data-active={tab === "coopermais"} onClick={() => setTab("coopermais")}>Coopermais</button>
         <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
+        <button data-active={tab === "contact"} onClick={() => setTab("contact")}>Fale com a gente</button>
       </div>
       {msg ? (
         <div className="form-status">
@@ -394,6 +399,11 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
             ) : null}
           </label>
         </div>
+      ) : tab === "contact" ? (
+        <FooterContactEditor value={data.settings.footer_contact || {}} busy={busy} onChange={patch => {
+          setData(current => current ? { ...current, settings: { ...current.settings, footer_contact: { ...current.settings.footer_contact, ...patch } } } : current);
+          setMsg("Atendimento e redes sociais alterados. Salve as alterações para publicar.");
+        }} />
       ) : tab === "magazine" ? (
         <MagazineEditorialEditor magazines={magazines} value={data.sections.find(section => section.id === "revista")?.content || {}} busy={busy} onChange={patch => {
           const section = data.sections.find(item => item.id === "revista");

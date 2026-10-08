@@ -1,31 +1,35 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getPolicies } from "@/lib/policies";
+import { getSiteSetting } from "@/lib/site";
+import { footerContact, socialNetworks, safeSocialUrl, whatsappUrl } from "@/lib/footer-contact";
+import { ContactIcon } from "./ContactIcon";
 import styles from "./Footer.module.css";
-
 export async function Footer() {
-  const policies = await getPolicies();
-  return (
-    <footer id="footer" className={styles.footer}>
+    const [policies, settings] = await Promise.all([getPolicies(), getSiteSetting<Record<string, string>>("footer_contact", {})]);
+    const contact = footerContact(settings);
+    const whatsapp = whatsappUrl(contact.whatsapp, contact.whatsappMessage);
+    return (<footer id="footer" className={styles.footer} style={{ "--contact-background": contact.backgroundColor, "--social-color": contact.socialColor } as CSSProperties}>
+      {contact.enabled !== "false" ? <div className="shell"><section className={styles.contactBanner} aria-labelledby="footer-contact-title">
+        <div className={styles.contactCopy}><h2 id="footer-contact-title">{contact.title}</h2><p>{contact.description}</p></div>
+        <div className={styles.contactActions}>
+          {contact.whatsapp ? whatsapp ? <a className={styles.contactButton} href={whatsapp} target="_blank" rel="noopener noreferrer"><ContactIcon name="whatsapp"/>{contact.whatsappLabel}</a> : <span className={styles.contactButton} aria-disabled="true" title="Número de exemplo: cadastre o WhatsApp real no CMS"><ContactIcon name="whatsapp"/><span>{contact.whatsappLabel}<small>(11) 99999-9999</small></span></span> : null}
+          <a className={styles.emailButton} href={`mailto:${contact.email}`}><ContactIcon name="email"/><span>{contact.emailLabel}<small>{contact.email}</small></span></a>
+        </div>
+      </section></div> : null}
       <div className={`shell ${styles.grid}`}>
         <div className={styles.intro}>
-          <a
-            href="/#home"
-            className={styles.brand}
-            aria-label="Voltar ao início"
-          >
-            <Image
-              src="/images/logo-white.png"
-              alt="Coopercica"
-              width={861}
-              height={145}
-              className={styles.logo}
-            />
-          </a>
+          <Link href="/#home" className={styles.brand} aria-label="Voltar ao início">
+            <Image src="/images/logo-white.png" alt="Coopercica" width={861} height={145} className={styles.logo}/>
+          </Link>
           <p>Qualidade, proximidade e cooperação há mais de cinco décadas.</p>
           <strong className={styles.signature}>
             Cooperar é <span>crescer juntos.</span>
           </strong>
+          <nav className={styles.socialLinks} aria-label="Redes sociais da Coopercica">
+            {socialNetworks.map(network => { const href = safeSocialUrl(contact[network]); return href ? <a key={network} href={href} target="_blank" rel="noopener noreferrer" aria-label={`${network === "youtube" ? "YouTube" : network === "linkedin" ? "LinkedIn" : network === "instagram" ? "Instagram" : "Facebook"} da Coopercica (abre em nova aba)`}><ContactIcon name={network}/></a> : null; })}
+          </nav>
         </div>
         <div className={styles.column}>
           <strong>Institucional</strong>
@@ -42,29 +46,21 @@ export async function Footer() {
         </div>
         <div className={styles.column}>
           <strong>Atendimento</strong>
-          <a href="mailto:faleconosco@coopercica.com.br">Fale Conosco</a>
+          <a href={`mailto:${contact.email}`}>{contact.title}</a>
           <span>Jundiaí e região</span>
         </div>
         <div className={styles.column}>
           <Link href="/politicas" className={styles.columnTitle}>
             Políticas e documentos
           </Link>
-          {policies.slice(0, 5).map((p) => (
-            <a
-              key={p.id}
-              href={p.file_url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+          {policies.slice(0, 5).map((p) => (<a key={p.id} href={p.file_url} target="_blank" rel="noopener noreferrer">
               {p.title}
-            </a>
-          ))}
+            </a>))}
         </div>
       </div>
       <div className={`shell ${styles.bottom}`}>
         <span>© 2026 Coopercica. Todos os direitos reservados.</span>
         <span>Uma cooperativa feita por pessoas.</span>
       </div>
-    </footer>
-  );
+    </footer>);
 }

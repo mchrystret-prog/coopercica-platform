@@ -141,3 +141,43 @@
 
 @media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.intro{grid-column:1/-1}}
 @media(max-width:580px){.grid{grid-template-columns:1fr}}
+
+.contactBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: clamp(44px, 6vw, 76px);
+  padding: clamp(24px, 4vw, 44px);
+  border-radius: 28px;
+  background: var(--contact-background, #a8cf38);
+  color: #1c4722;
+}
+.contactCopy { flex: 1; min-width: 0; max-width: 560px; }
+.contactCopy h2 { margin: 0 0 12px; font-size: clamp(1.6rem, 3vw, 2.5rem); line-height: 1.12; letter-spacing: -.04em; }
+.contactCopy p { margin: 0; line-height: 1.6; }
+.contactActions { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
+.contactButton, .emailButton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 14px 20px; border: 1px solid #1c4722; border-radius: 999px;
+  color: #1c4722; text-decoration: none; font-weight: 700; font-size: .85rem;
+}
+.contactButton { background: #fff; border-color: #fff; }
+.contactButton[aria-disabled="true"] { cursor: default; }
+.contactActions svg { flex-shrink: 0; }
+.contactActions small { display: block; margin-top: 4px; font-weight: 500; font-size: .75rem; overflow-wrap: anywhere; }
+.contactActions a:hover { background: #1c4722; border-color: #1c4722; color: #fff; }
+.socialLinks { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.socialLinks a { display: grid; place-items: center; width: 46px; height: 46px; color: var(--social-color, #a8cf38); border: 1px solid var(--social-color, #a8cf38); border-radius: 50%; }
+.socialLinks a:hover { background: var(--social-color, #a8cf38); color: #1c4722; }
+.socialLinks a:focus-visible, .contactActions a:focus-visible { outline: 3px solid currentColor; outline-offset: 5px; }
+@media (max-width: 1100px) {
+  .contactBanner { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 580px) {
+  .footer { padding-top: 48px; }
+  .contactBanner { border-radius: 22px; gap: 24px; }
+  .contactActions { width: 100%; flex-direction: column; }
+  .contactButton, .emailButton { width: 100%; min-width: 0; padding-inline: 12px; }
+  .contactActions span { min-width: 0; }
+}

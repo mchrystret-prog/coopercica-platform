@@ -17,7 +17,8 @@
     "test:publications": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:offers": "tsc lib/home-offers.ts lib/home-offers-preview.ts lib/leaflets.ts --target ES2022 --module commonjs --esModuleInterop --skipLibCheck --outDir .offers-test && node --test tests/home-offers.test.cjs",
     "test:seo": "tsc lib/seo.ts --target ES2022 --module commonjs --esModuleInterop --skipLibCheck --outDir .seo-test && node --test tests/seo.test.cjs",
-    "test:cms-session": "tsc lib/cms-session.ts lib/publication-upload-error.ts lib/magazine-editorial-save.ts --target ES2022 --module commonjs --esModuleInterop --skipLibCheck --outDir .cms-session-test && node --test tests/cms-session.test.cjs"
+    "test:cms-session": "tsc lib/cms-session.ts lib/publication-upload-error.ts lib/magazine-editorial-save.ts --target ES2022 --module commonjs --esModuleInterop --skipLibCheck --outDir .cms-session-test && node --test tests/cms-session.test.cjs",
+    "test:contact": "tsc lib/footer-contact.ts --target ES2022 --module commonjs --skipLibCheck --outDir .contact-test && node --test tests/footer-contact.test.cjs"
   },
   "dependencies": {
     "gsap": "^3.13.0",
