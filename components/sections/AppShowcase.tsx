@@ -322,7 +322,7 @@ export function AppShowcase() {
 
               <div className={styles.storeBadgesLinks}>
                 <a
-                  href="https://apps.apple.com/br/app/"
+                  href="https://apps.apple.com/app/coopercica-delivery/id6461457596"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Baixar na App Store"
@@ -334,7 +334,7 @@ export function AppShowcase() {
                 </a>
 
                 <a
-                  href="https://play.google.com/store"
+                  href="https://play.google.com/store/apps/details?id=br.com.coopercicadelivery"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Baixar no Google Play"
