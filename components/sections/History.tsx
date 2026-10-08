@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
-import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { historyItems } from "@/data/history";
 import styles from "./History.module.css";
@@ -185,24 +184,6 @@ export function History({ images = {} }: { images?: Record<string, string> }) {
           </div>
         </div>
       </nav>
-      <div className={styles.backTopWrap}>
-        <Button
-          variant="secondary"
-          onClick={() =>
-            window.scrollTo({
-              top: 0,
-              behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-                .matches
-                ? "instant"
-                : "smooth",
-            })
-          }
-          aria-label="Voltar ao topo"
-          icon={<Icon name="arrow-up" />}
-        >
-          Voltar ao topo
-        </Button>
-      </div>
       <div
         id="historia-fim"
         className={styles.historyEnd}

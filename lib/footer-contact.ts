@@ -5,6 +5,7 @@ export const footerContactDefaults: Record<string, string> = {
     title: "Fale com a gente",
     description: "Tem alguma dúvida, sugestão ou algo para compartilhar? Estamos aqui para ouvir você.",
     whatsapp: "5511999999999",
+    whatsappHref: "/",
     whatsappLabel: "Chamar no WhatsApp",
     whatsappMessage: "Olá! Gostaria de falar com a Coopercica.",
     email: "faleconosco@coopercica.com.br",
@@ -44,6 +45,7 @@ export function validateFooterContact(value: Record<string, string>): string | n
         return "Informe apenas o número do WhatsApp, com código do país e DDD.";
     if (content.whatsapp && !/^\d{10,15}$/.test(content.whatsapp.replace(/\D/g, "")))
         return "Informe o WhatsApp com código do país e DDD.";
+    if (content.whatsappHref && contactWhatsappHref(content.whatsappHref) !== content.whatsappHref && !safeSocialUrl(content.whatsappHref)) return "Informe um destino válido para o botão WhatsApp: caminho do site ou link HTTPS.";
     for (const network of socialNetworks) {
         if (content[network] && !safeSocialUrl(content[network]))
             return `Informe um link HTTPS válido para ${network}.`;
@@ -58,4 +60,9 @@ export function footerContact(value: Record<string, string>) {
         if (!/^#[0-9a-f]{6}$/i.test(content[field])) content[field] = footerContactDefaults[field];
     }
     return content;
+}
+
+export function contactWhatsappHref(value: string): string {
+    if (value.startsWith("/") && !value.startsWith("//") && !/[\\\s]/.test(value)) return value;
+    return safeSocialUrl(value) || "/";
 }

@@ -181,3 +181,5 @@
   .contactButton, .emailButton { width: 100%; min-width: 0; padding-inline: 12px; }
   .contactActions span { min-width: 0; }
 }
+
+.column .columnTitle { color: var(--white); font-weight: 700; }

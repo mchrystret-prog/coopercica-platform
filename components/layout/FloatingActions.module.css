@@ -1,0 +1,44 @@
+.actions {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  pointer-events: none;
+}
+.top, .whatsapp {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 6px 22px rgb(28 71 34 / 20%);
+  transition: opacity 180ms ease, transform 180ms ease, background 180ms ease;
+}
+.top { background: #1c4722; color: white; }
+.top[data-visible="false"] { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px); }
+.whatsapp { background: #a8cf38; color: #1c4722; text-decoration: none; }
+.whatsapp > svg { width: 30px; height: 30px; }
+.top:hover, .whatsapp:hover { transform: translateY(-3px); }
+.top:focus-visible, .whatsapp:focus-visible { outline: 3px solid #a8cf38; outline-offset: 7px; }
+.progress { position: absolute; inset: -4px; width: 64px; height: 64px; overflow: visible; transform: rotate(-90deg); fill: none; stroke-width: 2.5; pointer-events: none; }
+.track { stroke: rgb(28 71 34 / 15%); }
+.ring { stroke: var(--brand-red-500, #ef4037); stroke-linecap: round; }
+@media (max-width: 580px) {
+  .actions { right: max(16px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); gap: 14px; }
+  .top, .whatsapp { width: 48px; height: 48px; }
+  .progress { width: 56px; height: 56px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .top, .whatsapp { transition: none; }
+  .top:hover, .whatsapp:hover { transform: none; }
+}
+@media print { .actions { display: none; } }

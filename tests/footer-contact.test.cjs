@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { footerContactDefaults, footerContact, safeSocialUrl, whatsappUrl, validateFooterContact } = require('../.contact-test/footer-contact.js');
+const { footerContactDefaults, footerContact, safeSocialUrl, whatsappUrl, validateFooterContact, contactWhatsappHref } = require('../.contact-test/footer-contact.js');
 test('WhatsApp de exemplo não direciona o visitante a um número fictício', () => {
   assert.equal(whatsappUrl(footerContactDefaults.whatsapp, 'Olá'), null);
   assert.equal(whatsappUrl('', 'Olá'), null);
@@ -23,4 +23,14 @@ test('CMS valida contatos antes de publicar, preservando opções de ocultar can
   assert.ok(validateFooterContact({ linkedin: 'javascript:alert(1)' }));
   assert.equal(footerContact({ email: 'inválido' }).email, footerContactDefaults.email);
   assert.equal(footerContact({ enabled: 'false', instagram: '' }).instagram, '');
+});
+
+test('WhatsApp começa na Home e permite destino seguro editável pelo CMS', () => {
+  assert.equal(contactWhatsappHref(footerContactDefaults.whatsappHref), '/');
+  assert.equal(contactWhatsappHref('/delivery'), '/delivery');
+  assert.equal(contactWhatsappHref('https://wa.me/551134567890'), 'https://wa.me/551134567890');
+  assert.equal(contactWhatsappHref('javascript:alert(1)'), '/');
+  assert.equal(contactWhatsappHref('//example.com'), '/');
+  assert.ok(validateFooterContact({ whatsappHref: '//example.com' }));
+  assert.equal(validateFooterContact({ whatsappHref: '/' }), null);
 });

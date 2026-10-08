@@ -3,19 +3,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { getPolicies } from "@/lib/policies";
 import { getSiteSetting } from "@/lib/site";
-import { footerContact, socialNetworks, safeSocialUrl, whatsappUrl } from "@/lib/footer-contact";
+import { footerContact, socialNetworks, safeSocialUrl, contactWhatsappHref } from "@/lib/footer-contact";
+import { FloatingActions } from "./FloatingActions";
 import { ContactIcon } from "./ContactIcon";
 import styles from "./Footer.module.css";
 export async function Footer() {
     const [policies, settings] = await Promise.all([getPolicies(), getSiteSetting<Record<string, string>>("footer_contact", {})]);
     const contact = footerContact(settings);
-    const whatsapp = whatsappUrl(contact.whatsapp, contact.whatsappMessage);
+    const whatsapp = contactWhatsappHref(contact.whatsappHref);
     return (<footer id="footer" className={styles.footer} style={{ "--contact-background": contact.backgroundColor, "--social-color": contact.socialColor } as CSSProperties}>
       {contact.enabled !== "false" ? <div className="shell"><section className={styles.contactBanner} aria-labelledby="footer-contact-title">
         <div className={styles.contactCopy}><h2 id="footer-contact-title">{contact.title}</h2><p>{contact.description}</p></div>
         <div className={styles.contactActions}>
-          {contact.whatsapp ? whatsapp ? <a className={styles.contactButton} href={whatsapp} target="_blank" rel="noopener noreferrer"><ContactIcon name="whatsapp"/>{contact.whatsappLabel}</a> : <span className={styles.contactButton} aria-disabled="true" title="Número de exemplo: cadastre o WhatsApp real no CMS"><ContactIcon name="whatsapp"/><span>{contact.whatsappLabel}<small>(11) 99999-9999</small></span></span> : null}
-          <a className={styles.emailButton} href={`mailto:${contact.email}`}><ContactIcon name="email"/><span>{contact.emailLabel}<small>{contact.email}</small></span></a>
+          <Link className={styles.contactButton} href={whatsapp}><ContactIcon name="whatsapp"/>{contact.whatsappLabel}</Link>
+          <a className={styles.emailButton} href={`mailto:${contact.email}`}><ContactIcon name="email"/><span>{contact.emailLabel}</span></a>
         </div>
       </section></div> : null}
       <div className={`shell ${styles.grid}`}>
@@ -62,5 +63,6 @@ export async function Footer() {
         <span>© 2026 Coopercica. Todos os direitos reservados.</span>
         <span>Uma cooperativa feita por pessoas.</span>
       </div>
+      <FloatingActions whatsappHref={whatsapp} whatsappLabel={contact.whatsappLabel}/>
     </footer>);
 }
