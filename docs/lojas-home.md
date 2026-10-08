@@ -2,7 +2,7 @@
 
 A Home apresenta uma faixa com chamada institucional e a foto da fachada ao pôr do sol. Logo abaixo, as nove lojas ativas ficam em uma única linha horizontal, em vez de três linhas de cards. No desktop aparecem três cards; no tablet e no mobile parte do próximo card indica que há mais unidades.
 
-O carrossel oferece arraste com mouse, rolagem nativa com o dedo, botões de 44 px e setas do teclado quando o trilho está focado. Arrastar não abre links por acidente. Os filtros de cidade, abertas agora e drogaria continuam combináveis; mudar o conjunto de resultados retorna o trilho ao início. Links de endereço e detalhes continuam disponíveis. A página /lojas conserva o diretório completo, com horários e telefones.
+O carrossel oferece arraste com mouse, rolagem nativa com o dedo, botões de 44 px e setas do teclado quando o trilho está focado. Arrastar não abre links por acidente. Os filtros de cidade, abertas agora e drogaria continuam combináveis; mudar o conjunto de resultados retorna o trilho ao início. Os cards exibem Como chegar e o telefone clicável para ligar. O título da loja continua levando aos detalhes da unidade. A página /lojas conserva o diretório completo, com horários e telefones.
 
 ## Foto no CMS
 

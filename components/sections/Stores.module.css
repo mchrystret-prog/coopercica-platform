@@ -65,7 +65,7 @@ a.phone:hover { background: var(--brand-green-900); color: var(--text-inverse); 
 .rail[data-dragging="true"] { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .rail .card { flex: 0 0 calc((100% - 32px) / 3); scroll-snap-align: start; padding: 18px; gap: 12px; }
 .compact .actions { flex-direction: row; flex-wrap: wrap; margin-top: 14px; }
-.compact .maps { min-height: 44px; }
+.compact .maps, .compact .phone { min-height: 44px; }
 .storeName { margin: 0 0 6px; font-size: var(--font-size-sm); color: var(--text-heading); font-weight: var(--font-weight-semibold); }
 .rail:focus-visible, .carouselControls button:focus-visible, .city:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 3px; }
 @media (max-width: 1080px) { .rail .card { flex-basis: calc((100% - 16px) / 2.2); } }

@@ -87,12 +87,12 @@ export function Stores({ items, compact = false, content = {} }: { items: Store[
               <p className={styles.address}>{store.address}{store.neighborhood ? `, ${store.neighborhood}` : ""}<br />{store.city}</p>
               <span className={`${styles.status} ${status?.open ? styles.open : ""}`}>
                 <span aria-hidden="true" className={styles.dot} />
-                {status ? status.open ? `Aberta agora, fecha às ${status.closes?.replace(/:00$/, "h").replace(":", "h")}` : "Fechada agora" : compact ? "Confira os horários em Ver loja" : "Consulte os horários abaixo"}
+                {status ? status.open ? `Aberta agora, fecha às ${status.closes?.replace(/:00$/, "h").replace(":", "h")}` : "Fechada agora" : compact ? "Consulte os horários da unidade" : "Consulte os horários abaixo"}
               </span>
               {!compact && <p className={styles.hours}><DetailIcon />{store.hours || "Consulte a unidade para confirmar os horários."}</p>}
               <div className={styles.actions}>
                 <a className={styles.maps} href={storeMapsLink(store)} target="_blank" rel="noopener noreferrer" aria-label={`Como chegar à Loja ${store.storeNumber}`}><Icon name="pin" />Como chegar</a>
-                {compact ? <Link className={styles.maps} href={`/lojas/${store.slug}`} aria-label={`Ver detalhes da Loja ${store.storeNumber}`}>Ver loja</Link> : phone ? <a className={styles.phone} href={`tel:${phone}`} aria-label={`Ligar para a Loja ${store.storeNumber}: ${store.phone}`}><DetailIcon phone />{store.phone}</a> : store.phone ? <span className={styles.phone}><DetailIcon phone />{store.phone}</span> : null}
+                {phone ? <a className={styles.phone} href={`tel:${phone}`} aria-label={`Ligar para a Loja ${store.storeNumber}: ${store.phone}`}><DetailIcon phone />{store.phone}</a> : store.phone ? <span className={styles.phone}><DetailIcon phone />{store.phone}</span> : null}
               </div>
             </div>
           </article>;
