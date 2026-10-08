@@ -35,7 +35,17 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
     <Section id="nossa-cultura" className={styles.manifesto} aria-labelledby="manifesto-title">
       <Container>
         <div className={styles.editorialGrid}>
-          <div data-careers-reveal><span className="eyebrow">Nossa essência</span><h2 id="manifesto-title" className={styles.title}>{content.manifestoTitle}</h2><span className={styles.year}>1969 <span>O começo de uma história coletiva.</span></span></div>
+          <div data-careers-reveal><span className="eyebrow">Nossa essência</span><h2 id="manifesto-title" className={styles.title}>{content.manifestoTitle}</h2><div className={styles.historyYears}>
+            <div className={styles.yearRange} aria-label="De 1969 a 2026">
+              <span>1969</span>
+              <svg className={styles.yearLoop} viewBox="0 0 48 24" fill="none" aria-hidden="true" focusable="false">
+                <path className={styles.loopTrack} d="M24 12C19 3 12 3 8 6C1 11 5 21 12 20C17 20 20 16 24 12C28 8 31 4 36 4C43 3 47 13 40 18C36 21 29 21 24 12Z"/>
+                <path className={styles.loopTrail} pathLength="100" d="M24 12C19 3 12 3 8 6C1 11 5 21 12 20C17 20 20 16 24 12C28 8 31 4 36 4C43 3 47 13 40 18C36 21 29 21 24 12Z"/>
+              </svg>
+              <span>2026</span>
+            </div>
+            <p>O começo de uma história coletiva. E seguimos escrevendo novos capítulos.</p>
+          </div></div>
           <div className={styles.manifestoCopy} data-careers-reveal data-careers-delay="70">{content.manifesto.split(/\n\s*\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}<Button href="/quem-somos">Conheça nossa história</Button></div>
         </div>
       </Container>
