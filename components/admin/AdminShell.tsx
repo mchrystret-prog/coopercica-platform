@@ -92,13 +92,22 @@ export function AdminShell({ children }: { children: ReactNode }) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: fd.get("email"),
+        email: String(fd.get("email") || "").trim().toLowerCase(),
         password: fd.get("password"),
       }),
     });
     const j = await r.json();
     if (!r.ok) {
-      setError("E-mail ou senha inválidos.");
+      const code = j.error_code || j.code;
+      setError(
+        code === "email_not_confirmed" || j.error_description === "Email not confirmed"
+          ? "Seu e-mail ainda não foi confirmado. Abra o e-mail recebido no cadastro e clique no link de confirmação. A aprovação no CMS não substitui essa etapa."
+          : r.status === 429
+            ? "Muitas tentativas de login. Aguarde alguns minutos e tente novamente."
+            : code === "invalid_credentials" || j.error_description === "Invalid login credentials"
+              ? "E-mail ou senha inválidos."
+              : "Não foi possível entrar agora. Tente novamente; se o erro persistir, contate o administrador.",
+      );
       setLoading(false);
       return;
     }
@@ -152,7 +161,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     }
     setRequestMode(false);
     setError(
-      "Solicitação enviada. Após a aprovação, use seu e-mail e senha para entrar.",
+      "Solicitação enviada. Verifique sua caixa de entrada e spam para confirmar o e-mail, se solicitado. Após a confirmação e a aprovação no CMS, use seu e-mail e senha para entrar.",
     );
   }
   function logout() {
