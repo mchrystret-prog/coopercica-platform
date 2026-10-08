@@ -50,7 +50,7 @@ export const stores: Store[] = [
     maps: "https://maps.app.goo.gl/brDJneFt8p4KmMJJ9",
     featured: true,
     active: true,
-    services: ["Padaria", "Açougue", "Drogaria", "Delivery"]
+    services: ["Padaria", "Açougue", "Delivery"]
   },
 
   {

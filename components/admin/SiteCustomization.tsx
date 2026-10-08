@@ -497,7 +497,7 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
               </div>
               <div className="settings-form">
                 {Object.entries(s.content)
-                  .filter(([k]) => k !== "image" && k !== "editionDetails" && k !== "featuredId" && !(s.id === "revista" && ["title1", "title2"].includes(k)))
+                  .filter(([k]) => k !== "image" && k !== "editionDetails" && k !== "featuredId" && !(s.id === "lojas" && k === "imageAlt") && !(s.id === "revista" && ["title1", "title2"].includes(k)))
                   .map(([k, v]) => (
                     <label key={k}>
                       {labels[k] || k}
@@ -511,7 +511,7 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
                       />
                     </label>
                   ))}
-                {"image" in s.content ? (
+                {"image" in s.content || s.id === "lojas" ? (
                   <label className="form-span-full">
                     Imagem da seção
                     <input
@@ -522,15 +522,16 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
                     <small>
                       Recomendado: 1600 × 1000 px, JPG/PNG/WebP. Máximo: 15 MB.
                     </small>
-                    {s.content.image ? (
+                    {s.content.image || s.id === "lojas" ? (
                       <img
                         className="cms-upload-preview"
-                        src={s.content.image}
+                        src={s.content.image || "/images/stores/coopercica-sunset.webp"}
                         alt="Imagem atual"
                       />
                     ) : null}
                   </label>
                 ) : null}
+                {s.id === "lojas" && <label className="form-span-full">Descrição da foto de Nossas Lojas<input value={s.content.imageAlt || "Fachada de uma loja Coopercica ao pôr do sol"} onChange={event => setSection(s.id, { content: { ...s.content, imageAlt: event.target.value } })} /><small>A foto aparece ao lado da chamada na Home e acima dela no mobile. Mantenha a fachada na região central da imagem.</small></label>}
               </div>
             </article>
           ))}

@@ -73,7 +73,7 @@ export default async function Home() {
           <Leaflets items={leaflets} content={section("ofertas")?.content} />
         ) : null}
 
-        {visible("lojas") ? <Stores items={stores} /> : null}
+        {visible("lojas") ? <Stores items={stores} compact content={section("lojas")?.content} /> : null}
 
         {visible("drogaria") ? (
           <Pharmacy content={section("drogaria")?.content} offers={pharmacyOffers} />
