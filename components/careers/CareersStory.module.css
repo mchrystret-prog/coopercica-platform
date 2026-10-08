@@ -2,7 +2,7 @@
 .heroGrid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; column-gap: var(--content-gap); row-gap: 24px; }
 .withoutImage { grid-template-columns: 1fr; }
 .heroCopy { min-width: 0; }
-.eyebrow { display: block; font-size: var(--font-size-eyebrow); font-weight: var(--font-weight-bold); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--brand-lime-500); }
+.eyebrow { display: block; font-size: var(--font-size-eyebrow); font-weight: var(--font-weight-bold); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--brand-red-500); }
 .hero h1 { color: inherit; font-size: clamp(2.5rem, 4.6vw, 4.5rem); line-height: 1.06; letter-spacing: var(--tracking-heading); max-width: 850px; margin: 24px 0; overflow-wrap: anywhere; }
 .heroCopy p { max-width: 620px; color: var(--text-inverse-muted); font-size: var(--font-size-body-lg); line-height: var(--line-height-body); }
 .actions { grid-column: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; margin-top: 0; }

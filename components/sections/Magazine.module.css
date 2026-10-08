@@ -7,7 +7,7 @@
 .coverFallback { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 18px; border-radius: inherit; background: var(--brand-green-900); color: var(--text-inverse); text-align: left; }
 .coverFallback strong { font-size: clamp(1rem, 2vw, 2rem); }
 .coverFallback small { font-size: 12px; }
-.eyebrow { font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--brand-green-700); margin: 0 0 14px; }
+.eyebrow { font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--brand-red-500); margin: 0 0 14px; }
 .editorial { min-width: 0; }
 .editorial h2 { margin: 0 0 20px; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; font-weight: var(--font-weight-strong); text-transform: uppercase; color: var(--text-heading); overflow-wrap: anywhere; }
 .summary { margin: 0 0 24px; max-width: 65ch; color: var(--text-body); line-height: 1.7; white-space: pre-line; }

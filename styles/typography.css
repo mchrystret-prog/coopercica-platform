@@ -8,5 +8,5 @@
 .ds-copy, .ds-body-large { color:var(--text-body); font-size:var(--font-size-body-lg); line-height:var(--line-height-body); }
 .ds-body { color:var(--text-body); font-size:var(--font-size-body); line-height:var(--line-height-body); }
 .ds-caption { color:var(--text-muted); font-size:var(--font-size-sm); line-height:1.5; }
-.ds-eyebrow, .eyebrow { display:inline-block; color:var(--text-heading); font-size:var(--font-size-eyebrow); font-weight:var(--font-weight-strong); letter-spacing:var(--tracking-eyebrow); line-height:1.4; text-transform:uppercase; }
-.eyebrow.light { color:var(--text-inverse); }
+.ds-eyebrow, .eyebrow { display:inline-block; color:var(--brand-red-500); font-size:var(--font-size-eyebrow); font-weight:var(--font-weight-strong); letter-spacing:var(--tracking-eyebrow); line-height:1.4; text-transform:uppercase; }
+.eyebrow.light { color:var(--brand-red-500); }

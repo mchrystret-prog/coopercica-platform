@@ -3,13 +3,14 @@
 .filters { margin-block: var(--space-8) var(--space-4); gap: var(--space-4); }
 .cities { flex: 0 1 auto; }
 .city { min-height: 44px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill); padding: 8px 16px; background: var(--surface-card); color: var(--text-heading); font-size: var(--font-size-sm); transition: background-color var(--motion-fast) var(--ease-brand), color var(--motion-fast) var(--ease-brand); }
-.city[aria-pressed="true"] { background: var(--brand-green-900); border-color: var(--brand-green-900); color: var(--text-inverse); font-weight: var(--font-weight-bold); }
+.city[aria-pressed="true"] { background: var(--brand-lime-500); border-color: var(--brand-lime-500); color: var(--brand-green-900); font-weight: var(--font-weight-bold); }
 .city:hover { border-color: var(--brand-green-900); }
 .toggles { gap: var(--space-4); }
-.toggle { display: inline-flex; position: relative; align-items: center; min-height: 44px; gap: var(--space-2); cursor: pointer; color: var(--text-heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+.toggle { padding: 8px 14px; border: 1px solid transparent; border-radius: var(--radius-pill); display: inline-flex; position: relative; align-items: center; min-height: 44px; gap: var(--space-2); cursor: pointer; color: var(--text-heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
 .toggle input { position: absolute; width: 36px; height: 24px; margin: 0; opacity: 0; }
 .track { width: 36px; height: 22px; flex-shrink: 0; border-radius: var(--radius-pill); background: var(--border-strong); padding: 3px; transition: background-color var(--motion-fast) var(--ease-brand); }
 .track::after { content: ""; display: block; width: 16px; height: 16px; border-radius: 50%; background: var(--surface-card); transition: transform var(--motion-fast) var(--ease-brand); }
+.toggle:has(input:checked) { background: var(--brand-lime-500); border-color: var(--brand-lime-500); color: var(--brand-green-900); }
 .toggle input:checked + .track { background: var(--brand-green-900); }
 .toggle input:checked + .track::after { transform: translateX(14px); }
 .toggle input:focus-visible + .track { outline: 3px solid var(--focus-color); outline-offset: 4px; }

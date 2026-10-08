@@ -58,7 +58,7 @@
 .copy { position:absolute; inset:0; display:flex; max-width:720px; flex-direction:column; justify-content:center; opacity:0; will-change:opacity,transform,filter; }
 .copy:first-child { opacity:1; }
 .stepNumber { display:block; margin-bottom:22px; color:var(--text-heading); font-size:.82rem; font-weight:700; letter-spacing:.14em; }
-.stepEyebrow { display:block; margin-bottom:14px; color:var(--text-heading); font-size:.8rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+.stepEyebrow { display:block; margin-bottom:14px; color:var(--brand-red-500); font-size:.8rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
 .copy h2 { max-width:720px; margin:0; color:var(--brand-green-900); font-size:var(--font-size-showcase-title); font-weight:700; line-height:.98; letter-spacing:-.045em; text-transform:uppercase; }
 .copy p { max-width:610px; margin:24px 0 0; color:var(--text-body); font-size:1.06rem; line-height:1.7; }
 .storeBadges { position:relative; z-index:2; display:grid; width:fit-content; gap:12px; }
