@@ -54,6 +54,7 @@ a.phone:hover { background: var(--brand-green-900); color: var(--text-inverse); 
 .heroCopy > div { margin: 0; gap: 16px; }
 .heroCopy h2 { font-size: clamp(1.75rem, 3vw, 2.75rem); text-transform: uppercase; }
 .heroCopy p { font-size: var(--font-size-sm); }
+.heroCopy :global(.ds-eyebrow) { color: var(--brand-lime-500); }
 .heroPhoto { position: relative; min-width: 0; min-height: 300px; }
 .heroImage { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
 .compact .filters { margin-top: 20px; }
@@ -61,8 +62,10 @@ a.phone:hover { background: var(--brand-green-900); color: var(--text-inverse); 
 .carouselControls { display: flex; gap: 8px; margin-left: auto; }
 .carouselControls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); background: var(--surface-card); color: var(--text-heading); cursor: pointer; }
 .carouselControls button:disabled { opacity: .4; cursor: default; }
-.rail { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; padding: 6px 6px 14px; margin-inline: -6px; cursor: grab; }
-.rail::-webkit-scrollbar { display: none; }
+.rail { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--brand-lime-500) transparent; overscroll-behavior-x: contain; padding: 6px 6px 14px; margin-inline: -6px; cursor: grab; }
+.rail::-webkit-scrollbar { height: 6px; }
+.rail::-webkit-scrollbar-track { background: transparent; }
+.rail::-webkit-scrollbar-thumb { background: var(--brand-lime-500); border-radius: var(--radius-pill); }
 .rail[data-dragging="true"] { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .rail .card { flex: 0 0 calc((100% - 32px) / 3); scroll-snap-align: start; padding: 18px; gap: 12px; }
 .compact .actions { flex-direction: row; flex-wrap: wrap; margin-top: 14px; }
