@@ -53,6 +53,10 @@ export function Pharmacy({
             className={styles.image}
           />
         </div>
+
+      </Container>
+      {config.enabled || config.preview ? <Container><HomeOffers key={config.enabled ? "api" : "preview"} channel="pharmacy" title={config.title} preview={!config.enabled && config.preview} /></Container> : null}
+      <Container>
         <div className={styles.actions}>
           <Button
             data-analytics-id="cta:pharmacy"
@@ -63,7 +67,6 @@ export function Pharmacy({
           </Button>
         </div>
       </Container>
-      {config.enabled || config.preview ? <Container><HomeOffers key={config.enabled ? "api" : "preview"} channel="pharmacy" title={config.title} preview={!config.enabled && config.preview} /></Container> : null}
     </Section>
   );
 }

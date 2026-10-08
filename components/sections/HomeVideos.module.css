@@ -31,3 +31,9 @@
 .heading h2, .railHeading h3, .cardTitle { overflow-wrap: anywhere; }
 .arrows { flex-shrink: 0; }
 @media (max-width: 600px) { .featured { width: 100%; min-width: 0; } .section { padding-block: 40px; } .heading { gap: 18px; } }
+
+.rail { cursor: grab; overscroll-behavior-x: contain; }
+.rail[data-dragging="true"] { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.rail[data-dragging="true"] .card { cursor: grabbing; transform: none; }
+.rail:focus-visible { outline: 3px solid var(--brand-lime-500); outline-offset: 2px; }
+.thumbnail img { -webkit-user-drag: none; }

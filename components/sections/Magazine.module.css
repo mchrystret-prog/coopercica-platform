@@ -59,3 +59,5 @@
 @media (prefers-reduced-motion: reduce) { .stackCard { transition: none; } .stackCard[data-front="true"] { transform: translateX(-50%) translateX(var(--drag-offset, 0px)); } }
 
 .stackStage[data-multiple="false"] { cursor: default; }
+
+.stackCard, .stackCard .book, .stackCard .coverImage { touch-action: pan-y pinch-zoom; -webkit-user-drag: none; -webkit-touch-callout: none; }

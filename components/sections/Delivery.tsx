@@ -50,6 +50,10 @@ export function Delivery({
             sizes="(max-width:900px) 100vw, 50vw"
           />
         </div>
+
+      </Container>
+      {config.enabled || config.preview ? <Container><HomeOffers key={config.enabled ? "api" : "preview"} channel="delivery" title={config.title} preview={!config.enabled && config.preview} /></Container> : null}
+      <Container>
         <div className={styles.actions}>
           <Button
             data-analytics-id="cta:delivery"
@@ -61,7 +65,6 @@ export function Delivery({
           </Button>
         </div>
       </Container>
-      {config.enabled || config.preview ? <Container><HomeOffers key={config.enabled ? "api" : "preview"} channel="delivery" title={config.title} preview={!config.enabled && config.preview} /></Container> : null}
     </Section>
   );
 }

@@ -71,32 +71,4 @@
   }
 }
 
-/* Actions follow the image on mobile while staying below desktop copy. */
-.shell {
-  grid-template-areas: "copy image" "actions image";
-  row-gap: 24px;
-}
-.content {
-  grid-area: copy;
-  align-self: end;
-}
-.visual {
-  grid-area: image;
-}
-.actions {
-  grid-area: actions;
-  align-self: start;
-  margin-top: 0;
-}
-@media (max-width: 1100px) {
-  .shell {
-    grid-template-areas: "copy" "image" "actions";
-    row-gap: 28px;
-  }
-  .content {
-    align-self: auto;
-  }
-  .actions {
-    justify-self: start;
-  }
-}
+.actions { display: flex; justify-content: center; margin-top: var(--space-6); }

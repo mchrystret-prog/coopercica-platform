@@ -61,6 +61,7 @@ export function ProductOfferCard({
             alt={ageSeal.alt}
           />
         ) : null}
+        <div className={styles.badges}>
         {product.super_offer ? (
           <Badge variant="red" className={styles.badge}>
             Super Oferta
@@ -71,46 +72,21 @@ export function ProductOfferCard({
             Leve 3 Pague 2
           </Badge>
         ) : null}
+        </div>
       </div>
       <div className={styles.copy}>
         <strong>{product.description}</strong>
         {product.complement ? <span>{product.complement}</span> : null}
       </div>
-      <div
-        className={`${styles.priceBox} ${hasCooper ? styles.cooperPriceBox : !hasOffer ? styles.singlePriceBox : ""}`}
-      >
-        {hasCooper ? (
-          <Image
-            className={styles.cooperSeal}
-            src="/images/coopermais-selo.svg"
-            alt="Preço exclusivo para cliente Coopermais"
-            width={978}
-            height={519}
-          />
-        ) : null}
-        {hasOffer && !hasCooper ? (
-          <>
-            <div className={styles.regular}>
-              <small>PREÇO REGULAR</small>
-              <b>R$ {money(product.regular_price)}</b>
-            </div>
-            <span className={styles.divider} />
-          </>
-        ) : null}
-        <div className={styles.featured}>
-          {!hasCooper ? <small>{hasOffer ? "OFERTA" : "PREÇO"}</small> : null}
-          <div>
-            <sup>R$</sup>
-            <b>{money(featured)}</b>
-            {product.unit ? <em>/{product.unit}</em> : null}
+      <div className={`${styles.priceBox} ${hasCooper ? styles.cooperPriceBox : ""}`}>
+        <div className={styles.priceMain}>
+          {hasCooper ? <Image className={styles.cooperSeal} src="/images/coopermais-selo.svg" alt="Preço exclusivo para cliente Coopermais" width={978} height={519} /> : null}
+          <div className={styles.featured}>
+            {!hasCooper ? <small>{hasOffer ? "OFERTA" : "PREÇO"}</small> : null}
+            <div><span className={styles.amount}><sup>R$</sup><b>{money(featured)}</b></span>{product.unit ? <em>/{product.unit}</em> : null}</div>
           </div>
         </div>
-        {hasCooper ? (
-          <div className={styles.cooperRegular}>
-            <small>PREÇO REGULAR</small>
-            <b>R$ {money(product.regular_price)}</b>
-          </div>
-        ) : null}
+        {hasCooper || hasOffer ? <div className={styles.cooperRegular}><small>PREÇO REGULAR</small><b>R$ {money(product.regular_price)}</b></div> : null}
       </div>
       {product.promo_pack ? (
         <div className={styles.warnings}>
