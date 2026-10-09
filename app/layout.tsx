@@ -14,7 +14,7 @@ const montserrat = Montserrat({
 
 
 const baseMetadata: Metadata = {
-  title: { default: "Coopercica | Qualidade com você", template: "%s | Coopercica" },
+  title: { default: "Coopercica", template: "%s | Coopercica" },
   metadataBase: new URL(siteOrigin()),
   description: brandDescription,
   applicationName: "Coopercica",

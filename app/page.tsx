@@ -102,4 +102,10 @@ export default async function Home() {
   );
 }
 
-export const metadata = pageMetadata("Supermercados em Jundiaí e região", "Coopercica desde 1969: conheça as lojas em Jundiaí, Itupeva, Campo Limpo Paulista e Várzea Paulista, folhetos, Delivery, Drogaria e oportunidades.", "/");
+const homeMetadata = pageMetadata("Coopercica", "Coopercica desde 1969: conheça as lojas em Jundiaí, Itupeva, Campo Limpo Paulista e Várzea Paulista, folhetos, Delivery, Drogaria e oportunidades.", "/");
+export const metadata = {
+  ...homeMetadata,
+  title: { absolute: "Coopercica" },
+  openGraph: { ...homeMetadata.openGraph, title: "Coopercica" },
+  twitter: { ...homeMetadata.twitter, title: "Coopercica" },
+};
