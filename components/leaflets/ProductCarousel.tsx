@@ -18,11 +18,13 @@ import styles from "./ProductCarousel.module.css";
 export function ProductCarousel({
   title,
   headingId,
+  hideTitle = false,
   artworkUrl,
   children,
 }: {
   title: string;
   headingId: string;
+  hideTitle?: boolean;
   artworkUrl?: string;
   children: ReactNode;
 }) {
@@ -220,8 +222,8 @@ export function ProductCarousel({
       aria-roledescription="carrossel"
       aria-labelledby={headingId}
     >
-      <div className={styles.heading}>
-        <h2 id={headingId} className={styles.title}>
+      <div className={`${styles.heading} ${hideTitle ? styles.headingWithoutTitle : ""}`}>
+        <h2 id={headingId} className={hideTitle ? styles.hiddenTitle : styles.title}>
           {title}
         </h2>
         <div className={styles.controls}>

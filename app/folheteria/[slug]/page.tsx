@@ -88,6 +88,7 @@ export default async function LeafletPage({
                 <ProductCarousel
                   title={group.title}
                   headingId={`leaflet-box-${index}`}
+                  hideTitle
                   artworkUrl={group.background?.imageUrl}
                 >
                   {group.products.map(({ product, presentation }) => (
