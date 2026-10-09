@@ -230,6 +230,7 @@ export function ProductCarousel({
           <button
             type="button"
             aria-label={`Produtos anteriores de ${title}`}
+            title="Voltar ofertas — você também pode arrastar os cards"
             aria-controls={trackId}
             disabled={edges.start}
             onClick={() => move(-1)}
@@ -239,6 +240,7 @@ export function ProductCarousel({
           <button
             type="button"
             aria-label={`Próximos produtos de ${title}`}
+            title="Avançar ofertas — você também pode arrastar os cards"
             aria-controls={trackId}
             disabled={edges.end}
             onClick={() => move(1)}
@@ -260,6 +262,7 @@ export function ProductCarousel({
           ref={track}
           className={`${styles.track} ${edges.start && edges.end ? styles.staticTrack : ""}`}
           tabIndex={0}
+          data-leaflet-guide="products"
           aria-label={`Produtos de ${title}`}
           onKeyDown={onKeyDown}
           onPointerDown={startDrag}

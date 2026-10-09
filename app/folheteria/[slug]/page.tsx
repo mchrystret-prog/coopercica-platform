@@ -8,9 +8,11 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ProductOfferCard } from "@/components/leaflets/ProductOfferCard";
 import { ProductCarousel } from "@/components/leaflets/ProductCarousel";
+import { LeafletNavigationGuide } from "@/components/leaflets/LeafletNavigationGuide";
 import { getLeaflet, getLeafletProducts } from "@/lib/leaflets";
 import { getLeafletAssets } from "@/lib/leaflet-assets";
 import { groupProducts } from "@/lib/leaflet-presentation";
+import { validPublicationPdf } from "@/lib/publications";
 import styles from "./page.module.css";
 const findLeaflet = cache(getLeaflet);
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -38,6 +40,7 @@ export default async function LeafletPage({
     }),
   ]);
   const groups = groupProducts(products, assets);
+  const hasPdf = validPublicationPdf(leaflet.pdf_url);
   return (
     <>
       <Header />
@@ -56,7 +59,13 @@ export default async function LeafletPage({
         <div className="shell">
           <div className={styles.meta}>
             <h1>{leaflet.name}</h1>
-            {leaflet.pdf_url ? <Link className="button" href={`/folhetos/${leaflet.id}/folhear`}>Folhear PDF</Link> : null}
+            {hasPdf ? (
+              <div className={styles.pdfActions}>
+                <Link className="button" href={`/folhetos/${leaflet.id}/folhear`} data-leaflet-guide="flip" title="Abra o leitor para virar as páginas do folheto">Folhear PDF</Link>
+                <a className={styles.pdfLink} href={`/api/publications/${leaflet.id}/pdf`} target="_blank" rel="noopener noreferrer" data-leaflet-guide="open" title="Abra o arquivo PDF em uma nova aba">Abrir PDF</a>
+                <a className={styles.pdfLink} href={`/api/publications/${leaflet.id}/pdf?download=1`} data-leaflet-guide="download" title="Salve o folheto no seu dispositivo">Baixar PDF</a>
+              </div>
+            ) : null}
             <p>
               Ofertas válidas de{" "}
               {new Date(leaflet.starts_at + "T12:00:00").toLocaleDateString(
@@ -69,6 +78,9 @@ export default async function LeafletPage({
               .
             </p>
           </div>
+        </div>
+        <div className="shell">
+          <LeafletNavigationGuide hasProducts={products.length > 0} hasDelivery={products.some((product) => Boolean(product.delivery_url))} hasPdf={hasPdf} />
         </div>
         {groups.map((group, index) => (
           <section
@@ -90,14 +102,15 @@ export default async function LeafletPage({
                 hideTitle
                 artworkUrl={group.background?.imageUrl}
               >
-                {group.products.map(({ product, presentation }) => (
-                  <ProductOfferCard
-                    inBox={Boolean(group.code)}
-                    product={product}
-                    seals={presentation.seals}
-                    key={product.id}
-                  />
-                ))}
+                {group.products.map(({ product, presentation }) => {
+                  const card = <ProductOfferCard inBox={Boolean(group.code)} product={product} seals={presentation.seals} key={product.id} />;
+                  return product.delivery_url ? (
+                    <a key={product.id} className={styles.productLink} href={product.delivery_url} target="_blank" rel="noopener noreferrer"
+                      data-leaflet-guide="delivery" aria-label={`Ver ${product.description} no Delivery (abre em nova aba)`} title="Clique para ver este produto no Delivery">
+                      {card}
+                    </a>
+                  ) : card;
+                })}
               </ProductCarousel>
             </div>
           </section>
