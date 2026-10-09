@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import { Icon } from "@/components/ui/Icon";
+import { CarouselHint } from "@/components/ui/CarouselHint";
 import styles from "./ProductCarousel.module.css";
 
 export function ProductCarousel({
@@ -38,6 +39,7 @@ export function ProductCarousel({
   });
   const trackId = `${headingId}-products`;
   const [edges, setEdges] = useState({ start: true, end: true });
+  const hasOverflow = !edges.start || !edges.end;
   const [lightTextArtwork, setLightTextArtwork] = useState<string | null>(null);
 
   useEffect(() => {
@@ -226,27 +228,30 @@ export function ProductCarousel({
         <h2 id={headingId} className={hideTitle ? styles.hiddenTitle : styles.title}>
           {title}
         </h2>
-        <div className={styles.controls}>
-          <button
-            type="button"
-            aria-label={`Produtos anteriores de ${title}`}
-            title="Voltar ofertas — você também pode arrastar os cards"
-            aria-controls={trackId}
-            disabled={edges.start}
-            onClick={() => move(-1)}
-          >
-            <Icon name="chevron-left" />
-          </button>
-          <button
-            type="button"
-            aria-label={`Próximos produtos de ${title}`}
-            title="Avançar ofertas — você também pode arrastar os cards"
-            aria-controls={trackId}
-            disabled={edges.end}
-            onClick={() => move(1)}
-          >
-            <Icon name="chevron-right" />
-          </button>
+        <div className={styles.navigation}>
+          {hasOverflow ? <CarouselHint id={`${trackId}-hint`} /> : null}
+          <div className={styles.controls}>
+            <button
+              type="button"
+              aria-label={`Produtos anteriores de ${title}`}
+              title="Voltar ofertas — você também pode arrastar os cards"
+              aria-controls={trackId}
+              disabled={edges.start}
+              onClick={() => move(-1)}
+            >
+              <Icon name="chevron-left" />
+            </button>
+            <button
+              type="button"
+              aria-label={`Próximos produtos de ${title}`}
+              title="Avançar ofertas — você também pode arrastar os cards"
+              aria-controls={trackId}
+              disabled={edges.end}
+              onClick={() => move(1)}
+            >
+              <Icon name="chevron-right" />
+            </button>
+          </div>
         </div>
       </div>
       <div className={styles.body}>
@@ -264,6 +269,7 @@ export function ProductCarousel({
           tabIndex={0}
           data-leaflet-guide="products"
           aria-label={`Produtos de ${title}`}
+          aria-describedby={hasOverflow ? `${trackId}-hint` : undefined}
           onKeyDown={onKeyDown}
           onPointerDown={startDrag}
           onPointerMove={moveDrag}

@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { CarouselHint } from "@/components/ui/CarouselHint";
 
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import Link from "next/link";
@@ -14,6 +15,7 @@ export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: 
   const track = useRef<HTMLDivElement>(null);
   const drag = useRef({ pointerId: -1, startX: 0, scrollLeft: 0, moved: false });
   const [edges, setEdges] = useState({ start: true, end: true });
+  const hasOverflow = !edges.start || !edges.end;
 
   useEffect(() => {
     const el = track.current;
@@ -36,7 +38,7 @@ export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: 
 
   const down = (event: PointerEvent<HTMLDivElement>) => {
     drag.current.moved = false;
-    if (event.pointerType === "touch" || event.button !== 0 || !event.isPrimary) return;
+    if (event.pointerType === "touch" || event.button !== 0 || !event.isPrimary || event.currentTarget.scrollWidth <= event.currentTarget.clientWidth + 2) return;
     drag.current = { pointerId: event.pointerId, startX: event.clientX, scrollLeft: event.currentTarget.scrollLeft, moved: false };
   };
 
@@ -75,14 +77,19 @@ export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: 
     <Container>
       <SectionHeader eyebrow={content.eyebrow || "Folheteria Digital"} title={[content.title1 ?? "OFERTAS VIGENTES,", content.title2 ?? "DO JEITO COOPERCICA."].filter(Boolean)} description={content.description || "Confira os folhetos disponíveis e encontre os produtos em oferta de forma rápida e fácil."} />
       <div className={styles.carousel} role="region" aria-label="Folhetos disponíveis" aria-roledescription="carrossel">
-        <button type="button" className={`${styles.slideArrow} ${styles.prev}`} aria-label="Folhetos anteriores" aria-controls="leaflets-track" disabled={edges.start} onClick={() => move(-1)}><Icon name="chevron-left" /></button>
-        <div id="leaflets-track" className={styles.grid} ref={track} onPointerDown={down} onPointerMove={pointerMove} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag} onPointerLeave={event => { if (!drag.current.moved) endDrag(event); }} onClickCapture={preventClick} onDragStart={event => event.preventDefault()}>
+        <div className={styles.navigation}>
+          {hasOverflow ? <CarouselHint id="leaflets-navigation-hint" /> : null}
+          <div className={styles.controls}>
+            <button type="button" className={styles.slideArrow} aria-label="Folhetos anteriores" aria-controls="leaflets-track" disabled={edges.start} onClick={() => move(-1)}><Icon name="chevron-left" /></button>
+            <button type="button" className={styles.slideArrow} aria-label="Próximos folhetos" aria-controls="leaflets-track" disabled={edges.end} onClick={() => move(1)}><Icon name="chevron-right" /></button>
+          </div>
+        </div>
+        <div id="leaflets-track" className={`${styles.grid} ${items.length === 1 ? styles.singleCard : ""} ${hasOverflow ? "" : styles.staticTrack}`} aria-describedby={hasOverflow ? "leaflets-navigation-hint" : undefined} ref={track} onPointerDown={down} onPointerMove={pointerMove} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag} onPointerLeave={event => { if (!drag.current.moved) endDrag(event); }} onClickCapture={preventClick} onDragStart={event => event.preventDefault()}>
           {items.map(item => <Link data-analytics-id={`leaflet:${item.id}`} data-analytics-label={`Folheto: ${item.name}`} className={styles.card} href={`/folheteria/${item.slug}`} key={item.id} draggable={false}>
             <span className={styles.cover}>{item.cover_url ? <img className={styles.image} src={item.cover_url} alt="" draggable={false} /> : <span className={styles.placeholder}><span>COOPERCICA</span><strong>{item.name}</strong></span>}</span>
             <span className={styles.info}><span><strong>{item.name}</strong><small>{item.pdf_url ? "PDF disponível · " : ""}Válido até {new Date(item.ends_at + "T12:00:00").toLocaleDateString("pt-BR")}</small></span><span className={styles.action} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span></span>
           </Link>)}
         </div>
-        <button type="button" className={`${styles.slideArrow} ${styles.next}`} aria-label="Próximos folhetos" aria-controls="leaflets-track" disabled={edges.end} onClick={() => move(1)}><Icon name="chevron-right" /></button>
       </div>
       <Button href="/folheteria" variant="secondary" className={styles.all}>{content.ctaLabel || "Ver todos os folhetos"}</Button>
     </Container>

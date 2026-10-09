@@ -24,6 +24,7 @@
 
 .heading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
@@ -63,6 +64,17 @@
   flex-shrink: 0;
   gap: 8px;
 }
+
+.navigation {
+  display: flex;
+  flex: 1 1 260px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.navigation > .controls { margin-left: auto; }
 
 .controls button {
   display: grid;
