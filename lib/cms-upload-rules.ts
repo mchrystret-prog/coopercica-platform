@@ -37,6 +37,7 @@ export const uploadRules = {
   seal: { label: "Selo", kind: "image", extensions: ["jpg", "jpeg", "png", "webp"], maxBytes: MB, minWidth: 64, minHeight: 64, maxWidth: 1600, maxHeight: 800 } as UploadRule,
   product: { label: "Foto do produto", kind: "image", extensions: ["jpg", "jpeg", "png", "webp"], maxBytes: MB, minWidth: 64, minHeight: 64, maxWidth: 1600, maxHeight: 1600 } as UploadRule,
   logo: { label: "Logo", kind: "image", extensions: ["png", "webp", "svg"], maxBytes: 512 * 1024, minWidth: 1200, minHeight: 1, maxWidth: 2400, maxHeight: 600, minRatio: 4, maxRatio: 7 } as UploadRule,
+  favicon: { label: "Favicon", kind: "image", extensions: ["png"], maxBytes: 512 * 1024, minWidth: 256, minHeight: 256, maxWidth: 1024, maxHeight: 1024, minRatio: 1, maxRatio: 1 } as UploadRule,
   pdf: { label: "PDF", kind: "pdf", extensions: ["pdf"], maxBytes: 15 * MB, maxPages: 300 } as UploadRule,
   sheet: { label: "Planilha ERP", kind: "sheet", extensions: ["xlsx"], maxBytes: 10 * MB } as UploadRule,
 } satisfies Record<string, UploadRule>;
@@ -47,6 +48,7 @@ export function uploadRequirements(key: UploadRuleKey) {
   const rule: UploadRule = uploadRules[key];
   const dimensions = rule.dimensions ? `Medida obrigatória: ${rule.dimensions[0]} × ${rule.dimensions[1]} px.`
     : key === "logo" ? "PNG/WebP: largura de 1200 a 2400 px, altura até 600 px. Proporção horizontal de 4:1 a 7:1. SVG: vetorial estático, na mesma proporção, sem mínimo de pixels, scripts ou recursos externos."
+    : key === "favicon" ? "Imagem quadrada (1:1): de 256 × 256 a 1024 × 1024 px."
     : rule.kind === "image" ? `Largura: ${rule.minWidth}–${rule.maxWidth} px. Altura: ${rule.minHeight}–${rule.maxHeight} px. Proporção livre, sem esticar a imagem.`
     : rule.kind === "pdf" ? `Página em formato livre. De 1 a ${rule.maxPages} páginas, sem senha.` : "Aba obrigatória: Tabloide Digital.";
   const formats = rule.extensions.filter((ext) => ext !== "jpeg").map((ext) => ext.toUpperCase()).join(", ");
@@ -56,6 +58,7 @@ export function leafletAssetRule(kind: "box" | "seal", code: string): UploadRule
   return kind === "box" ? "box" : code === "+18" ? "ageSeal" : code === "aleitamento" ? "warningSeal" : "seal";
 }
 export function customizationUploadRule(target: string): UploadRuleKey {
+  if (target === "favicon") return "favicon";
   if (target === "logo" || target === "logoWhite") return "logo";
   if (target.startsWith("history:")) return "history";
   if (target.startsWith("careers:")) return target.endsWith("mobileImage") ? "careersMobile" : "careersDesktop";

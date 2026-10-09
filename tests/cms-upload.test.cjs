@@ -26,6 +26,16 @@ test("products retain their proportions within a bounded size", async () => {
   await assert.rejects(validateCmsUpload(imageFile(40, 900), "product"), /fora do intervalo/);
   await assert.rejects(validateCmsUpload(imageFile(1601, 300), "product"), /fora do intervalo/);
 });
+test("favicons accept only square PNGs with bounded resolution and weight", async () => {
+  await validateCmsUpload(imageFile(256, 256), "favicon");
+  await validateCmsUpload(imageFile(1000, 1000), "favicon");
+  await assert.rejects(validateCmsUpload(imageFile(512, 400), "favicon"), /proporção inválida/);
+  await assert.rejects(validateCmsUpload(imageFile(128, 128), "favicon"), /fora do intervalo/);
+  await assert.rejects(validateCmsUpload(imageFile(1025, 1025), "favicon"), /fora do intervalo/);
+  await assert.rejects(validateCmsUpload(new File([new Uint8Array(512 * 1024 + 1)], "grande.png", { type: "image/png" }), "favicon"), /512 KB/);
+  await assert.rejects(validateCmsUpload(imageFile(512, 512, "icone.webp"), "favicon"), /formato inválido/);
+  assert.match(uploadRequirements("favicon"), /quadrada.*256 × 256.*1024 × 1024.*PNG.*512 KB/);
+});
 test("oversized, empty, renamed and corrupted files are rejected", async () => {
   await assert.rejects(validateCmsUpload(new File([new Uint8Array(1024 * 1024 + 1)], "produto.png", { type: "image/png" }), "product"), /limite de 1 MB/);
   await assert.rejects(validateCmsUpload(new File([], "vazio.png", { type: "image/png" }), "product"), /não vazio/);

@@ -17,6 +17,7 @@ import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { customizationUploadRule } from "@/lib/cms-upload-rules";
 import { UploadRequirements } from "./UploadRequirements";
+import { DEFAULT_FAVICON } from "@/lib/site";
 type Json = Record<string, string>;
 type Section = {
   id: string;
@@ -385,6 +386,24 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
                 alt="Logo claro atual"
               />
             ) : null}
+          </label>
+          <label className="form-span-full">
+            Favicon · ícone da aba do navegador
+            <input
+              type="file"
+              accept="image/png"
+              disabled={busy}
+              onChange={(e) => media(e, "favicon")}
+            />
+            <UploadRequirements rule="favicon">Use o símbolo da marca com fundo transparente. Salve as alterações para publicar.</UploadRequirements>
+            <img
+              className="cms-upload-preview cms-upload-preview-dark"
+              src={i.favicon || DEFAULT_FAVICON}
+              alt="Favicon atual"
+              width={64}
+              height={64}
+              style={{ width: 64, height: 64, objectFit: "contain" }}
+            />
           </label>
         </div>
       ) : tab === "contact" ? (
