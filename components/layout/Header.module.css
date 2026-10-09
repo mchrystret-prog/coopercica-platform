@@ -28,11 +28,12 @@
   min-height: var(--header-height);
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: clamp(16px, 1.6vw, 24px);
 }
 
 .brand {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   color: var(--brand-green-900);
   font-weight: 800;
@@ -43,14 +44,16 @@
 .logo {
   display: block;
   height: 44px;
-  width: auto;
+  width: 180px;
   object-fit: contain;
 }
 
 .nav {
   display: flex;
+  flex-wrap: nowrap;
+  min-width: 0;
   align-items: center;
-  gap: clamp(20px, 2vw, 34px);
+  gap: clamp(12px, 1.25vw, 20px);
 }
 
 .nav > a:not(.cta) {
@@ -59,6 +62,7 @@
   font-size: 0.93rem;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .nav > a:not(.cta)::after {
@@ -115,6 +119,9 @@
     border-radius: 24px;
     background: var(--white);
     box-shadow: var(--shadow-soft);
+    max-height: calc(100dvh - var(--header-height) - 32px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   .nav.open {
@@ -138,7 +145,7 @@
     height: 38px;
   }
   .nav {
-    gap: clamp(16px, 1.7vw, 25px);
+    gap: clamp(12px, 1.1vw, 16px);
   }
   .nav > a:not(.cta) {
     font-size: 0.86rem;
@@ -147,6 +154,7 @@
 
 .cta {
   flex-shrink: 0;
+  white-space: nowrap;
 }
 @media (max-width: 1250px) {
   .cta {
@@ -158,6 +166,9 @@
   min-height: 48px;
   padding-inline: 20px;
   font-size: 0.9rem;
+}
+@media (max-width: 600px) {
+  .logo { width: 150px; height: 38px; }
 }
 @media (min-width: 1251px) and (max-width: 1450px) {
   .cta {

@@ -1,4 +1,5 @@
 "use client";
+import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { getVideosHeader } from "@/lib/videos-header";
@@ -16,7 +17,7 @@ export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
       {([['image', 'Arte principal'], ['mobileImage', 'Arte para celular (opcional)']] as const).map(([field, label]) => <label key={field}>
         {label}
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy || (field === 'mobileImage' && !value.image)} onChange={e => onUpload(e, field)} />
-        <small>{field === 'image' ? 'Recomendado: 2048 × 522 px, como a arte original.' : 'Recomendado: 1080 × 810 px (4:3), com textos maiores. Sem esta versão, o celular mostra a arte principal inteira.'} JPG, PNG ou WebP, até 15 MB.</small>
+        <UploadRequirements rule={field === "image" ? "videosDesktop" : "videosMobile"}>{field === "mobileImage" ? "Sem esta versão, o celular mostra a arte principal inteira." : null}</UploadRequirements>
       </label>)}
       <label className="form-span-full">Descrição da arte (acessibilidade)
         <input disabled={busy} maxLength={300} value={value.alt ?? hero.alt} onChange={e => onChange({ alt: e.target.value })} />

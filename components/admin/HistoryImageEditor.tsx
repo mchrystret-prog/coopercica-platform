@@ -2,6 +2,7 @@
 
 import type { ChangeEvent } from "react";
 import { historyItems } from "@/data/history";
+import { UploadRequirements } from "./UploadRequirements";
 
 export function HistoryImageEditor({
   images,
@@ -42,10 +43,7 @@ export function HistoryImageEditor({
                 disabled={busy}
                 onChange={(e) => onUpload(e, item.id)}
               />
-              <small>
-                Recomendado: imagem horizontal, 1600 × 1000 px. JPG, PNG ou
-                WebP, até 15 MB.
-              </small>
+              <UploadRequirements rule="history" />
             </label>
           </div>
           {images[item.id] ? (

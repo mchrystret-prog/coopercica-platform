@@ -1,4 +1,5 @@
 "use client";
+import { UploadRequirements } from "./UploadRequirements";
 import { FormEvent, useState } from "react";
 import { LeafletAdmin } from "./LeafletAdmin";
 import { uploadPublicationPdf } from "@/lib/publication-upload";
@@ -26,5 +27,5 @@ function PdfLeafletForm() {
     } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível cadastrar."); }
     finally { setBusy(false); }
   }
-  return <><form onSubmit={submit}><fieldset className="settings-form" disabled={busy}><legend>Novo folheto em PDF</legend><label>Nome do folheto<input name="name" required maxLength={160} /></label><label>Exibir a partir de<input name="display_from" type="date" required /></label><label>Início da vigência<input name="starts_at" type="date" required /></label><label>Fim da vigência<input name="ends_at" type="date" required /></label><label>Status<select name="status" defaultValue="draft"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></label><label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required /><small>Até 15 MB e 300 páginas, sem senha.</small></label><button className="button" disabled={busy}>{busy ? "Enviando…" : "Salvar folheto"}</button></fieldset></form>{message ? <p role="status">{message}</p> : null}</>;
+  return <><form onSubmit={submit}><fieldset className="settings-form" disabled={busy}><legend>Novo folheto em PDF</legend><label>Nome do folheto<input name="name" required maxLength={160} /></label><label>Exibir a partir de<input name="display_from" type="date" required /></label><label>Início da vigência<input name="starts_at" type="date" required /></label><label>Fim da vigência<input name="ends_at" type="date" required /></label><label>Status<select name="status" defaultValue="draft"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></label><label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required /><UploadRequirements rule="pdf" /></label><button className="button" disabled={busy}>{busy ? "Enviando…" : "Salvar folheto"}</button></fieldset></form>{message ? <p role="status">{message}</p> : null}</>;
 }

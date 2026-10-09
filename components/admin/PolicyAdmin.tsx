@@ -2,6 +2,8 @@
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import type { SitePolicy } from "@/lib/policies";
+import { validateCmsUpload } from "@/lib/cms-upload-validation";
+import { UploadRequirements } from "./UploadRequirements";
 const slugify = (v: string) =>
   v
     .normalize("NFD")
@@ -39,11 +41,8 @@ export function PolicyAdmin() {
       file = fd.get("file") as File;
     let fileUrl = editing?.file_url || "";
     try {
-      if (file?.size) {
-        if (file.type !== "application/pdf")
-          throw new Error("Envie o documento em PDF.");
-        if (file.size > 15 * 1024 * 1024)
-          throw new Error("O PDF deve ter no máximo 15 MB.");
+      if (file?.name) {
+        await validateCmsUpload(file, "pdf");
         const slug = slugify(String(fd.get("title")));
         const path = `policies/${slug}-${Date.now()}.pdf`;
         const up = await fetch(
@@ -210,12 +209,12 @@ export function PolicyAdmin() {
           </label>
           <label className="form-span-full">
             Arquivo PDF
-            <input name="file" type="file" accept="application/pdf" />
-            <small>
+            <input name="file" type="file" accept="application/pdf,.pdf" />
+            <UploadRequirements rule="pdf">
               {editing
                 ? "Envie um novo PDF somente se quiser substituir o documento atual."
-                : "PDF de até 15 MB."}
-            </small>
+                : ""}
+            </UploadRequirements>
           </label>
           <label className="cms-switch form-span-full">
             <input

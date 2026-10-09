@@ -14,6 +14,9 @@ import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
 import { CareersHeroEditor } from "./CareersHeroEditor";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
+import { validateCmsUpload } from "@/lib/cms-upload-validation";
+import { customizationUploadRule } from "@/lib/cms-upload-rules";
+import { UploadRequirements } from "./UploadRequirements";
 type Json = Record<string, string>;
 type Section = {
   id: string;
@@ -55,8 +58,6 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
       .catch(() => setMsg("Não foi possível carregar a personalização."));
   }, []);
   async function upload(file: File, folder: string) {
-    if (file.size > 15 * 1024 * 1024)
-      throw new Error("O arquivo excede 15 MB.");
     const path = `${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
     const r = await fetch(
       `${SUPABASE_URL}/storage/v1/object/site-content/${path}`,
@@ -164,16 +165,7 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
     if (!file) return;
     setBusy(true);
     try {
-      if (
-        (target.startsWith("history:") || target.startsWith("careers:") || target.startsWith("videos:")) &&
-        !["image/jpeg", "image/png", "image/webp"].includes(file.type)
-      )
-        throw new Error("Use uma imagem JPG, PNG ou WebP.");
-      if (target.startsWith("coopermais:")) {
-        const field = target.slice(11);
-        const accepted = field === "video" ? ["video/mp4", "video/webm"] : ["image/jpeg", "image/png", "image/webp"];
-        if (!accepted.includes(file.type)) throw new Error(field === "video" ? "Use MP4 ou WebM." : "Use JPG, PNG ou WebP.");
-      }
+      await validateCmsUpload(file, customizationUploadRule(target));
       const url = await upload(
         file,
         target.startsWith("coopermais:") ? "sections" : target.startsWith("videos:")
@@ -364,13 +356,11 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
             Logo principal
             <input
               type="file"
-              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              accept="image/png,image/webp,image/svg+xml"
+              disabled={busy}
               onChange={(e) => media(e, "logo")}
             />
-            <small>
-              Recomendado: arquivo horizontal com fundo transparente, mínimo
-              1200 px de largura. PNG, WebP ou SVG. Máximo: 15 MB.
-            </small>
+            <UploadRequirements rule="logo">Use fundo transparente.</UploadRequirements>
             {i.logo ? (
               <img
                 className="cms-upload-preview"
@@ -383,13 +373,11 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
             Logo para fundos escuros
             <input
               type="file"
-              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              accept="image/png,image/webp,image/svg+xml"
+              disabled={busy}
               onChange={(e) => media(e, "logoWhite")}
             />
-            <small>
-              Mesmas proporções do logo principal. PNG, WebP ou SVG. Máximo: 15
-              MB.
-            </small>
+            <UploadRequirements rule="logo">Use fundo transparente e a versão clara da marca.</UploadRequirements>
             {i.logoWhite ? (
               <img
                 className="cms-upload-preview cms-upload-preview-dark"
@@ -527,11 +515,10 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
                     <input
                       type="file"
                       accept="image/png,image/jpeg,image/webp"
+                      disabled={busy}
                       onChange={(e) => media(e, `section:${s.id}`)}
                     />
-                    <small>
-                      Recomendado: 1600 × 1000 px, JPG/PNG/WebP. Máximo: 15 MB.
-                    </small>
+                    <UploadRequirements rule="section" />
                     {s.content.image || s.id === "lojas" ? (
                       <img
                         className="cms-upload-preview"

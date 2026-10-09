@@ -10,11 +10,15 @@ import {
   type LeafletAsset,
 } from "@/lib/leaflet-presentation";
 import styles from "./LeafletAssetLibrary.module.css";
+import { validateCmsUpload } from "@/lib/cms-upload-validation";
+import { leafletAssetRule } from "@/lib/cms-upload-rules";
+import { UploadRequirements } from "./UploadRequirements";
 
 export function LeafletAssetLibrary() {
   const [assets, setAssets] = useState<LeafletAsset[]>([]);
   const [editing, setEditing] = useState<LeafletAsset | null>(null);
   const [kind, setKind] = useState<"box" | "seal">("box");
+  const [codeValue, setCodeValue] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
@@ -68,8 +72,7 @@ export function LeafletAssetLibrary() {
       const file = data.get("image");
       if (!(file instanceof File) || !file.size)
         throw new Error("Selecione a imagem.");
-      if (file.size > 10 * 1024 * 1024)
-        throw new Error("A imagem excede 10 MB.");
+      await validateCmsUpload(file, leafletAssetRule(kind, code));
       const extension = {
         "image/jpeg": "jpg",
         "image/png": "png",
@@ -125,6 +128,7 @@ export function LeafletAssetLibrary() {
         asset,
       ]);
       setEditing(null);
+      setCodeValue("");
       form.reset();
       setMessage(
         "Arquivo cadastrado. Ele já pode ser usado nas próximas importações.",
@@ -167,7 +171,8 @@ export function LeafletAssetLibrary() {
             required
             maxLength={80}
             readOnly={!!editing}
-            defaultValue={editing?.code || ""}
+            value={codeValue}
+            onChange={(event) => setCodeValue(event.target.value)}
             placeholder={kind === "box" ? "padaria" : "+18 ou aleitamento"}
           />
           <small>
@@ -201,13 +206,12 @@ export function LeafletAssetLibrary() {
             required
             accept="image/png,image/jpeg,image/webp"
           />
-          <small>
-            PNG, JPG ou WebP, até 10 MB. Use PNG ou WebP transparente para
-            selos.{" "}
+          <UploadRequirements rule={leafletAssetRule(kind, sealCode(codeValue))}>
+            Use PNG ou WebP transparente para selos.{" "}
             {kind === "box"
-              ? "Fundo com selo à esquerda: use 1920 × 505 px, com o selo inteiro nos primeiros 480 px e cor uniforme no restante. Essa área ocupa um card fixo antes dos produtos no desktop; no celular, aparece acima do carrossel. A seção cresce para acomodar os cards e selos de advertência."
+              ? "Mantenha o selo inteiro nos primeiros 480 px à esquerda e cor uniforme no restante. Essa área ocupa um card fixo antes dos produtos no desktop; no celular, aparece acima do carrossel."
               : "Transcreva o texto completo do selo no texto alternativo."}
-          </small>
+          </UploadRequirements>
         </label>
         <div className="form-actions">
           <button className="button" disabled={busy || !ready}>
@@ -221,7 +225,7 @@ export function LeafletAssetLibrary() {
             <button
               type="button"
               disabled={busy}
-              onClick={() => setEditing(null)}
+              onClick={() => { setEditing(null); setCodeValue(""); }}
             >
               Cancelar
             </button>
@@ -251,6 +255,7 @@ export function LeafletAssetLibrary() {
                 onClick={() => {
                   setEditing(asset);
                   setKind(asset.kind);
+                  setCodeValue(asset.code);
                 }}
               >
                 Substituir arquivo

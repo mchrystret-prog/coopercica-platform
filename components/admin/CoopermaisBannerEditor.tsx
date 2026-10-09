@@ -1,4 +1,5 @@
 "use client";
+import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { getCoopermaisBanner } from "@/lib/coopermais-banner";
@@ -13,8 +14,8 @@ export function CoopermaisBannerEditor({ value, busy, onChange, onUpload }: {
     <p>Troque a mídia e salve as alterações para publicar. Todo o banner leva ao destino configurado. O vídeo roda sem som e em loop, com opção de pausa.</p>
     <div className="settings-form">
       <label>Tipo de mídia<select disabled={busy} value={value.mode || "video"} onChange={e => onChange({ mode: e.target.value })}><option value="video">Vídeo</option><option value="image">Imagem</option></select></label>
-      <label>Enviar vídeo<input type="file" accept="video/mp4,video/webm" disabled={busy} onChange={e => onUpload(e, "video")} /><small>MP4 (H.264) ou WebM, até 15 MB. Recomendado: 2880 × 432 px, curto e leve.</small></label>
-      <label>Imagem de apoio / capa<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => onUpload(e, "image")} /><small>JPG, PNG ou WebP, até 15 MB. Aparece antes do vídeo e se ele não carregar. Use a mesma proporção do vídeo.</small></label>
+      <label>Enviar vídeo<input type="file" accept="video/mp4,video/webm" disabled={busy} onChange={e => onUpload(e, "video")} /><UploadRequirements rule="coopermaisVideo" /></label>
+      <label>Imagem de apoio / capa<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => onUpload(e, "image")} /><UploadRequirements rule="coopermaisImage">Aparece antes do vídeo e se ele não carregar.</UploadRequirements></label>
       <label>Descrição da mídia<input disabled={busy} maxLength={300} value={value.alt ?? media.alt} onChange={e => onChange({ alt: e.target.value })} /></label>
       <label>Rótulo do link (acessibilidade)<input disabled={busy} maxLength={80} value={value.ctaLabel ?? media.ctaLabel} onChange={e => onChange({ ctaLabel: e.target.value })} /></label>
       <label>Destino do banner<input type="url" disabled={busy} value={value.ctaHref ?? media.ctaHref} onChange={e => onChange({ ctaHref: e.target.value })} /></label>

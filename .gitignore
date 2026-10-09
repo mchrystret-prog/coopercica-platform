@@ -22,3 +22,4 @@ supabase/functions/.env
 .cms-session-test/
 
 .contact-test/
+.upload-test/

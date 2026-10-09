@@ -5,6 +5,8 @@ import * as XLSX from "xlsx";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { getLeafletAssets } from "@/lib/leaflet-assets";
 import { spreadsheetRecords, importProducts } from "@/lib/leaflet-import";
+import { validateCmsUpload, validateCmsUploads } from "@/lib/cms-upload-validation";
+import { UploadRequirements } from "./UploadRequirements";
 import {
   boxCode,
   field,
@@ -59,9 +61,7 @@ export function LeafletAdmin({
     };
   }, [libraryRevision]);
   function chooseImageFolder(e: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []).filter((f) =>
-      /\.(jpe?g|png|webp)$/i.test(f.name),
-    );
+    const files = Array.from(e.target.files || []);
     setImageFiles(files);
     const matched = files.filter((f) =>
       requiredEans.has(f.name.replace(/\.[^.]+$/, "").trim()),
@@ -100,10 +100,6 @@ export function LeafletAdmin({
       }
       const ext = (file.name.split(".").pop() || "webp").toLowerCase();
       const path = `products/${slug}/${p.ean}.${ext}`;
-      if (file.size > 10 * 1024 * 1024) {
-        missing++;
-        return;
-      }
       const mime =
         file.type ||
         {
@@ -162,8 +158,7 @@ export function LeafletAdmin({
       const file = form.get("file");
       if (!(file instanceof File) || !file.size)
         throw new Error("Selecione a planilha do ERP.");
-      if (file.size > 10 * 1024 * 1024)
-        throw new Error("A planilha excede 10 MB.");
+      await validateCmsUpload(file, "sheet");
       const buffer = await file.arrayBuffer();
       const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
       const sheet = workbook.Sheets["Tabloide Digital"];
@@ -184,17 +179,18 @@ export function LeafletAdmin({
         products.map((p) => p.ean).filter((v): v is string => Boolean(v)),
       );
       setRequiredEans(eans);
+      const selectedImages = new Map<string, File>();
+      for (const image of imageFiles) {
+        const ean = image.name.replace(/\.[^.]+$/, "").trim();
+        if (eans.has(ean)) selectedImages.set(ean, image);
+      }
+      await validateCmsUploads([
+        [form.get("cover_file"), "leafletCover"],
+        [form.get("header_file"), "leafletHeader"],
+        ...Array.from(selectedImages.values()).map((image): [File, "product"] => [image, "product"]),
+      ]);
       const upload = async (file: FormDataEntryValue | null, kind: string) => {
         if (!(file instanceof File) || !file.size) return "";
-        if (file.size > 10 * 1024 * 1024)
-          throw new Error(
-            `A ${kind === "thumb" ? "thumbnail" : "imagem de cabeçalho"} excede o limite de 10 MB (${(file.size / 1024 / 1024).toFixed(1)} MB).`,
-          );
-        const allowed = ["image/jpeg", "image/png", "image/webp"];
-        if (!allowed.includes(file.type))
-          throw new Error(
-            `Formato não aceito para a ${kind === "thumb" ? "thumbnail" : "imagem de cabeçalho"}: ${file.type || file.name}. Use JPG, PNG ou WebP.`,
-          );
         const ext = file.name.split(".").pop()?.toLowerCase() || "webp";
         const path = `${Date.now()}-${kind}.${ext}`;
         const up = await fetch(
@@ -315,8 +311,7 @@ export function LeafletAdmin({
     setLoading(true);
     setStatus("idle");
     try {
-      if (file.size > 10 * 1024 * 1024)
-        throw new Error("A planilha excede 10 MB.");
+      await validateCmsUpload(file, "sheet");
       const workbook = XLSX.read(await file.arrayBuffer(), {
         type: "array",
         cellDates: true,
@@ -405,11 +400,7 @@ export function LeafletAdmin({
               accept="image/png,image/jpeg,image/webp"
               required
             />
-            <small>
-              Usada na vitrine. Recomendado: 1080 × 1440 px (3:4). JPG, PNG ou
-              WebP. Máximo: 10 MB. Mantenha títulos e informações importantes
-              longe das bordas: o recorte é central e pode variar no celular.
-            </small>
+            <UploadRequirements rule="leafletCover">Mantenha títulos e informações importantes longe das bordas.</UploadRequirements>
           </label>
           <label>
             Header da página
@@ -419,10 +410,7 @@ export function LeafletAdmin({
               accept="image/png,image/jpeg,image/webp"
               required
             />
-            <small>
-              Usada no topo da landing page. Recomendado: 1920 × 600 px
-              (horizontal). JPG, PNG ou WebP. Máximo: 10 MB.
-            </small>
+            <UploadRequirements rule="leafletHeader" />
           </label>
           <label>
             Status
@@ -443,10 +431,7 @@ export function LeafletAdmin({
               required
               onChange={previewSheet}
             />
-            <small>
-              Use a exportação XLSX com a aba “Tabloide Digital”. Apenas .xlsx.
-              Para evitar travamentos no navegador, recomendamos até 10 MB.
-            </small>
+            <UploadRequirements rule="sheet" />
           </label>
           <div className="form-span-full">
             <p>
@@ -530,12 +515,12 @@ export function LeafletAdmin({
               } as React.InputHTMLAttributes<HTMLInputElement>)}
               onChange={chooseImageFolder}
             />
-            <small>
+            <UploadRequirements rule="product">
               Selecione a pasta do banco de imagens da rede. O CMS procura
               automaticamente arquivos cujo nome seja o EAN do produto (ex.:
               7891234567890.jpg). JPG, PNG ou WebP. Apenas as imagens usadas
               neste folheto serão enviadas.
-            </small>
+            </UploadRequirements>
             {imageFiles.length ? (
               <span className="cms-folder-status">
                 {requiredEans.size ? (

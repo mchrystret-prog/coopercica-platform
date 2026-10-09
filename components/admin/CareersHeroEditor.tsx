@@ -3,6 +3,7 @@ import Image from "next/image";
 import { careersDefaults } from "@/lib/careers-content";
 import type { ChangeEvent } from "react";
 import { getCareersHeroImage } from "@/lib/careers-hero";
+import { UploadRequirements } from "./UploadRequirements";
 export function CareersHeroEditor({
   value,
   busy,
@@ -49,12 +50,9 @@ export function CareersHeroEditor({
                   disabled={busy || (field === "mobileImage" && !value.image)}
                   onChange={(e) => onUpload(e, field)}
                 />
-                <small>
-                  {field === "image"
-                    ? "Recomendado: 1600 × 1200 px (4:3)."
-                    : "Recomendado: 1080 × 810 px (4:3). Sem esta imagem, o celular usa a foto principal."}{" "}
-                  JPG, PNG ou WebP, até 15 MB.
-                </small>
+                <UploadRequirements rule={field === "image" ? "careersDesktop" : "careersMobile"}>
+                  {field === "mobileImage" ? "Sem esta imagem, o celular usa a foto principal." : null}
+                </UploadRequirements>
                 {src ? (
                   <Image
                     className="cms-upload-preview"
