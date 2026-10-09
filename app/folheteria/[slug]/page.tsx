@@ -74,7 +74,7 @@ export default async function LeafletPage({
           <section
             key={group.code}
             className={group.code ? styles.box : styles.offers}
-            aria-labelledby={group.code ? `leaflet-box-${index}` : undefined}
+            aria-labelledby={`leaflet-group-${index}`}
             style={
               group.background
                 ? {
@@ -84,33 +84,21 @@ export default async function LeafletPage({
             }
           >
             <div className="shell">
-              {group.code ? (
-                <ProductCarousel
-                  title={group.title}
-                  headingId={`leaflet-box-${index}`}
-                  hideTitle
-                  artworkUrl={group.background?.imageUrl}
-                >
-                  {group.products.map(({ product, presentation }) => (
-                    <ProductOfferCard
-                      inBox
-                      product={product}
-                      seals={presentation.seals}
-                      key={product.id}
-                    />
-                  ))}
-                </ProductCarousel>
-              ) : (
-                <div className={styles.grid}>
-                  {group.products.map(({ product, presentation }) => (
-                    <ProductOfferCard
-                      product={product}
-                      seals={presentation.seals}
-                      key={product.id}
-                    />
-                  ))}
-                </div>
-              )}
+              <ProductCarousel
+                title={group.title}
+                headingId={`leaflet-group-${index}`}
+                hideTitle
+                artworkUrl={group.background?.imageUrl}
+              >
+                {group.products.map(({ product, presentation }) => (
+                  <ProductOfferCard
+                    inBox={Boolean(group.code)}
+                    product={product}
+                    seals={presentation.seals}
+                    key={product.id}
+                  />
+                ))}
+              </ProductCarousel>
             </div>
           </section>
         ))}
