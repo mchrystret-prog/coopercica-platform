@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
+import { usePublicMenu } from "./MobileNavigation";
 
 const links = [
   { label: "Vídeos", href: "/videos", sectionId: "videos" },
@@ -29,7 +30,7 @@ export function Header({
 } = {}) {
   const pathname = usePathname();
   const onHome = pathname === "/";
-  const [open, setOpen] = useState(false);
+  const { open, closeMenu: closePublicMenu, toggleMenu } = usePublicMenu();
   const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
@@ -56,10 +57,10 @@ export function Header({
     return () => observer.disconnect();
   }, []);
 
-  const closeMenu = () => setOpen(false);
+  const closeMenu = () => closePublicMenu();
 
   return (
-    <header data-analytics-fixed className={styles.header}>
+    <header data-public-menu data-analytics-fixed className={styles.header}>
       <div className={`shell ${styles.inner}`}>
         <a
           href={onHome ? "#home" : "/"}
@@ -80,7 +81,7 @@ export function Header({
         <button
           type="button"
           className={styles.menuButton}
-          onClick={() => setOpen((current) => !current)}
+          onClick={event => toggleMenu(event.currentTarget)}
           aria-expanded={open}
           aria-controls="main-navigation"
           aria-label={open ? "Fechar menu" : "Abrir menu"}
@@ -93,6 +94,7 @@ export function Header({
           className={`${styles.nav} ${open ? styles.open : ""}`}
           aria-label="Navegação principal"
         >
+          <button type="button" className={styles.menuClose} onClick={() => closePublicMenu(true)} aria-label="Fechar menu completo">Fechar <span aria-hidden="true">×</span></button>
           {links
             .filter((link) => link.sectionId !== "ofertas" || hasOffers)
             .map((link) => (

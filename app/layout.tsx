@@ -1,10 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { siteOrigin, brandDescription, indexingEnabled, organizationGraph } from "@/lib/seo";
 import { StructuredData } from "@/components/seo/StructuredData";
 import "./globals.css";
 import { Montserrat } from "next/font/google";
 import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
 import { DEFAULT_FAVICON, getSiteIdentity } from "@/lib/site";
+import { MobileNavigationProvider } from "@/components/layout/MobileNavigation";
+
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -39,5 +42,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const identity = await getSiteIdentity();
-  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph(identity.siteName)} />{children}<SiteAnalytics /></body></html>;
+  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph(identity.siteName)} /><MobileNavigationProvider deliveryUrl={identity.deliveryUrl}>{children}</MobileNavigationProvider><SiteAnalytics /></body></html>;
 }

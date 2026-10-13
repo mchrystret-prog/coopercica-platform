@@ -67,6 +67,7 @@
   --grid-gap: var(--space-6);
   --card-padding: var(--space-8);
   --header-height: 82px;
+  --mobile-nav-height: max(76px, 4.75rem);
   --control-height: 48px;
   --radius-control: 12px;
   --radius-sm: 16px;

@@ -42,3 +42,6 @@
   .top:hover, .whatsapp:hover { transform: none; }
 }
 @media print { .actions { display: none; } }
+@media (max-width: 767px) {
+  .actions { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + 18px); }
+}
