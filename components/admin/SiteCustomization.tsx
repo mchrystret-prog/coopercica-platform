@@ -18,6 +18,10 @@ import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { customizationUploadRule } from "@/lib/cms-upload-rules";
 import { UploadRequirements } from "./UploadRequirements";
 import { DEFAULT_FAVICON } from "@/lib/site";
+import { FaqEditor } from "./FaqEditor";
+import { SocialSharingEditor } from "./SocialSharingEditor";
+import { validateFaq } from "@/lib/home-faq";
+import { socialImage } from "@/lib/social-sharing";
 type Json = Record<string, string>;
 type Section = {
   id: string;
@@ -38,7 +42,7 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization({ magazines = [], initialTab }: { magazines?: Magazine[]; initialTab?: "magazine" }) {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq">(
       initialTab || "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -78,6 +82,9 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
   }
   async function saveAll() {
     if (!data) return;
+    const faqError = validateFaq(data.settings.home_faq || {});
+    if (faqError) { setTab("faq"); setMsg(faqError); return; }
+    if (data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
     const contactError = validateFooterContact(data.settings.footer_contact || {});
     if (contactError) { setTab("contact"); setMsg(contactError); return; }
     const partnersError = validatePartners(data.settings.home_partners || {});
@@ -169,7 +176,7 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
       await validateCmsUpload(file, customizationUploadRule(target));
       const url = await upload(
         file,
-        target.startsWith("coopermais:") ? "sections" : target.startsWith("videos:")
+        target === "social:image" ? "social" : target.startsWith("coopermais:") ? "sections" : target.startsWith("videos:")
           ? "videos"
           : target.startsWith("careers:")
           ? "careers"
@@ -179,7 +186,9 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
               ? "sections"
               : "identity",
       );
-      if (target.startsWith("coopermais:")) {
+      if (target === "social:image") {
+        setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, image: url } } } : current);
+      } else if (target.startsWith("coopermais:")) {
         const field = target.slice(11);
         setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, [field]: url, ...(field === "video" ? { mode: "video" } : field === "mobileVideo" ? { mobileMode: "video" } : {}) } } } : current);
       } else if (target.startsWith("videos:")) {
@@ -279,12 +288,16 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
         <button data-active={tab === "coopermais"} onClick={() => setTab("coopermais")}>Coopermais</button>
         <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
         <button data-active={tab === "contact"} onClick={() => setTab("contact")}>Fale com a gente</button>
+        <button data-active={tab === "sharing"} onClick={() => setTab("sharing")}>Compartilhamento</button>
+        <button data-active={tab === "faq"} onClick={() => setTab("faq")}>Perguntas Frequentes</button>
       </div>
       {msg ? (
         <div className="form-status">
           <strong>{msg}</strong>
         </div>
       ) : null}
+      {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
+      {tab === "faq" ? <FaqEditor value={data.settings.home_faq || {}} busy={busy} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, home_faq: { ...current.settings.home_faq, ...patch } } } : current)} /> : null}
       {tab === "identity" ? (
         <div className="settings-form">
           <p id="identity-colors-note" className="form-span-full">

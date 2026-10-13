@@ -17,6 +17,7 @@ const MB = 1024 * 1024;
 const image = (label: string, dimensions: readonly [number, number], maxBytes = 2 * MB): UploadRule => ({ label, kind: "image", extensions: ["jpg", "jpeg", "png", "webp"], dimensions, maxBytes });
 
 export const uploadRules = {
+  socialImage: image("Imagem de compartilhamento", [1200, 630]),
   campaignDesktop: image("Banner desktop", [1920, 826]),
   campaignMobile: image("Banner mobile", [1080, 1350]),
   store: image("Foto da loja", [1600, 1000]),
@@ -60,6 +61,7 @@ export function leafletAssetRule(kind: "box" | "seal", code: string): UploadRule
   return kind === "box" ? "box" : code === "+18" ? "ageSeal" : code === "aleitamento" ? "warningSeal" : "seal";
 }
 export function customizationUploadRule(target: string): UploadRuleKey {
+  if (target === "social:image") return "socialImage";
   if (target === "favicon") return "favicon";
   if (target === "logo" || target === "logoWhite") return "logo";
   if (target.startsWith("history:")) return "history";
