@@ -78,6 +78,18 @@ export function Header({
           />
         </a>
 
+        <Button
+          className={styles.mobileCoopermais}
+          href="https://soucoopermais.com.br/"
+          external
+          icon={false}
+          onClick={closeMenu}
+          data-analytics-id="cta:coopermais-header-mobile"
+          data-analytics-label="Seja Coopermais"
+        >
+          Seja Coopermais
+        </Button>
+
         <button
           type="button"
           className={styles.menuButton}
