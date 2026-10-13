@@ -61,3 +61,12 @@
 .stackStage[data-multiple="false"] { cursor: default; }
 
 .stackCard, .stackCard .book, .stackCard .coverImage { touch-action: pan-y pinch-zoom; -webkit-user-drag: none; -webkit-touch-callout: none; }
+
+/* Introduce the selected edition before its cover on mobile. */
+@media (max-width: 800px) {
+  .feature { display: flex; flex-direction: column; align-items: stretch; }
+  .editorial { display: contents; }
+  .introduction { order: -1; min-width: 0; }
+  .introduction h2 { margin-bottom: 0; }
+  .editionContent { margin-block: 0; }
+}

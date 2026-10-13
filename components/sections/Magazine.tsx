@@ -81,8 +81,10 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
         {magazines.length > 1 && <div className={styles.stackNavigation}><div className={styles.controls}><button type="button" aria-label="Destacar edição anterior" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(-1)}><Icon name="chevron-left" /></button><button type="button" aria-label="Destacar próxima edição" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(1)}><Icon name="chevron-right" /></button></div><p>{selectedIndex + 1} / {magazines.length} · Arraste para trocar</p></div>}
       </div>
       <div className={styles.editorial}>
+        <div className={styles.introduction}>
         <p className={styles.eyebrow}>{content.eyebrow || "Revista Coopercica"}<span aria-hidden="true"> · </span>{selected.edition}</p>
         <h2 id="magazine-title">{editorial.headline.trim() || selected.title}</h2>
+        </div>
         <section className={styles.editionContent} aria-labelledby="magazine-summary-title">
           <h3 id="magazine-summary-title">Nessa edição</h3>
           <p className={styles.summary}>{editorial.summary.trim() || content.description?.trim() || "Folheie esta edição para conhecer todas as matérias e novidades da Revista Coopercica."}</p>
