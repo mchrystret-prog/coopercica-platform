@@ -2,6 +2,8 @@ import { SUPABASE_URL } from "./leaflets";
 export const coopermaisBannerDefaults = {
   video: "/coopermais/coopermais.mp4",
   image: "/coopermais/coopermais-poster.jpg",
+  mobileVideo: "/coopermais/coopermais-mobile.mp4",
+  mobileImage: "/coopermais/coopermais-mobile-poster.jpg",
   alt: "Seja Cliente Coopermais. Cadastre-se no Sou Coopermais e faça parte.",
   ctaLabel: "Quero ser Coopermais",
   ctaHref: "https://soucoopermais.com.br/",
@@ -23,6 +25,8 @@ export function getCoopermaisBanner(value: Record<string, string> = {}) {
   return {
     video: value.mode === "image" ? undefined : media(value.video, /\.(mp4|webm)$/i) || coopermaisBannerDefaults.video,
     image: media(value.image, /\.(png|jpe?g|webp)$/i) || coopermaisBannerDefaults.image,
+    mobileVideo: (value.mobileMode || value.mode) === "image" ? undefined : media(value.mobileVideo, /\.(mp4|webm)$/i) || coopermaisBannerDefaults.mobileVideo,
+    mobileImage: media(value.mobileImage, /\.(png|jpe?g|webp)$/i) || coopermaisBannerDefaults.mobileImage,
     alt: value.alt?.trim().slice(0, 300) || coopermaisBannerDefaults.alt,
     ctaLabel: value.ctaLabel?.trim().slice(0, 80) || coopermaisBannerDefaults.ctaLabel,
     ctaHref,

@@ -181,7 +181,7 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
       );
       if (target.startsWith("coopermais:")) {
         const field = target.slice(11);
-        setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, [field]: url, ...(field === "video" ? { mode: "video" } : {}) } } } : current);
+        setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, [field]: url, ...(field === "video" ? { mode: "video" } : field === "mobileVideo" ? { mobileMode: "video" } : {}) } } } : current);
       } else if (target.startsWith("videos:")) {
         const field = target.slice(7);
         setData(current => current ? { ...current, settings: { ...current.settings,

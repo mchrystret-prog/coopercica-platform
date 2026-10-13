@@ -28,6 +28,8 @@ export const uploadRules = {
   videosMobile: image("Cabeçalho mobile de Vídeos", [1080, 810]),
   coopermaisImage: image("Imagem Coopermais", [2880, 432]),
   coopermaisVideo: { label: "Vídeo Coopermais", kind: "video", extensions: ["mp4", "webm"], dimensions: [2880, 432], maxBytes: 15 * MB, maxDuration: 15 } as UploadRule,
+  coopermaisMobileImage: image("Imagem Coopermais mobile", [1080, 1350]),
+  coopermaisMobileVideo: { label: "Vídeo Coopermais mobile", kind: "video", extensions: ["mp4", "webm"], dimensions: [1080, 1350], maxBytes: 15 * MB, maxDuration: 15 } as UploadRule,
   leafletCover: image("Capa do folheto", [1080, 1440]),
   leafletHeader: image("Cabeçalho do folheto", [1920, 600]),
   magazineCover: image("Capa da revista", [1080, 1350]),
@@ -63,7 +65,14 @@ export function customizationUploadRule(target: string): UploadRuleKey {
   if (target.startsWith("history:")) return "history";
   if (target.startsWith("careers:")) return target.endsWith("mobileImage") ? "careersMobile" : "careersDesktop";
   if (target.startsWith("videos:")) return target.endsWith("mobileImage") ? "videosMobile" : "videosDesktop";
-  if (target.startsWith("coopermais:")) return target.endsWith("video") ? "coopermaisVideo" : "coopermaisImage";
+  if (target.startsWith("coopermais:")) {
+    const field = target.slice(11);
+    if (field === "mobileVideo") return "coopermaisMobileVideo";
+    if (field === "mobileImage") return "coopermaisMobileImage";
+    if (field === "video") return "coopermaisVideo";
+    if (field === "image") return "coopermaisImage";
+    throw new Error("Campo de upload Coopermais não reconhecido.");
+  }
   if (target.startsWith("section:")) return "section";
   throw new Error("Campo de upload não reconhecido.");
 }

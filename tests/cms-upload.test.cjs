@@ -3,7 +3,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { createCanvas, loadImage } = require("@napi-rs/canvas");
 const { PDFDocument } = require("pdf-lib");
-const { assertUploadGeometry, uploadRequirements } = require("../.upload-test/cms-upload-rules.js");
+const { assertUploadGeometry, uploadRequirements, customizationUploadRule } = require("../.upload-test/cms-upload-rules.js");
 const { validateCmsUpload, validateCmsUploads } = require("../.upload-test/cms-upload-validation.js");
 
 // Decode real images rather than returning fabricated dimensions.
@@ -71,4 +71,17 @@ test("PDFs are parsed and constrained to 300 pages", async () => {
   for (let i = 0; i < 300; i++) pdf.addPage();
   await assert.rejects(validateCmsUpload(new File([await pdf.save()], "longo.pdf", { type: "application/pdf" }), "pdf"), /300 páginas/);
   await assert.rejects(validateCmsUpload(new File(["%PDF-invalid"], "corrompido.pdf", { type: "application/pdf" }), "pdf"), /PDF válido/);
+});
+
+test("Coopermais routes mobile uploads to portrait validation", async () => {
+  assert.equal(customizationUploadRule("coopermais:mobileVideo"), "coopermaisMobileVideo");
+  assert.equal(customizationUploadRule("coopermais:mobileImage"), "coopermaisMobileImage");
+  assert.equal(customizationUploadRule("coopermais:video"), "coopermaisVideo");
+  assert.equal(customizationUploadRule("coopermais:image"), "coopermaisImage");
+  assert.throws(() => customizationUploadRule("coopermais:unknown"), /não reconhecido/);
+  assertUploadGeometry("coopermaisMobileVideo", 1080, 1350, false, 10);
+  assert.throws(() => assertUploadGeometry("coopermaisMobileVideo", 2880, 432, false, 10), /1080 × 1350/);
+  assert.throws(() => assertUploadGeometry("coopermaisMobileVideo", 1080, 1350, false, 16), /duração/);
+  await validateCmsUpload(imageFile(1080, 1350), "coopermaisMobileImage");
+  await assert.rejects(validateCmsUpload(imageFile(2880, 432), "coopermaisMobileImage"), /1080 × 1350/);
 });

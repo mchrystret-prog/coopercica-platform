@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Container } from "@/components/ui/Container/Container";
 import { getCoopermaisBanner } from "@/lib/coopermais-banner";
@@ -13,7 +12,15 @@ const subscribe = (callback: () => void) => {
 };
 const motionSnapshot = () => window.matchMedia(motionQuery).matches;
 const serverSnapshot = () => true;
-function BannerMedia({ media }: { media: ReturnType<typeof getCoopermaisBanner> }) {
+const screenQuery = "(max-width: 767px)";
+const subscribeScreen = (callback: () => void) => {
+  const query = window.matchMedia(screenQuery);
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+};
+const screenSnapshot = () => window.matchMedia(screenQuery).matches;
+const screenServerSnapshot = (): boolean | null => null;
+function BannerMedia({ media }: { media: Pick<ReturnType<typeof getCoopermaisBanner>, "video" | "image" | "alt" | "ctaHref" | "ctaLabel"> & { width: number; height: number } }) {
   const video = useRef<HTMLVideoElement>(null);
   const reducedMotion = useSyncExternalStore(subscribe, motionSnapshot, serverSnapshot);
   const [paused, setPaused] = useState(false);
@@ -28,22 +35,23 @@ function BannerMedia({ media }: { media: ReturnType<typeof getCoopermaisBanner> 
   }, [stopped, failed]);
   const pauseLabel = reducedMotion ? "Animação pausada" : stopped ? "Reproduzir vídeo" : "Pausar vídeo";
   return <>
-    <h2 className={styles.mobileTitle}>Seja cliente Coopermais</h2>
-    <div className={styles.mediaFrame}>
     <a className={styles.link} href={media.ctaHref} target="_blank" rel="noopener noreferrer" aria-label={`${media.ctaLabel} (abre em nova aba)`} data-analytics-id="cta:coopermais-banner" data-analytics-label={media.ctaLabel}>
-    {media.video && !failed ? <video ref={video} className={styles.image} src={media.video} poster={media.image} width={2880} height={432} autoPlay={!stopped} muted loop playsInline controls={false} disablePictureInPicture disableRemotePlayback preload="metadata" aria-label={media.alt} onError={() => setFailed(true)} /> : <Image src={media.image} alt={media.alt} width={2880} height={432} sizes="(max-width: 1280px) 100vw, 1280px" className={styles.image} />}
+    {media.video && !failed ? <video ref={video} className={styles.image} src={media.video} poster={media.image} width={media.width} height={media.height} autoPlay={!stopped} muted loop playsInline controls={false} disablePictureInPicture disableRemotePlayback preload="metadata" aria-label={media.alt} onError={() => setFailed(true)} /> : <Image src={media.image} alt={media.alt} width={media.width} height={media.height} sizes="(max-width: 1280px) 100vw, 1280px" className={styles.image} />}
     </a>
     {media.video && !failed ? <button type="button" className={styles.pause} disabled={reducedMotion} aria-label={pauseLabel} title={pauseLabel} onClick={() => setPaused(value => !value)}>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">{stopped ? <path d="M4 2v12l10-6z" /> : <><rect x="3" y="2" width="4" height="12" rx="1" /><rect x="9" y="2" width="4" height="12" rx="1" /></>}</svg>
     </button> : null}
-    </div>
-    <div className={styles.mobileCopy}>
-      <p>Cadastre-se no Sou Coopermais e aproveite ofertas exclusivas para clientes Coopermais.</p>
-      <Button href={media.ctaHref} external data-analytics-id="cta:coopermais-banner" data-analytics-label={media.ctaLabel}>{media.ctaLabel}</Button>
-    </div>
   </>;
 }
 export function CoopermaisBanner({ content = {} }: { content?: Record<string, string> }) {
   const media = getCoopermaisBanner(content);
-  return <section id="coopermais" className={styles.section} aria-label="Seja Cliente Coopermais"><Container><div className={styles.badge}><BannerMedia key={`${media.video}:${media.image}`} media={media} /></div></Container></section>;
+  const mobile = useSyncExternalStore(subscribeScreen, screenSnapshot, screenServerSnapshot);
+  const selected = mobile
+    ? { ...media, video: media.mobileVideo, image: media.mobileImage, width: 1080, height: 1350 }
+    : { ...media, width: 2880, height: 432 };
+  return <section id="coopermais" className={styles.section} aria-label="Seja Cliente Coopermais"><Container>
+    <div className={`${styles.badge} ${mobile === null ? styles.placeholder : ""}`} aria-busy={mobile === null}>
+      {mobile === null ? null : <BannerMedia key={`${mobile}:${selected.video}:${selected.image}`} media={selected} />}
+    </div>
+  </Container></section>;
 }
