@@ -70,3 +70,13 @@
   .introduction h2 { margin-bottom: 0; }
   .editionContent { margin-block: 0; }
 }
+
+.titleSizer { display: none; }
+@media (max-width: 800px) {
+  .stackStage { display: none; }
+  .titleStage { display: grid; }
+  .titleStage > h2 { grid-area: 1 / 1; }
+  .titleSizer { display: block; visibility: hidden; pointer-events: none; }
+  .introduction .eyebrow { min-height: 2.8em; }
+}
+

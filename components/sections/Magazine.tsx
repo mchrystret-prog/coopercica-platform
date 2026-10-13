@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { MobileMagazineCarousel } from "./MobileMagazineCarousel";
 import { CarouselHint } from "@/components/ui/CarouselHint";
 import type { Magazine as MagazineType } from "@/types/content";
 import { magazineEditorials, emptyMagazineEditorial } from "@/lib/magazine-editorial";
@@ -76,6 +77,7 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
   return <Section id="revista" className={styles.section} tabIndex={-1} aria-labelledby="magazine-title"><Container>
     <div className={styles.feature}>
       <div className={styles.stack}>
+        <MobileMagazineCarousel items={magazines} selectedId={selected.id} onSelect={setSelectedId} />
         <div id="magazine-stack" ref={stackStage} className={styles.stackStage} data-multiple={magazines.length > 1} role="group" aria-roledescription="carrossel" aria-label="Capas das revistas" aria-describedby={magazines.length > 1 ? "magazine-stack-hint" : undefined}
           onPointerDown={event => { if (magazines.length < 2 || !event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return; stackSuppressClick.current = 0; stackDrag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, dx: 0, moved: false }; }}
           onPointerMove={event => { const state = stackDrag.current; if (!state || state.id !== event.pointerId) return; const dx = event.clientX - state.x, dy = event.clientY - state.y; if (!state.moved && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) { stackDrag.current = null; return; } if (!state.moved && Math.abs(dx) > 8) { state.moved = true; event.currentTarget.setPointerCapture(event.pointerId); } if (state.moved) { event.preventDefault(); state.dx = dx; event.currentTarget.dataset.dragging = "true"; if (stackFrame.current === null) { stackFrame.current = requestAnimationFrame(() => { stackFrame.current = null; const active = stackDrag.current; if (active?.moved) stackStage.current?.style.setProperty("--drag-offset", `${Math.max(-110, Math.min(110, active.dx))}px`); }); } } }}
@@ -89,12 +91,15 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
             return <a key={item.id} className={styles.stackCard} data-front={offset === 0} href={item.href} style={style} aria-label={offset === 0 ? `Folhear ${item.title}` : `Destacar ${item.title}`} onClick={event => { if (offset !== 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) { event.preventDefault(); setSelectedId(item.id); } }} data-analytics-kind={offset === 0 ? "download" : undefined} data-analytics-id={`magazine:${item.id}`}><span className={styles.book}><MagazineCover key={item.cover} item={item} featured={offset === 0} preload={Math.abs(offset) <= 1} /></span></a>;
           })}
         </div>
-        {magazines.length > 1 && <div className={styles.stackNavigation}><div className={styles.controls}><button type="button" aria-label="Destacar edição anterior" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(-1)}><Icon name="chevron-left" /></button><button type="button" aria-label="Destacar próxima edição" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(1)}><Icon name="chevron-right" /></button></div><CarouselHint id="magazine-stack-hint" /></div>}
+        {magazines.length > 1 && <div className={styles.stackNavigation}><div className={styles.controls}><button type="button" aria-label="Destacar edição anterior" aria-controls="magazine-stack magazine-mobile-stack magazine-summary-title" onClick={() => selectAdjacent(-1)}><Icon name="chevron-left" /></button><button type="button" aria-label="Destacar próxima edição" aria-controls="magazine-stack magazine-mobile-stack magazine-summary-title" onClick={() => selectAdjacent(1)}><Icon name="chevron-right" /></button></div><CarouselHint id="magazine-stack-hint" /></div>}
       </div>
       <div className={styles.editorial}>
         <div className={styles.introduction}>
         <p className={styles.eyebrow}>{content.eyebrow || "Revista Coopercica"}<span aria-hidden="true"> · </span>{selected.edition}</p>
-        <h2 id="magazine-title">{editorial.headline.trim() || selected.title}</h2>
+        <div className={styles.titleStage}>
+          <h2 id="magazine-title">{editorial.headline.trim() || selected.title}</h2>
+          {magazines.map(item => <h2 key={item.id} className={styles.titleSizer} aria-hidden="true">{magazineEditorials(content)[item.id]?.headline.trim() || item.title}</h2>)}
+        </div>
         </div>
         <section className={styles.editionContent} aria-labelledby="magazine-summary-title">
           <h3 id="magazine-summary-title">Nessa edição</h3>
@@ -119,3 +124,4 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
     </div>
   </Container></Section>;
 }
+
