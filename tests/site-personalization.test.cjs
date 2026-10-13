@@ -44,3 +44,16 @@ test('real Open Graph renderer uses uploaded artwork and falls back for a broken
     broken=true;const fallback=await generate();const fallbackImage=await loadImage(Buffer.from(await fallback.arrayBuffer()));assert.equal(fallbackImage.width,1200);assert.equal(fallbackImage.height,630);
   } finally {global.fetch=original;}
 });
+test('rich FAQ answers link phrases, keep old text and escape unsupported markup', () => {
+  const { answerLink, answerText }=require('../lib/faq-rich-text.ts');
+  const React=require('react');const {renderToStaticMarkup}=require('react-dom/server');const {FaqAnswer}=require('../components/publications/FaqAnswer.tsx');
+  const answer=JSON.stringify([{text:'Veja '},{text:'Nossa História',href:'/#historia',bold:true},{text:' e o '},{text:'site parceiro',href:'https://example.com'}]);
+  assert.equal(answerText(answer,'rich'),'Veja Nossa História e o site parceiro');
+  const html=renderToStaticMarkup(React.createElement(FaqAnswer,{answer,format:'rich'}));
+  assert.match(html,/href="\/#historia"/);assert.match(html,/>Nossa História<\/strong>/);assert.match(html,/target="_blank" rel="noopener noreferrer"/);
+  assert.equal(answerText('Resposta anterior'),'Resposta anterior');
+  for(const href of ['javascript:alert(1)','data:text/html,test','//evil.example','/\\evil.example','https://user:password@example.com'])assert.equal(answerLink(href),null);
+  const unsafe=renderToStaticMarkup(React.createElement(FaqAnswer,{answer:JSON.stringify([{text:'<script>alert(1)</script>',href:'javascript:alert(1)'}]),format:'rich'}));
+  assert.ok(!unsafe.includes('<script>'));assert.ok(!unsafe.includes('<a '));
+  assert.match(validateFaq({items:JSON.stringify([{id:'empty',question:'Teste',answer:'[]',answerFormat:'rich',active:true}])}),/resposta/);
+});

@@ -1,4 +1,5 @@
-export type FaqItem = { id: string; question: string; answer: string; active: boolean };
+import { answerText } from "./faq-rich-text";
+export type FaqItem = { id: string; question: string; answer: string; active: boolean; answerFormat?: "rich" };
 export const faqDefaults: FaqItem[] = [
   { id: "lojas", question: "Onde encontro os endereços e horários das lojas?", answer: "Na seção Nossas Lojas, você pode consultar o endereço, os horários e o telefone de cada unidade da Coopercica.", active: true },
   { id: "compras", question: "Como faço minhas compras online?", answer: "Use o botão Compre Online para acessar o Delivery Coopercica e fazer suas compras.", active: true },
@@ -15,6 +16,7 @@ export function getFaqItems(value: Record<string, string>): FaqItem[] {
       question: typeof item.question === "string" ? item.question : "",
       answer: typeof item.answer === "string" ? item.answer : "",
       active: item.active !== false,
+      ...(item.answerFormat === "rich" ? { answerFormat: "rich" as const } : {}),
     }));
   } catch { return []; }
 }
@@ -25,8 +27,8 @@ export function validateFaq(value: Record<string, string>) {
   }
   if (value.enabled !== "false" && value.title !== undefined && !value.title.trim()) return "Informe o título da seção Perguntas Frequentes.";
   for (const [index, item] of getFaqItems(value).entries()) {
-    if (item.active && (!item.question.trim() || !item.answer.trim())) return `Preencha a pergunta e a resposta do item ${index + 1}, ou oculte esse item.`;
-    if (item.question.length > 200 || item.answer.length > 4000) return `O item ${index + 1} excede o limite de texto.`;
+    if (item.active && (!item.question.trim() || !answerText(item.answer, item.answerFormat).trim())) return `Preencha a pergunta e a resposta do item ${index + 1}, ou oculte esse item.`;
+    if (item.question.length > 200 || answerText(item.answer, item.answerFormat).length > 4000 || (item.answerFormat === "rich" && item.answer.length > 32000)) return `O item ${index + 1} excede o limite de texto.`;
   }
   return null;
 }

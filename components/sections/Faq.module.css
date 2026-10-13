@@ -10,3 +10,6 @@
 .answer { padding: 0 var(--space-6) var(--space-6); color: var(--text-body); font-size: var(--font-size-body); line-height: var(--line-height-body); white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .question { padding: var(--space-5); } .answer { padding: 0 var(--space-5) var(--space-5); } }
 @media (prefers-reduced-motion: reduce) { .indicator { transition: none; } }
+
+.answer a { color: var(--brand-green-900); font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px; }
+.answer a:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }

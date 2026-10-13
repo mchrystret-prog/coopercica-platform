@@ -1,4 +1,5 @@
 "use client";
+import { FaqAnswerEditor } from "./FaqAnswerEditor";
 import { getFaqItems, type FaqItem } from "@/lib/home-faq";
 export function FaqEditor({ value, busy, onChange }: { value: Record<string, string>; busy: boolean; onChange: (patch: Record<string, string>) => void }) {
   const items = getFaqItems(value);
@@ -17,7 +18,7 @@ export function FaqEditor({ value, busy, onChange }: { value: Record<string, str
     {items.map((item, index) => <article className="cms-section-card" key={item.id}>
       <h3>Pergunta {index + 1}</h3><div className="settings-form">
         <label>Pergunta<input maxLength={200} value={item.question} disabled={busy} onChange={e => update(index, { question: e.target.value })} /></label>
-        <label>Resposta<textarea rows={5} maxLength={4000} value={item.answer} disabled={busy} onChange={e => update(index, { answer: e.target.value })} /></label>
+        <FaqAnswerEditor value={item.answer} format={item.answerFormat} disabled={busy} onChange={(answer, answerFormat) => update(index, { answer, answerFormat })} />
         <label><input type="checkbox" checked={item.active} disabled={busy} onChange={e => update(index, { active: e.target.checked })} /> Exibir pergunta</label>
       </div><div className="form-actions">
         <button type="button" className="button button-secondary" disabled={busy || index === 0} onClick={() => move(index, -1)} aria-label={`Mover pergunta ${index + 1} para cima`}>Subir</button>
