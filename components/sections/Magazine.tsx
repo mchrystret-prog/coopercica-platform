@@ -27,6 +27,39 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
   const stackSuppressClick = useRef(0);
   const stackStage = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    const element = stackStage.current;
+    if (!element) return;
+    let gesture: { x: number; y: number; axis: "horizontal" | "vertical" | null } | null = null;
+    const start = (event: TouchEvent) => {
+      if (event.touches.length !== 1 || element.dataset.multiple !== "true") { gesture = null; return; }
+      gesture = { x: event.touches[0].clientX, y: event.touches[0].clientY, axis: null };
+    };
+    const move = (event: TouchEvent) => {
+      if (!gesture || event.touches.length !== 1) { gesture = null; return; }
+      if (gesture.axis === "vertical") return;
+      const dx = Math.abs(event.touches[0].clientX - gesture.x);
+      const dy = Math.abs(event.touches[0].clientY - gesture.y);
+      if (gesture.axis === null) {
+        if (stackDrag.current?.moved || (dx > 3 && dx >= dy)) gesture.axis = "horizontal";
+        else if (dy > 4 && dy > dx) gesture.axis = "vertical";
+      }
+      // React's pointer preventDefault does not reliably cancel native touch scrolling.
+      // Lock only this horizontal gesture, keeping normal vertical scroll and pinch zoom.
+      if (gesture.axis === "horizontal" && event.cancelable) event.preventDefault();
+    };
+    const end = () => { gesture = null; };
+    element.addEventListener("touchstart", start, { passive: true });
+    element.addEventListener("touchmove", move, { passive: false });
+    element.addEventListener("touchend", end, { passive: true });
+    element.addEventListener("touchcancel", end, { passive: true });
+    return () => {
+      element.removeEventListener("touchstart", start);
+      element.removeEventListener("touchmove", move);
+      element.removeEventListener("touchend", end);
+      element.removeEventListener("touchcancel", end);
+    };
+  }, [items.length]);
+  useEffect(() => {
     const element = rail.current;
     if (!element) return;
     const sync = () => setEdges({ start: element.scrollLeft <= 2, end: element.scrollLeft + element.clientWidth >= element.scrollWidth - 2 });
