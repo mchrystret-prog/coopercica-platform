@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+<title>Áreas de respiro — banner mobile</title>
+<desc>Área verde para informações. Margens laterais de 240 pixels, topo de 80 pixels e base de 300 pixels. Remova esta camada antes de exportar a arte.</desc>
+<rect width="1080" height="1350" fill="#fff0ed"/>
+<rect x="240" y="80" width="600" height="970" fill="#f3faf2" stroke="#1c4722" stroke-width="4" stroke-dasharray="16 12"/>
+<g font-family="Arial,sans-serif" fill="#1c4722" text-anchor="middle">
+<text x="540" y="150" font-size="34" font-weight="bold">INFORMAÇÕES AQUI</text>
+<text x="540" y="198" font-size="28">Textos · logos · preços</text>
+<text x="540" y="244" font-size="25">Área segura recomendada</text>
+<text x="540" y="50" font-size="26">Topo: 80 px</text>
+</g>
+<g font-family="Arial,sans-serif" fill="#ab3028" text-anchor="middle">
+<text transform="translate(120,525) rotate(-90)" font-size="28">SETAS / RESPIRO · 240 px</text>
+<text transform="translate(960,525) rotate(90)" font-size="28">SETAS / RESPIRO · 240 px</text>
+<text x="540" y="1192" font-size="30" font-weight="bold">PLAYER / INDICADORES</text>
+<text x="540" y="1238" font-size="26">Base: 300 px · somente fundo</text>
+</g></svg>

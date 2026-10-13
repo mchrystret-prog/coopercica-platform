@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="826" viewBox="0 0 1920 826">
+<title>Áreas de respiro — banner desktop</title>
+<desc>Área verde para informações. Margens laterais de 360 pixels, topo de 100 pixels e base de 180 pixels. Remova esta camada antes de exportar a arte.</desc>
+<rect width="1920" height="826" fill="#fff0ed"/>
+<rect x="360" y="100" width="1200" height="546" fill="#f3faf2" stroke="#1c4722" stroke-width="4" stroke-dasharray="16 12"/>
+<g font-family="Arial,sans-serif" fill="#1c4722" text-anchor="middle">
+<text x="960" y="170" font-size="34" font-weight="bold">INFORMAÇÕES AQUI</text>
+<text x="960" y="218" font-size="28">Textos · logos · preços</text>
+<text x="960" y="264" font-size="25">Área segura recomendada</text>
+<text x="960" y="60" font-size="26">Topo: 100 px</text>
+</g>
+<g font-family="Arial,sans-serif" fill="#ab3028" text-anchor="middle">
+<text transform="translate(180,323) rotate(-90)" font-size="28">SETAS / RESPIRO · 360 px</text>
+<text transform="translate(1740,323) rotate(90)" font-size="28">SETAS / RESPIRO · 360 px</text>
+<text x="960" y="728" font-size="30" font-weight="bold">PLAYER / INDICADORES</text>
+<text x="960" y="774" font-size="26">Base: 180 px · somente fundo</text>
+</g></svg>
