@@ -14,10 +14,8 @@ const montserrat = Montserrat({
 
 
 const baseMetadata: Metadata = {
-  title: { default: "Coopercica", template: "%s | Coopercica" },
   metadataBase: new URL(siteOrigin()),
   description: brandDescription,
-  applicationName: "Coopercica",
   robots: !indexingEnabled() ? { index: false, follow: false, noarchive: true, nosnippet: true } : { index: true, follow: true },
   verification: {
     ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
@@ -30,6 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const favicon = identity.favicon || DEFAULT_FAVICON;
   return {
     ...baseMetadata,
+    title: { default: identity.siteName, template: `%s | ${identity.siteName}` },
+    applicationName: identity.siteName,
     icons: {
       icon: [{ url: favicon, type: "image/png" }],
       apple: [{ url: favicon, type: "image/png" }],
@@ -37,6 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph()} />{children}<SiteAnalytics /></body></html>;
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const identity = await getSiteIdentity();
+  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph(identity.siteName)} />{children}<SiteAnalytics /></body></html>;
 }

@@ -102,10 +102,13 @@ export default async function Home() {
   );
 }
 
-const homeMetadata = pageMetadata("Coopercica", "Coopercica desde 1969: conheça as lojas em Jundiaí, Itupeva, Campo Limpo Paulista e Várzea Paulista, folhetos, Delivery, Drogaria e oportunidades.", "/");
-export const metadata = {
-  ...homeMetadata,
-  title: { absolute: "Coopercica" },
-  openGraph: { ...homeMetadata.openGraph, title: "Coopercica" },
-  twitter: { ...homeMetadata.twitter, title: "Coopercica" },
-};
+export async function generateMetadata() {
+  const { siteName } = await getSiteIdentity();
+  const homeMetadata = pageMetadata(siteName, "Coopercica desde 1969: conheça as lojas em Jundiaí, Itupeva, Campo Limpo Paulista e Várzea Paulista, folhetos, Delivery, Drogaria e oportunidades.", "/");
+  return {
+    ...homeMetadata,
+    title: { absolute: siteName },
+    openGraph: { ...homeMetadata.openGraph, siteName, title: siteName },
+    twitter: { ...homeMetadata.twitter, title: siteName },
+  };
+}

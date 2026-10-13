@@ -64,7 +64,7 @@ export function Header({
         <a
           href={onHome ? "#home" : "/"}
           className={styles.brand}
-          aria-label="Coopercica — voltar ao início"
+          aria-label={`${siteName} — voltar ao início`}
           onClick={closeMenu}
         >
           <Image
