@@ -13,8 +13,12 @@ export function FloatingActions({ whatsappHref, whatsappLabel }: { whatsappHref:
     let frame = 0;
     const update = () => {
       frame = 0;
-      const extent = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const progress = extent > 0 ? Math.min(1, Math.max(0, window.scrollY / extent)) : 0;
+      const footer = document.getElementById("footer") ?? document.querySelector("footer");
+      const contentEnd = footer
+        ? footer.getBoundingClientRect().top + window.scrollY
+        : document.documentElement.scrollHeight;
+      const extent = Math.max(0, contentEnd - document.documentElement.clientHeight);
+      const progress = extent > 0 ? Math.min(1, Math.max(0, window.scrollY / extent)) : 1;
       ring.current?.setAttribute("stroke-dashoffset", String(100 * (1 - progress)));
       setShowTop(window.scrollY > 180);
     };

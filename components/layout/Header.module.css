@@ -207,6 +207,11 @@
 .mobileCoopermais { display: none; }
 @media (max-width: 767px) {
   .inner { gap: 8px; }
-  .logo { width: clamp(128px, 38vw, 150px); }
-  .mobileCoopermais { display: inline-flex; flex-shrink: 0; min-height: 44px; padding-inline: 12px; font-size: .75rem; white-space: nowrap; }
+  .brand { flex-shrink: 1; min-width: 0; }
+  .logo { width: clamp(154px, 48vw, 200px); max-width: 100%; height: auto; }
+  .mobileCoopermais { display: inline-flex; flex-shrink: 0; min-height: 44px; padding-inline: 10px; font-size: .75rem; white-space: nowrap; }
+}
+
+@media (max-width: 360px) {
+  .mobileCoopermais { padding-inline: 8px; }
 }
