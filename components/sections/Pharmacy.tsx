@@ -10,9 +10,11 @@ import styles from "./Pharmacy.module.css";
 
 export function Pharmacy({
   content = {},
+  showHeading = true,
   offers = {},
 }: {
   content?: Record<string, string>;
+  showHeading?: boolean;
   offers?: Record<string, string>;
 }) {
   const config = offersConfig(offers, "pharmacy");
@@ -20,12 +22,13 @@ export function Pharmacy({
     <Section
       id="drogaria"
       className={styles.section}
-      aria-labelledby="pharmacy-title"
+      aria-labelledby={showHeading ? "pharmacy-title" : undefined}
+      aria-label={showHeading ? undefined : "Serviços da Drogaria"}
       tabIndex={-1}
     >
       <Container className={styles.shell}>
         <div className={styles.content}>
-          <SectionHeader
+          {showHeading ? <SectionHeader
             id="pharmacy-title"
             eyebrow={content.eyebrow || pharmacy.eyebrow}
             title={[
@@ -34,7 +37,7 @@ export function Pharmacy({
             ].filter(Boolean)}
             description={content.description || pharmacy.description}
             stacked
-          />
+          /> : null}
           <ul
             className={styles.highlights}
             aria-label="Destaques da Coopercica Drogaria"

@@ -21,7 +21,7 @@ function DetailIcon({ phone = false }: { phone?: boolean }) {
     {phone ? <path d="M7.4 3.5 10 7.8 7.8 10a15 15 0 0 0 6.2 6.2l2.2-2.2 4.3 2.6-.8 3.4a2 2 0 0 1-2 1.5C9.3 21.5 2.5 14.7 2.5 6.3a2 2 0 0 1 1.5-2Z" /> : <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>}
   </svg>;
 }
-export function Stores({ items, compact = false, content = {} }: { items: Store[]; compact?: boolean; content?: Record<string, string> }) {
+export function Stores({ items, compact = false, content = {}, showHeading = true }: { items: Store[]; compact?: boolean; showHeading?: boolean; content?: Record<string, string> }) {
   const [city, setCity] = useState("");
   const [onlyOpen, setOnlyOpen] = useState(false);
   const [onlyPharmacy, setOnlyPharmacy] = useState(false);
@@ -57,9 +57,9 @@ export function Stores({ items, compact = false, content = {} }: { items: Store[
   }
   function endDrag() { if (drag.current?.moved) suppressClick.current = Date.now() + 350; drag.current = null; setDragging(false); }
   function reset() { setCity(""); setOnlyOpen(false); setOnlyPharmacy(false); }
-  return <Section id="lojas" tone="muted" className={`${styles.section} ${compact ? styles.compact : ""}`} tabIndex={-1} aria-labelledby="stores-title">
+  return <Section id="lojas" tone="muted" className={`${styles.section} ${compact ? styles.compact : ""}`} tabIndex={-1} aria-labelledby={showHeading || compact ? "stores-title" : undefined} aria-label={!showHeading && !compact ? "Lojas Coopercica" : undefined}>
     <Container>
-      {compact ? <div className={styles.hero}><div className={styles.heroCopy}><SectionHeader id="stores-title" stacked light eyebrow={content.eyebrow || "Nossas lojas"} title={[content.title1 || "SEMPRE PERTO", content.title2 || "DE VOCÊ."]} description={content.description || "Encontre sua Coopercica em Jundiaí e região. Escolha uma unidade abaixo."} /></div><div className={styles.heroPhoto}><Image src={failedHero === heroImage ? "/images/stores/coopercica-sunset.webp" : heroImage} alt={failedHero !== heroImage && content.imageAlt || "Fachada de uma loja Coopercica ao pôr do sol"} width={1546} height={1017} className={styles.heroImage} unoptimized onError={() => setFailedHero(heroImage)} /></div></div> : <SectionHeader id="stores-title" eyebrow="Nossas lojas" title={["Sempre perto", "de você."]} description="Encontre sua Coopercica e consulte endereço, horários e contato de cada unidade." />}
+      {compact ? <div className={styles.hero}><div className={styles.heroCopy}><SectionHeader id="stores-title" stacked light eyebrow={content.eyebrow || "Nossas lojas"} title={[content.title1 || "SEMPRE PERTO", content.title2 || "DE VOCÊ."]} description={content.description || "Encontre sua Coopercica em Jundiaí e região. Escolha uma unidade abaixo."} /></div><div className={styles.heroPhoto}><Image src={failedHero === heroImage ? "/images/stores/coopercica-sunset.webp" : heroImage} alt={failedHero !== heroImage && content.imageAlt || "Fachada de uma loja Coopercica ao pôr do sol"} width={1546} height={1017} className={styles.heroImage} unoptimized onError={() => setFailedHero(heroImage)} /></div></div> : showHeading ? <SectionHeader id="stores-title" eyebrow="Nossas lojas" title={["Sempre perto", "de você."]} description="Encontre sua Coopercica e consulte endereço, horários e contato de cada unidade." /> : null}
       <div className={styles.filters}>
         <div className={styles.cities} role="group" aria-label="Filtrar lojas por cidade">
           {["", ...cities].map(name => <button key={name} type="button" className={styles.city} aria-pressed={city === name} onClick={() => setCity(name)}>{name || "Todas"}</button>)}

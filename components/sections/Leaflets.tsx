@@ -11,7 +11,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import type { Leaflet } from "@/lib/leaflets";
 import styles from "./Leaflets.module.css";
 
-export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: Record<string, string> }) {
+export function Leaflets({ items, content = {}, showHeading = true, showAllLink = true }: { items: Leaflet[]; showHeading?: boolean; showAllLink?: boolean; content?: Record<string, string> }) {
   const track = useRef<HTMLDivElement>(null);
   const drag = useRef({ pointerId: -1, startX: 0, scrollLeft: 0, moved: false });
   const [edges, setEdges] = useState({ start: true, end: true });
@@ -75,7 +75,7 @@ export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: 
   if (!items.length) return null;
   return <Section id="ofertas" tone="muted" className={styles.section} tabIndex={-1}>
     <Container>
-      <SectionHeader eyebrow={content.eyebrow || "Folheteria Digital"} title={[content.title1 ?? "OFERTAS VIGENTES,", content.title2 ?? "DO JEITO COOPERCICA."].filter(Boolean)} description={content.description || "Confira os folhetos disponíveis e encontre os produtos em oferta de forma rápida e fácil."} />
+      {showHeading ? <SectionHeader eyebrow={content.eyebrow || "Folheteria Digital"} title={[content.title1 ?? "OFERTAS VIGENTES,", content.title2 ?? "DO JEITO COOPERCICA."].filter(Boolean)} description={content.description || "Confira os folhetos disponíveis e encontre os produtos em oferta de forma rápida e fácil."} /> : null}
       <div className={styles.carousel} role="region" aria-label="Folhetos disponíveis" aria-roledescription="carrossel">
         <div className={styles.navigation}>
           {hasOverflow ? <CarouselHint id="leaflets-navigation-hint" /> : null}
@@ -91,7 +91,7 @@ export function Leaflets({ items, content = {} }: { items: Leaflet[]; content?: 
           </Link>)}
         </div>
       </div>
-      <Button href="/folheteria" variant="secondary" className={styles.all}>{content.ctaLabel || "Ver todos os folhetos"}</Button>
+      {showAllLink ? <Button href="/folheteria" variant="secondary" className={styles.all}>{content.ctaLabel || "Ver todos os folhetos"}</Button> : null}
     </Container>
   </Section>;
 }

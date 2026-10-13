@@ -8,7 +8,7 @@ import styles from "./History.module.css";
 import { TimelineCard } from "./TimelineCard";
 import { useHorizontalHistory } from "./useHorizontalHistory";
 
-export function History({ images = {} }: { images?: Record<string, string> }) {
+export function History({ images = {}, showHeading = true }: { showHeading?: boolean; images?: Record<string, string> }) {
   const items = historyItems.map((item) => ({
     ...item,
     image: images[item.id] || item.image,
@@ -50,11 +50,12 @@ export function History({ images = {} }: { images?: Record<string, string> }) {
     <section
       id="historia"
       className={styles.history}
-      aria-labelledby="history-title"
+      aria-labelledby={showHeading ? "history-title" : undefined}
+      aria-label={showHeading ? undefined : "Linha do tempo da Coopercica"}
       tabIndex={-1}
       {...autoplayHandlers}
     >
-      <div className={styles.topbar}>
+      {showHeading ? <div className={styles.topbar}>
         <SectionHeader
           id="history-title"
           title="NOSSA HISTÓRIA"
@@ -62,7 +63,7 @@ export function History({ images = {} }: { images?: Record<string, string> }) {
           stacked
           className={styles.historyHeader}
         />
-      </div>
+      </div> : null}
 
       <div
         className={styles.viewport}

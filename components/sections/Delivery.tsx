@@ -9,9 +9,11 @@ import styles from "./Delivery.module.css";
 
 export function Delivery({
   content = {},
+  showHeading = true,
   offers = {},
 }: {
   content?: Record<string, string>;
+  showHeading?: boolean;
   offers?: Record<string, string>;
 }) {
   const config = offersConfig(offers, "delivery");
@@ -19,7 +21,7 @@ export function Delivery({
     <Section id="delivery" tone="soft" className={styles.section} tabIndex={-1}>
       <Container className={styles.layout}>
         <div className={styles.content}>
-          <SectionHeader
+          {showHeading ? <SectionHeader
             eyebrow={content.eyebrow || "Delivery"}
             stacked
             title={[
@@ -31,7 +33,7 @@ export function Delivery({
               "Faça suas compras pelo site ou aplicativo e receba tudo em casa com a qualidade que você já conhece."
             }
             className={styles.heading}
-          />
+          /> : null}
 
           <ul className={styles.benefits}>
             <li>Entrega em domicílio</li>
