@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { MobileMagazineCarousel } from "./MobileMagazineCarousel";
 import { CarouselHint } from "@/components/ui/CarouselHint";
 import type { Magazine as MagazineType } from "@/types/content";
 import { magazineEditorials, emptyMagazineEditorial } from "@/lib/magazine-editorial";
@@ -24,13 +23,9 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
   const suppressClickUntil = useRef(0);
   const [edges, setEdges] = useState({ start: true, end: true });
   const [dragging, setDragging] = useState(false);
-  const stackDrag = useRef<{ id: number; x: number; y: number; dx: number; moved: boolean } | null>(null);
+  const stackDrag = useRef<{ id: number; x: number; y: number; dx: number; dy: number; moved: boolean } | null>(null);
   const stackSuppressClick = useRef(0);
   const stackStage = useRef<HTMLDivElement>(null);
-  const stackFrame = useRef<number | null>(null);
-  useEffect(() => () => {
-    if (stackFrame.current !== null) cancelAnimationFrame(stackFrame.current);
-  }, []);
   useEffect(() => {
     const element = rail.current;
     if (!element) return;
@@ -55,13 +50,10 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
       stackSuppressClick.current = Date.now() + 350;
       if (!cancelled && Math.abs(state.dx) > 45) selectAdjacent(state.dx < 0 ? 1 : -1);
     }
-    if (stackFrame.current !== null) {
-      cancelAnimationFrame(stackFrame.current);
-      stackFrame.current = null;
-    }
     stackDrag.current = null;
     event.currentTarget.dataset.dragging = "false";
     event.currentTarget.style.setProperty("--drag-offset", "0px");
+    event.currentTarget.style.setProperty("--drag-y", "0px");
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }
   function slide(direction: number) {
@@ -77,10 +69,32 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
   return <Section id="revista" className={styles.section} tabIndex={-1} aria-labelledby="magazine-title"><Container>
     <div className={styles.feature}>
       <div className={styles.stack}>
-        <MobileMagazineCarousel items={magazines} selectedId={selected.id} onSelect={setSelectedId} />
         <div id="magazine-stack" ref={stackStage} className={styles.stackStage} data-multiple={magazines.length > 1} role="group" aria-roledescription="carrossel" aria-label="Capas das revistas" aria-describedby={magazines.length > 1 ? "magazine-stack-hint" : undefined}
-          onPointerDown={event => { if (magazines.length < 2 || !event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return; stackSuppressClick.current = 0; stackDrag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, dx: 0, moved: false }; }}
-          onPointerMove={event => { const state = stackDrag.current; if (!state || state.id !== event.pointerId) return; const dx = event.clientX - state.x, dy = event.clientY - state.y; if (!state.moved && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) { stackDrag.current = null; return; } if (!state.moved && Math.abs(dx) > 8) { state.moved = true; event.currentTarget.setPointerCapture(event.pointerId); } if (state.moved) { event.preventDefault(); state.dx = dx; event.currentTarget.dataset.dragging = "true"; if (stackFrame.current === null) { stackFrame.current = requestAnimationFrame(() => { stackFrame.current = null; const active = stackDrag.current; if (active?.moved) stackStage.current?.style.setProperty("--drag-offset", `${Math.max(-110, Math.min(110, active.dx))}px`); }); } } }}
+          onPointerDown={event => {
+            if (magazines.length < 2 || !event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
+            if (event.pointerType === "mouse") event.preventDefault();
+            stackSuppressClick.current = 0;
+            stackDrag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, dx: 0, dy: 0, moved: false };
+          }}
+          onPointerMove={event => {
+            const state = stackDrag.current;
+            if (!state || state.id !== event.pointerId) return;
+            const dx = event.clientX - state.x;
+            const dy = event.clientY - state.y;
+            if (!state.moved && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 4) { stackDrag.current = null; return; }
+            if (!state.moved && Math.abs(dx) > 3 && Math.abs(dx) >= Math.abs(dy)) {
+              state.moved = true;
+              event.currentTarget.setPointerCapture(event.pointerId);
+            }
+            if (!state.moved) return;
+            event.preventDefault();
+            state.dx = dx;
+            state.dy = dy;
+            // One-to-one movement, with no easing, clamp, or React update while the finger is down.
+            event.currentTarget.dataset.dragging = "true";
+            event.currentTarget.style.setProperty("--drag-offset", `${dx}px`);
+            event.currentTarget.style.setProperty("--drag-y", `${dy}px`);
+          }}
           onPointerUp={event => finishStackDrag(event)} onPointerCancel={event => finishStackDrag(event, true)} onLostPointerCapture={event => { if (event.target === event.currentTarget) finishStackDrag(event, true); }} onPointerLeave={event => { if (event.pointerType === "mouse" && stackDrag.current && !stackDrag.current.moved) stackDrag.current = null; }} onDragStart={event => event.preventDefault()}
           onClickCapture={event => { if (event.detail !== 0 && Date.now() < stackSuppressClick.current) { event.preventDefault(); event.stopPropagation(); } }}>
           {magazines.map((item, index) => {
@@ -91,7 +105,7 @@ export function Magazine({ items, content = {} }: { items: MagazineType[]; conte
             return <a key={item.id} className={styles.stackCard} data-front={offset === 0} href={item.href} style={style} aria-label={offset === 0 ? `Folhear ${item.title}` : `Destacar ${item.title}`} onClick={event => { if (offset !== 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) { event.preventDefault(); setSelectedId(item.id); } }} data-analytics-kind={offset === 0 ? "download" : undefined} data-analytics-id={`magazine:${item.id}`}><span className={styles.book}><MagazineCover key={item.cover} item={item} featured={offset === 0} preload={Math.abs(offset) <= 1} /></span></a>;
           })}
         </div>
-        {magazines.length > 1 && <div className={styles.stackNavigation}><div className={styles.controls}><button type="button" aria-label="Destacar edição anterior" aria-controls="magazine-stack magazine-mobile-stack magazine-summary-title" onClick={() => selectAdjacent(-1)}><Icon name="chevron-left" /></button><button type="button" aria-label="Destacar próxima edição" aria-controls="magazine-stack magazine-mobile-stack magazine-summary-title" onClick={() => selectAdjacent(1)}><Icon name="chevron-right" /></button></div><CarouselHint id="magazine-stack-hint" /></div>}
+        {magazines.length > 1 && <div className={styles.stackNavigation}><div className={styles.controls}><button type="button" aria-label="Destacar edição anterior" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(-1)}><Icon name="chevron-left" /></button><button type="button" aria-label="Destacar próxima edição" aria-controls="magazine-stack magazine-summary-title" onClick={() => selectAdjacent(1)}><Icon name="chevron-right" /></button></div><CarouselHint id="magazine-stack-hint" /></div>}
       </div>
       <div className={styles.editorial}>
         <div className={styles.introduction}>

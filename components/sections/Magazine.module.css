@@ -49,14 +49,15 @@
 .stackStage[data-dragging="true"] { cursor: grabbing; }
 .stackCard { position: absolute; left: 50%; top: 6%; width: 70%; border-radius: 4px 12px 12px 4px; transform: translateX(-50%) translateX(calc(var(--stack-position) * 12%)) translateY(calc(var(--stack-position) * 8px)) rotate(calc(var(--stack-position) * 7deg)) scale(calc(1 - var(--stack-position) * var(--stack-position) * .04)); transform-origin: 50% 85%; transition: transform 400ms var(--ease-brand); }
 .stackCard .book { width: 100%; transform: none; }
-.stackCard[data-front="true"] { transform: translateX(-50%) translateX(var(--drag-offset, 0px)) rotate(-3deg); }
+.stackCard[data-front="true"] { transform: translateX(-50%) translate3d(var(--drag-offset, 0px), var(--drag-y, 0px), 0) rotate(-3deg); }
 .stackStage[data-dragging="true"] .stackCard { transition: none; }
+.stackStage[data-dragging="true"] .stackCard[data-front="true"] { will-change: transform; }
 .stackCard:focus-visible { outline: 3px solid var(--brand-green-900); outline-offset: 5px; }
 .stackNavigation { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
 .stackNavigation p { margin: 0; color: var(--text-body); font-size: var(--font-size-sm); }
 @media (hover: hover) and (pointer: fine) { .stackCard[data-front="true"]:hover .book { transform: translateY(-6px); } }
 @media (max-width: 800px) { .stackStage { max-width: 380px; } .stackCard .book { width: 100%; } }
-@media (prefers-reduced-motion: reduce) { .stackCard { transition: none; } .stackCard[data-front="true"] { transform: translateX(-50%) translateX(var(--drag-offset, 0px)); } }
+@media (prefers-reduced-motion: reduce) { .stackCard { transition: none; } .stackCard[data-front="true"] { transform: translateX(-50%) translate3d(var(--drag-offset, 0px), var(--drag-y, 0px), 0); } }
 
 .stackStage[data-multiple="false"] { cursor: default; }
 
@@ -73,7 +74,6 @@
 
 .titleSizer { display: none; }
 @media (max-width: 800px) {
-  .stackStage { display: none; }
   .titleStage { display: grid; }
   .titleStage > h2 { grid-area: 1 / 1; }
   .titleSizer { display: block; visibility: hidden; pointer-events: none; }
