@@ -1,24 +1,22 @@
 export type CustomizationTab = "identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq";
-export type CustomizationModule = "personalization" | "settings" | "magazines" | "careers" | "campaigns" | "media" | "stores" | "leaflets";
+export type CustomizationModule = "personalization" | "settings" | "magazines";
 export const customizationModules: Record<CustomizationModule, { title: string; tabs: CustomizationTab[]; settings: string[]; sections: string[] }> = {
-  personalization: { title: "Personalização", tabs: ["sections", "history", "partners", "faq"], settings: ["history_images", "home_partners", "home_faq"], sections: ["app-showcase", "delivery", "drogaria", "historia"] },
-  settings: { title: "Configurações", tabs: ["identity", "contact", "sharing", "offers"], settings: ["identity", "footer_contact", "social_sharing", "offers_delivery", "offers_pharmacy"], sections: [] },
-  magazines: { title: "Apresentação das revistas", tabs: ["sections", "magazine"], settings: [], sections: ["revista"] },
-  careers: { title: "Apresentação do Portal de Vagas", tabs: ["careers"], settings: ["careers_hero"], sections: [] },
-  campaigns: { title: "Banner Coopermais", tabs: ["coopermais"], settings: ["coopermais_banner"], sections: [] },
-  media: { title: "Vídeos no site", tabs: ["videos"], settings: ["home_videos", "videos_header"], sections: [] },
-  stores: { title: "Apresentação de Nossas Lojas", tabs: ["sections"], settings: [], sections: ["lojas"] },
-  leaflets: { title: "Apresentação da Folheteria", tabs: ["sections"], settings: [], sections: ["ofertas"] },
+  personalization: { title: "Personalização", tabs: ["identity", "sections", "history", "careers", "videos", "coopermais", "partners", "contact", "sharing", "faq"], settings: ["identity", "history_images", "careers_hero", "home_videos", "videos_header", "coopermais_banner", "home_partners", "footer_contact", "social_sharing", "home_faq"], sections: [] },
+  settings: { title: "Configurações", tabs: ["offers"], settings: ["offers_delivery", "offers_pharmacy"], sections: [] },
+  magazines: { title: "Nessa edição", tabs: ["magazine"], settings: [], sections: ["revista"] },
 };
-export const customizationTabLabels: Record<CustomizationTab, string> = { identity: "Identidade visual", sections: "Seções da Home", history: "Nossa História", careers: "Arte do portal", offers: "Integrações de ofertas", videos: "Vídeos", coopermais: "Coopermais", partners: "Parceiros", magazine: "Resumo e destaques", contact: "Contatos e redes sociais", sharing: "Compartilhamento", faq: "Perguntas Frequentes" };
-export const sectionDestinations: Record<string, { href: string; label: string }> = { lojas: { href: "/admin/lojas?tab=settings", label: "Lojas" }, revista: { href: "/admin/revistas?tab=settings", label: "Revistas" }, ofertas: { href: "/admin/folheteria?tab=settings", label: "Folheteria" } };
-export const legacyCustomizationDestinations: Partial<Record<CustomizationTab, string>> = { identity: "/admin/configuracoes", contact: "/admin/configuracoes?tab=contact", sharing: "/admin/configuracoes?tab=sharing", offers: "/admin/configuracoes?tab=offers", magazine: "/admin/revistas?tab=settings", careers: "/admin/vagas?tab=settings", videos: "/admin/midias?tab=settings", coopermais: "/admin/campanhas?tab=settings" };
+export const customizationTabLabels: Record<CustomizationTab, string> = { identity: "Identidade visual", sections: "Seções da Home", history: "Nossa História", careers: "Portal de Vagas", offers: "Integrações de ofertas", videos: "Vídeos", coopermais: "Coopermais", partners: "Parceiros", magazine: "Resumo e destaques", contact: "Contatos e redes sociais", sharing: "Compartilhamento", faq: "Perguntas Frequentes" };
+export const legacyCustomizationDestinations: Partial<Record<CustomizationTab, string>> = { magazine: "/admin/revistas?tab=settings" };
 type Section = { id: string; label: string; sort_order: number; active: boolean; content: Record<string, string> };
-export function customizationSavePayload(module: CustomizationModule, data: { settings: Record<string, Record<string, string>>; sections: Section[] }) {
+type Payload = { settings: Record<string, Record<string, string>>; sections: Section[] };
+export function customizationSavePayload(module: CustomizationModule, data: Payload, current: Payload = data) {
   const config = customizationModules[module];
   const settings = Object.fromEntries(Object.entries(data.settings).filter(([key]) => config.settings.includes(key)));
-  const sections = module === "personalization"
-    ? data.sections.map(section => ({ id: section.id, sort_order: section.sort_order, active: section.active, ...(sectionDestinations[section.id] ? {} : { content: section.content }) }))
-    : data.sections.filter(section => config.sections.includes(section.id)).map(section => ({ id: section.id, content: section.content }));
+  const sections = data.sections.filter(section => module === "personalization" || config.sections.includes(section.id)).map(section => {
+    const latest = current.sections.find(item => item.id === section.id)?.content || section.content;
+    if (module === "magazines") return { id: section.id, content: { ...latest, editionDetails: section.content.editionDetails || "{}" } };
+    const presentation = Object.fromEntries(Object.entries(section.content).filter(([key]) => key !== "editionDetails"));
+    return { id: section.id, active: section.active, sort_order: section.sort_order, content: section.id === "revista" ? { ...latest, ...presentation } : section.content };
+  });
   return { p_settings: settings, p_sections: sections };
 }

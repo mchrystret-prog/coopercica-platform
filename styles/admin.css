@@ -254,3 +254,8 @@
 .admin-shell .settings-form > *, .admin-shell .settings-form label { min-width: 0; }
 .admin-shell .settings-form input:not([type="checkbox"]):not([type="radio"]), .admin-shell .settings-form select, .admin-shell .settings-form textarea { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; }
 @media (max-width: 900px) { .admin-shell .settings-form { grid-template-columns: minmax(0, 1fr); } }
+
+/* Personalization tabs wrap within the content gutter on tablet and desktop. */
+.cms-custom-tabs { display: flex; flex-wrap: wrap; max-width: 100%; }
+.cms-custom-tabs button { white-space: normal; line-height: 1.3; padding-block: 10px; }
+@media (max-width: 600px) { .cms-custom-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }

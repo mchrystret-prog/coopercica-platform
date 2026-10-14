@@ -1,6 +1,5 @@
 "use client";
-import Link from "next/link";
-import { customizationModules, customizationTabLabels, customizationSavePayload, sectionDestinations, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
+import { customizationModules, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
@@ -10,6 +9,7 @@ import { FooterContactEditor } from "./FooterContactEditor";
 import { validateFooterContact } from "@/lib/footer-contact";
 import { PartnersEditor } from "./PartnersEditor";
 import { MagazineEditorialEditor } from "./MagazineEditorialEditor";
+import { getMagazines } from "@/lib/content";
 import type { Magazine } from "@/types/content";
 import { validatePartners } from "@/lib/home-partners";
 import { HomeVideosEditor } from "./HomeVideosEditor";
@@ -44,6 +44,8 @@ const labels: Record<string, string> = {
 };
 export function SiteCustomization({ magazines = [], initialTab, module = "personalization", embedded = false }: { magazines?: Magazine[]; initialTab?: CustomizationTab; module?: CustomizationModule; embedded?: boolean }) {
   const config = customizationModules[module];
+  const [editionItems, setEditionItems] = useState(magazines);
+  useEffect(() => { if (module === "magazines") { let cancelled = false; getMagazines().then(items => { if (!cancelled) setEditionItems(items); }); return () => { cancelled = true; }; } }, [module]);
   const [data, setData] = useState<Payload | null>(null),
     [tab, setTab] = useState<CustomizationTab>(initialTab && config.tabs.includes(initialTab) ? initialTab : config.tabs[0]),
     [msg, setMsg] = useState(""),
@@ -85,17 +87,17 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     if (!data) return;
     const faqError = module === "personalization" ? validateFaq(data.settings.home_faq || {}) : null;
     if (faqError) { setTab("faq"); setMsg(faqError); return; }
-    if (module === "settings" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
-    const contactError = module === "settings" ? validateFooterContact(data.settings.footer_contact || {}) : null;
+    if (module === "personalization" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
+    const contactError = module === "personalization" ? validateFooterContact(data.settings.footer_contact || {}) : null;
     if (contactError) { setTab("contact"); setMsg(contactError); return; }
     const partnersError = module === "personalization" ? validatePartners(data.settings.home_partners || {}) : null;
     if (partnersError) { setTab("partners"); setMsg(partnersError); return; }
-    const videosError = module === "media" ? validateHomeVideos(data.settings.home_videos || {}) : null;
+    const videosError = module === "personalization" ? validateHomeVideos(data.settings.home_videos || {}) : null;
     if (videosError) { setTab("videos"); setMsg(videosError); return; }
     const offersError = module === "settings" ? validateOffersSettings(data.settings) : null;
     if (offersError) { setTab("offers"); setMsg(offersError); return; }
     if (
-      module === "careers" && data.settings.careers_hero?.image &&
+      module === "personalization" && data.settings.careers_hero?.image &&
       !data.settings.careers_hero.alt?.trim()
     ) {
       setTab("careers");
@@ -104,16 +106,19 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       );
       return;
     }
-    if (module === "media" && data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
+    if (module === "personalization" && data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
       setTab("videos"); setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
     }
-    if (module === "campaigns" && data.settings.coopermais_banner?.ctaHref) {
+    if (module === "personalization" && data.settings.coopermais_banner?.ctaHref) {
       try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
       catch { setTab("coopermais"); setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
     }
     setBusy(true);
     setMsg("");
     try {
+      const latestResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" }, body: "{}" });
+      if (!latestResponse.ok) throw new Error("Não foi possível conferir os dados atuais antes de salvar.");
+      const latest: Payload = await latestResponse.json();
       const r = await fetch(
         `${SUPABASE_URL}/rest/v1/rpc/cms_save_site_customization`,
         {
@@ -123,7 +128,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             Authorization: `Bearer ${token()}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(customizationSavePayload(module, data)),
+          body: JSON.stringify(customizationSavePayload(module, data, latest)),
         },
       );
       if (!r.ok) throw new Error(await r.text());
@@ -251,7 +256,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           <span className="eyebrow">Site</span>
           {embedded ? <h2>{config.title}</h2> : <h1>{config.title}</h1>}
           <p>
-            {module === "personalization" ? "Organize a Home e edite os conteúdos que não têm um módulo próprio." : "Edite a apresentação deste módulo no site e salve para publicar."}
+            {module === "personalization" ? "Edite a identidade visual, as seções da Home e a apresentação do site." : "Edite a apresentação deste módulo no site e salve para publicar."}
           </p>
         </div>
       </header>
@@ -378,7 +383,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           setMsg("Atendimento e redes sociais alterados. Salve as alterações para publicar.");
         }} />
       ) : tab === "magazine" ? (
-        <MagazineEditorialEditor magazines={magazines} value={data.sections.find(section => section.id === "revista")?.content || {}} busy={busy} onChange={patch => {
+        <MagazineEditorialEditor magazines={editionItems} value={data.sections.find(section => section.id === "revista")?.content || {}} busy={busy} onChange={patch => {
           const section = data.sections.find(item => item.id === "revista");
           if (!section) { setMsg("A seção Revista não foi encontrada na configuração da Home."); return; }
           setSection(section.id, { content: { ...section.content, ...patch } });
@@ -478,7 +483,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
                   Exibir
                 </label> : null}
               </div>
-              {module === "personalization" && sectionDestinations[s.id] ? <p className="cms-module-location">O conteúdo desta seção é editado em <Link href={sectionDestinations[s.id].href}>{sectionDestinations[s.id].label}</Link>.</p> : <div className="settings-form">
+              <div className="settings-form">
                 {Object.entries(s.content)
                   .filter(([k]) => k !== "image" && k !== "editionDetails" && k !== "featuredId" && !(s.id === "lojas" && k === "imageAlt"))
                   .map(([k, v]) => (
@@ -494,6 +499,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
                       />
                     </label>
                   ))}
+                {s.id === "revista" ? <label className="form-span-full">Edição em destaque<select value={s.content.featuredId || ""} onChange={event => setSection(s.id, { content: { ...s.content, featuredId: event.target.value } })}><option value="">Mais recente automaticamente</option>{magazines.map(item => <option key={item.id} value={item.id}>{item.title} · {item.edition}</option>)}</select><small>O resumo e os destaques de cada edição são editados no menu Revistas.</small></label> : null}
                 {"image" in s.content || s.id === "lojas" ? (
                   <label className="form-span-full">
                     Imagem da seção
@@ -514,7 +520,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
                   </label>
                 ) : null}
                 {s.id === "lojas" && <label className="form-span-full">Descrição da foto de Nossas Lojas<input value={s.content.imageAlt || "Fachada de uma loja Coopercica ao pôr do sol"} onChange={event => setSection(s.id, { content: { ...s.content, imageAlt: event.target.value } })} /><small>A foto aparece ao lado da chamada na Home e acima dela no mobile. Mantenha a fachada na região central da imagem.</small></label>}
-              </div>}
+              </div>
             </article>
           ))}
         </div>

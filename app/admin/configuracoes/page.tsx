@@ -1,6 +1,7 @@
+import { redirect } from "next/navigation";
 import { SiteCustomization } from "@/components/admin/SiteCustomization";
-import type { CustomizationTab } from "@/lib/cms-customization-structure";
 export default async function Page({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const params = await searchParams;
-  return <SiteCustomization module="settings" initialTab={params.tab as CustomizationTab} />;
+  if (params.tab && ["identity", "contact", "sharing"].includes(params.tab)) redirect(`/admin/personalizacao?tab=${params.tab}`);
+  return <SiteCustomization module="settings" />;
 }

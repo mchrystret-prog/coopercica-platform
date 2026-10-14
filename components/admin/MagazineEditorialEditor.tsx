@@ -47,9 +47,8 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
   }
   return <article className="cms-section-card">
     <div className="cms-section-card-head"><div><small>Página inicial · Revista</small><h2>Nessa edição · resumo e destaques</h2></div></div>
-    <p>As capas e PDFs continuam no menu Revistas. Aqui você escolhe a edição em destaque e descreve o conteúdo real de cada revista. Clique em Salvar alterações para publicar.</p>
+    <p>Selecione uma revista para preencher o resumo e os destaques. A leitura automática usa o PDF já cadastrado na edição; não é necessário enviar o arquivo novamente. Salve as alterações para publicar.</p>
     {edition ? <fieldset disabled={busy}><legend>Conteúdo editorial</legend><div className="settings-form">
-      <label>Edição em destaque<select value={value.featuredId || ""} onChange={event => onChange({ featuredId: event.target.value })}><option value="">Mais recente automaticamente</option>{magazines.map(item => <option key={item.id} value={item.id}>{item.title} · {item.edition}</option>)}</select><small>Se a edição escolhida sair do ar, a próxima edição publicada aparece automaticamente.</small></label>
       <label>Edição para editar<select disabled={reading} value={edition.id} onChange={event => { setEditionId(event.target.value); setSuggestion(null); setError(""); setStatus(""); }}>{magazines.map(item => <option key={item.id} value={item.id}>{item.title} · {item.edition}</option>)}</select></label>
       <div className="form-span-full">
         <button type="button" disabled={reading || !edition.pdfHref} onClick={readPdf}>Ler PDF e sugerir conteúdo</button>
