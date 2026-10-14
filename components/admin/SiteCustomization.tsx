@@ -1,7 +1,4 @@
 "use client";
-import { StoreGalleryEditor } from "./StoreGalleryEditor";
-import type { Store } from "@/data/stores";
-import { storeGallery, validateStoreGalleries } from "@/lib/store-gallery";
 import { ChangeEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
@@ -17,7 +14,7 @@ import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
 import { CareersHeroEditor } from "./CareersHeroEditor";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
-import { validateCmsUpload, validateCmsUploads } from "@/lib/cms-upload-validation";
+import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { customizationUploadRule } from "@/lib/cms-upload-rules";
 import { UploadRequirements } from "./UploadRequirements";
 import { DEFAULT_FAVICON } from "@/lib/site";
@@ -43,9 +40,9 @@ const labels: Record<string, string> = {
   ctaHref: "Destino do botão",
   image: "Imagem da seção",
 };
-export function SiteCustomization({ magazines = [], stores = [], initialTab }: { magazines?: Magazine[]; stores?: Store[]; initialTab?: "magazine" }) {
+export function SiteCustomization({ magazines = [], initialTab }: { magazines?: Magazine[]; initialTab?: "magazine" }) {
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq" | "stores">(
+    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq">(
       initialTab || "identity",
     ),
     [msg, setMsg] = useState(""),
@@ -85,8 +82,6 @@ export function SiteCustomization({ magazines = [], stores = [], initialTab }: {
   }
   async function saveAll() {
     if (!data) return;
-    const galleriesError = validateStoreGalleries(data.settings.store_galleries || {});
-    if (galleriesError) { setTab("stores"); setMsg(galleriesError); return; }
     const faqError = validateFaq(data.settings.home_faq || {});
     if (faqError) { setTab("faq"); setMsg(faqError); return; }
     if (data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
@@ -128,7 +123,7 @@ export function SiteCustomization({ magazines = [], stores = [], initialTab }: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            p_settings: data.settings,
+            p_settings: Object.fromEntries(Object.entries(data.settings).filter(([key]) => key !== "store_galleries")),
             p_sections: data.sections,
           }),
         },
@@ -150,21 +145,6 @@ export function SiteCustomization({ magazines = [], stores = [], initialTab }: {
     } finally {
       setBusy(false);
     }
-  }
-  async function uploadStoreGallery(event: ChangeEvent<HTMLInputElement>, slug: string) {
-    if (!data) return;
-    const files = Array.from(event.target.files || []);
-    if (!files.length) return;
-    const existing = storeGallery(data.settings.store_galleries || {}, slug);
-    if (existing.length + files.length > 6) { setMsg("Cada loja pode ter até 6 fotos. Remova uma foto antes de adicionar outras."); return; }
-    setBusy(true); setMsg("");
-    try {
-      await validateCmsUploads(files.map(file => [file, "store"]));
-      const urls = await Promise.all(files.map(file => upload(file, "stores")));
-      setData(current => current ? { ...current, settings: { ...current.settings, store_galleries: { ...current.settings.store_galleries, [slug]: JSON.stringify([...existing, ...urls]) } } } : current);
-      setMsg("Fotos enviadas. Clique em Salvar alterações para publicar.");
-    } catch (error) { setMsg(error instanceof Error ? error.message : "Não foi possível enviar as fotos."); }
-    finally { setBusy(false); }
   }
   function setIdentity(k: string, v: string) {
     if (!data) return;
@@ -309,7 +289,6 @@ export function SiteCustomization({ magazines = [], stores = [], initialTab }: {
         <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
         <button data-active={tab === "contact"} onClick={() => setTab("contact")}>Fale com a gente</button>
         <button data-active={tab === "sharing"} onClick={() => setTab("sharing")}>Compartilhamento</button>
-        <button data-active={tab === "stores"} onClick={() => setTab("stores")}>Fotos das lojas</button>
         <button data-active={tab === "faq"} onClick={() => setTab("faq")}>Perguntas Frequentes</button>
       </div>
       {msg ? (
@@ -317,7 +296,6 @@ export function SiteCustomization({ magazines = [], stores = [], initialTab }: {
           <strong>{msg}</strong>
         </div>
       ) : null}
-      {tab === "stores" ? <StoreGalleryEditor stores={stores} value={data.settings.store_galleries || {}} busy={busy} onUpload={uploadStoreGallery} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, store_galleries: { ...current.settings.store_galleries, ...patch } } } : current)} /> : null}
       {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
       {tab === "faq" ? <FaqEditor value={data.settings.home_faq || {}} busy={busy} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, home_faq: { ...current.settings.home_faq, ...patch } } } : current)} /> : null}
       {tab === "identity" ? (

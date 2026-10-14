@@ -1,6 +1,6 @@
 import { SiteCustomization } from "@/components/admin/SiteCustomization";
-import { getMagazines, getStores } from "@/lib/content";
+import { getMagazines } from "@/lib/content";
 export default async function Page({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
-  const [magazines, stores, params] = await Promise.all([getMagazines(), getStores(), searchParams]);
-  return <SiteCustomization magazines={magazines} stores={stores} initialTab={params.tab === "magazine" ? "magazine" : undefined} />;
+  const [magazines, params] = await Promise.all([getMagazines(), searchParams]);
+  return <SiteCustomization magazines={magazines} initialTab={params.tab === "magazine" ? "magazine" : undefined} />;
 }
