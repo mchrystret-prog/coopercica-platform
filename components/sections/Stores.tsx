@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import { StorePhoto } from "./StorePhoto";
+import { StoreDetailsModal } from "./StoreDetailsModal";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { Store } from "@/data/stores";
@@ -22,6 +23,7 @@ function DetailIcon({ phone = false }: { phone?: boolean }) {
   </svg>;
 }
 export function Stores({ items, compact = false, content = {}, showHeading = true }: { items: Store[]; compact?: boolean; showHeading?: boolean; content?: Record<string, string> }) {
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [city, setCity] = useState("");
   const [onlyOpen, setOnlyOpen] = useState(false);
   const [onlyPharmacy, setOnlyPharmacy] = useState(false);
@@ -80,10 +82,12 @@ export function Stores({ items, compact = false, content = {}, showHeading = tru
           const digits = store.phone.replace(/\D/g, "");
           const phone = digits.length === 10 || digits.length === 11 ? `+55${digits}` : /^55\d{10,11}$/.test(digits) ? `+${digits}` : null;
           return <article key={store.slug} className={styles.card}>
-            <span className={styles.number} aria-hidden="true">{store.storeNumber}</span>
+            <div className={styles.storeIntro}><button type="button" className={styles.storePhoto} aria-label={`Fotos e informações da Loja ${store.storeNumber}: ${store.name}`} aria-haspopup="dialog" onClick={() => setSelectedStore(store)}><StorePhoto src={store.photos?.[0] || store.image} alt={`Foto da Loja ${store.storeNumber}`} className={styles.ovalImage} sizes="112px" /></button>
+            <div className={styles.storeIdentity}>
+              <div className={styles.heading}><h3><button type="button" aria-haspopup="dialog" onClick={() => setSelectedStore(store)}>Loja {store.storeNumber}</button></h3>{hasPharmacy(store) ? <span className={styles.pharmacy}>com Drogaria</span> : null}</div>
+              <p className={styles.storeName}>{store.name}</p>
+            </div></div>
             <div className={styles.content}>
-              <div className={styles.heading}><h3><Link href={`/lojas/${store.slug}`} aria-label={`Loja ${store.storeNumber}: ${store.name}, ${store.city}`}>Loja {store.storeNumber}</Link></h3>{hasPharmacy(store) ? <span className={styles.pharmacy}>com Drogaria</span> : null}</div>
-              {compact && <p className={styles.storeName}>{store.name}</p>}
               <p className={styles.address}>{store.address}{store.neighborhood ? `, ${store.neighborhood}` : ""}<br />{store.city}</p>
               <span className={`${styles.status} ${status?.open ? styles.open : ""}`}>
                 <span aria-hidden="true" className={styles.dot} />
@@ -100,5 +104,6 @@ export function Stores({ items, compact = false, content = {}, showHeading = tru
       </div> : <div className={styles.empty}><p>Nenhuma loja corresponde aos filtros selecionados.</p><button type="button" onClick={reset}>Ver todas as lojas</button></div>}
       <p className={styles.note}>Horário de Brasília. O funcionamento pode mudar em feriados; confirme com a unidade.</p>
     </Container>
+    {selectedStore ? <StoreDetailsModal key={selectedStore.slug} store={selectedStore} onClose={() => setSelectedStore(null)} /> : null}
   </Section>;
 }

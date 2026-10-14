@@ -21,6 +21,8 @@ export interface Store {
 
   image: string;
 
+  photos?: string[];
+
   maps: string;
 
   latitude?: number;

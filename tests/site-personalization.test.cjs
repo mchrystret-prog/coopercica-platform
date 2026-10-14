@@ -57,3 +57,14 @@ test('rich FAQ answers link phrases, keep old text and escape unsupported markup
   assert.ok(!unsafe.includes('<script>'));assert.ok(!unsafe.includes('<a '));
   assert.match(validateFaq({items:JSON.stringify([{id:'empty',question:'Teste',answer:'[]',answerFormat:'rich',active:true}])}),/resposta/);
 });
+test('store galleries preserve cover order, deduplicate photos and reject invalid destinations', () => {
+  const {storeGallery,validateStoreGalleries}=require('../lib/store-gallery.ts');
+  const first='https://pmcvhrkykezvtdzkkfpa.supabase.co/storage/v1/object/public/site-content/stores/front.jpg';
+  const second=first.replace('front','inside');
+  assert.deepEqual(storeGallery({'loja-1':JSON.stringify([first,second,first])},'loja-1'),[first,second]);
+  assert.deepEqual(storeGallery({'loja-1':'broken'},'loja-1'),[]);
+  assert.equal(validateStoreGalleries({'loja-1':JSON.stringify([first,second])}),null);
+  assert.match(validateStoreGalleries({'loja-1':JSON.stringify(Array(7).fill(first))}),/6 fotos/);
+  assert.match(validateStoreGalleries({'loja-1':JSON.stringify(['https://outside.example/image.jpg'])}),/válidas/);
+  assert.deepEqual(storeGallery({'loja-1':JSON.stringify(['javascript:alert(1)','/stores/jardim-cica.jpg'])},'loja-1'),['/stores/jardim-cica.jpg']);
+});
