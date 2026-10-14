@@ -240,3 +240,17 @@
 .cms-policy-row .cms-delete-one{grid-column:1/-1}}
 
 .badge { display:inline-flex; width:max-content; padding:7px 10px; border-radius:var(--radius-pill); background:var(--surface-soft); color:var(--text-heading); font-size:var(--font-size-xs); font-weight:var(--font-weight-bold); }
+
+/* Module workspaces own their outer gutter; nested editors own their form padding. */
+.cms-module-workspace { width: 100%; min-width: 0; }
+.cms-module-workspace > .cms-custom-tabs { margin-top: 0; margin-bottom: var(--space-6); }
+.cms-module-body, .cms-module-settings { min-width: 0; }
+.cms-module-body .admin-page { max-width: none; margin: 0; padding: 0; }
+.cms-module-settings .admin-header h2 { margin: 0 0 var(--space-3); font-size: var(--font-size-h3); color: var(--text-heading); }
+.cms-module-settings .cms-save-bar { margin: var(--space-6) 0 0; padding: var(--space-4); border-radius: var(--radius-sm); }
+.cms-module-location { margin: 0; line-height: var(--line-height-body); color: var(--text-muted); }
+.cms-module-location a { color: var(--text-heading); text-decoration: underline; text-underline-offset: 3px; }
+.admin-shell .settings-form { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: clamp(16px, 2vw, 30px); }
+.admin-shell .settings-form > *, .admin-shell .settings-form label { min-width: 0; }
+.admin-shell .settings-form input:not([type="checkbox"]):not([type="radio"]), .admin-shell .settings-form select, .admin-shell .settings-form textarea { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; }
+@media (max-width: 900px) { .admin-shell .settings-form { grid-template-columns: minmax(0, 1fr); } }

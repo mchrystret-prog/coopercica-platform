@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { customizationModules, customizationTabLabels, customizationSavePayload, sectionDestinations, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
@@ -40,11 +42,10 @@ const labels: Record<string, string> = {
   ctaHref: "Destino do botão",
   image: "Imagem da seção",
 };
-export function SiteCustomization({ magazines = [], initialTab }: { magazines?: Magazine[]; initialTab?: "magazine" }) {
+export function SiteCustomization({ magazines = [], initialTab, module = "personalization", embedded = false }: { magazines?: Magazine[]; initialTab?: CustomizationTab; module?: CustomizationModule; embedded?: boolean }) {
+  const config = customizationModules[module];
   const [data, setData] = useState<Payload | null>(null),
-    [tab, setTab] = useState<"identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq">(
-      initialTab || "identity",
-    ),
+    [tab, setTab] = useState<CustomizationTab>(initialTab && config.tabs.includes(initialTab) ? initialTab : config.tabs[0]),
     [msg, setMsg] = useState(""),
     [busy, setBusy] = useState(false);
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
@@ -82,19 +83,19 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
   }
   async function saveAll() {
     if (!data) return;
-    const faqError = validateFaq(data.settings.home_faq || {});
+    const faqError = module === "personalization" ? validateFaq(data.settings.home_faq || {}) : null;
     if (faqError) { setTab("faq"); setMsg(faqError); return; }
-    if (data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
-    const contactError = validateFooterContact(data.settings.footer_contact || {});
+    if (module === "settings" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
+    const contactError = module === "settings" ? validateFooterContact(data.settings.footer_contact || {}) : null;
     if (contactError) { setTab("contact"); setMsg(contactError); return; }
-    const partnersError = validatePartners(data.settings.home_partners || {});
+    const partnersError = module === "personalization" ? validatePartners(data.settings.home_partners || {}) : null;
     if (partnersError) { setTab("partners"); setMsg(partnersError); return; }
-    const videosError = validateHomeVideos(data.settings.home_videos || {});
+    const videosError = module === "media" ? validateHomeVideos(data.settings.home_videos || {}) : null;
     if (videosError) { setTab("videos"); setMsg(videosError); return; }
-    const offersError = validateOffersSettings(data.settings);
+    const offersError = module === "settings" ? validateOffersSettings(data.settings) : null;
     if (offersError) { setTab("offers"); setMsg(offersError); return; }
     if (
-      data.settings.careers_hero?.image &&
+      module === "careers" && data.settings.careers_hero?.image &&
       !data.settings.careers_hero.alt?.trim()
     ) {
       setTab("careers");
@@ -103,10 +104,10 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
       );
       return;
     }
-    if (data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
+    if (module === "media" && data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
       setTab("videos"); setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
     }
-    if (data.settings.coopermais_banner?.ctaHref) {
+    if (module === "campaigns" && data.settings.coopermais_banner?.ctaHref) {
       try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
       catch { setTab("coopermais"); setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
     }
@@ -122,10 +123,7 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
             Authorization: `Bearer ${token()}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            p_settings: Object.fromEntries(Object.entries(data.settings).filter(([key]) => key !== "store_galleries")),
-            p_sections: data.sections,
-          }),
+          body: JSON.stringify(customizationSavePayload(module, data)),
         },
       );
       if (!r.ok) throw new Error(await r.text());
@@ -247,55 +245,18 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
     );
   const i = data.settings.identity || {};
   return (
-    <section className="admin-page">
+    <section className={embedded ? "cms-module-settings" : "admin-page"}>
       <header className="admin-header">
         <div>
           <span className="eyebrow">Site</span>
-          <h1>Personalização</h1>
+          {embedded ? <h2>{config.title}</h2> : <h1>{config.title}</h1>}
           <p>
-            Edite identidade visual e conteúdo das seções sem alterar o código.
+            {module === "personalization" ? "Organize a Home e edite os conteúdos que não têm um módulo próprio." : "Edite a apresentação deste módulo no site e salve para publicar."}
           </p>
         </div>
       </header>
-      <div className="cms-custom-tabs">
-        <button
-          data-active={tab === "identity"}
-          onClick={() => setTab("identity")}
-        >
-          Identidade visual
-        </button>
-        <button
-          data-active={tab === "sections"}
-          onClick={() => setTab("sections")}
-        >
-          Seções da Home
-        </button>
-        <button
-          data-active={tab === "history"}
-          onClick={() => setTab("history")}
-        >
-          Nossa História
-        </button>
-        <button
-          data-active={tab === "careers"}
-          onClick={() => setTab("careers")}
-        >
-          Portal de Vagas
-        </button>
-        <button data-active={tab === "partners"} onClick={() => setTab("partners")}>Parceiros</button>
-        <button data-active={tab === "magazine"} onClick={() => setTab("magazine")}>Revista</button>
-        <button data-active={tab === "videos"} onClick={() => setTab("videos")}>Vídeos</button>
-        <button data-active={tab === "coopermais"} onClick={() => setTab("coopermais")}>Coopermais</button>
-        <button data-active={tab === "offers"} onClick={() => setTab("offers")}>Ofertas via API</button>
-        <button data-active={tab === "contact"} onClick={() => setTab("contact")}>Fale com a gente</button>
-        <button data-active={tab === "sharing"} onClick={() => setTab("sharing")}>Compartilhamento</button>
-        <button data-active={tab === "faq"} onClick={() => setTab("faq")}>Perguntas Frequentes</button>
-      </div>
-      {msg ? (
-        <div className="form-status">
-          <strong>{msg}</strong>
-        </div>
-      ) : null}
+      {config.tabs.length > 1 ? <nav className="cms-custom-tabs" aria-label="Configurações do módulo">{config.tabs.map(item => <button key={item} type="button" data-active={tab === item} aria-pressed={tab === item} onClick={() => setTab(item)}>{item === "sections" && module !== "personalization" ? "Chamada da seção" : customizationTabLabels[item]}</button>)}</nav> : null}
+
       {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
       {tab === "faq" ? <FaqEditor value={data.settings.home_faq || {}} busy={busy} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, home_faq: { ...current.settings.home_faq, ...patch } } } : current)} /> : null}
       {tab === "identity" ? (
@@ -352,18 +313,10 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
             />
           </label>
           <label>
-            URL do Delivery
+            Link do botão Compre Online
             <input
               value={i.deliveryUrl || ""}
               onChange={(e) => setIdentity("deliveryUrl", e.target.value)}
-            />
-          </label>
-          <label>
-            E-mail de atendimento
-            <input
-              type="email"
-              value={i.contactEmail || ""}
-              onChange={(e) => setIdentity("contactEmail", e.target.value)}
             />
           </label>
           <label className="form-span-full">
@@ -505,16 +458,16 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
             );
           }}
         />
-      ) : (
+      ) : tab === "sections" ? (
         <div className="cms-section-editor">
-          {data.sections.map((s) => (
+          {data.sections.filter(section => module === "personalization" || config.sections.includes(section.id)).map((s) => (
             <article className="cms-section-card" key={s.id}>
               <div className="cms-section-card-head">
                 <div>
                   <small>Seção da Home</small>
                   <h2>{s.label}</h2>
                 </div>
-                <label className="cms-switch">
+                {module === "personalization" ? <label className="cms-switch">
                   <input
                     type="checkbox"
                     checked={s.active}
@@ -523,11 +476,11 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
                     }
                   />{" "}
                   Exibir
-                </label>
+                </label> : null}
               </div>
-              <div className="settings-form">
+              {module === "personalization" && sectionDestinations[s.id] ? <p className="cms-module-location">O conteúdo desta seção é editado em <Link href={sectionDestinations[s.id].href}>{sectionDestinations[s.id].label}</Link>.</p> : <div className="settings-form">
                 {Object.entries(s.content)
-                  .filter(([k]) => k !== "image" && k !== "editionDetails" && k !== "featuredId" && !(s.id === "lojas" && k === "imageAlt") && !(s.id === "revista" && ["title1", "title2"].includes(k)))
+                  .filter(([k]) => k !== "image" && k !== "editionDetails" && k !== "featuredId" && !(s.id === "lojas" && k === "imageAlt"))
                   .map(([k, v]) => (
                     <label key={k}>
                       {labels[k] || k}
@@ -561,11 +514,11 @@ export function SiteCustomization({ magazines = [], initialTab }: { magazines?: 
                   </label>
                 ) : null}
                 {s.id === "lojas" && <label className="form-span-full">Descrição da foto de Nossas Lojas<input value={s.content.imageAlt || "Fachada de uma loja Coopercica ao pôr do sol"} onChange={event => setSection(s.id, { content: { ...s.content, imageAlt: event.target.value } })} /><small>A foto aparece ao lado da chamada na Home e acima dela no mobile. Mantenha a fachada na região central da imagem.</small></label>}
-              </div>
+              </div>}
             </article>
           ))}
         </div>
-      )}
+      ) : null}
       <div className="cms-save-bar">
         <div aria-live="polite">
           {msg ? (

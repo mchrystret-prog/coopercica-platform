@@ -1,2 +1,6 @@
-import { AdminToolbar } from "../../../components/admin/AdminTable";
-export default function Page(){return <section className="admin-page"><AdminToolbar title="Configurações" description="Informações gerais, links, contatos e preferências da plataforma." action="Salvar alterações"/><form className="settings-form"><label>Nome do site<input defaultValue="Coopercica" /></label><label>E-mail de atendimento<input defaultValue="faleconosco@coopercica.com.br" /></label><label>URL do Delivery<input defaultValue="https://www.coopercicadelivery.com.br" /></label><label>Cor institucional<input defaultValue="#1c4722" /></label></form></section>}
+import { SiteCustomization } from "@/components/admin/SiteCustomization";
+import type { CustomizationTab } from "@/lib/cms-customization-structure";
+export default async function Page({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  const params = await searchParams;
+  return <SiteCustomization module="settings" initialTab={params.tab as CustomizationTab} />;
+}

@@ -95,5 +95,5 @@ export function MagazineAdmin() {
     <div className="form-span-full" role="status">{readStatus}</div>{readError && <p className="form-span-full" role="alert">{readError}</p>}
     {reading && <button type="button" onClick={() => controller.current?.abort()}>Cancelar leitura</button>}
     <div className="form-actions"><button className="button" disabled={loading || reading || saved}>{loading ? "Salvando…" : createdId ? "Salvar Nessa edição" : "Publicar revista e Nessa edição"}</button>{createdId && <button type="button" className="button button-secondary" disabled={loading} onClick={() => { formRef.current?.reset(); setSelectedPdf(null); setCreatedId(null); setSaved(false); setEditorial(emptyMagazineEditorial); setMessage(""); setReadStatus(""); setReadError(""); }}>Cadastrar outra edição</button>}</div>
-  </form>{message && <div className="form-status" role="status"><strong>{message}</strong>{createdId && <p><Link href="/admin/personalizacao?tab=magazine">Editar ou reler esta edição na Personalização</Link></p>}</div>}</>;
+  </form>{message && <div className="form-status" role="status"><strong>{message}</strong>{createdId && <p><Link href="/admin/revistas?tab=settings">Editar ou reler esta edição em Revistas</Link></p>}</div>}</>;
 }
