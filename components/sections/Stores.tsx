@@ -81,10 +81,10 @@ export function Stores({ items, compact = false, content = {}, showHeading = tru
           const status = statuses.get(store.slug);
           const digits = store.phone.replace(/\D/g, "");
           const phone = digits.length === 10 || digits.length === 11 ? `+55${digits}` : /^55\d{10,11}$/.test(digits) ? `+${digits}` : null;
-          return <article key={store.slug} className={styles.card}>
-            <div className={styles.storeIntro}><button type="button" className={styles.storePhoto} aria-label={`Fotos e informações da Loja ${store.storeNumber}: ${store.name}`} aria-haspopup="dialog" onClick={() => setSelectedStore(store)}><StorePhoto src={store.photos?.[0] || store.image} alt={`Foto da Loja ${store.storeNumber}`} className={styles.ovalImage} sizes="112px" /></button>
+          return <article key={store.slug} className={styles.card} id={`loja-${store.slug}`}>
+            <div className={styles.storeIntro}><div className={styles.storePhoto}><StorePhoto src={store.photos?.[0] || store.image} alt={`Foto da Loja ${store.storeNumber}`} className={styles.circleImage} sizes="112px" /></div>
             <div className={styles.storeIdentity}>
-              <div className={styles.heading}><h3><button type="button" aria-haspopup="dialog" onClick={() => setSelectedStore(store)}>Loja {store.storeNumber}</button></h3>{hasPharmacy(store) ? <span className={styles.pharmacy}>com Drogaria</span> : null}</div>
+              <div className={styles.heading}><h3><button type="button" className={styles.cardTrigger} aria-label={`Fotos e informações da Loja ${store.storeNumber}: ${store.name}`} aria-haspopup="dialog" onClick={() => setSelectedStore(store)}>Loja {store.storeNumber}</button></h3>{hasPharmacy(store) ? <span className={styles.pharmacy}>com Drogaria</span> : null}</div>
               <p className={styles.storeName}>{store.name}</p>
             </div></div>
             <div className={styles.content}>

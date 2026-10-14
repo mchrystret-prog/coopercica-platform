@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Store } from "@/data/stores";
 import { storeMapsLink } from "@/lib/store-directory";
@@ -33,7 +32,7 @@ export function StoreDetailsModal({ store, onClose }: { store: Store; onClose: (
         <h3>Horário de funcionamento</h3><p>{store.hours || "Consulte a unidade para confirmar os horários."}</p>
         {store.services.length ? <><h3>Serviços da unidade</h3><ul className={styles.services}>{store.services.map(service => <li key={service}>{service}</li>)}</ul></> : null}
         {store.phone ? <><h3>Contato</h3><p>{phone ? <a href={`tel:${phone}`}>{store.phone}</a> : store.phone}</p></> : null}
-        <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button><Link href={`/lojas/${store.slug}`}>Abrir página da unidade</Link></div>
+        <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
         <small>Horário de Brasília. Em feriados, confirme o funcionamento com a unidade.</small>
       </div>
     </div>

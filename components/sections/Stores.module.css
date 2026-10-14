@@ -18,14 +18,17 @@
 .resultLine p { margin: 0; }
 .resultLine button { border: 0; background: transparent; color: var(--text-heading); font: inherit; font-weight: var(--font-weight-bold); text-decoration: underline; text-underline-offset: 3px; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
-.card { display: flex; align-items: flex-start; gap: var(--space-4); padding: var(--space-5); min-width: 0; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: transparent; transition: border-color var(--motion-fast) var(--ease-brand), box-shadow var(--motion-fast) var(--ease-brand); }
+.card { position: relative; isolation: isolate; display: flex; align-items: flex-start; gap: var(--space-4); padding: var(--space-5); min-width: 0; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--surface-card); transition: border-color var(--motion-fast) var(--ease-brand), box-shadow var(--motion-fast) var(--ease-brand); }
 .card:hover, .card:focus-within { border-color: var(--border-strong); box-shadow: var(--shadow-soft); }
- .storePhoto { width: 112px; aspect-ratio: 4 / 3; flex-shrink: 0; padding: 3px; border: 1px solid var(--brand-green-900); border-radius: 50%; overflow: hidden; background: var(--surface-muted); cursor: pointer; }
-.ovalImage { display: flex; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.storePhoto:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+ .storePhoto { width: 112px; aspect-ratio: 1; flex-shrink: 0; padding: 3px; border: 1px solid var(--brand-green-900); border-radius: 50%; overflow: hidden; background: var(--surface-muted); cursor: pointer; }
+.circleImage { display: flex; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.cardTrigger::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-sm); cursor: pointer; }
+.cardTrigger:focus-visible { outline: none; }
+.card:has(.cardTrigger:focus-visible) { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+.actions a { position: relative; z-index: 1; }
 .heading button { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; text-align: left; }
 .heading button:hover { text-decoration: underline; text-underline-offset: 3px; }
-.heading button:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 3px; }
+
 
 .content { min-width: 0; flex: 1; }
 .heading { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: var(--space-1); }

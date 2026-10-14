@@ -29,7 +29,7 @@ export function organizationGraph(siteName = "Coopercica") {
 export function breadcrumbs(items: Array<{ name: string; path: string }>) { return { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: items.map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.name, item: absoluteUrl(item.path) })) }; }
 export function storeSchema(store: Store) {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  return { "@context": "https://schema.org", "@type": "GroceryStore", "@id": absoluteUrl(`/lojas/${store.slug}#store`), name: `Coopercica ${store.name}`, url: absoluteUrl(`/lojas/${store.slug}`), parentOrganization: { "@id": absoluteUrl("/#organization") },
+  return { "@context": "https://schema.org", "@type": "GroceryStore", "@id": absoluteUrl(`/lojas#loja-${store.slug}`), name: `Coopercica ${store.name}`, url: absoluteUrl(`/lojas#loja-${store.slug}`), parentOrganization: { "@id": absoluteUrl("/#organization") },
     address: { "@type": "PostalAddress", streetAddress: store.address, addressLocality: store.city, addressRegion: "SP", addressCountry: "BR" },
     ...(store.phone ? { telephone: store.phone } : {}), ...(store.image ? { image: absoluteUrl(store.image) } : {}),
     openingHoursSpecification: Object.entries(openingHoursFromText(store.hours)).flatMap(([day, intervals]) => intervals.map(interval => ({ "@type": "OpeningHoursSpecification", dayOfWeek: `https://schema.org/${days[Number(day)]}`, ...interval }))),
