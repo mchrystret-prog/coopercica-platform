@@ -1,7 +1,7 @@
-.dialog { position: fixed; width: min(1040px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface-page); color: var(--text-body); overflow: hidden; overscroll-behavior: contain; box-shadow: var(--shadow-overlay); }
+.dialog { --modal-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); position: fixed; inset: 0; margin: auto; box-sizing: border-box; width: min(1040px, calc(100% - 32px)); max-width: none; max-height: var(--modal-height); padding: 0; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface-page); color: var(--text-body); overflow: hidden; overscroll-behavior: contain; box-shadow: var(--shadow-overlay); }
 .dialog::backdrop { background: rgb(16 16 16 / 60%); }
 .close { position: absolute; top: 12px; right: 12px; z-index: 2; margin: 0; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); background: var(--surface-card); color: var(--text-heading); font-size: 28px; }
-.layout { max-height: calc(100dvh - 32px); overflow: auto; overscroll-behavior: contain; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+.layout { min-height: 0; max-height: calc(var(--modal-height) - 2px); overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
 .gallery { min-width: 0; padding: var(--space-6); background: var(--surface-soft); }
 .mainPhoto { width: 100%; aspect-ratio: 8 / 5; height: auto; object-fit: contain; border-radius: var(--radius-sm); display: block; background: var(--surface-muted); }
 .placeholder { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: var(--space-2); color: var(--text-muted); background: var(--surface-muted); font-size: var(--font-size-xs); }
@@ -24,4 +24,20 @@
 .info p a { color: var(--text-heading); text-underline-offset: 3px; }
 .info small { display: block; font-size: var(--font-size-xs); line-height: 1.6; }
 .close:focus-visible, .galleryControls button:focus-visible, .thumbnails button:focus-visible { outline: 3px solid var(--focus-color); outline-offset: 2px; }
-@media(max-width:700px) { .layout { grid-template-columns: minmax(0,1fr); } .gallery { padding: var(--space-5); } .info { padding: var(--space-6); } .dialog { max-height: calc(100dvh - 24px); } }
+@media(max-width:700px) {
+  .dialog { --modal-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); width: calc(100% - 24px); }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .gallery { padding: 56px var(--space-4) var(--space-4); }
+  .mainPhoto { height: clamp(100px, 23dvh, 180px); aspect-ratio: auto; }
+  .info { padding: var(--space-5) var(--space-4); font-size: var(--font-size-sm); }
+  .info h2 { margin-bottom: var(--space-4); }
+  .info h2 span { font-size: var(--font-size-body); }
+  .info h3 { margin-top: var(--space-4); font-size: var(--font-size-sm); }
+  .info p { line-height: 1.5; }
+  .services { margin-block: var(--space-2); gap: var(--space-2); }
+  .services li { padding: 4px 10px; }
+  .actions { margin-block: var(--space-4); width: 100%; }
+  .actions > a { width: 100%; }
+  .thumbnails button { flex-basis: 60px; }
+  .thumbnail { height: 40px; }
+}
