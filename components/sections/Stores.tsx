@@ -23,7 +23,7 @@ function DetailIcon({ phone = false }: { phone?: boolean }) {
   </svg>;
 }
 export function Stores({ items, compact = false, content = {}, showHeading = true }: { items: Store[]; compact?: boolean; showHeading?: boolean; content?: Record<string, string> }) {
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [selectedStore, setSelectedStore] = useState<{ store: Store; trigger: HTMLButtonElement; keyboard: boolean } | null>(null);
   const [city, setCity] = useState("");
   const [onlyOpen, setOnlyOpen] = useState(false);
   const [onlyPharmacy, setOnlyPharmacy] = useState(false);
@@ -84,7 +84,7 @@ export function Stores({ items, compact = false, content = {}, showHeading = tru
           return <article key={store.slug} className={styles.card} id={`loja-${store.slug}`}>
             <div className={styles.storeIntro}><div className={styles.storePhoto}><StorePhoto src={store.photos?.[0] || store.image} alt={`Foto da Loja ${store.storeNumber}`} className={styles.circleImage} sizes="112px" /></div>
             <div className={styles.storeIdentity}>
-              <div className={styles.heading}><h3><button type="button" className={styles.cardTrigger} aria-label={`Fotos e informações da Loja ${store.storeNumber}: ${store.name}`} aria-haspopup="dialog" onClick={() => setSelectedStore(store)}>Loja {store.storeNumber}</button></h3>{hasPharmacy(store) ? <span className={styles.pharmacy}>com Drogaria</span> : null}</div>
+              <div className={styles.heading}><h3><button type="button" className={styles.cardTrigger} aria-label={`Fotos e informações da Loja ${store.storeNumber}: ${store.name}`} aria-haspopup="dialog" onClick={event => setSelectedStore({ store, trigger: event.currentTarget, keyboard: event.detail === 0 })}>Loja {store.storeNumber}</button></h3>{hasPharmacy(store) ? <span className={styles.pharmacy}>com Drogaria</span> : null}</div>
               <p className={styles.storeName}>{store.name}</p>
             </div></div>
             <div className={styles.content}>
@@ -104,6 +104,6 @@ export function Stores({ items, compact = false, content = {}, showHeading = tru
       </div> : <div className={styles.empty}><p>Nenhuma loja corresponde aos filtros selecionados.</p><button type="button" onClick={reset}>Ver todas as lojas</button></div>}
       <p className={styles.note}>Horário de Brasília. O funcionamento pode mudar em feriados; confirme com a unidade.</p>
     </Container>
-    {selectedStore ? <StoreDetailsModal key={selectedStore.slug} store={selectedStore} onClose={() => setSelectedStore(null)} /> : null}
+    {selectedStore ? <StoreDetailsModal key={selectedStore.store.slug} store={selectedStore.store} trigger={selectedStore.trigger} keyboard={selectedStore.keyboard} onClose={() => setSelectedStore(null)} /> : null}
   </Section>;
 }

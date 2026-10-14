@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button/Button";
 import { Icon } from "@/components/ui/Icon";
 import { StorePhoto } from "./StorePhoto";
 import styles from "./StoreDetailsModal.module.css";
-export function StoreDetailsModal({ store, onClose }: { store: Store; onClose: () => void }) {
+export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store: Store; trigger: HTMLButtonElement; keyboard: boolean; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [photo, setPhoto] = useState(0);
   const photos = [...new Set(store.photos?.length ? store.photos : [store.image].filter(Boolean))];
@@ -14,11 +14,26 @@ export function StoreDetailsModal({ store, onClose }: { store: Store; onClose: (
   const phone = digits.length === 10 || digits.length === 11 ? `+55${digits}` : /^55\d{10,11}$/.test(digits) ? `+${digits}` : null;
   useEffect(() => {
     const element = dialog.current;
-    const focused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const focused = trigger;
+    let keyboardInteraction = keyboard;
+    const onKey = () => { keyboardInteraction = true; };
+    const onPointer = () => { keyboardInteraction = false; };
+    element?.addEventListener("keydown", onKey);
+    element?.addEventListener("pointerdown", onPointer);
     const overflow = document.body.style.overflow;
     element?.showModal(); document.body.style.overflow = "hidden";
-    return () => { element?.close(); document.body.style.overflow = overflow; if (focused?.isConnected) focused.focus({ preventScroll: true }); };
-  }, []);
+    return () => {
+      element?.removeEventListener("keydown", onKey);
+      element?.removeEventListener("pointerdown", onPointer);
+      element?.close(); document.body.style.overflow = overflow;
+      if (focused.isConnected) {
+        focused.focus({ preventScroll: true });
+        // Touch on Safari can leave the carousel as the native return target.
+        // Return to the actual card, and retain visible focus only for keyboard use.
+        if (!keyboardInteraction) focused.blur();
+      }
+    };
+  }, [trigger, keyboard]);
   return <dialog ref={dialog} className={styles.dialog} aria-labelledby="store-modal-title" onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) { const box = event.currentTarget.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) onClose(); } }}>
     <button type="button" className={styles.close} aria-label="Fechar informações da loja" autoFocus onClick={onClose}>×</button>
     <div className={styles.layout}>
