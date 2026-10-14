@@ -47,9 +47,9 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
         <h3>Horário de funcionamento</h3><p>{store.hours || "Consulte a unidade para confirmar os horários."}</p>
         {store.services.length ? <><h3>Serviços da unidade</h3><ul className={styles.services}>{store.services.map(service => <li key={service}>{service}</li>)}</ul></> : null}
         {store.phone ? <><h3>Contato</h3><p>{phone ? <a href={`tel:${phone}`}>{store.phone}</a> : store.phone}</p></> : null}
-        <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
         <small>Horário de Brasília. Em feriados, confirme o funcionamento com a unidade.</small>
       </div>
     </div>
+    <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
   </dialog>;
 }
