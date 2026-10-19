@@ -3,13 +3,13 @@
 import { useEffect, useRef } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import { Icon } from "@/components/ui/Icon";
-import { historyItems } from "@/data/history";
+import { historyItems, type HistoryItem } from "@/data/history";
 import styles from "./History.module.css";
 import { TimelineCard } from "./TimelineCard";
 import { useHorizontalHistory } from "./useHorizontalHistory";
 
-export function History({ images = {}, showHeading = true }: { showHeading?: boolean; images?: Record<string, string> }) {
-  const items = historyItems.map((item) => ({
+export function History({ images = {}, showHeading = true, chapters = historyItems }: { showHeading?: boolean; images?: Record<string, string>; chapters?: HistoryItem[] }) {
+  const items = chapters.map((item) => ({
     ...item,
     image: images[item.id] || item.image,
   }));
