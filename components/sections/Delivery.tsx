@@ -60,7 +60,7 @@ export function Delivery({
           <Button
             data-analytics-id="cta:delivery"
             data-analytics-label="Comprar no Delivery"
-            href={content.ctaHref || "https://www.coopercicadelivery.com.br/"}
+            href={!content.ctaHref || /^\/delivery\/?(?:[?#].*)?$/.test(content.ctaHref) ? "https://www.coopercicadelivery.com.br/" : content.ctaHref}
             external
           >
             {content.ctaLabel || "Comprar no Delivery"}

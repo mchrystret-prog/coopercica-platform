@@ -10,7 +10,7 @@ export const pharmacy = {
     "Atendimento farmacêutico",
   ],
   ctaLabel: "Conheça a Coopercica Drogaria",
-  ctaHref: "/drogaria",
+  ctaHref: "https://www.coopercicadrogaria.com.br/",
   image: "/pharmacy/hero.jpg",
   imageAlt:
     "Atendimento próximo e acolhedor na Coopercica Drogaria",

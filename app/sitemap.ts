@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!indexingEnabled()) return [];
   const [jobs, leaflets] = await Promise.all([getJobs().catch(() => []), getActiveLeaflets().catch(() => [])]);
   return [
-    ...["/", "/quem-somos", "/lojas", "/delivery", "/drogaria", "/folheteria", "/revista", "/vagas", "/videos", "/videos/playlists", "/politicas"].map(path => ({ url: absoluteUrl(path) })),
+    ...["/", "/quem-somos", "/lojas", "/folheteria", "/revista", "/vagas", "/videos", "/videos/playlists", "/politicas"].map(path => ({ url: absoluteUrl(path) })),
     ...jobs.filter(j => jobIsCurrent(j)).map(j => ({ url: absoluteUrl(`/vagas/${j.slug}`), ...(Number.isFinite(Date.parse(j.updated_at)) ? { lastModified: new Date(j.updated_at) } : {}) })),
     ...leaflets.map(l => ({ url: absoluteUrl(`/folheteria/${l.slug}`) })),
     ...videos.map(v => ({ url: absoluteUrl(`/videos/${v.id}`) })),

@@ -33,7 +33,7 @@ export default async function Page() {
     <History images={images} chapters={aboutHistoryItems} showHeading={false} />
     <Section aria-labelledby="about-services-title"><Container>
       <SectionHeader id="about-services-title" eyebrow="A Coopercica hoje" title="Perto de você, de diferentes formas." stacked />
-      <div className={styles.services}>{aboutServices.map(service => <Card key={service.href} variant="outline" className={styles.card}><h3>{service.title}</h3><p>{service.description}</p><Button href={service.href} variant="secondary">{service.cta}</Button></Card>)}</div>
+      <div className={styles.services}>{aboutServices.map(service => <Card key={service.href} variant="outline" className={styles.card}><h3>{service.title}</h3><p>{service.description}</p><Button href={service.href} external={service.href.startsWith("https://")} variant="secondary">{service.cta}</Button></Card>)}</div>
     </Container></Section>
   </InternalPage>;
 }

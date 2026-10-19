@@ -64,7 +64,8 @@ export function Pharmacy({
           <Button
             data-analytics-id="cta:pharmacy"
             data-analytics-label="Conhecer a Drogaria"
-            href={content.ctaHref || pharmacy.ctaHref}
+            href={!content.ctaHref || /^\/drogaria\/?(?:[?#].*)?$/.test(content.ctaHref) ? pharmacy.ctaHref : content.ctaHref}
+            external
           >
             {content.ctaLabel || pharmacy.ctaLabel}
           </Button>

@@ -12,6 +12,6 @@ export const aboutHistoryItems: HistoryItem[] = historyItems.map(item => {
 
 export const aboutServices = [
   { title: "Lojas perto de você", description: "Estamos em Jundiaí, Várzea Paulista, Campo Limpo Paulista e Itupeva, oferecendo alimentos, produtos de limpeza, cuidados pessoais e utilidades para o dia a dia.", href: "/lojas", cta: "Encontre uma loja" },
-  { title: "Coopercica Drogaria", description: "O cuidado com as pessoas também está nas unidades de Vila Rio Branco, Jardim São Vicente e Caxambu, com produtos e serviços voltados à saúde e ao bem-estar.", href: "/drogaria", cta: "Conheça a Drogaria" },
-  { title: "Delivery Coopercica", description: "Implantado em março de 2020, o Delivery ampliou as formas de comprar na cooperativa, levando a comodidade das compras online para a rotina dos cooperados.", href: "/delivery", cta: "Conheça o Delivery" },
+  { title: "Coopercica Drogaria", description: "O cuidado com as pessoas também está nas unidades de Vila Rio Branco, Jardim São Vicente e Caxambu, com produtos e serviços voltados à saúde e ao bem-estar.", href: "https://www.coopercicadrogaria.com.br/", cta: "Conheça a Drogaria" },
+  { title: "Delivery Coopercica", description: "Implantado em março de 2020, o Delivery ampliou as formas de comprar na cooperativa, levando a comodidade das compras online para a rotina dos cooperados.", href: "https://www.coopercicadelivery.com.br/", cta: "Conheça o Delivery" },
 ];

@@ -35,7 +35,7 @@ export default function DesignSystemPage() {
       <div className={styles.typeScale}>{hierarchy.map(([label, cls]) => <div className={styles.typeRow} key={label}><code>{label} · {cls}</code><p className={cls}>Qualidade com você</p></div>)}</div>
     </section>
     <section id="botoes" className={styles.section}><SectionHeader eyebrow="Componentes reais" title="CTAs e estados" description="Altura mínima de 48 px. Visual anterior restaurado: primary em verde de apoio, texto branco e hover em verde escuro. Tab revela o foco; pressione um botão para observar active."/>
-      <div className={styles.actions}><Button>Primary</Button><Button variant="secondary">Secondary</Button><Button variant="ghost">Ghost</Button><Button disabled>Desabilitado</Button><Button href="/delivery">Link interno</Button><Button href="https://www.coopercicadelivery.com.br/" external>Link externo</Button><Button href="/" disabled>Link desabilitado</Button></div>
+      <div className={styles.actions}><Button>Primary</Button><Button variant="secondary">Secondary</Button><Button variant="ghost">Ghost</Button><Button disabled>Desabilitado</Button><Button href="/lojas">Link interno</Button><Button href="https://www.coopercicadelivery.com.br/" external>Link externo</Button><Button href="/" disabled>Link desabilitado</Button></div>
       <div className={styles.inverse}><p className="ds-caption">Tons inversos para fundo institucional</p><div className={styles.actions}><Button tone="inverse">Primary</Button><Button tone="inverse" variant="secondary">Secondary</Button><Button tone="inverse" variant="ghost">Ghost</Button></div></div>
       <p className="ds-body"><Link className="ds-link" href="/politicas">Link de texto institucional</Link></p>
     </section>

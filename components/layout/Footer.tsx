@@ -41,8 +41,8 @@ export async function Footer() {
         <div className={styles.column}>
           <strong>Serviços</strong>
           <Link href="/videos">Vídeos</Link>
-          <Link href="/delivery">Delivery</Link>
-          <Link href="/drogaria">Drogaria</Link>
+          <a href="https://www.coopercicadelivery.com.br/" target="_blank" rel="noopener noreferrer">Delivery</a>
+          <a href="https://www.coopercicadrogaria.com.br/" target="_blank" rel="noopener noreferrer">Drogaria</a>
           <Link href="/revista">Revista</Link>
         </div>
         <div className={styles.column}>
