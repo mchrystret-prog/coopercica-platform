@@ -2,7 +2,9 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Container } from "@/components/ui/Container/Container";
-import { getCoopermaisBanner } from "@/lib/coopermais-banner";
+import { Button } from "@/components/ui/Button/Button";
+import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
+import { getCoopermaisInformation, getCoopermaisBanner } from "@/lib/coopermais-banner";
 import styles from "./CoopermaisBanner.module.css";
 const motionQuery = "(prefers-reduced-motion: reduce)";
 const subscribe = (callback: () => void) => {
@@ -45,11 +47,16 @@ function BannerMedia({ media }: { media: Pick<ReturnType<typeof getCoopermaisBan
 }
 export function CoopermaisBanner({ content = {} }: { content?: Record<string, string> }) {
   const media = getCoopermaisBanner(content);
+  const information = getCoopermaisInformation(content);
   const mobile = useSyncExternalStore(subscribeScreen, screenSnapshot, screenServerSnapshot);
   const selected = mobile
     ? { ...media, video: media.mobileVideo, image: media.mobileImage, width: 1080, height: 1350 }
     : { ...media, width: 2880, height: 432 };
   return <section id="coopermais" className={styles.section} aria-label="Seja Cliente Coopermais"><Container>
+    {information.enabled ? <div className={styles.information}>
+      <div className={styles.introduction}><SectionHeader id="coopermais-information-title" light stacked eyebrow={information.eyebrow} title={information.title} className={styles.heading} /><Button href={information.ctaHref} external={information.ctaHref.startsWith("https://")} variant="secondary" tone="inverse">{information.ctaLabel}</Button></div>
+      <dl className={styles.metrics} aria-label="Coopercica em números">{information.metrics.map((metric, index) => <div className={styles.metric} key={index}><dt>{metric.label}</dt><dd>{metric.value}</dd></div>)}</dl>
+    </div> : null}
     <div className={`${styles.badge} ${mobile === null ? styles.placeholder : ""}`} aria-busy={mobile === null}>
       {mobile === null ? null : <BannerMedia key={`${mobile}:${selected.video}:${selected.image}`} media={selected} />}
     </div>

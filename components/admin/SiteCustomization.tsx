@@ -1,6 +1,7 @@
 "use client";
 import { customizationModules, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
+import { validateCoopermaisInformation } from "@/lib/coopermais-banner";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { HistoryImageEditor } from "./HistoryImageEditor";
 import { CoopermaisBannerEditor } from "./CoopermaisBannerEditor";
@@ -113,6 +114,8 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
       catch { setTab("coopermais"); setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
     }
+    const informationError = module === "personalization" ? validateCoopermaisInformation(data.settings.coopermais_banner || {}) : null;
+    if (informationError) { setTab("coopermais"); setMsg(informationError); return; }
     setBusy(true);
     setMsg("");
     try {

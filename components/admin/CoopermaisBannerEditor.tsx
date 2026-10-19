@@ -2,16 +2,31 @@
 import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
-import { getCoopermaisBanner } from "@/lib/coopermais-banner";
+import { coopermaisInformationDefaults, getCoopermaisInformation, getCoopermaisBanner } from "@/lib/coopermais-banner";
 export function CoopermaisBannerEditor({ value, busy, onChange, onUpload }: {
   value: Record<string, string>; busy: boolean;
   onChange: (patch: Record<string, string>) => void;
   onUpload: (event: ChangeEvent<HTMLInputElement>, field: "video" | "image" | "mobileVideo" | "mobileImage") => void;
 }) {
   const media = getCoopermaisBanner(value);
+  const information = getCoopermaisInformation(value);
   return <div className="cms-section-editor"><article className="cms-section-card">
     <div className="cms-section-card-head"><h2>Banner Seja Coopermais</h2></div>
     <p>Configure uma mídia para cada tela e salve as alterações para publicar. Todo o banner leva ao destino configurado. Os vídeos rodam sem som e em loop, com opção de pausa.</p>
+    <h3>Informações institucionais</h3>
+    <p>Exibidas acima do vídeo, na mesma seção. Atualize os números sempre que necessário.</p>
+    <div className="settings-form">
+      <label>Exibir informações acima do vídeo<select disabled={busy} value={value.infoEnabled || "true"} onChange={e => onChange({ infoEnabled: e.target.value })}><option value="true">Sim</option><option value="false">Não</option></select></label>
+      <label>Chamada superior<input disabled={busy} maxLength={80} value={value.infoEyebrow ?? information.eyebrow} onChange={e => onChange({ infoEyebrow: e.target.value })} /></label>
+      <label className="form-span-full">Título institucional<textarea disabled={busy} rows={3} maxLength={200} value={value.infoTitle ?? information.title} onChange={e => onChange({ infoTitle: e.target.value })} /></label>
+      {information.metrics.map((metric, index) => <div className="form-span-full settings-form" key={index}>
+        <label>Indicador {index + 1} · valor<input disabled={busy} maxLength={24} value={value[`metric${index + 1}Value`] ?? metric.value} onChange={e => onChange({ [`metric${index + 1}Value`]: e.target.value })} /><small>Ex.: 210 mil, 9 ou 1.100.</small></label>
+        <label>Indicador {index + 1} · descrição<input disabled={busy} maxLength={80} value={value[`metric${index + 1}Label`] ?? metric.label} onChange={e => onChange({ [`metric${index + 1}Label`]: e.target.value })} /></label>
+      </div>)}
+      <label>Texto do botão da história<input disabled={busy} maxLength={80} value={value.historyCtaLabel ?? information.ctaLabel} onChange={e => onChange({ historyCtaLabel: e.target.value })} /></label>
+      <label>Destino do botão da história<input disabled={busy} maxLength={300} value={value.historyCtaHref ?? information.ctaHref} onChange={e => onChange({ historyCtaHref: e.target.value })} /><small>Use uma página interna, como /quem-somos, ou um endereço HTTPS.</small></label>
+    </div>
+    <button type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ ...coopermaisInformationDefaults, infoEnabled: "true" })}>Restaurar informações do modelo</button>
     <h3>Desktop · faixa horizontal</h3>
     <div className="settings-form">
       <label>Tipo de mídia desktop<select disabled={busy} value={value.mode || "video"} onChange={e => onChange({ mode: e.target.value })}><option value="video">Vídeo</option><option value="image">Imagem</option></select></label>
