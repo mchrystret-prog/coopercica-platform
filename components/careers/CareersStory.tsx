@@ -1,4 +1,4 @@
-import Image, { getImageProps } from "next/image";
+import { PageHeading } from "@/components/layout/PageHeading";
 import type { CareersHeroImage } from "@/lib/careers-hero";
 import type { CareersContent } from "@/lib/careers-content";
 import { Button } from "@/components/ui/Button/Button";
@@ -6,32 +6,15 @@ import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
 import styles from "./CareersStory.module.css";
 export function CareersStory({ content, image }: { content: CareersContent; image?: CareersHeroImage }) {
-  const mobile = image?.mobileSrc ? getImageProps({ src: image.mobileSrc, alt: image.alt, width: 1080, height: 810, sizes: "100vw" }).props : undefined;
   return <>
-    <section className={styles.hero} aria-labelledby="careers-title">
-      <Container>
-        <div className={`${styles.heroGrid} ${!image ? styles.withoutImage : ""}`}>
-          <div className={styles.heroCopy} data-careers-reveal>
-            <span className={styles.eyebrow}>Carreiras Coopercica</span>
-            <h1 id="careers-title">{content.heroTitle}</h1>
-            <p>{content.heroIntro}</p>
-
-          </div>
-          {image ? <div className={styles.media} data-careers-reveal data-careers-delay="70">
-            <picture>
-              {mobile ? <source media="(max-width: 760px)" srcSet={mobile.srcSet} sizes={mobile.sizes} /> : null}
-              <Image src={image.src} alt={image.alt} fill loading="eager" fetchPriority="high" sizes="(max-width: 760px) 100vw, (max-width: 1280px) 45vw, 560px" style={{ objectPosition: image.position }} />
-            </picture>
-            <span className={styles.photoCaption}>Uma história feita por pessoas.</span>
-          </div> : null}
-            <div className={styles.actions} data-careers-reveal data-careers-delay="140">
-              <Button href="#oportunidades">Encontre sua oportunidade</Button>
-              <a className={styles.textLink} href="#nossa-cultura">Conheça o que nos move <span aria-hidden="true">↓</span></a>
-            </div>
-        </div>
-        <div className={styles.heroFoot}><span>Qualidade com você desde 1969</span><span>Cooperar é fazer parte.</span></div>
-      </Container>
-    </section>
+    <PageHeading eyebrow="Carreiras Coopercica" title={content.heroTitle} intro={content.heroIntro}
+      image={image ?? { src: "/stores/eloy-chaves.jpg", alt: "Fachada da Coopercica no Eloy Chaves" }} />
+    <Container>
+      <div className={styles.actions} style={{ marginTop: "var(--space-8)" }}>
+        <Button href="#oportunidades">Encontre sua oportunidade</Button>
+        <a className="button button-secondary" href="#nossa-cultura">Conheça o que nos move <span aria-hidden="true">↓</span></a>
+      </div>
+    </Container>
     <Section id="nossa-cultura" className={styles.manifesto} aria-labelledby="manifesto-title">
       <Container>
         <div className={styles.editorialGrid}>
