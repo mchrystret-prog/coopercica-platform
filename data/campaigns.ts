@@ -27,7 +27,7 @@ export const campaigns: Campaign[] = [
     title: "Mês do Cooperativismo",
     desktopImage: "/campaigns/cooperativismo.jpg",
     mobileImage: "/campaigns/cooperativismo.jpg",
-    href: "/quem-somos",
+    href: "#historia",
     target: "_self",
     active: true,
     order: 2,
