@@ -47,6 +47,8 @@ export function ProductOfferCard({
             className={styles.productImage}
             src={product.image_url}
             alt={product.description}
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className={styles.noImage}>Imagem em breve</div>
