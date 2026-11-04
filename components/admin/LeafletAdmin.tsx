@@ -1,4 +1,37 @@
 "use client";
+// Reduz o tráfego da CDN: fotos de produtos não precisam ter resolução de impressão.
+async function optimizeProductImage(file: File): Promise<Blob> {
+  const bitmap = await createImageBitmap(file);
+  try {
+    const maxSide = 960;
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Não foi possível preparar a imagem.");
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const encode = (quality: number) =>
+      new Promise<Blob>((resolve, reject) =>
+        canvas.toBlob(
+          (blob) => blob ? resolve(blob) : reject(new Error("Falha ao converter imagem.")),
+          "image/webp",
+          quality,
+        ),
+      );
+    let optimized = await encode(0.82);
+    // Ajusta a qualidade apenas se necessário; mantém a transparência do PNG.
+    if (optimized.size > 320 * 1024) optimized = await encode(0.68);
+    if (optimized.size > 320 * 1024) optimized = await encode(0.52);
+    if (optimized.type !== "image/webp") {
+      throw new Error("Navegador sem suporte à conversão WebP.");
+    }
+    return optimized;
+  } finally {
+    bitmap.close();
+  }
+}
+
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
@@ -98,25 +131,19 @@ export function LeafletAdmin({
         missing++;
         return;
       }
-      const ext = (file.name.split(".").pop() || "webp").toLowerCase();
-      const path = `products/${slug}/${p.ean}.${ext}`;
-      if (file.size > 10 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024 || !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
         missing++;
         return;
       }
-      const mime =
-        file.type ||
-        {
-          jpg: "image/jpeg",
-          jpeg: "image/jpeg",
-          png: "image/png",
-          webp: "image/webp",
-        }[ext] ||
-        "";
-      if (!["image/jpeg", "image/png", "image/webp"].includes(mime)) {
+      let optimized: Blob;
+      try {
+        optimized = await optimizeProductImage(file);
+      } catch {
         missing++;
         return;
       }
+      // Nome único evita conteúdo antigo em cache e não sobrescreve campanhas anteriores.
+      const path = `products/${slug}/${p.ean}-${crypto.randomUUID()}.webp`;
       const up = await fetch(
         `${SUPABASE_URL}/storage/v1/object/leaflet-assets/${path}`,
         {
@@ -124,10 +151,11 @@ export function LeafletAdmin({
           headers: {
             apikey: SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${token}`,
-            "Content-Type": mime,
-            "x-upsert": "true",
+            "Content-Type": "image/webp",
+            "x-upsert": "false",
+            "cache-control": "31536000",
           },
-          body: file,
+          body: optimized,
         },
       );
       if (!up.ok) {
