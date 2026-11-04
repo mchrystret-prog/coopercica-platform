@@ -43,12 +43,15 @@ export function ProductOfferCard({
         className={`${styles.visual} ${ageSeal ? styles.visualWithAgeSeal : ""}`}
       >
         {product.image_url ? (
-          <img
+          <Image
             className={styles.productImage}
             src={product.image_url}
             alt={product.description}
+            width={480}
+            height={480}
+            sizes="(max-width: 600px) 45vw, 280px"
+            quality={75}
             loading="lazy"
-            decoding="async"
           />
         ) : (
           <div className={styles.noImage}>Imagem em breve</div>
