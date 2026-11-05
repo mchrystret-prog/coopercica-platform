@@ -15,6 +15,8 @@ create table if not exists public.leaflet_cleanup_runs (
 alter table public.leaflet_cleanup_runs enable row level security;
 revoke all on public.leaflet_cleanup_runs from anon, authenticated;
 grant select on public.leaflet_cleanup_runs to authenticated;
+grant insert, select on public.leaflet_cleanup_runs to service_role;
+grant usage, select on sequence public.leaflet_cleanup_runs_id_seq to service_role;
 create policy "CMS may see leaflet cleanup audit" on public.leaflet_cleanup_runs
   for select to authenticated using ((select public.cms_can_edit()));
 
