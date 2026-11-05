@@ -20,7 +20,7 @@ create policy "CMS may see leaflet cleanup audit" on public.leaflet_cleanup_runs
 
 create or replace function public.leaflet_cleanup_candidates()
 returns table(path text, size_bytes bigint)
-language sql stable security invoker
+language sql stable security definer
 set search_path = ''
 as $$
   with expired as (
@@ -63,7 +63,7 @@ revoke all on function public.leaflet_cleanup_candidates() from public, anon, au
 grant execute on function public.leaflet_cleanup_candidates() to service_role;
 
 create or replace function public.leaflet_cleanup_mark_deleted(p_path text)
-returns integer language plpgsql security invoker set search_path = ''
+returns integer language plpgsql security definer set search_path = ''
 as $$
 declare affected integer := 0;
 begin
