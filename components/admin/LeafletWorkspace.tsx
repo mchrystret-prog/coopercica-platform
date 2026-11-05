@@ -3,8 +3,9 @@ import { useState } from "react";
 import { ContentManager } from "./ContentManager";
 import { LeafletCreate } from "./LeafletCreate";
 import { LeafletAssetLibrary } from "./LeafletAssetLibrary";
+import { LeafletCleanupPanel } from "./LeafletCleanupPanel";
 export function LeafletWorkspace() {
-  const [tab, setTab] = useState<"leaflets" | "assets">("leaflets");
+  const [tab, setTab] = useState<"leaflets" | "assets" | "cleanup">("leaflets");
   const [revision, setRevision] = useState(0);
   return (
     <>
@@ -26,6 +27,7 @@ export function LeafletWorkspace() {
         >
           Fundos e selos
         </button>
+        <button type="button" data-active={tab === "cleanup"} onClick={() => setTab("cleanup")}>Limpeza de arquivos</button>
       </div>
       <div hidden={tab !== "leaflets"}>
         <ContentManager
@@ -38,6 +40,7 @@ export function LeafletWorkspace() {
         </ContentManager>
       </div>
       {tab === "assets" ? <LeafletAssetLibrary /> : null}
+      {tab === "cleanup" ? <LeafletCleanupPanel /> : null}
     </>
   );
 }

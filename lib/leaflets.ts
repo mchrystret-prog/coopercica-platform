@@ -57,8 +57,12 @@ export async function getActiveLeaflets() {
   );
 }
 export async function getLeaflet(slug: string) {
+  // Um link antigo não deve exibir ofertas vencidas nem imagens já arquivadas.
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(new Date());
   const leaflets = await rest<Leaflet[]>(
-    `digital_leaflets?select=*&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`,
+    `digital_leaflets?select=*&slug=eq.${encodeURIComponent(slug)}&status=eq.published&ends_at=gte.${today}&limit=1`,
   );
   return leaflets[0] ?? null;
 }
