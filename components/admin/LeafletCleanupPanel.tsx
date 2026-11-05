@@ -61,7 +61,7 @@ export function LeafletCleanupPanel() {
         </div>
       </div>
       <div className="data-card" style={{ padding: 24 }}>
-        <p><strong>Agendamento:</strong> diariamente às 06h (Brasília). Até 50 arquivos por execução.</p>
+        <p><strong>Agendamento:</strong> diariamente às 06h (Brasília). Até 20 arquivos por execução.</p>
         <p>As informações de preços e produtos são preservadas. Fundos, selos, capas e arquivos
            sem vínculo identificado ficam fora da limpeza automática.</p>
         <button type="button" className="button button-primary" onClick={simulate} disabled={working}>
