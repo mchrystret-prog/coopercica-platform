@@ -48,7 +48,7 @@ Deno.serve(async (request: Request) => {
   if (error) return respond({ error: "Candidate audit failed" }, 500);
   const candidates = (data ?? []) as Candidate[];
   const totalBytes = candidates.reduce((n, f) => n + Number(f.size_bytes || 0), 0);
-  const maxPerRun = 50;
+  const maxPerRun = 20;
   let deleted = 0;
   let bytesReclaimed = 0;
   const failures: string[] = [];
