@@ -9,6 +9,7 @@ import styles from "./StoreDetailsModal.module.css";
 export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store: Store; trigger: HTMLButtonElement; keyboard: boolean; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [photo, setPhoto] = useState(0);
+  const [expanded, setExpanded] = useState(false);
   const photos = [...new Set(store.photos?.length ? store.photos : [store.image].filter(Boolean))];
   const digits = store.phone.replace(/\D/g, "");
   const phone = digits.length === 10 || digits.length === 11 ? `+55${digits}` : /^55\d{10,11}$/.test(digits) ? `+${digits}` : null;
@@ -34,11 +35,12 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
       }
     };
   }, [trigger, keyboard]);
-  return <dialog ref={dialog} className={styles.dialog} aria-labelledby="store-modal-title" onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) { const box = event.currentTarget.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) onClose(); } }}>
+  return <dialog ref={dialog} className={`${styles.dialog} ${expanded ? styles.expanded : ""}`} aria-label={expanded ? `Fotos da Loja ${store.storeNumber}: ${store.name}` : undefined} aria-labelledby={expanded ? undefined : "store-modal-title"} onCancel={event => { event.preventDefault(); if (expanded) setExpanded(false); else onClose(); }} onClick={event => { if (event.target === event.currentTarget) { const box = event.currentTarget.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) onClose(); } }}>
     <button type="button" className={styles.close} aria-label="Fechar informações da loja" autoFocus onClick={onClose}>×</button>
     <div className={styles.layout}>
       <div className={styles.gallery}>
-        <StorePhoto src={photos[photo]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${photo + 1}`} className={styles.mainPhoto} />
+        <button type="button" className={styles.expand} aria-pressed={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "Voltar às informações" : "Ampliar foto"}</button>
+        <StorePhoto src={photos[photo]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${photo + 1}`} className={styles.mainPhoto} sizes={expanded ? "96vw" : "(max-width: 700px) 94vw, 65vw"} />
         {photos.length > 1 ? <><div className={styles.galleryControls}><button type="button" onClick={() => setPhoto(index => (index - 1 + photos.length) % photos.length)} aria-label="Foto anterior"><Icon name="chevron-left" /></button><span role="status">Foto {photo + 1} de {photos.length}</span><button type="button" onClick={() => setPhoto(index => (index + 1) % photos.length)} aria-label="Próxima foto"><Icon name="chevron-right" /></button></div><div className={styles.thumbnails}>{photos.map((src, index) => <button key={src} type="button" aria-label={`Exibir foto ${index + 1}`} aria-pressed={photo === index} onClick={() => setPhoto(index)}><StorePhoto src={src} alt="" className={styles.thumbnail} sizes="76px" /></button>)}</div></> : null}
       </div>
       <div className={styles.info}>
@@ -53,3 +55,4 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
     <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
   </dialog>;
 }
+
