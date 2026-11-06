@@ -10,6 +10,8 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
   const dialog = useRef<HTMLDialogElement>(null);
   const [photo, setPhoto] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const swipe = useRef<{ id: number; x: number; y: number } | null>(null);
+  const suppressPhotoClick = useRef(false);
   const photos = [...new Set(store.photos?.length ? store.photos : [store.image].filter(Boolean))];
   const digits = store.phone.replace(/\D/g, "");
   const phone = digits.length === 10 || digits.length === 11 ? `+55${digits}` : /^55\d{10,11}$/.test(digits) ? `+${digits}` : null;
@@ -40,7 +42,36 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
     <div className={styles.layout}>
       <div className={styles.gallery}>
         {expanded ? <button type="button" className={styles.expand} onClick={() => setExpanded(false)}>Voltar às informações</button> : null}
-        <button type="button" className={styles.photoTrigger} aria-label={expanded ? "Voltar às informações da loja" : `Ampliar foto ${photo + 1} da Loja ${store.storeNumber}`} aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>
+        <button type="button" className={styles.photoTrigger} aria-label={expanded ? "Voltar às informações da loja" : `Ampliar foto ${photo + 1} da Loja ${store.storeNumber}`} aria-expanded={expanded}
+          onPointerDown={event => {
+            if (!event.isPrimary) { swipe.current = null; suppressPhotoClick.current = true; return; }
+            if (event.button !== 0) return;
+            suppressPhotoClick.current = false;
+            if (photos.length < 2) return;
+            swipe.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={event => {
+            const start = swipe.current;
+            if (start?.id === event.pointerId && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) suppressPhotoClick.current = true;
+          }}
+          onPointerUp={event => {
+            const start = swipe.current;
+            if (!start || start.id !== event.pointerId) return;
+            swipe.current = null;
+            const dx = event.clientX - start.x, dy = event.clientY - start.y;
+            if (Math.hypot(dx, dy) > 8) suppressPhotoClick.current = true;
+            if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+              setPhoto(index => (index + (dx < 0 ? 1 : -1) + photos.length) % photos.length);
+            }
+          }}
+          onPointerCancel={() => { swipe.current = null; suppressPhotoClick.current = true; }}
+          onLostPointerCapture={() => { swipe.current = null; }}
+          onDragStart={event => event.preventDefault()}
+          onClick={event => {
+            if (event.detail !== 0 && suppressPhotoClick.current) { event.preventDefault(); return; }
+            setExpanded(value => !value);
+          }}>
           <StorePhoto src={photos[photo]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${photo + 1}`} className={styles.mainPhoto} sizes={expanded ? "96vw" : "(max-width: 700px) 94vw, 65vw"} />
         </button>
         {photos.length > 1 ? <><div className={styles.galleryControls}><button type="button" onClick={() => setPhoto(index => (index - 1 + photos.length) % photos.length)} aria-label="Foto anterior"><Icon name="chevron-left" /></button><span role="status">Foto {photo + 1} de {photos.length}</span><button type="button" onClick={() => setPhoto(index => (index + 1) % photos.length)} aria-label="Próxima foto"><Icon name="chevron-right" /></button></div><div className={styles.thumbnails}>{photos.map((src, index) => <button key={src} type="button" aria-label={`Exibir foto ${index + 1}`} aria-pressed={photo === index} onClick={() => setPhoto(index)}><StorePhoto src={src} alt="" className={styles.thumbnail} sizes="76px" /></button>)}</div></> : null}
@@ -57,5 +88,6 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
     <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
   </dialog>;
 }
+
 
 
