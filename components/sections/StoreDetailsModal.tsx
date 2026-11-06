@@ -39,8 +39,10 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
     <button type="button" className={styles.close} aria-label="Fechar informações da loja" autoFocus onClick={onClose}>×</button>
     <div className={styles.layout}>
       <div className={styles.gallery}>
-        <button type="button" className={styles.expand} aria-pressed={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "Voltar às informações" : "Ampliar foto"}</button>
-        <StorePhoto src={photos[photo]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${photo + 1}`} className={styles.mainPhoto} sizes={expanded ? "96vw" : "(max-width: 700px) 94vw, 65vw"} />
+        {expanded ? <button type="button" className={styles.expand} onClick={() => setExpanded(false)}>Voltar às informações</button> : null}
+        <button type="button" className={styles.photoTrigger} aria-label={expanded ? "Voltar às informações da loja" : `Ampliar foto ${photo + 1} da Loja ${store.storeNumber}`} aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>
+          <StorePhoto src={photos[photo]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${photo + 1}`} className={styles.mainPhoto} sizes={expanded ? "96vw" : "(max-width: 700px) 94vw, 65vw"} />
+        </button>
         {photos.length > 1 ? <><div className={styles.galleryControls}><button type="button" onClick={() => setPhoto(index => (index - 1 + photos.length) % photos.length)} aria-label="Foto anterior"><Icon name="chevron-left" /></button><span role="status">Foto {photo + 1} de {photos.length}</span><button type="button" onClick={() => setPhoto(index => (index + 1) % photos.length)} aria-label="Próxima foto"><Icon name="chevron-right" /></button></div><div className={styles.thumbnails}>{photos.map((src, index) => <button key={src} type="button" aria-label={`Exibir foto ${index + 1}`} aria-pressed={photo === index} onClick={() => setPhoto(index)}><StorePhoto src={src} alt="" className={styles.thumbnail} sizes="76px" /></button>)}</div></> : null}
       </div>
       <div className={styles.info}>
@@ -55,4 +57,5 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
     <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
   </dialog>;
 }
+
 
