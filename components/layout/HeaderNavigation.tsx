@@ -1,0 +1,140 @@
+"use client";
+
+import Image from "next/image";
+import { Button } from "@/components/ui/Button";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import styles from "./Header.module.css";
+
+const links = [
+  { label: "Vídeos", href: "/videos", sectionId: "videos" },
+  { label: "Quem Somos", href: "#historia", sectionId: "historia" },
+  { label: "Nossas Lojas", href: "#lojas", sectionId: "lojas" },
+  { label: "Ofertas", href: "#ofertas", sectionId: "ofertas" },
+  { label: "Delivery", href: "#delivery", sectionId: "delivery" },
+  { label: "Drogaria", href: "#drogaria", sectionId: "drogaria" },
+  { label: "Revista", href: "#revista", sectionId: "revista" },
+  { label: "Vagas", href: "/vagas", sectionId: "vagas" },
+];
+
+export function HeaderNavigation({
+  logo = "/images/logo.png",
+  siteName = "Coopercica",
+  hasOffers,
+}: {
+  logo?: string;
+  siteName?: string;
+  deliveryUrl?: string;
+  hasOffers: boolean;
+}) {
+  const pathname = usePathname();
+  const onHome = pathname === "/";
+  const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+
+  useEffect(() => {
+    const sectionIds = ["home", ...links.map((link) => link.sectionId)];
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible?.target.id) setActiveSection(visible.target.id);
+      },
+      {
+        rootMargin: "-18% 0px -62% 0px",
+        threshold: [0, 0.1, 0.25, 0.5],
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  const closeMenu = () => setOpen(false);
+
+  return (
+    <header data-analytics-fixed className={styles.header}>
+      <div className={`shell ${styles.inner}`}>
+        <a
+          href={onHome ? "#home" : "/"}
+          className={styles.brand}
+          aria-label="Coopercica — voltar ao início"
+          onClick={closeMenu}
+        >
+          <Image
+            src={logo}
+            alt={siteName}
+            width={861}
+            height={145}
+            priority
+            className={styles.logo}
+          />
+        </a>
+
+        <button
+          type="button"
+          className={styles.menuButton}
+          onClick={() => setOpen((current) => !current)}
+          aria-expanded={open}
+          aria-controls="main-navigation"
+          aria-label={open ? "Fechar menu" : "Abrir menu"}
+        >
+          <span aria-hidden="true">{open ? "Fechar" : "Menu"}</span>
+        </button>
+
+        <nav
+          id="main-navigation"
+          className={`${styles.nav} ${open ? styles.open : ""}`}
+          aria-label="Navegação principal"
+        >
+          {links
+            .filter((link) => link.sectionId !== "ofertas" || hasOffers)
+            .map((link) => (
+              <a
+                key={link.href}
+                data-analytics-id={`navigation:${link.sectionId}`}
+                data-analytics-label={`Menu: ${link.label}`}
+                href={
+                  link.href.startsWith("#") && !onHome
+                    ? `/${link.href}`
+                    : link.href
+                }
+                onClick={closeMenu}
+                className={
+                  (onHome && activeSection === link.sectionId) ||
+                  (link.sectionId === "vagas" && pathname.startsWith("/vagas"))
+                    ? styles.active
+                    : undefined
+                }
+                aria-current={
+                  (onHome && activeSection === link.sectionId) ||
+                  (link.sectionId === "vagas" && pathname.startsWith("/vagas"))
+                    ? "page"
+                    : undefined
+                }
+              >
+                {link.label}
+              </a>
+            ))}
+
+          <Button
+            data-analytics-id="cta:coopermais-header"
+            data-analytics-label="Seja Coopermais"
+            className={styles.cta}
+            href="https://soucoopermais.com.br/"
+            external
+            onClick={closeMenu}
+          >
+            Seja Coopermais
+          </Button>
+        </nav>
+      </div>
+    </header>
+  );
+}
