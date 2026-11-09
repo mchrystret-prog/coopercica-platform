@@ -6,6 +6,7 @@ import { Montserrat } from "next/font/google";
 import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
 import { DEFAULT_FAVICON, getSiteIdentity } from "@/lib/site";
 import { MobileNavigationProvider } from "@/components/layout/MobileNavigation";
+import { getActiveLeaflets } from "@/lib/leaflets";
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
 
@@ -41,6 +42,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const identity = await getSiteIdentity();
-  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph(identity.siteName)} /><MobileNavigationProvider deliveryUrl={identity.deliveryUrl}>{children}</MobileNavigationProvider><SiteAnalytics /></body></html>;
+  const [identity, leaflets] = await Promise.all([getSiteIdentity(), getActiveLeaflets()]);
+  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph(identity.siteName)} /><MobileNavigationProvider deliveryUrl={identity.deliveryUrl} hasOffers={leaflets.length > 0}>{children}</MobileNavigationProvider><SiteAnalytics /></body></html>;
 }

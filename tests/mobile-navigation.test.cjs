@@ -9,7 +9,7 @@ const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 const navigation = require("../.navigation-test/mobile-navigation.js");
 
-function renderNavigation(pathname, deliveryUrl, withHeader = false) {
+function renderNavigation(pathname, deliveryUrl, withHeader = false, hasOffers = true) {
   const modules = new Map();
   function load(file) {
     if (modules.has(file)) return modules.get(file);
@@ -43,8 +43,18 @@ function renderNavigation(pathname, deliveryUrl, withHeader = false) {
   const children = withHeader
     ? React.createElement(load("components/layout/Header.tsx").Header)
     : React.createElement("main", null, "Conteúdo");
-  return renderToStaticMarkup(React.createElement(MobileNavigationProvider, { deliveryUrl }, children));
+  return renderToStaticMarkup(React.createElement(MobileNavigationProvider, { deliveryUrl, hasOffers }, children));
 }
+
+test("without current leaflets only Offers is removed from the mobile shortcuts", () => {
+  for (const pathname of ["/", "/lojas", "/folheteria"]) {
+    const html = renderNavigation(pathname, undefined, false, false);
+    assert.doesNotMatch(html, /mobile-navigation:offers/);
+    assert.doesNotMatch(html, /href="\/folheteria"/);
+    for (const label of ["Início", "Compre Online", "Lojas", "Mais"]) assert.ok(html.includes(label));
+    assert.match(html, /data-has-offers="false"/);
+  }
+});
 
 test("all five mobile actions render with the configured Delivery link and accessible menu control", () => {
   const html = renderNavigation("/", "https://delivery.example.com/compras");
