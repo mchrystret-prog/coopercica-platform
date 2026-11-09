@@ -18,6 +18,9 @@
     background: var(--surface-card);
     box-shadow: 0 -6px 24px rgb(28 71 34 / 10%);
   }
+  .navigation[data-has-offers="false"] {
+    grid-template-columns: minmax(0, 1fr) clamp(120px, 32vw, 144px) minmax(0, 1fr) minmax(0, 1fr);
+  }
   .item {
     display: flex;
     min-width: 0;

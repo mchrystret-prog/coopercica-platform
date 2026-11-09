@@ -20,7 +20,7 @@ export function usePublicMenu() {
   return menu;
 }
 
-export function MobileNavigationProvider({ children, deliveryUrl }: { children: ReactNode; deliveryUrl: string }) {
+export function MobileNavigationProvider({ children, deliveryUrl, hasOffers }: { children: ReactNode; deliveryUrl: string; hasOffers: boolean }) {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname, open: false });
   const trigger = useRef<HTMLButtonElement | null>(null);
@@ -65,13 +65,13 @@ export function MobileNavigationProvider({ children, deliveryUrl }: { children: 
       {children}
       {visible ? <>
         <div className={styles.spacer} aria-hidden="true" />
-        <nav className={styles.navigation} aria-label="Navegação rápida" data-mobile-navigation data-public-menu data-analytics-fixed>
+        <nav className={styles.navigation} aria-label="Navegação rápida" data-mobile-navigation data-has-offers={hasOffers} data-public-menu data-analytics-fixed>
           <Link href={pathname === "/" ? "#home" : "/"} className={styles.item} aria-current={active === "home" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:home" data-analytics-label="Navegação mobile: Início">
             <Icon name="home" /><span>Início</span>
           </Link>
-          <Link href="/folheteria" className={styles.item} aria-current={active === "offers" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:offers" data-analytics-label="Navegação mobile: Ofertas">
+          {hasOffers ? <Link href="/folheteria" className={styles.item} aria-current={active === "offers" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:offers" data-analytics-label="Navegação mobile: Ofertas">
             <Icon name="tag" /><span>Ofertas</span>
-          </Link>
+          </Link> : null}
           <a href={mobileDeliveryHref(deliveryUrl)} className={`${styles.item} ${styles.buy}`} target="_blank" rel="noopener noreferrer" onClick={() => closeMenu()} data-analytics-id="cta:mobile-buy-online" data-analytics-label="Compre Online">
             <Icon name="shopping-bag" /><span>Compre Online</span>
           </a>
