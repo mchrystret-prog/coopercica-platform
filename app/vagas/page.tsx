@@ -4,6 +4,8 @@ import { Footer } from "@/components/layout/Footer";
 import { CareersMotion } from "@/components/careers/CareersMotion";
 import { CareersStory } from "@/components/careers/CareersStory";
 import { getCareersContent } from "@/lib/careers-content";
+import { CareersBannerSlider } from "@/components/careers/CareersBannerSlider";
+import { getCareersBanners, careersBannerInterval } from "@/lib/careers-banners";
 import { CareersPortal } from "@/components/careers/CareersPortal";
 import { getJobs } from "@/lib/jobs";
 import { getSiteSetting } from "@/lib/site";
@@ -15,12 +17,14 @@ export default async function Page() {
     getJobs(),
     getSiteSetting<Record<string, unknown>>("careers_hero", {}),
   ]);
+  const banners = getCareersBanners(hero).filter(item => item.active && item.image && item.title && item.href);
   return (
     <>
       <Header />
       <main>
+        <CareersBannerSlider items={banners} interval={careersBannerInterval(hero)} autoplay={hero.bannerAutoplay !== "false"} />
         <CareersMotion>
-        <CareersStory content={getCareersContent(hero)} image={getCareersHeroImage(hero)} />
+        <CareersStory content={getCareersContent(hero)} image={banners.length ? undefined : getCareersHeroImage(hero)} />
         <CareersPortal jobs={jobs.filter(job => jobIsCurrent(job))} />
         </CareersMotion>
       </main>

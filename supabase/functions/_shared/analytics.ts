@@ -36,7 +36,7 @@ export type AnalyticsEvent = {
 };
 
 const PUBLIC_PATH =
-  /^\/(?:$|(?:quem-somos|lojas|folheteria|delivery|drogaria|revista|politicas)\/?$|folheteria\/[a-z0-9-]{1,140}\/?$)/;
+  /^\/(?:$|(?:quem-somos|lojas|folheteria|delivery|drogaria|revista|politicas|vagas)\/?$|folheteria\/[a-z0-9-]{1,140}\/?$)/;
 export function safePath(value: string): string | null {
   const path = value.split(/[?#]/)[0].replace(/\/$/, "") || "/";
   return PUBLIC_PATH.test(path) ? path : null;
@@ -66,7 +66,7 @@ export function safeDestination(value: string, base: string): string {
     const path = safePath(url.pathname);
     if (!path) return "";
     const hash =
-      /^#(?:home|historia|lojas|ofertas|delivery|drogaria|revista|app-showcase|footer)$/.test(
+      /^#(?:home|historia|lojas|ofertas|delivery|drogaria|revista|app-showcase|footer|oportunidades|depoimentos|nossa-cultura)$/.test(
         url.hash,
       )
         ? url.hash

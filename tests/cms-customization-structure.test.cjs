@@ -8,6 +8,12 @@ new Function('exports', source)(moduleExports);
 const { customizationModules, customizationSavePayload } = moduleExports;
 const sections = [{id:'revista',label:'Revista',active:true,sort_order:4,content:{title1:'Título editado',featuredId:'edition-1',editionDetails:'conteúdo antigo'}},{id:'lojas',label:'Lojas',active:true,sort_order:2,content:{title1:'Lojas'}}];
 const current = {settings:{},sections:[{...sections[0],content:{title1:'Título atual',featuredId:'edition-2',editionDetails:'resumo atualizado'}}]};
+
+test('careers banner fields survive the personalization save payload',()=>{
+  const hero={heroTitle:'Carreiras',bannerOrder:'["marcia-santos"]',bannerInterval:'8','banner_marcia-santos_image':'/careers/marcia-santos.jpg','banner_marcia-santos_title':'Márcia Santos','banner_marcia-santos_href':'#oportunidades'};
+  const saved=customizationSavePayload('personalization',{settings:{careers_hero:hero},sections:[]});
+  assert.deepEqual(JSON.parse(JSON.stringify(saved)).p_settings.careers_hero,hero);
+});
 test('all site presentation tabs belong to Personalização',()=>{
   for(const tab of ['identity','sections','history','careers','videos','coopermais','partners','contact','sharing','faq'])assert.ok(customizationModules.personalization.tabs.includes(tab));
   assert.ok(!customizationModules.personalization.tabs.includes('magazine'));

@@ -55,6 +55,18 @@ test('banner impressions require active visibility and are deduplicated per page
 test('quick banner click also creates a measured impression',async()=>{
  const s=setup();const stop=s.analytics.startAnalytics('/');s.click(s.banner);stop();const events=await s.events();assert.equal(events.filter(e=>e.event_type==='banner_view').length,1);
 });
+
+test('careers testimonials keep their own identity and route in click reports',async()=>{
+ const s=setup();
+ s.banner.dataset.analyticsId='careers-banner:marcia-santos';
+ s.banner.dataset.analyticsLabel='Vagas · Márcia Santos';
+ s.banner.href='https://coopercica-platform.vercel.app/vagas#oportunidades';
+ const stop=s.analytics.startAnalytics('/vagas');s.click(s.banner);stop();
+ const events=await s.events();const click=events.find(e=>e.event_type==='banner_click');
+ assert.equal(click.target_id,'careers-banner:marcia-santos');assert.equal(click.path,'/vagas');
+ assert.equal(click.label,'Vagas · Márcia Santos');
+ assert.equal(events.filter(e=>e.event_type==='banner_view').length,1);
+});
 test('revoking consent discards queued events and clears the session',async()=>{
  const s=setup();const stop=s.analytics.startAnalytics('/');s.analytics.chooseConsent('denied');stop();assert.equal((await s.events()).length,0);assert.equal(sessionStorage.getItem('coopercica_analytics_session_v1'),null);
 });

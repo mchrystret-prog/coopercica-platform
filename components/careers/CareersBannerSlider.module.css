@@ -1,0 +1,14 @@
+.slider { width:100%; background:var(--surface-soft); }
+.stage { width:100%; touch-action:pan-y; }
+.slide { display:block; width:100%; }
+.slide[hidden] { display:none; }
+.slide picture { display:block; }
+.slide img { display:block; width:100%; height:auto; object-fit:contain; }
+.controls { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:4px; padding:8px 12px; }
+.controls button { display:grid; place-items:center; min-width:44px; height:44px; border:1px solid var(--border-soft); border-radius:999px; background:var(--surface-card); color:var(--text-heading); cursor:pointer; }
+.controls button:focus-visible, .slide:focus-visible { outline:3px solid var(--brand-green-900); outline-offset:-3px; }
+.dots { display:flex; flex-wrap:wrap; justify-content:center; }
+.dots button { border:0; background:transparent; }
+.dots span { width:8px; height:8px; border-radius:999px; background:var(--border-strong); }
+.dots [aria-current="true"] span { width:24px; background:var(--brand-green-900); }
+.count { font-size:13px; padding:0 8px; color:var(--text-heading); }

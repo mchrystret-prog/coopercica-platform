@@ -15,7 +15,7 @@ import { AnalyticsHeatmap } from "./AnalyticsHeatmap";
 import styles from "./AnalyticsDashboard.module.css";
 
 const number = (value: number) => value.toLocaleString("pt-BR");
-const pageName = (value: string) => (value === "/" ? "Início" : value);
+const pageName = (value: string) => (value === "/" ? "Início" : value === "/vagas" ? "Portal de Vagas" : value);
 function exportReport(report: AnalyticsReport, filters: AnalyticsFilters) {
   const url = URL.createObjectURL(
     new Blob([analyticsCsv(report, filters)], {
@@ -138,6 +138,7 @@ export function AnalyticsDashboard() {
             {[
               ...new Set([
                 "/",
+                "/vagas",
                 ...(report?.paths || []),
                 ...(filters.path ? [filters.path] : []),
               ]),

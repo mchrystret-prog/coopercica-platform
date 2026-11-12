@@ -24,3 +24,4 @@ supabase/functions/.env
 .contact-test/
 .upload-test/
 .navigation-test/
+.careers-test/

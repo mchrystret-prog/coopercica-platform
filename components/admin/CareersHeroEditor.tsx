@@ -1,4 +1,5 @@
 "use client";
+import { CareersBannersEditor } from "./CareersBannersEditor";
 import Image from "next/image";
 import { careersDefaults } from "@/lib/careers-content";
 import type { ChangeEvent } from "react";
@@ -15,21 +16,22 @@ export function CareersHeroEditor({
   onChange: (patch: Record<string, string>) => void;
   onUpload: (
     event: ChangeEvent<HTMLInputElement>,
-    field: "image" | "mobileImage",
+    field: string,
   ) => void;
 }) {
   const hero = getCareersHeroImage(value);
   return (
     <div className="cms-section-editor">
+      <CareersBannersEditor value={value} busy={busy} onChange={onChange} onUpload={onUpload} />
       <article className="cms-section-card">
         <div className="cms-section-card-head">
           <div>
             <small>Portal de Vagas</small>
-            <h2>Foto de destaque</h2>
+            <h2>Foto de abertura (alternativa)</h2>
           </div>
         </div>
         <p>
-          Use uma foto real da equipe Coopercica. Ela acompanha o texto no
+          Esta foto aparece quando não há banners ativos. Use uma foto real da equipe Coopercica. Ela acompanha o texto no
           header e aparece abaixo dele no celular. Após o envio, clique em
           Salvar alterações para publicar.
         </p>

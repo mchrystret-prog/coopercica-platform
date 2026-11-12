@@ -15,6 +15,7 @@ import type { Magazine } from "@/types/content";
 import { validatePartners } from "@/lib/home-partners";
 import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
+import { validateCareersBanners } from "@/lib/careers-banners";
 import { CareersHeroEditor } from "./CareersHeroEditor";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 import { validateCmsUpload } from "@/lib/cms-upload-validation";
@@ -86,6 +87,8 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   }
   async function saveAll() {
     if (!data) return;
+    const bannerError = module === "personalization" ? validateCareersBanners(data.settings.careers_hero || {}) : null;
+    if (bannerError) { setTab("careers"); setMsg(bannerError); return; }
     const faqError = module === "personalization" ? validateFaq(data.settings.home_faq || {}) : null;
     if (faqError) { setTab("faq"); setMsg(faqError); return; }
     if (module === "personalization" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
