@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { CareersBannersEditor } from "./CareersBannersEditor";
 import Image from "next/image";
 import { careersDefaults } from "@/lib/careers-content";
@@ -104,22 +105,22 @@ export function CareersHeroEditor({
           </label>
         </div>
         {value.mobileImage ? (
-          <button
+          <Button variant="secondary" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={() => onChange({ mobileImage: "" })}
           >
             Remover versão mobile
-          </button>
+          </Button>
         ) : null}
         {value.image ? (
-          <button
+          <Button variant="secondary" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={() => onChange({ image: "", mobileImage: "" })}
           >
             Remover foto do header
-          </button>
+          </Button>
         ) : null}
       </article>
       <article className="cms-section-card">

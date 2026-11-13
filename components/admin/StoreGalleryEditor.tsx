@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { UploadRequirements } from "./UploadRequirements";
@@ -8,7 +9,7 @@ export function StoreGalleryEditor({ photos, storeNumber, busy, onChange, onUplo
     <label>Adicionar fotos<input type="file" accept="image/png,image/jpeg,image/webp" multiple disabled={busy || photos.length >= 6} onChange={onUpload} /><UploadRequirements rule="store">Até 6 fotos. Salve as alterações da loja para publicar.</UploadRequirements></label>
     {!photos.length ? <p>A galeria usa a imagem original da unidade, quando disponível.</p> : photos.map((src, index) => <div key={src} className="cms-section-card">
       <h3>{index === 0 ? "Foto principal" : `Foto ${index + 1}`}</h3><Image src={src} alt={`Foto ${index + 1} da Loja ${storeNumber}`} width={1600} height={1000} style={{ width: "100%", maxWidth: 360, height: "auto", borderRadius: 16 }} />
-      <div className="form-actions"><button type="button" className="button button-secondary" disabled={busy || index === 0} onClick={() => move(index, -1)}>Mover para cima</button><button type="button" className="button button-secondary" disabled={busy || index === photos.length - 1} onClick={() => move(index, 1)}>Mover para baixo</button><button type="button" className="button button-secondary" disabled={busy} onClick={() => onChange(photos.filter((_, i) => i !== index))}>Remover foto {index + 1}</button></div>
+      <div className="form-actions"><Button variant="secondary" type="button" className="button button-secondary" disabled={busy || index === 0} onClick={() => move(index, -1)}>Mover para cima</Button><Button variant="secondary" type="button" className="button button-secondary" disabled={busy || index === photos.length - 1} onClick={() => move(index, 1)}>Mover para baixo</Button><Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange(photos.filter((_, i) => i !== index))}>Remover foto {index + 1}</Button></div>
     </div>)}
   </section>;
 }

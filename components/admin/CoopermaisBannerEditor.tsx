@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
@@ -26,7 +27,7 @@ export function CoopermaisBannerEditor({ value, busy, onChange, onUpload }: {
       <label>Texto do botão da história<input disabled={busy} maxLength={80} value={value.historyCtaLabel ?? information.ctaLabel} onChange={e => onChange({ historyCtaLabel: e.target.value })} /></label>
       <label>Destino do botão da história<input disabled={busy} maxLength={300} value={value.historyCtaHref ?? information.ctaHref} onChange={e => onChange({ historyCtaHref: e.target.value })} /><small>Use uma página interna, como /quem-somos, ou um endereço HTTPS.</small></label>
     </div>
-    <button type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ ...coopermaisInformationDefaults, infoEnabled: "true" })}>Restaurar informações do modelo</button>
+    <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ ...coopermaisInformationDefaults, infoEnabled: "true" })}>Restaurar informações do modelo</Button>
     <h3>Desktop · faixa horizontal</h3>
     <div className="settings-form">
       <label>Tipo de mídia desktop<select disabled={busy} value={value.mode || "video"} onChange={e => onChange({ mode: e.target.value })}><option value="video">Vídeo</option><option value="image">Imagem</option></select></label>
@@ -48,6 +49,6 @@ export function CoopermaisBannerEditor({ value, busy, onChange, onUpload }: {
       <label>Rótulo do link<input disabled={busy} maxLength={80} value={value.ctaLabel ?? media.ctaLabel} onChange={e => onChange({ ctaLabel: e.target.value })} /></label>
       <label>Destino do banner<input type="url" disabled={busy} value={value.ctaHref ?? media.ctaHref} onChange={e => onChange({ ctaHref: e.target.value })} /></label>
     </div>
-    <button type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ mode: "video", mobileMode: "video", video: "", image: "", mobileVideo: "", mobileImage: "", alt: "", ctaLabel: "", ctaHref: "" })}>Restaurar mídias originais</button>
+    <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ mode: "video", mobileMode: "video", video: "", image: "", mobileVideo: "", mobileImage: "", alt: "", ctaLabel: "", ctaHref: "" })}>Restaurar mídias originais</Button>
   </article></div>;
 }

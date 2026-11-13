@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { customizationModules, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
 import { validateCoopermaisInformation } from "@/lib/coopermais-banner";
@@ -266,7 +267,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           </p>
         </div>
       </header>
-      {config.tabs.length > 1 ? <nav className="cms-custom-tabs" aria-label="Configurações do módulo">{config.tabs.map(item => <button key={item} type="button" data-active={tab === item} aria-pressed={tab === item} onClick={() => setTab(item)}>{item === "sections" && module !== "personalization" ? "Chamada da seção" : customizationTabLabels[item]}</button>)}</nav> : null}
+      {config.tabs.length > 1 ? <nav className="cms-custom-tabs" aria-label="Configurações do módulo">{config.tabs.map(item => <Button variant="ghost" key={item} type="button" data-active={tab === item} aria-pressed={tab === item} onClick={() => setTab(item)}>{item === "sections" && module !== "personalization" ? "Chamada da seção" : customizationTabLabels[item]}</Button>)}</nav> : null}
 
       {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
       {tab === "faq" ? <FaqEditor value={data.settings.home_faq || {}} busy={busy} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, home_faq: { ...current.settings.home_faq, ...patch } } } : current)} /> : null}
@@ -539,9 +540,9 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <span>Revise as alterações antes de publicar.</span>
           )}
         </div>
-        <button className="button" onClick={saveAll} disabled={busy}>
+        <Button variant="primary" type="button" className="button" onClick={saveAll} disabled={busy}>
           {busy ? "Salvando..." : "Salvar alterações"}
-        </button>
+        </Button>
       </div>
     </section>
   );

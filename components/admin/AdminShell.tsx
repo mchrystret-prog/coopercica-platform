@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -255,15 +256,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
               />
             </label>
             {error ? <div className="cms-auth-message">{error}</div> : null}
-            <button className="button" disabled={loading}>
+            <Button variant="primary" type="submit" className="button" disabled={loading}>
               {loading
                 ? "Aguarde..."
                 : requestMode
                   ? "Solicitar acesso"
                   : "Entrar no CMS"}
-            </button>
+            </Button>
           </form>
-          <button
+          <Button variant="ghost"
             className="cms-auth-switch"
             type="button"
             onClick={() => {
@@ -274,7 +275,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             {requestMode
               ? "Já tenho acesso"
               : "Ainda não tenho acesso · Solicitar"}
-          </button>
+          </Button>
           <Link className="cms-auth-back" href="/">
             ← Voltar ao site
           </Link>
@@ -293,7 +294,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <strong>Coopercica</strong>
           <span>CMS</span>
         </Link>
-        <button
+        <Button variant="ghost"
           className="cms-menu-button"
           type="button"
           aria-label="Abrir menu do CMS"
@@ -303,7 +304,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <span />
           <span />
           <span />
-        </button>
+        </Button>
       </header>
       {mobileOpen ? (
         <button
@@ -320,14 +321,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </Link>
             <span className="admin-kicker">CMS · Conteúdo Digital</span>
           </div>
-          <button
+          <Button variant="ghost" tone="inverse"
             className="cms-drawer-close"
             type="button"
             aria-label="Fechar menu"
             onClick={() => setMobileOpen(false)}
           >
             ×
-          </button>
+          </Button>
         </div>
         <nav>
           {nav.map(([href, label]) => {
@@ -347,7 +348,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <div className="cms-user">
           <strong>{member?.name || member?.email}</strong>
           <small>{cmsRoleName(member?.role || "")}</small>
-          <button onClick={logout}>Sair do CMS</button>
+          <Button variant="ghost" tone="inverse" type="button" onClick={logout}>Sair do CMS</Button>
         </div>
       </aside>
       <main>

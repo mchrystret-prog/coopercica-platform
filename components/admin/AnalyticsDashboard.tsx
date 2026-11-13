@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState } from "react";
 import {
   analyticsCsv,
@@ -92,20 +93,20 @@ export function AnalyticsDashboard() {
           </p>
         </div>
         <div className={styles.actions}>
-          <button
+          <Button variant="secondary"
             type="button"
             onClick={() => setRevision((x) => x + 1)}
             disabled={loading}
           >
             Atualizar
-          </button>
-          <button
+          </Button>
+          <Button variant="secondary"
             type="button"
             onClick={() => report && exportReport(report, filters)}
             disabled={!report || loading || !!error}
           >
             Exportar CSV
-          </button>
+          </Button>
         </div>
       </header>
       <div className={styles.filters}>
@@ -165,7 +166,7 @@ export function AnalyticsDashboard() {
         </label>
         <div className={styles.presets}>
           {[7, 30, 90].map((days) => (
-            <button
+            <Button variant="secondary"
               key={days}
               type="button"
               onClick={() =>
@@ -177,7 +178,7 @@ export function AnalyticsDashboard() {
               }
             >
               {days} dias
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -203,14 +204,14 @@ export function AnalyticsDashboard() {
             ["heatmap", "Mapa de calor"],
           ] as const
         ).map(([value, label]) => (
-          <button
+          <Button variant="ghost"
             key={value}
             type="button"
             aria-pressed={tab === value}
             onClick={() => setTab(value)}
           >
             {label}
-          </button>
+          </Button>
         ))}
       </nav>
       {tab === "sessions" && valid ? (

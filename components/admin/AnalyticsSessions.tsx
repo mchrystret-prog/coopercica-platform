@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState } from "react";
 import {
   analyticsRpc,
@@ -296,7 +297,7 @@ export function AnalyticsSessions({
                         </small>
                       </td>
                       <td>
-                        <button
+                        <Button variant="ghost"
                           className={styles.sessionButton}
                           type="button"
                           aria-pressed={selected?.session_id === s.session_id}
@@ -304,7 +305,7 @@ export function AnalyticsSessions({
                           onClick={() => setSelected(s)}
                         >
                           Ver jornada
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -322,7 +323,7 @@ export function AnalyticsSessions({
                   ? `${offset + 1}–${Math.min(offset + 25, report.total)} de ${num(report.total)}`
                   : "0 sessões"}
               </span>
-              <button
+              <Button variant="secondary"
                 type="button"
                 disabled={loading || offset === 0}
                 onClick={() => {
@@ -331,8 +332,8 @@ export function AnalyticsSessions({
                 }}
               >
                 Anterior
-              </button>
-              <button
+              </Button>
+              <Button variant="secondary"
                 type="button"
                 disabled={
                   loading || offset + 25 >= report.total || offset >= 100000
@@ -343,7 +344,7 @@ export function AnalyticsSessions({
                 }}
               >
                 Próxima
-              </button>
+              </Button>
             </div>
           </article>
           {selected ? (
@@ -461,13 +462,13 @@ function SessionJourney({
             {deviceName(session.device)} · {clock(session.started_at)}
           </p>
         </div>
-        <button
+        <Button variant="ghost"
           type="button"
           className={styles.sessionButton}
           onClick={onClose}
         >
           Fechar jornada
-        </button>
+        </Button>
       </div>
       <p>
         Reprodução dos eventos coletados, sem gravação visual da tela. Dados
@@ -482,7 +483,7 @@ function SessionJourney({
       ) : events.length ? (
         <>
           <div className={styles.player}>
-            <button
+            <Button variant="secondary"
               type="button"
               disabled={index === 0}
               onClick={() => {
@@ -491,8 +492,8 @@ function SessionJourney({
               }}
             >
               ← Anterior
-            </button>
-            <button
+            </Button>
+            <Button variant="secondary"
               type="button"
               onClick={() => {
                 if (last) {
@@ -502,8 +503,8 @@ function SessionJourney({
               }}
             >
               {playing && !last ? "Pausar" : "Reproduzir eventos"}
-            </button>
-            <button
+            </Button>
+            <Button variant="secondary"
               type="button"
               disabled={last}
               onClick={() => {
@@ -512,7 +513,7 @@ function SessionJourney({
               }}
             >
               Próximo →
-            </button>
+            </Button>
             <span>
               {index + 1} / {events.length}
             </span>
@@ -553,13 +554,13 @@ function SessionJourney({
                 {current.event_type === "engagement" ? " s" : "% da página"}
               </span>
             ) : null}
-            <button
+            <Button variant="secondary"
               type="button"
               className={styles.sessionButton}
               onClick={() => onMap(current.path, session.device)}
             >
               Ver mapa desta página
-            </button>
+            </Button>
           </div>
           <details>
             <summary>Ver lista completa de eventos</summary>
@@ -569,7 +570,7 @@ function SessionJourney({
                   key={e.event_id}
                   aria-current={i === index ? "step" : undefined}
                 >
-                  <button
+                  <Button variant="secondary"
                     type="button"
                     onClick={() => {
                       setPlaying(false);
@@ -581,7 +582,7 @@ function SessionJourney({
                       {e.path} · {clock(e.at)}
                       {e.label ? ` · ${e.label}` : ""}
                     </small>
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ol>

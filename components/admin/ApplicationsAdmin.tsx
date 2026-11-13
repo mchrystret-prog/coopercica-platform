@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { SUPABASE_URL } from "@/lib/leaflets";
@@ -214,15 +215,15 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               placeholder="Nome ou e-mail"
             />
           </label>
-          <button className="cms-edit-one">Buscar</button>
+          <Button variant="secondary" type="submit" className="cms-edit-one">Buscar</Button>
         </form>
-        <button
+        <Button variant="secondary" type="button"
           className="button button-secondary"
           disabled={loading}
           onClick={() => setRevision((n) => n + 1)}
         >
           Atualizar
-        </button>
+        </Button>
       </div>
       {error ? (
         <p className={styles.error} role="alert">
@@ -245,13 +246,13 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               <h2>{selected.name}</h2>
               <p>{selected.site_jobs?.title}</p>
             </div>
-            <button
+            <Button variant="ghost" type="button"
               className="cms-edit-one"
               disabled={busy}
               onClick={() => setSelected(null)}
             >
               Fechar detalhes
-            </button>
+            </Button>
           </div>
           <dl>
             <div>
@@ -281,13 +282,13 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               <dd>{selected.message || "Não informada"}</dd>
             </div>
           </dl>
-          <button
+          <Button variant="secondary" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={download}
           >
             {busy ? "Aguarde…" : "Baixar currículo PDF"}
-          </button>
+          </Button>
           <form
             className={styles.noteForm}
             key={`${selected.id}:${selected.updated_at || selected.status}`}
@@ -319,9 +320,9 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               />
             </label>
             <div>
-              <button className="button" disabled={busy}>
+              <Button variant="primary" type="submit" className="button" disabled={busy}>
                 {busy ? "Salvando…" : "Salvar acompanhamento"}
-              </button>
+              </Button>
             </div>
           </form>
         </article>
@@ -345,7 +346,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               </p>
             </div>
             <div className={styles.actions}>
-              <button
+              <Button variant="secondary" type="button"
                 disabled={busy}
                 onClick={() => {
                   setSelected(c);
@@ -353,7 +354,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
                 }}
               >
                 Ver candidatura
-              </button>
+              </Button>
             </div>
           </article>
         ))}
@@ -369,7 +370,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
             ? `${page * 25 + 1}–${Math.min((page + 1) * 25, total)} de ${total} candidaturas`
             : "0 candidaturas"}
         </span>
-        <button
+        <Button variant="secondary" type="button"
           disabled={loading || page === 0}
           onClick={() => {
             setPage((n) => n - 1);
@@ -377,8 +378,8 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           }}
         >
           Anterior
-        </button>
-        <button
+        </Button>
+        <Button variant="secondary" type="button"
           disabled={loading || (page + 1) * 25 >= total}
           onClick={() => {
             setPage((n) => n + 1);
@@ -386,7 +387,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           }}
         >
           Próxima
-        </button>
+        </Button>
       </div>
     </section>
   );

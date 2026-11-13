@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import{FormEvent,useEffect,useState,type ChangeEvent}from"react";import{SUPABASE_PUBLISHABLE_KEY,SUPABASE_URL}from"@/lib/leaflets";import{LeafletMissingImages}from"./LeafletMissingImages";
 import { PublicationPdfField } from "./PublicationPdfField";
 import { StoreGalleryEditor } from "./StoreGalleryEditor";
@@ -58,4 +59,4 @@ return <form className="settings-form" onSubmit={submit}>{fields[kind].map(f=><l
 {kind==="leaflet"?<label>Status<select name="status" defaultValue={String(data.status||"draft")}><option value="draft">Rascunho</option><option value="published">Publicado</option></select><small>Publicado respeita a data de exibição e o fim da vigência. Imagens pendentes podem ser adicionadas abaixo.</small></label>:null}
 {kind==="leaflet"||kind==="magazine"?<PublicationPdfField kind={kind} id={id} currentUrl={String(data.pdf_url||"")}/>:null}
 {kind==="store"?<StoreGalleryEditor photos={photos} storeNumber={String(data.store_number)} busy={saving||uploading} onUpload={uploadPhotos} onChange={next=>{setPhotos(next);setPhotosDirty(true);}}/>:null}
-<div className="form-actions"><button className="button" disabled={saving||uploading}>{saving?"Salvando...":"Salvar alterações"}</button></div>{msg?<div className="form-status" role="status"><strong>{msg}</strong></div>:null}{kind==="leaflet"?<LeafletMissingImages leafletId={id}/>:null}</form>}
+<div className="form-actions"><Button variant="primary" type="submit" className="button" disabled={saving||uploading}>{saving?"Salvando...":"Salvar alterações"}</Button></div>{msg?<div className="form-status" role="status"><strong>{msg}</strong></div>:null}{kind==="leaflet"?<LeafletMissingImages leafletId={id}/>:null}</form>}

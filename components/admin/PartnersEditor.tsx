@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { partnerRows, type Partner } from "@/lib/home-partners";
 export function PartnersEditor({ value, busy, onChange }: { value: Record<string, string>; busy: boolean; onChange: (patch: Record<string, string>) => void }) {
   const rows = partnerRows(value);
@@ -17,9 +18,9 @@ export function PartnersEditor({ value, busy, onChange }: { value: Record<string
       <label>Cor<select value={item.theme} onChange={e => patch(index, { theme: e.target.value as Partner["theme"] })}><option value="green">Verde</option><option value="red">Vermelho</option></select></label>
       <label>Ilustração<select value={item.icon} onChange={e => patch(index, { icon: e.target.value as Partner["icon"] })}><option value="bag">Compras / Delivery</option><option value="education">Educação</option><option value="partnership">Parceria</option></select></label>
       <label>Status<select value={item.enabled ? "true" : "false"} onChange={e => patch(index, { enabled: e.target.value === "true" })}><option value="true">Publicado</option><option value="false">Rascunho</option></select></label>
-      <div className="form-span-full"><button type="button" disabled={index === 0} aria-label={`Mover parceiro ${index + 1} para cima`} onClick={() => { const next = [...rows]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; update(next); }}>Subir</button> <button type="button" disabled={index === rows.length - 1} aria-label={`Mover parceiro ${index + 1} para baixo`} onClick={() => { const next = [...rows]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; update(next); }}>Descer</button> <button type="button" aria-label={`Remover parceiro ${index + 1}`} onClick={() => update(rows.filter((_, i) => i !== index))}>Remover</button></div>
+      <div className="form-span-full"><Button variant="secondary" type="button" disabled={index === 0} aria-label={`Mover parceiro ${index + 1} para cima`} onClick={() => { const next = [...rows]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; update(next); }}>Subir</Button> <Button variant="secondary" type="button" disabled={index === rows.length - 1} aria-label={`Mover parceiro ${index + 1} para baixo`} onClick={() => { const next = [...rows]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; update(next); }}>Descer</Button> <Button variant="secondary" type="button" aria-label={`Remover parceiro ${index + 1}`} onClick={() => update(rows.filter((_, i) => i !== index))}>Remover</Button></div>
     </div></fieldset>)}
-    <button type="button" disabled={busy || rows.length >= 20} onClick={() => update([...rows, { title: "", description: "", href: "", theme: "green", icon: "partnership", enabled: false }])}>+ Adicionar parceiro</button>
+    <Button variant="secondary" type="button" disabled={busy || rows.length >= 20} onClick={() => update([...rows, { title: "", description: "", href: "", theme: "green", icon: "partnership", enabled: false }])}>+ Adicionar parceiro</Button>
     <p>Até 20 parceiros. Salve as alterações para publicar.</p>
   </div>;
 }

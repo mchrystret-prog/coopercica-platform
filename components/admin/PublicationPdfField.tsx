@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import { useRef, useState } from "react";
 import { uploadPublicationPdf } from "@/lib/publication-upload";
@@ -20,5 +21,5 @@ export function PublicationPdfField({ kind, id, currentUrl }: { kind: "leaflet" 
     } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível salvar o PDF."); }
     finally { setBusy(false); }
   }
-  return <fieldset className="form-span-full" disabled={busy}><legend>PDF para folhear</legend><label>Enviar ou substituir PDF<input ref={input} type="file" accept="application/pdf,.pdf" /><UploadRequirements rule="pdf">O envio é salvo separadamente dos demais campos.</UploadRequirements></label><button type="button" className="button" onClick={upload}>{busy ? "Enviando…" : "Salvar PDF"}</button>{url && url !== "#" ? <a href={url} target="_blank" rel="noopener noreferrer">Abrir PDF atual</a> : null}{message ? <p role="status">{message}</p> : null}</fieldset>;
+  return <fieldset className="form-span-full" disabled={busy}><legend>PDF para folhear</legend><label>Enviar ou substituir PDF<input ref={input} type="file" accept="application/pdf,.pdf" /><UploadRequirements rule="pdf">O envio é salvo separadamente dos demais campos.</UploadRequirements></label><Button variant="primary" type="button" className="button" onClick={upload}>{busy ? "Enviando…" : "Salvar PDF"}</Button>{url && url !== "#" ? <a href={url} target="_blank" rel="noopener noreferrer">Abrir PDF atual</a> : null}{message ? <p role="status">{message}</p> : null}</fieldset>;
 }

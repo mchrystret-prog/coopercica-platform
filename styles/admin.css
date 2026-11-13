@@ -307,3 +307,139 @@
 .admin-shell input[type="checkbox"]:disabled {
   cursor: not-allowed;
 }
+
+/* CMS actions share the DS variants, even inside legacy module layouts. */
+:is(.admin-shell, .cms-auth) :is(.ds-button, .button) {
+  --cms-button-bg: var(--brand-green-900);
+  --cms-button-text: var(--text-inverse);
+  --cms-button-border: transparent;
+  --cms-button-hover-bg: var(--brand-green-700);
+  --cms-button-hover-text: var(--text-inverse);
+  --cms-button-active-bg: var(--brand-green-900);
+  --cms-button-active-text: var(--text-inverse);
+  min-height: var(--control-height);
+  height: auto;
+  align-self: start;
+  justify-self: start;
+  max-width: 100%;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--cms-button-border);
+  border-radius: var(--radius-pill);
+  background: var(--cms-button-bg);
+  color: var(--cms-button-text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: normal;
+  opacity: 1;
+  cursor: pointer;
+  box-shadow: none;
+}
+:is(.admin-shell, .cms-auth) :is(.ds-button--secondary, .button-secondary) {
+  --cms-button-bg: transparent;
+  --cms-button-text: var(--text-heading);
+  --cms-button-border: var(--brand-green-900);
+  --cms-button-hover-bg: var(--brand-green-900);
+  --cms-button-hover-text: var(--text-inverse);
+  --cms-button-active-bg: var(--surface-muted);
+  --cms-button-active-text: var(--text-heading);
+}
+:is(.admin-shell, .cms-auth) .ds-button--ghost {
+  --cms-button-bg: transparent;
+  --cms-button-text: var(--text-heading);
+  --cms-button-border: transparent;
+  --cms-button-hover-bg: var(--surface-soft);
+  --cms-button-hover-text: var(--text-heading);
+  --cms-button-active-bg: var(--surface-muted);
+  --cms-button-active-text: var(--text-heading);
+}
+.admin-shell .ds-button--inverse {
+  --cms-button-text: var(--text-inverse);
+  --cms-button-hover-bg: rgb(255 255 255 / 12%);
+  --cms-button-hover-text: var(--text-inverse);
+  --cms-button-active-bg: rgb(255 255 255 / 20%);
+  --cms-button-active-text: var(--text-inverse);
+  --focus-color: var(--brand-lime-500);
+}
+:is(.admin-shell, .cms-auth) :is(.ds-button, .button):is([aria-pressed="true"], [data-active="true"]) {
+  --cms-button-bg: var(--brand-green-900);
+  --cms-button-text: var(--text-inverse);
+  --cms-button-hover-bg: var(--brand-green-700);
+  --cms-button-hover-text: var(--text-inverse);
+}
+:is(.admin-shell, .cms-auth) :is(.ds-button, .button):hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--cms-button-hover-bg);
+  color: var(--cms-button-hover-text);
+  border-color: var(--cms-button-border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+:is(.admin-shell, .cms-auth) .ds-button--ghost:hover {
+  transform: none;
+  box-shadow: none;
+}
+:is(.admin-shell, .cms-auth) :is(.ds-button, .button):active:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--cms-button-active-bg);
+  color: var(--cms-button-active-text);
+  transform: none;
+  box-shadow: none;
+}
+:is(.admin-shell, .cms-auth) :is(.ds-button, .button):focus-visible {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 2px var(--surface-card);
+}
+:is(.admin-shell, .cms-auth) :is(.ds-button, .button):is(:disabled, [aria-disabled="true"]) {
+  background: var(--cms-button-bg);
+  color: var(--cms-button-text);
+  opacity: .55;
+  cursor: not-allowed;
+  pointer-events: auto;
+  transform: none;
+  box-shadow: none;
+}
+.admin-shell .cms-menu-button.ds-button {
+  display: grid;
+  width: 48px;
+  padding: var(--space-3);
+}
+.admin-shell .cms-drawer-close.ds-button {
+  display: grid;
+  width: 48px;
+  flex-basis: 48px;
+  padding: var(--space-2);
+  font-size: var(--font-size-h3);
+}
+.admin-shell .cms-drawer-backdrop:focus-visible {
+  outline: 3px solid var(--brand-lime-500);
+  outline-offset: -4px;
+}
+.admin-shell input[type="file"]::file-selector-button {
+  min-height: 44px;
+  border: 1px solid var(--brand-green-900);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-heading);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+.admin-shell input[type="file"]:enabled::file-selector-button:hover {
+  background: var(--brand-green-900);
+  color: var(--text-inverse);
+}
+.admin-shell input[type="file"]:enabled::file-selector-button:active {
+  background: var(--surface-muted);
+  color: var(--text-heading);
+}
+.admin-shell input[type="file"]:disabled::file-selector-button {
+  opacity: .55;
+  cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.admin-shell, .cms-auth) :is(.ds-button, .button) { transition: none; }
+  :is(.admin-shell, .cms-auth) :is(.ds-button, .button):hover { transform: none; }
+}
+
+.admin-shell .cms-icon-button.ds-button { width:48px; min-width:48px; padding:var(--space-2); }

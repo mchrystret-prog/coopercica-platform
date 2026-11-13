@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useId, useRef, useState, type ClipboardEvent, type DragEvent } from "react";
 import { answerLink, answerSegments, answerText, type AnswerSegment } from "@/lib/faq-rich-text";
 import styles from "./FaqAnswerEditor.module.css";
@@ -101,15 +102,15 @@ export function FaqAnswerEditor({ value, format, disabled, onChange }: { value: 
   return <div className={styles.wrapper}>
     <span id={id} className={styles.label}>Resposta</span>
     <div className={styles.toolbar} role="group" aria-label="Formatar resposta">
-      <button type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={() => mark("strong")}>Negrito</button>
-      <button type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={() => mark("em")}>Itálico</button>
-      <button type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={editLink}>Inserir / editar link</button>
-      <button type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={unlink}>Remover link</button>
+      <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={() => mark("strong")}>Negrito</Button>
+      <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={() => mark("em")}>Itálico</Button>
+      <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={editLink}>Inserir / editar link</Button>
+      <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={unlink}>Remover link</Button>
     </div>
     {linkForm ? <div className={styles.linkForm}>
       <label>Texto do link<input value={label} maxLength={200} disabled={disabled} onChange={e => setLabel(e.target.value)} /></label>
       <label>Destino do link<input autoFocus value={href} maxLength={1000} disabled={disabled} placeholder="/#historia, /lojas ou https://..." onChange={e => setHref(e.target.value)} /></label>
-      <div className={styles.actions}><button type="button" disabled={disabled} onClick={applyLink}>Aplicar link</button><button type="button" disabled={disabled} onClick={() => { setLinkForm(false); setMessage(""); editor.current?.focus(); }}>Cancelar</button></div>
+      <div className={styles.actions}><Button variant="secondary" type="button" disabled={disabled} onClick={applyLink}>Aplicar link</Button><Button variant="ghost" type="button" disabled={disabled} onClick={() => { setLinkForm(false); setMessage(""); editor.current?.focus(); }}>Cancelar</Button></div>
     </div> : null}
     <div ref={editor} className={styles.editor} contentEditable={!disabled} suppressContentEditableWarning role="textbox" aria-multiline="true" aria-labelledby={id} aria-disabled={disabled} tabIndex={disabled ? -1 : 0} onInput={emit} onPaste={paste} onDrop={drop} onClick={event => { if ((event.target as HTMLElement).closest("a")) event.preventDefault(); }} />
     <small>Selecione um texto para inserir um link. Sites externos abrem em outra aba. {answerText(value, format).length}/4000 caracteres.</small>

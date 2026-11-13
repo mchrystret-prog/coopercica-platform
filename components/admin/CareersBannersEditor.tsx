@@ -37,13 +37,13 @@ export function CareersBannersEditor({ value, busy, onChange, onUpload }: {
           <label>Destino ao clicar<input value={value[field("href")] ?? "#oportunidades"} onChange={event => onChange({ [field("href")]: event.target.value })} placeholder="#oportunidades ou https://..." /></label>
           <label><input type="checkbox" checked={banner.active} onChange={event => onChange({ [field("active")]: String(event.target.checked) })} /> Banner ativo</label>
         </div>
-        <button type="button" disabled={busy || index === 0} onClick={() => move(index, -1)}>Mover para cima</button>{" "}
-        <button type="button" disabled={busy || index === ids.length - 1} onClick={() => move(index, 1)}>Mover para baixo</button>{" "}
-        <button type="button" onClick={() => onChange({ bannerOrder: JSON.stringify(ids.filter(id => id !== banner.id)), ...Object.fromEntries(["image", "mobileImage", "title", "href", "active"].map(name => [field(name), ""])) })}>Remover banner</button>
+        <Button variant="secondary" type="button" disabled={busy || index === 0} onClick={() => move(index, -1)}>Mover para cima</Button>{" "}
+        <Button variant="secondary" type="button" disabled={busy || index === ids.length - 1} onClick={() => move(index, 1)}>Mover para baixo</Button>{" "}
+        <Button variant="secondary" type="button" onClick={() => onChange({ bannerOrder: JSON.stringify(ids.filter(id => id !== banner.id)), ...Object.fromEntries(["image", "mobileImage", "title", "href", "active"].map(name => [field(name), ""])) })}>Remover banner</Button>
       </fieldset>;
     })}
-    <button type="button" className="button button-secondary" disabled={busy || ids.length >= 12} onClick={() => {
+    <Button variant="secondary" type="button" className="button button-secondary" disabled={busy || ids.length >= 12} onClick={() => {
       const id = crypto.randomUUID(); onChange({ bannerOrder: JSON.stringify([...ids, id]), [`banner_${id}_href`]: "#oportunidades", [`banner_${id}_active`]: "true" });
-    }}>Adicionar depoimento</button>
+    }}>Adicionar depoimento</Button>
   </article>;
 }

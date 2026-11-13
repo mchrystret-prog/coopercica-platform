@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
@@ -542,9 +543,9 @@ export function LeafletAdmin({
             ) : null}
           </label>
           <div className="form-actions">
-            <button className="button" disabled={loading} aria-busy={loading}>
+            <Button variant="primary" type="submit" className="button" disabled={loading} aria-busy={loading}>
               {loading ? "Importando folheto..." : "Criar folheto"}
-            </button>
+            </Button>
           </div>
         </fieldset>
       </form>

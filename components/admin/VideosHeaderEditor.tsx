@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
@@ -26,7 +27,7 @@ export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
       <div className="form-span-full"><Image src={hero.image} alt={hero.alt} width={2048} height={522} style={{ width: '100%', height: 'auto' }} /></div>
       {hero.mobileImage ? <div className="form-span-full"><p>Prévia da versão para celular</p><Image src={hero.mobileImage} alt={hero.alt} width={1080} height={810} style={{ width: 'min(100%, 360px)', height: 'auto' }} /></div> : null}
     </div>
-    {value.mobileImage ? <button className="button button-secondary" disabled={busy} onClick={() => onChange({ mobileImage: '' })}>Remover versão para celular</button> : null}
-    {value.image ? <button className="button button-secondary" disabled={busy} onClick={() => onChange({ image: '', mobileImage: '', alt: '' })}>Restaurar arte original</button> : null}
+    {value.mobileImage ? <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ mobileImage: '' })}>Remover versão para celular</Button> : null}
+    {value.image ? <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ image: '', mobileImage: '', alt: '' })}>Restaurar arte original</Button> : null}
   </article></div>;
 }

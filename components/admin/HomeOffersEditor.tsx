@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { useState } from "react";
 import { offerFields, offersConfig, publicHttps, type OffersChannel } from "@/lib/home-offers";
 export function HomeOffersEditor({ settings, busy, onChange }: {
@@ -38,7 +39,7 @@ export function HomeOffersEditor({ settings, busy, onChange }: {
           <label>Autenticação<select disabled={busy} value={value.useToken || "false"} onChange={e => patch({ useToken: e.target.value })}><option value="false">API pública</option><option value="true">Bearer token no servidor</option></select><small>O T.I cadastra {channel === "delivery" ? "OFFERS_DELIVERY_TOKEN" : "OFFERS_PHARMACY_TOKEN"} nas variáveis do servidor. Nunca use NEXT_PUBLIC_ para esse token.</small></label>
         </div>
         <details><summary>Correspondência dos campos da API</summary><p>Use os nomes ou caminhos reais da resposta, como prices.regular. Campos opcionais podem ficar vazios. Nome e preço regular são obrigatórios. Valores numéricos devem vir em reais. Mapeie “Preço Coopermais” para o preço exclusivo informado pela API: um valor válido exibe automaticamente o selo e o preço regular abaixo, como na folheteria. Sem esse preço, o card mantém a oferta comum, sem selo Coopermais.</p><div className="settings-form">{Object.entries(offerFields).map(([field, label]) => <label key={field}>{label}<input disabled={busy} value={value[`field_${field}`] ?? field} onChange={e => patch({ [`field_${field}`]: e.target.value })} /></label>)}</div></details>
-        <button type="button" className="button button-secondary" disabled={busy || testing !== null} onClick={() => test(channel)}>{testing === channel ? "Testando…" : "Testar configuração salva"}</button>
+        <Button variant="secondary" type="button" className="button button-secondary" disabled={busy || testing !== null} onClick={() => test(channel)}>{testing === channel ? "Testando…" : "Testar configuração salva"}</Button>
         {messages[channel] ? <p role="status">{messages[channel]}</p> : null}
       </article>;
     })}

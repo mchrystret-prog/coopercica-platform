@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { useState } from "react";
 import { ContentManager } from "./ContentManager";
 import { LeafletCreate } from "./LeafletCreate";
@@ -9,7 +10,7 @@ export function LeafletWorkspace() {
   return (
     <>
       <div className="cms-custom-tabs">
-        <button
+        <Button variant="ghost"
           type="button"
           data-active={tab === "leaflets"}
           onClick={() => {
@@ -18,14 +19,14 @@ export function LeafletWorkspace() {
           }}
         >
           Folhetos
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
           data-active={tab === "assets"}
           onClick={() => setTab("assets")}
         >
           Fundos e selos
-        </button>
+        </Button>
       </div>
       <div hidden={tab !== "leaflets"}>
         <ContentManager
