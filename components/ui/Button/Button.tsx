@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import { Icon } from "../Icon";
 
-type Shared = { variant?: "primary" | "secondary" | "ghost"; tone?: "default" | "inverse"; children: ReactNode; icon?: ReactNode | false; disabled?: boolean; className?: string };
+type Shared = { variant?: "primary" | "secondary" | "ghost" | "danger"; tone?: "default" | "inverse"; children: ReactNode; icon?: ReactNode | false; disabled?: boolean; className?: string };
 type LinkProps = Shared & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"> & { href: string; external?: boolean };
 type ActionProps = Shared & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> & { href?: never; external?: never };
 export function Button(props: LinkProps | ActionProps) {

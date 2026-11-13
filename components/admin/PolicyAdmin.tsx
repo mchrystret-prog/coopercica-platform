@@ -1,4 +1,7 @@
 "use client";
+import { cmsUploadFetch, reportCmsUploadError } from "@/lib/cms-upload-feedback";
+import { CmsFileInput } from "./CmsFileInput";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
@@ -16,7 +19,7 @@ export function PolicyAdmin() {
   const [items, setItems] = useState<SitePolicy[]>([]),
     [editing, setEditing] = useState<SitePolicy | null>(null),
     [busy, setBusy] = useState(false),
-    [msg, setMsg] = useState("");
+    [msg, setMsg, msgKind] = useCmsMessage("");
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
   const load = useCallback(async () => {
     const r = await fetch(
@@ -46,7 +49,7 @@ export function PolicyAdmin() {
         await validateCmsUpload(file, "pdf");
         const slug = slugify(String(fd.get("title")));
         const path = `policies/${slug}-${Date.now()}.pdf`;
-        const up = await fetch(
+        const up = await cmsUploadFetch(
           `${SUPABASE_URL}/storage/v1/object/site-content/${path}`,
           {
             method: "POST",
@@ -62,7 +65,7 @@ export function PolicyAdmin() {
         if (!up.ok) throw new Error("Não foi possível enviar o PDF.");
         fileUrl = `${SUPABASE_URL}/storage/v1/object/public/site-content/${path}`;
       }
-      if (!fileUrl) throw new Error("Selecione um PDF.");
+      if (!fileUrl) { reportCmsUploadError(form.elements.namedItem("file") as HTMLInputElement, "Selecione um PDF antes de publicar."); throw new Error("Selecione um PDF antes de publicar."); }
       const title = String(fd.get("title"));
       const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_save_policy`, {
         method: "POST",
@@ -82,7 +85,7 @@ export function PolicyAdmin() {
         }),
       });
       if (!r.ok) throw new Error(await r.text());
-      setMsg(editing ? "Documento atualizado." : "Documento publicado.");
+      setMsg(editing ? "Documento atualizado." : "Documento publicado.", "success");
       setEditing(null);
       form.reset();
       await load();
@@ -92,7 +95,7 @@ export function PolicyAdmin() {
       setBusy(false);
     }
   }
-  async function remove(id: string) {
+  async function remove(id: string) {try {
     if (!confirm("Excluir este documento do site?")) return;
     const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_delete_policy`, {
       method: "POST",
@@ -106,8 +109,8 @@ export function PolicyAdmin() {
     if (r.ok) {
       if (editing?.id === id) setEditing(null);
       await load();
-    }
-  }
+    } else { setMsg("Não foi possível excluir o documento. Tente novamente."); }
+  } catch (cause) { setMsg(cause instanceof Error ? cause.message : "Não foi possível concluir a exclusão. Tente novamente."); }}
   return (
     <div className="cms-policy-manager">
       <section className="cms-content-section">
@@ -142,7 +145,7 @@ export function PolicyAdmin() {
                   >
                     Editar
                   </Button>
-                  <Button variant="secondary" type="button"
+                  <Button variant="danger" type="button"
                     className="cms-delete-one"
                     onClick={() => remove(p.id)}
                   >
@@ -210,7 +213,7 @@ export function PolicyAdmin() {
           </label>
           <label className="form-span-full">
             Arquivo PDF
-            <input name="file" type="file" accept="application/pdf,.pdf" />
+            <CmsFileInput name="file" type="file" accept="application/pdf,.pdf" />
             <UploadRequirements rule="pdf">
               {editing
                 ? "Envie um novo PDF somente se quiser substituir o documento atual."
@@ -235,7 +238,7 @@ export function PolicyAdmin() {
             </Button>
           </div>
         </form>
-        {msg ? <div className="form-status">{msg}</div> : null}
+        {msg ? <div className="form-status"><CmsFeedback message={msg} kind={msgKind} /></div> : null}
       </section>
     </div>
   );

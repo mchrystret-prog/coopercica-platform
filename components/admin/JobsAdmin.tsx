@@ -1,4 +1,5 @@
 "use client";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -26,8 +27,8 @@ export function JobsAdmin() {
     [showForm, setShowForm] = useState(false),
     [loading, setLoading] = useState(true),
     [busy, setBusy] = useState(false),
-    [message, setMessage] = useState(""),
-    [error, setError] = useState(""),
+    [message, setMessage, messageKind] = useCmsMessage(""),
+    [error, setError, errorKind] = useCmsMessage(""),
     [revision, setRevision] = useState(0);
   const formSection = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -54,7 +55,7 @@ export function JobsAdmin() {
     }
     void load();
     return () => c.abort();
-  }, [page, status, revision]);
+  }, [page, status, revision, setError]);
   function edit(job: Job | null) {
     setEditing(job);
     setShowForm(true);
@@ -109,7 +110,7 @@ export function JobsAdmin() {
       if (!rows.length)
         throw new Error("A vaga não foi alterada. Verifique seu acesso.");
       setMessage(
-        "Vaga salva. Publicadas aparecem no portal enquanto estiverem dentro do prazo.",
+        "Vaga salva. Publicadas aparecem no portal enquanto estiverem dentro do prazo.", "success",
       );
       setEditing(null);
       setShowForm(false);
@@ -166,12 +167,12 @@ export function JobsAdmin() {
       <RecruitmentNav />
       {message ? (
         <p className="form-status" role="status">
-          {message}
+          <CmsFeedback message={message} kind={messageKind} />
         </p>
       ) : null}
       {error ? (
         <p className={styles.error} role="alert">
-          {error}
+          <CmsFeedback message={error} kind={errorKind} />
         </p>
       ) : null}
       <div className={styles.filters}>

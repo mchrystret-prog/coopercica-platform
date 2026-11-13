@@ -1,4 +1,5 @@
 "use client";
+import { CmsFileInput } from "./CmsFileInput";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button/Button";
 import styles from "./CareersBannersEditor.module.css";
@@ -30,16 +31,16 @@ export function CareersBannersEditor({ value, busy, onChange, onUpload }: {
         <legend>Depoimento {index + 1}</legend>
         <div className="settings-form">
           <label>Descrição e identificação do depoimento<input maxLength={500} value={value[field("title")] || ""} onChange={event => onChange({ [field("title")]: event.target.value })} placeholder="Nome, cargo e depoimento do colaborador" /></label>
-          <label>Banner desktop<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => onUpload(event, field("image"))} /><UploadRequirements rule="careersBannerDesktop" /></label>
+          <label>Banner desktop<CmsFileInput type="file" accept="image/jpeg,image/png,image/webp" onChange={event => onUpload(event, field("image"))} /><UploadRequirements rule="careersBannerDesktop" /></label>
           {banner.image ? <Image src={banner.image} alt={banner.title || "Prévia do depoimento"} width={3384} height={864} style={{ width: "100%", height: "auto" }} /> : null}
-          <label>Banner mobile (opcional)<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => onUpload(event, field("mobileImage"))} /><UploadRequirements rule="careersBannerMobile">Sem versão mobile, o banner horizontal será exibido inteiro. Uma arte vertical melhora a leitura no celular.</UploadRequirements></label>
-          {banner.mobileImage ? <div className={`form-span-full ${styles.mobilePreview}`}><Image src={banner.mobileImage} alt="Prévia mobile" width={1080} height={1350} style={{ maxWidth: 240, width: "100%", height: "auto" }} /><Button variant="secondary" disabled={busy} onClick={() => onChange({ [field("mobileImage")]: "" })}>Remover versão mobile</Button></div> : null}
+          <label>Banner mobile (opcional)<CmsFileInput type="file" accept="image/jpeg,image/png,image/webp" onChange={event => onUpload(event, field("mobileImage"))} /><UploadRequirements rule="careersBannerMobile">Sem versão mobile, o banner horizontal será exibido inteiro. Uma arte vertical melhora a leitura no celular.</UploadRequirements></label>
+          {banner.mobileImage ? <div className={`form-span-full ${styles.mobilePreview}`}><Image src={banner.mobileImage} alt="Prévia mobile" width={1080} height={1350} style={{ maxWidth: 240, width: "100%", height: "auto" }} /><Button variant="danger" disabled={busy} onClick={() => onChange({ [field("mobileImage")]: "" })}>Remover versão mobile</Button></div> : null}
           <label>Destino ao clicar<input value={value[field("href")] ?? "#oportunidades"} onChange={event => onChange({ [field("href")]: event.target.value })} placeholder="#oportunidades ou https://..." /></label>
           <label><input type="checkbox" checked={banner.active} onChange={event => onChange({ [field("active")]: String(event.target.checked) })} /> Banner ativo</label>
         </div>
         <Button variant="secondary" type="button" disabled={busy || index === 0} onClick={() => move(index, -1)}>Mover para cima</Button>{" "}
         <Button variant="secondary" type="button" disabled={busy || index === ids.length - 1} onClick={() => move(index, 1)}>Mover para baixo</Button>{" "}
-        <Button variant="secondary" type="button" onClick={() => onChange({ bannerOrder: JSON.stringify(ids.filter(id => id !== banner.id)), ...Object.fromEntries(["image", "mobileImage", "title", "href", "active"].map(name => [field(name), ""])) })}>Remover banner</Button>
+        <Button variant="danger" type="button" onClick={() => onChange({ bannerOrder: JSON.stringify(ids.filter(id => id !== banner.id)), ...Object.fromEntries(["image", "mobileImage", "title", "href", "active"].map(name => [field(name), ""])) })}>Remover banner</Button>
       </fieldset>;
     })}
     <Button variant="secondary" type="button" className="button button-secondary" disabled={busy || ids.length >= 12} onClick={() => {

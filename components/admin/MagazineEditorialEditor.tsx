@@ -1,4 +1,5 @@
 "use client";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useRef, useState } from "react";
 import type { Magazine } from "@/types/content";
@@ -9,7 +10,7 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
   const [editionId, setEditionId] = useState("");
   const [reading, setReading] = useState(false);
   const [status, setStatus] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError, errorKind] = useCmsMessage("");
   const [suggestion, setSuggestion] = useState<{ id: string; content: MagazinePdfSuggestion } | null>(null);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => { controller.current?.abort(); controller.current = null; }, []);
@@ -57,7 +58,7 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
         <p>Identifica quadros e títulos na camada de texto do PDF, sem enviar o arquivo a um serviço de IA. Revise a sugestão antes de aplicar. Até 15 MB e 60 páginas.</p>
         {!edition.pdfHref && <p>Cadastre um PDF válido desta edição no menu Revistas para usar a leitura automática.</p>}
         <p role="status" aria-live="polite">{status}</p>
-        {error && <p role="alert">{error}</p>}
+        {error && <p role="alert"><CmsFeedback message={error} kind={errorKind} /></p>}
         {suggestion?.id === edition.id && <section aria-label="Sugestão extraída do PDF">
           <h3>Revisar sugestão</h3>
           <p>{suggestion.content.summary}</p>
@@ -75,7 +76,7 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
       {editorial.highlights.map((item, index) => <div className="form-span-full settings-form" key={index}>
         <label>Categoria do destaque {index + 1}<input maxLength={60} value={item.label} placeholder="Ex.: Receitas" onChange={event => update({ highlights: editorial.highlights.map((row, i) => i === index ? { ...row, label: event.target.value } : row) })} /></label>
         <label>Conteúdo do destaque {index + 1}<input maxLength={200} value={item.text} placeholder="Título ou assunto da matéria" onChange={event => update({ highlights: editorial.highlights.map((row, i) => i === index ? { ...row, text: event.target.value } : row) })} /></label>
-        <Button variant="secondary" type="button" aria-label={`Remover destaque ${index + 1}`} onClick={() => update({ highlights: editorial.highlights.filter((_, i) => i !== index) })}>Remover destaque</Button>
+        <Button variant="danger" type="button" aria-label={`Remover destaque ${index + 1}`} onClick={() => update({ highlights: editorial.highlights.filter((_, i) => i !== index) })}>Remover destaque</Button>
       </div>)}
       <div className="form-span-full"><Button variant="secondary" type="button" disabled={editorial.highlights.length >= 8} onClick={() => update({ highlights: [...editorial.highlights, { label: "", text: "" }] })}>+ Adicionar destaque</Button><p>Até 8 destaques. Itens sem conteúdo não aparecem no site.</p></div>
     </div></fieldset> : <p>Publique uma revista no menu Revistas para configurar o destaque.</p>}

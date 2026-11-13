@@ -1,4 +1,5 @@
 "use client";
+import { CmsFileInput } from "./CmsFileInput";
 import { Button } from "@/components/ui/Button/Button";
 import { CareersBannersEditor } from "./CareersBannersEditor";
 import Image from "next/image";
@@ -47,7 +48,7 @@ export function CareersHeroEditor({
             return (
               <label key={field}>
                 {label}
-                <input
+                <CmsFileInput
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   disabled={busy || (field === "mobileImage" && !value.image)}
@@ -105,7 +106,7 @@ export function CareersHeroEditor({
           </label>
         </div>
         {value.mobileImage ? (
-          <Button variant="secondary" type="button"
+          <Button variant="danger" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={() => onChange({ mobileImage: "" })}
@@ -114,7 +115,7 @@ export function CareersHeroEditor({
           </Button>
         ) : null}
         {value.image ? (
-          <Button variant="secondary" type="button"
+          <Button variant="danger" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={() => onChange({ image: "", mobileImage: "" })}

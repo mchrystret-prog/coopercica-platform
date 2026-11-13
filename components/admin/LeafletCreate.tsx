@@ -1,4 +1,6 @@
 "use client";
+import { CmsFileInput } from "./CmsFileInput";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import { FormEvent, useState } from "react";
@@ -11,7 +13,7 @@ export function LeafletCreate({ libraryRevision }: { libraryRevision: number }) 
   return <><div className="cms-custom-tabs"><Button variant="ghost" type="button" data-active={mode === "sheet"} onClick={() => setMode("sheet")}>Importar planilha</Button><Button variant="ghost" type="button" data-active={mode === "pdf"} onClick={() => setMode("pdf")}>Enviar folheto PDF</Button></div>{mode === "sheet" ? <LeafletAdmin libraryRevision={libraryRevision} /> : <PdfLeafletForm />}</>;
 }
 function PdfLeafletForm() {
-  const [busy, setBusy] = useState(false), [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false), [message, setMessage, messageKind] = useCmsMessage("");
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const form = event.currentTarget, data = new FormData(form);
     const token = sessionStorage.getItem("coopercica_admin_token");
@@ -24,9 +26,9 @@ function PdfLeafletForm() {
       const currentToken = await getCmsAccessToken();
       const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_create_pdf_leaflet`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" }, body: JSON.stringify({ p_data: { name: data.get("name"), display_from: display, starts_at: starts, ends_at: ends, status: data.get("status"), pdf_url: pdfUrl } }) });
       if (!response.ok) throw new Error("Não foi possível cadastrar o folheto. Confira sua sessão e as datas.");
-      form.reset(); setMessage("Folheto cadastrado. A publicação respeita o status e as datas escolhidas.");
+      form.reset(); setMessage("Folheto cadastrado. A publicação respeita o status e as datas escolhidas.", "success");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível cadastrar."); }
     finally { setBusy(false); }
   }
-  return <><form onSubmit={submit}><fieldset className="settings-form" disabled={busy}><legend>Novo folheto em PDF</legend><label>Nome do folheto<input name="name" required maxLength={160} /></label><label>Exibir a partir de<input name="display_from" type="date" required /></label><label>Início da vigência<input name="starts_at" type="date" required /></label><label>Fim da vigência<input name="ends_at" type="date" required /></label><label>Status<select name="status" defaultValue="draft"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></label><label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required /><UploadRequirements rule="pdf" /></label><Button variant="primary" type="submit" className="button" disabled={busy}>{busy ? "Enviando…" : "Salvar folheto"}</Button></fieldset></form>{message ? <p role="status">{message}</p> : null}</>;
+  return <><form onSubmit={submit}><fieldset className="settings-form" disabled={busy}><legend>Novo folheto em PDF</legend><label>Nome do folheto<input name="name" required maxLength={160} /></label><label>Exibir a partir de<input name="display_from" type="date" required /></label><label>Início da vigência<input name="starts_at" type="date" required /></label><label>Fim da vigência<input name="ends_at" type="date" required /></label><label>Status<select name="status" defaultValue="draft"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></label><label>Arquivo PDF<CmsFileInput name="pdf" type="file" accept="application/pdf,.pdf" required /><UploadRequirements rule="pdf" /></label><Button variant="primary" type="submit" className="button" disabled={busy}>{busy ? "Enviando…" : "Salvar folheto"}</Button></fieldset></form>{message ? <p role="status"><CmsFeedback message={message} kind={messageKind} /></p> : null}</>;
 }

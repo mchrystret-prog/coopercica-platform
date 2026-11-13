@@ -1,4 +1,6 @@
 "use client";
+import { CmsFeedback } from "./CmsFeedback";
+import type { CmsMessageKind } from "@/lib/cms-feedback";
 import { Button } from "@/components/ui/Button/Button";
 import { useState } from "react";
 import { offerFields, offersConfig, publicHttps, type OffersChannel } from "@/lib/home-offers";
@@ -7,18 +9,21 @@ export function HomeOffersEditor({ settings, busy, onChange }: {
   onChange: (key: string, patch: Record<string, string>) => void;
 }) {
   const [messages, setMessages] = useState<Record<string, string>>({});
+  const [messageKinds, setMessageKinds] = useState<Record<string, CmsMessageKind>>({});
   const [testing, setTesting] = useState<string | null>(null);
   async function test(channel: OffersChannel) {
     setTesting(channel);
+    setMessageKinds(current => ({ ...current, [channel]: "info" }));
     setMessages(current => ({ ...current, [channel]: "Consultando a configuração salva…" }));
     try {
       const response = await fetch(`/api/home-offers?channel=${channel}`, { cache: "no-store" });
       const data = await response.json();
+      setMessageKinds(current => ({ ...current, [channel]: response.ok && data.status === "ready" ? "success" : "error" }));
       setMessages(current => ({ ...current, [channel]: response.ok && data.status === "ready"
         ? `${data.products.length} ofertas válidas recebidas.` : data.status === "disabled"
           ? "Integração desativada na configuração salva. Ative e salve antes de testar."
           : "Falha na consulta. Confira endpoint, host permitido, token e mapeamento dos campos." }));
-    } catch { setMessages(current => ({ ...current, [channel]: "Não foi possível consultar a integração." })); }
+    } catch { setMessageKinds(current => ({ ...current, [channel]: "error" })); setMessages(current => ({ ...current, [channel]: "Não foi possível consultar a integração." })); }
     finally { setTesting(null); }
   }
   return <div className="cms-section-editor">
@@ -40,7 +45,7 @@ export function HomeOffersEditor({ settings, busy, onChange }: {
         </div>
         <details><summary>Correspondência dos campos da API</summary><p>Use os nomes ou caminhos reais da resposta, como prices.regular. Campos opcionais podem ficar vazios. Nome e preço regular são obrigatórios. Valores numéricos devem vir em reais. Mapeie “Preço Coopermais” para o preço exclusivo informado pela API: um valor válido exibe automaticamente o selo e o preço regular abaixo, como na folheteria. Sem esse preço, o card mantém a oferta comum, sem selo Coopermais.</p><div className="settings-form">{Object.entries(offerFields).map(([field, label]) => <label key={field}>{label}<input disabled={busy} value={value[`field_${field}`] ?? field} onChange={e => patch({ [`field_${field}`]: e.target.value })} /></label>)}</div></details>
         <Button variant="secondary" type="button" className="button button-secondary" disabled={busy || testing !== null} onClick={() => test(channel)}>{testing === channel ? "Testando…" : "Testar configuração salva"}</Button>
-        {messages[channel] ? <p role="status">{messages[channel]}</p> : null}
+        {messages[channel] ? <CmsFeedback message={messages[channel]} kind={messageKinds[channel]} /> : null}
       </article>;
     })}
   </div>;

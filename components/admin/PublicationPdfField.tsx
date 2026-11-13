@@ -1,4 +1,7 @@
 "use client";
+import { reportCmsUploadError } from "@/lib/cms-upload-feedback";
+import { CmsFileInput } from "./CmsFileInput";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import { useRef, useState } from "react";
@@ -6,20 +9,21 @@ import { uploadPublicationPdf } from "@/lib/publication-upload";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 export function PublicationPdfField({ kind, id, currentUrl }: { kind: "leaflet" | "magazine"; id: string; currentUrl: string }) {
   const input = useRef<HTMLInputElement>(null);
-  const [message, setMessage] = useState("");
+  const [message, setMessage, messageKind] = useCmsMessage("");
   const [busy, setBusy] = useState(false);
   const [url, setUrl] = useState(currentUrl);
   async function upload() {
     const token = sessionStorage.getItem("coopercica_admin_token");
     if (!token) { setMessage("Entre no CMS novamente."); return; }
+    if (!input.current?.files?.length) { reportCmsUploadError(input.current, "Selecione o PDF antes de salvar."); return; }
     setBusy(true); setMessage("");
     try {
       const pdfUrl = await uploadPublicationPdf(input.current?.files?.[0] || null, token, kind === "leaflet" ? "leaflets" : "magazines");
       const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_set_publication_pdf`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ p_kind: kind, p_id: id, p_url: pdfUrl }) });
       if (!response.ok) throw new Error("O PDF foi enviado, mas não foi vinculado à publicação. Tente novamente.");
-      setUrl(pdfUrl); if (input.current) input.current.value = ""; setMessage("PDF salvo e disponível para folhear quando a publicação estiver no ar.");
+      setUrl(pdfUrl); if (input.current) input.current.value = ""; setMessage("PDF salvo e disponível para folhear quando a publicação estiver no ar.", "success");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível salvar o PDF."); }
     finally { setBusy(false); }
   }
-  return <fieldset className="form-span-full" disabled={busy}><legend>PDF para folhear</legend><label>Enviar ou substituir PDF<input ref={input} type="file" accept="application/pdf,.pdf" /><UploadRequirements rule="pdf">O envio é salvo separadamente dos demais campos.</UploadRequirements></label><Button variant="primary" type="button" className="button" onClick={upload}>{busy ? "Enviando…" : "Salvar PDF"}</Button>{url && url !== "#" ? <a href={url} target="_blank" rel="noopener noreferrer">Abrir PDF atual</a> : null}{message ? <p role="status">{message}</p> : null}</fieldset>;
+  return <fieldset className="form-span-full" disabled={busy}><legend>PDF para folhear</legend><label>Enviar ou substituir PDF<CmsFileInput ref={input} type="file" accept="application/pdf,.pdf" /><UploadRequirements rule="pdf">O envio é salvo separadamente dos demais campos.</UploadRequirements></label><Button variant="primary" type="button" className="button" onClick={upload}>{busy ? "Enviando…" : "Salvar PDF"}</Button>{url && url !== "#" ? <a href={url} target="_blank" rel="noopener noreferrer">Abrir PDF atual</a> : null}{message ? <p role="status"><CmsFeedback message={message} kind={messageKind} /></p> : null}</fieldset>;
 }

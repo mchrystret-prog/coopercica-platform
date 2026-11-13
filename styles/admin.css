@@ -443,3 +443,34 @@
 }
 
 .admin-shell .cms-icon-button.ds-button { width:48px; min-width:48px; padding:var(--space-2); }
+
+/* Destructive actions use the brand red with readable dark text. */
+:is(.admin-shell, .cms-auth) .ds-button--danger {
+  --cms-button-bg: var(--brand-red-500);
+  --cms-button-text: var(--neutral-1000);
+  --cms-button-border: var(--brand-red-500);
+  --cms-button-hover-bg: var(--brand-coral-500);
+  --cms-button-hover-text: var(--neutral-1000);
+  --cms-button-active-bg: var(--brand-red-500);
+  --cms-button-active-text: var(--neutral-1000);
+  --focus-color: var(--brand-red-500);
+}
+:is(.admin-shell, .cms-auth) .ds-button--danger:active:not(:disabled) {
+  box-shadow: inset 0 0 0 2px var(--neutral-1000);
+}
+:is(.admin-shell, .cms-auth) .cms-feedback { display:block; font-weight:var(--font-weight-semibold); line-height:1.5; overflow-wrap:anywhere; }
+:is(.admin-shell, .cms-auth) :is(.cms-feedback[data-state="error"], .cms-field-error) {
+  color:var(--feedback-error);
+  border-left:3px solid var(--brand-red-500);
+  padding:var(--space-2) var(--space-3);
+  background:var(--surface-card);
+  font-size:var(--font-size-sm);
+  font-weight:var(--font-weight-semibold);
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+:is(.admin-shell, .cms-auth) .cms-field-error { display:block; width:100%; margin-top:var(--space-2); }
+:is(.admin-shell, .cms-auth) .cms-feedback[data-state="success"] { color:var(--feedback-success); }
+:is(.admin-shell, .cms-auth) .cms-feedback[data-state="info"] { color:var(--text-body); }
+:is(.admin-shell, .cms-auth) input[aria-invalid="true"] { border-color:var(--brand-red-500); }
+:is(.admin-shell, .cms-auth) [role="alert"] { color:var(--feedback-error); }

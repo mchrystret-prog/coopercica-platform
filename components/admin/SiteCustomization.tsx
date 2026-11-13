@@ -1,4 +1,7 @@
 "use client";
+import { cmsUploadFetch, reportCmsUploadError } from "@/lib/cms-upload-feedback";
+import { CmsFileInput } from "./CmsFileInput";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { customizationModules, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -51,7 +54,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   useEffect(() => { if (module === "magazines") { let cancelled = false; getMagazines().then(items => { if (!cancelled) setEditionItems(items); }); return () => { cancelled = true; }; } }, [module]);
   const [data, setData] = useState<Payload | null>(null),
     [tab, setTab] = useState<CustomizationTab>(initialTab && config.tabs.includes(initialTab) ? initialTab : config.tabs[0]),
-    [msg, setMsg] = useState(""),
+    [msg, setMsg, msgKind] = useCmsMessage(""),
     [busy, setBusy] = useState(false);
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
   useEffect(() => {
@@ -67,10 +70,10 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setData)
       .catch(() => setMsg("Não foi possível carregar a personalização."));
-  }, []);
+  }, [setMsg]);
   async function upload(file: File, folder: string) {
     const path = `${folder}/${Date.now()}-${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
-    const r = await fetch(
+    const r = await cmsUploadFetch(
       `${SUPABASE_URL}/storage/v1/object/site-content/${path}`,
       {
         method: "POST",
@@ -139,7 +142,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         },
       );
       if (!r.ok) throw new Error(await r.text());
-      setMsg("Personalização salva e publicada no site.");
+      setMsg("Personalização salva e publicada no site.", "success");
     } catch (err) {
       let detail = "Erro desconhecido ao salvar.";
       if (err instanceof Error && err.message) {
@@ -244,9 +247,10 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         const s = data?.sections.find((x) => x.id === id);
         if (s) setSection(id, { content: { ...s.content, image: url } });
       } else setIdentity(target, url);
-      setMsg("Arquivo enviado. Clique em Salvar alterações para publicar.");
+      setMsg("Arquivo enviado. Clique em Salvar alterações para publicar.", "info");
     } catch (err) {
-      setMsg(err instanceof Error ? err.message : "Falha no upload.");
+      reportCmsUploadError(e.target, err);
+      setMsg("Não foi possível enviar o arquivo. Confira a mensagem abaixo do campo de upload.");
     } finally {
       setBusy(false);
     }
@@ -333,7 +337,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           </label>
           <label className="form-span-full">
             Logo principal
-            <input
+            <CmsFileInput
               type="file"
               accept="image/png,image/webp,image/svg+xml"
               disabled={busy}
@@ -350,7 +354,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           </label>
           <label className="form-span-full">
             Logo para fundos escuros
-            <input
+            <CmsFileInput
               type="file"
               accept="image/png,image/webp,image/svg+xml"
               disabled={busy}
@@ -367,7 +371,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           </label>
           <label className="form-span-full">
             Favicon · ícone da aba do navegador
-            <input
+            <CmsFileInput
               type="file"
               accept="image/png"
               disabled={busy}
@@ -387,25 +391,25 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       ) : tab === "contact" ? (
         <FooterContactEditor value={data.settings.footer_contact || {}} busy={busy} onChange={patch => {
           setData(current => current ? { ...current, settings: { ...current.settings, footer_contact: { ...current.settings.footer_contact, ...patch } } } : current);
-          setMsg("Atendimento e redes sociais alterados. Salve as alterações para publicar.");
+          setMsg("Atendimento e redes sociais alterados. Salve as alterações para publicar.", "info");
         }} />
       ) : tab === "magazine" ? (
         <MagazineEditorialEditor magazines={editionItems} value={data.sections.find(section => section.id === "revista")?.content || {}} busy={busy} onChange={patch => {
           const section = data.sections.find(item => item.id === "revista");
           if (!section) { setMsg("A seção Revista não foi encontrada na configuração da Home."); return; }
           setSection(section.id, { content: { ...section.content, ...patch } });
-          setMsg("Conteúdo da revista alterado. Salve as alterações para publicar.");
+          setMsg("Conteúdo da revista alterado. Salve as alterações para publicar.", "info");
         }} />
       ) : tab === "partners" ? (
         <PartnersEditor value={data.settings.home_partners || {}} busy={busy} onChange={patch => {
           setData(current => current ? { ...current, settings: { ...current.settings, home_partners: { ...current.settings.home_partners, ...patch } } } : current);
-          setMsg("Parceiros alterados. Salve as alterações para publicar.");
+          setMsg("Parceiros alterados. Salve as alterações para publicar.", "info");
         }} />
       ) : tab === "videos" ? (
         <>
         <HomeVideosEditor value={data.settings.home_videos || {}} busy={busy} onChange={patch => {
           setData(current => current ? { ...current, settings: { ...current.settings, home_videos: { ...current.settings.home_videos, ...patch } } } : current);
-          setMsg("Vídeos da home alterados. Salve as alterações para publicar.");
+          setMsg("Vídeos da home alterados. Salve as alterações para publicar.", "info");
         }} />
         <VideosHeaderEditor value={data.settings.videos_header || {}} busy={busy}
           onUpload={(e, field) => media(e, `videos:${field}`)}
@@ -413,7 +417,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             setData(current => current ? { ...current, settings: { ...current.settings,
               videos_header: { ...current.settings.videos_header, ...patch }
             } } : current);
-            setMsg("Cabeçalho de Vídeos alterado. Salve as alterações para publicar.");
+            setMsg("Cabeçalho de Vídeos alterado. Salve as alterações para publicar.", "info");
           }} />
         </>
       ) : tab === "coopermais" ? (
@@ -421,12 +425,12 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           onUpload={(e, field) => media(e, `coopermais:${field}`)}
           onChange={patch => {
             setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, ...patch } } } : current);
-            setMsg("Badge Coopermais alterado. Salve as alterações para publicar.");
+            setMsg("Badge Coopermais alterado. Salve as alterações para publicar.", "info");
           }} />
       ) : tab === "offers" ? (
         <HomeOffersEditor settings={data.settings} busy={busy} onChange={(key, patch) => {
           setData(current => current ? { ...current, settings: { ...current.settings, [key]: { ...current.settings[key], ...patch } } } : current);
-          setMsg("Configuração de ofertas alterada. Salve as alterações para publicar.");
+          setMsg("Configuração de ofertas alterada. Salve as alterações para publicar.", "info");
         }} />
       ) : tab === "careers" ? (
         <CareersHeroEditor
@@ -449,7 +453,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
                 : current,
             );
             setMsg(
-              "Portal de Vagas alterado. Salve as alterações para publicar.",
+              "Portal de Vagas alterado. Salve as alterações para publicar.", "info",
             );
           }}
         />
@@ -466,7 +470,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               settings: { ...data.settings, history_images: images },
             });
             setMsg(
-              "Imagem original restaurada. Salve as alterações para publicar.",
+              "Imagem original restaurada. Salve as alterações para publicar.", "info",
             );
           }}
         />
@@ -510,7 +514,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
                 {"image" in s.content || s.id === "lojas" ? (
                   <label className="form-span-full">
                     Imagem da seção
-                    <input
+                    <CmsFileInput
                       type="file"
                       accept="image/png,image/jpeg,image/webp"
                       disabled={busy}
@@ -535,7 +539,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       <div className="cms-save-bar">
         <div aria-live="polite">
           {msg ? (
-            <span className="cms-save-message">{msg}</span>
+            <span className="cms-save-message"><CmsFeedback message={msg} kind={msgKind} /></span>
           ) : (
             <span>Revise as alterações antes de publicar.</span>
           )}

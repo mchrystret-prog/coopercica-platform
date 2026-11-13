@@ -1,4 +1,5 @@
 "use client";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
@@ -30,7 +31,7 @@ async function fetchMembers(): Promise<{ items: Member[]; self: string }> {
 }
 export function CmsUsers() {
   const [items, setItems] = useState<Member[]>([]),
-    [msg, setMsg] = useState(""),
+    [msg, setMsg, msgKind] = useCmsMessage(""),
     [busy, setBusy] = useState(false),
     [self, setSelf] = useState("");
   async function load() {
@@ -53,7 +54,7 @@ export function CmsUsers() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [setMsg]);
   async function update(id: string, status: string, role?: CmsRole) {
     const token = sessionStorage.getItem("coopercica_admin_token");
     if (!token) return;
@@ -81,7 +82,7 @@ export function CmsUsers() {
       setMsg(
         status === "rejected"
           ? "Usuário removido da lista e acesso ao CMS bloqueado. A conta e o acesso ao Hub foram preservados."
-          : "Acesso atualizado. O usuário deve sair e entrar novamente para atualizar seu menu.",
+          : "Acesso atualizado. O usuário deve sair e entrar novamente para atualizar seu menu.", "success",
       );
       await load();
     } catch {
@@ -162,7 +163,7 @@ export function CmsUsers() {
       </div>
       {msg ? (
         <div className="form-status" role="status">
-          <strong>{msg}</strong>
+          <strong><CmsFeedback message={msg} kind={msgKind} /></strong>
         </div>
       ) : null}
     </>

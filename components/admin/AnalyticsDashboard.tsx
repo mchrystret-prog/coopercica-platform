@@ -1,5 +1,6 @@
 "use client";
 
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState } from "react";
 import {
@@ -34,7 +35,7 @@ export function AnalyticsDashboard() {
   const [revision, setRevision] = useState(0);
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError, errorKind] = useCmsMessage("");
   const [tab, setTab] = useState<
     "overview" | "banners" | "interactions" | "heatmap" | "sessions"
   >("overview");
@@ -77,7 +78,7 @@ export function AnalyticsDashboard() {
     }
     void load();
     return () => controller.abort();
-  }, [filters.from, filters.to, filters.path, filters.device, revision, valid]);
+  }, [filters.from, filters.to, filters.path, filters.device, revision, valid, setError]);
   const change = (key: keyof AnalyticsFilters, value: string) =>
     setFilters((current) => ({ ...current, [key]: value }));
   const chartMax = Math.max(1, ...(report?.daily.map((x) => x.views) || []));
@@ -191,7 +192,7 @@ export function AnalyticsDashboard() {
       </p>
       {error ? (
         <div className={styles.error} role="alert">
-          {error}
+          <CmsFeedback message={error} kind={errorKind} />
         </div>
       ) : null}
       <nav className={styles.tabs} aria-label="Relatórios de analytics">

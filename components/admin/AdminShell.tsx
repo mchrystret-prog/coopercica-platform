@@ -1,4 +1,5 @@
 "use client";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -59,7 +60,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [member, setMember] = useState<Member | null>(null);
   const [ready, setReady] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError, errorKind] = useCmsMessage("");
   const [loading, setLoading] = useState(false);
   const [requestMode, setRequestMode] = useState(false);
   const [mobilePath, setMobilePath] = useState<string | null>(null);
@@ -86,7 +87,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       if (!cancelled) setReady(true);
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [setError]);
   const authenticated = Boolean(token);
   useEffect(() => {
     if (!authenticated) return;
@@ -106,7 +107,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     window.addEventListener("focus", renew);
     document.addEventListener("visibilitychange", renew);
     return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener("focus", renew); document.removeEventListener("visibilitychange", renew); };
-  }, [authenticated]);
+  }, [authenticated, setError]);
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -188,7 +189,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     }
     setRequestMode(false);
     setError(
-      "Solicitação enviada. Verifique sua caixa de entrada e spam para confirmar o e-mail, se solicitado. Após a confirmação e a aprovação no CMS, use seu e-mail e senha para entrar.",
+      "Solicitação enviada. Verifique sua caixa de entrada e spam para confirmar o e-mail, se solicitado. Após a confirmação e a aprovação no CMS, use seu e-mail e senha para entrar.", "success",
     );
   }
   function logout() {
@@ -255,7 +256,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 autoComplete={requestMode ? "new-password" : "current-password"}
               />
             </label>
-            {error ? <div className="cms-auth-message">{error}</div> : null}
+            {error ? <div className="cms-auth-message"><CmsFeedback message={error} kind={errorKind} /></div> : null}
             <Button variant="primary" type="submit" className="button" disabled={loading}>
               {loading
                 ? "Aguarde..."

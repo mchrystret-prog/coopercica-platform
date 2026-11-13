@@ -1,5 +1,6 @@
 "use client";
 
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { useEffect, useRef, useState } from "react";
 import { safePath } from "@/supabase/functions/_shared/analytics";
 import {
@@ -32,7 +33,7 @@ export function AnalyticsHeatmap({
   const path = filters.path || selectedPath,
     device = filters.device || selectedDevice;
   const [data, setData] = useState<Heatmap | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError, errorKind] = useCmsMessage("");
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const controller = new AbortController();
@@ -65,7 +66,7 @@ export function AnalyticsHeatmap({
     }
     void load();
     return () => controller.abort();
-  }, [filters.from, filters.to, path, device, revision, kind]);
+  }, [filters.from, filters.to, path, device, revision, kind, setError]);
   return (
     <article className={styles.panel}>
       <h2>Mapas de comportamento</h2>
@@ -118,7 +119,7 @@ export function AnalyticsHeatmap({
         <p role="status">Carregando mapa…</p>
       ) : error ? (
         <p role="alert" className={styles.error}>
-          {error}
+          <CmsFeedback message={error} kind={errorKind} />
         </p>
       ) : data && (kind === "scroll" ? data.views : data.total) ? (
         <>

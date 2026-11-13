@@ -1,4 +1,5 @@
 "use client";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
@@ -33,8 +34,8 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     [page, setPage] = useState(0),
     [selected, setSelected] = useState<Candidate | null>(null),
     [loading, setLoading] = useState(true),
-    [error, setError] = useState(""),
-    [message, setMessage] = useState(""),
+    [error, setError, errorKind] = useCmsMessage(""),
+    [message, setMessage, messageKind] = useCmsMessage(""),
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0);
   useEffect(() => {
@@ -62,7 +63,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     }
     void load();
     return () => c.abort();
-  }, []);
+  }, [setError]);
   useEffect(() => {
     const c = new AbortController();
     async function load() {
@@ -91,7 +92,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     }
     void load();
     return () => c.abort();
-  }, [job, status, query, page, revision]);
+  }, [job, status, query, page, revision, setError]);
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selected || busy) return;
@@ -116,7 +117,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
         );
       setSelected({ ...selected, ...rows[0] });
       setMessage(
-        "Etapa e observações salvas. Nenhuma mensagem foi enviada ao candidato.",
+        "Etapa e observações salvas. Nenhuma mensagem foi enviada ao candidato.", "success",
       );
       setRevision((n) => n + 1);
     } catch (err) {
@@ -227,12 +228,12 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
       </div>
       {error ? (
         <p className={styles.error} role="alert">
-          {error}
+          <CmsFeedback message={error} kind={errorKind} />
         </p>
       ) : null}
       {message ? (
         <p className="form-status" role="status">
-          {message}
+          <CmsFeedback message={message} kind={messageKind} />
         </p>
       ) : null}
       {loading ? <p role="status">Carregando candidaturas…</p> : null}

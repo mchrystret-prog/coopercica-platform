@@ -25,3 +25,4 @@ supabase/functions/.env
 .upload-test/
 .navigation-test/
 .careers-test/
+.cms-feedback-test/

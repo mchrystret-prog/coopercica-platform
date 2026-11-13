@@ -1,3 +1,4 @@
+import { reportCmsUploadError } from "./cms-upload-feedback";
 import { assertUploadGeometry, formatUploadBytes, uploadRules, type UploadRuleKey } from "./cms-upload-rules";
 
 const types: Record<string, string[]> = { jpg: ["image/jpeg"], jpeg: ["image/jpeg"], png: ["image/png"], webp: ["image/webp"], svg: ["image/svg+xml"], mp4: ["video/mp4"], webm: ["video/webm"], pdf: ["application/pdf"], xlsx: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/zip", "application/vnd.ms-excel"] };
@@ -6,7 +7,7 @@ const validated = new WeakMap<File, Set<UploadRuleKey>>();
 export function assertUploadFile(file: File, key: UploadRuleKey) {
   const rule = uploadRules[key];
   if (!file.size) throw new Error(`${rule.label}: selecione um arquivo não vazio.`);
-  if (file.size > rule.maxBytes) throw new Error(`${rule.label}: limite de ${formatUploadBytes(rule.maxBytes)}; recebido ${(file.size / 1024 / 1024).toFixed(2)} MB.`);
+  if (file.size > rule.maxBytes) throw new Error(`${rule.label}: limite de ${formatUploadBytes(rule.maxBytes)}; recebido ${(file.size / 1024 / 1024).toFixed(2)} MB. Reduza o tamanho do arquivo e tente novamente.`);
   const extension = file.name.split(".").pop()?.toLowerCase() || "";
   if (!(rule.extensions as readonly string[]).includes(extension) || (file.type && !types[extension]?.includes(file.type))) throw new Error(`${rule.label}: formato inválido. Use ${rule.extensions.join(", ").toUpperCase()}.`);
   return extension;
@@ -82,7 +83,7 @@ export async function validateCmsUpload(file: File, key: UploadRuleKey) {
     const checked = validated.get(file) ?? new Set<UploadRuleKey>();
     checked.add(key);
     validated.set(file, checked);
-  } catch (error) { throw new Error(`${file.name}: ${error instanceof Error ? error.message : "Arquivo inválido."}`); }
+  } catch (error) { const failure = new Error(`${file.name}: ${error instanceof Error ? error.message : "Arquivo inválido. Escolha outro arquivo."}`); reportCmsUploadError(file, failure); throw failure; }
 }
 
 /** Validate the complete batch before its first network upload. */

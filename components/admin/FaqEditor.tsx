@@ -24,7 +24,7 @@ export function FaqEditor({ value, busy, onChange }: { value: Record<string, str
       </div><div className="form-actions">
         <Button variant="secondary" type="button" className="button button-secondary" disabled={busy || index === 0} onClick={() => move(index, -1)} aria-label={`Mover pergunta ${index + 1} para cima`}>Subir</Button>
         <Button variant="secondary" type="button" className="button button-secondary" disabled={busy || index === items.length - 1} onClick={() => move(index, 1)} aria-label={`Mover pergunta ${index + 1} para baixo`}>Descer</Button>
-        <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => updateItems(items.filter((_, i) => i !== index))}>Remover pergunta {index + 1}</Button>
+        <Button variant="danger" type="button" className="button button-secondary" disabled={busy} onClick={() => updateItems(items.filter((_, i) => i !== index))}>Remover pergunta {index + 1}</Button>
       </div>
     </article>)}
     <Button variant="primary" type="button" className="button" disabled={busy || items.length >= 30} onClick={() => updateItems([...items, { id: crypto.randomUUID(), question: "", answer: "", active: true }])}>Adicionar pergunta</Button>

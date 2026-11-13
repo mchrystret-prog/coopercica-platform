@@ -21,7 +21,8 @@
     "test:contact": "tsc lib/footer-contact.ts --target ES2022 --module commonjs --skipLibCheck --outDir .contact-test && node --test tests/footer-contact.test.cjs",
     "test:uploads": "tsc lib/cms-upload-rules.ts lib/cms-upload-validation.ts --target ES2020 --module commonjs --esModuleInterop --skipLibCheck --outDir .upload-test && node --test tests/cms-upload.test.cjs",
     "test:mobile-navigation": "tsc lib/mobile-navigation.ts --target ES2022 --module commonjs --skipLibCheck --outDir .navigation-test && node --test tests/mobile-navigation.test.cjs",
-    "test:careers-banners": "tsc lib/careers-banners.ts lib/cms-upload-rules.ts --target ES2022 --module commonjs --skipLibCheck --outDir .careers-test && node --test tests/careers-banners.test.cjs"
+    "test:careers-banners": "tsc lib/careers-banners.ts lib/cms-upload-rules.ts --target ES2022 --module commonjs --skipLibCheck --outDir .careers-test && node --test tests/careers-banners.test.cjs",
+    "test:cms-feedback": "tsc lib/cms-feedback.ts --target ES2020 --module commonjs --skipLibCheck --outDir .cms-feedback-test && node --test tests/cms-feedback.test.cjs tests/cms-buttons.test.cjs"
   },
   "dependencies": {
     "gsap": "^3.13.0",

@@ -85,7 +85,7 @@ export function customizationUploadRule(target: string): UploadRuleKey {
 export function assertUploadGeometry(key: UploadRuleKey, width: number, height: number, vector = false, duration?: number) {
   const rule: UploadRule = uploadRules[key];
   if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) throw new Error("Não foi possível identificar as medidas do arquivo.");
-  if (rule.dimensions && (width !== rule.dimensions[0] || height !== rule.dimensions[1])) throw new Error(`${rule.label}: esperado ${rule.dimensions[0]} × ${rule.dimensions[1]} px; arquivo recebido: ${width} × ${height} px.`);
+  if (rule.dimensions && (width !== rule.dimensions[0] || height !== rule.dimensions[1])) throw new Error(`${rule.label}: esperado ${rule.dimensions[0]} × ${rule.dimensions[1]} px; arquivo recebido: ${width} × ${height} px. Redimensione a imagem e selecione o arquivo novamente.`);
   if (!(vector && key === "logo") && ((rule.minWidth && width < rule.minWidth) || (rule.minHeight && height < rule.minHeight) || (rule.maxWidth && width > rule.maxWidth) || (rule.maxHeight && height > rule.maxHeight))) throw new Error(`${rule.label}: ${width} × ${height} px fora do intervalo permitido. ${uploadRequirements(key)}`);
   const ratio = width / height;
   if ((rule.minRatio && ratio < rule.minRatio) || (rule.maxRatio && ratio > rule.maxRatio)) throw new Error(`${rule.label}: proporção inválida (${ratio.toFixed(2)}:1). ${uploadRequirements(key)}`);

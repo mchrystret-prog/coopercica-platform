@@ -1,4 +1,5 @@
 "use client";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useId, useRef, useState, type ClipboardEvent, type DragEvent } from "react";
 import { answerLink, answerSegments, answerText, type AnswerSegment } from "@/lib/faq-rich-text";
@@ -12,7 +13,7 @@ export function FaqAnswerEditor({ value, format, disabled, onChange }: { value: 
   const [linkForm, setLinkForm] = useState(false);
   const [label, setLabel] = useState("");
   const [href, setHref] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage, messageKind] = useCmsMessage("");
   useEffect(() => {
     if (!editor.current || emitted.current === value) return;
     const fragment = document.createDocumentFragment();
@@ -105,7 +106,7 @@ export function FaqAnswerEditor({ value, format, disabled, onChange }: { value: 
       <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={() => mark("strong")}>Negrito</Button>
       <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={() => mark("em")}>Itálico</Button>
       <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={editLink}>Inserir / editar link</Button>
-      <Button variant="secondary" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={unlink}>Remover link</Button>
+      <Button variant="danger" type="button" disabled={disabled} onMouseDown={e => e.preventDefault()} onClick={unlink}>Remover link</Button>
     </div>
     {linkForm ? <div className={styles.linkForm}>
       <label>Texto do link<input value={label} maxLength={200} disabled={disabled} onChange={e => setLabel(e.target.value)} /></label>
@@ -114,6 +115,6 @@ export function FaqAnswerEditor({ value, format, disabled, onChange }: { value: 
     </div> : null}
     <div ref={editor} className={styles.editor} contentEditable={!disabled} suppressContentEditableWarning role="textbox" aria-multiline="true" aria-labelledby={id} aria-disabled={disabled} tabIndex={disabled ? -1 : 0} onInput={emit} onPaste={paste} onDrop={drop} onClick={event => { if ((event.target as HTMLElement).closest("a")) event.preventDefault(); }} />
     <small>Selecione um texto para inserir um link. Sites externos abrem em outra aba. {answerText(value, format).length}/4000 caracteres.</small>
-    {message ? <p role="status" className={styles.message}>{message}</p> : null}
+    {message ? <p role="status" className={styles.message}><CmsFeedback message={message} kind={messageKind} /></p> : null}
   </div>;
 }

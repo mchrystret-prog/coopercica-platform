@@ -1,5 +1,6 @@
 "use client";
 
+import { CmsFileInput } from "./CmsFileInput";
 import { Button } from "@/components/ui/Button/Button";
 import type { ChangeEvent } from "react";
 import { historyItems } from "@/data/history";
@@ -38,7 +39,7 @@ export function HistoryImageEditor({
           <div className="settings-form">
             <label className="form-span-full">
               Foto de {item.year}
-              <input
+              <CmsFileInput
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
                 disabled={busy}

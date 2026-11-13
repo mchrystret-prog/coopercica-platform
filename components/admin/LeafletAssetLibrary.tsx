@@ -1,4 +1,7 @@
 "use client";
+import { cmsUploadFetch } from "@/lib/cms-upload-feedback";
+import { CmsFileInput } from "./CmsFileInput";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import { useEffect, useState, type FormEvent } from "react";
@@ -20,7 +23,7 @@ export function LeafletAssetLibrary() {
   const [editing, setEditing] = useState<LeafletAsset | null>(null);
   const [kind, setKind] = useState<"box" | "seal">("box");
   const [codeValue, setCodeValue] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage, messageKind] = useCmsMessage("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -40,7 +43,7 @@ export function LeafletAssetLibrary() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [setMessage]);
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const token = sessionStorage.getItem("coopercica_admin_token");
@@ -81,7 +84,7 @@ export function LeafletAssetLibrary() {
       }[file.type];
       if (!extension) throw new Error("Use uma imagem PNG, JPG ou WebP.");
       const path = `presentation/${kind}/${crypto.randomUUID()}.${extension}`;
-      const response = await fetch(
+      const response = await cmsUploadFetch(
         `${SUPABASE_URL}/storage/v1/object/leaflet-assets/${path}`,
         {
           method: "POST",
@@ -132,7 +135,7 @@ export function LeafletAssetLibrary() {
       setCodeValue("");
       form.reset();
       setMessage(
-        "Arquivo cadastrado. Ele já pode ser usado nas próximas importações.",
+        "Arquivo cadastrado. Ele já pode ser usado nas próximas importações.", "success",
       );
     } catch (error) {
       setMessage(
@@ -201,7 +204,7 @@ export function LeafletAssetLibrary() {
         </label>
         <label className="form-span-full">
           Imagem
-          <input
+          <CmsFileInput
             name="image"
             type="file"
             required
@@ -233,7 +236,7 @@ export function LeafletAssetLibrary() {
           ) : null}
         </div>
       </form>
-      {message ? <p role="status">{message}</p> : null}
+      {message ? <p role="status"><CmsFeedback message={message} kind={messageKind} /></p> : null}
       <div className={styles.library}>
         {assets.map((asset) => (
           <article key={assetKey(asset)}>

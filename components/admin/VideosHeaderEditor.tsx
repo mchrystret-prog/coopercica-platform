@@ -1,4 +1,5 @@
 "use client";
+import { CmsFileInput } from "./CmsFileInput";
 import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
@@ -17,7 +18,7 @@ export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
     <div className="settings-form">
       {([['image', 'Arte principal'], ['mobileImage', 'Arte para celular (opcional)']] as const).map(([field, label]) => <label key={field}>
         {label}
-        <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy || (field === 'mobileImage' && !value.image)} onChange={e => onUpload(e, field)} />
+        <CmsFileInput type="file" accept="image/jpeg,image/png,image/webp" disabled={busy || (field === 'mobileImage' && !value.image)} onChange={e => onUpload(e, field)} />
         <UploadRequirements rule={field === "image" ? "videosDesktop" : "videosMobile"}>{field === "mobileImage" ? "Sem esta versão, o celular mostra a arte principal inteira." : null}</UploadRequirements>
       </label>)}
       <label className="form-span-full">Descrição da arte (acessibilidade)
@@ -27,7 +28,7 @@ export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
       <div className="form-span-full"><Image src={hero.image} alt={hero.alt} width={2048} height={522} style={{ width: '100%', height: 'auto' }} /></div>
       {hero.mobileImage ? <div className="form-span-full"><p>Prévia da versão para celular</p><Image src={hero.mobileImage} alt={hero.alt} width={1080} height={810} style={{ width: 'min(100%, 360px)', height: 'auto' }} /></div> : null}
     </div>
-    {value.mobileImage ? <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ mobileImage: '' })}>Remover versão para celular</Button> : null}
+    {value.mobileImage ? <Button variant="danger" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ mobileImage: '' })}>Remover versão para celular</Button> : null}
     {value.image ? <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ image: '', mobileImage: '', alt: '' })}>Restaurar arte original</Button> : null}
   </article></div>;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState } from "react";
 import {
@@ -92,7 +93,7 @@ export function AnalyticsSessions({
   const [selected, setSelected] = useState<Session | null>(null);
   const [report, setReport] = useState<SessionsReport | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError, errorKind] = useCmsMessage("");
   useEffect(() => {
     const controller = new AbortController();
     async function load() {
@@ -127,17 +128,7 @@ export function AnalyticsSessions({
     }
     void load();
     return () => controller.abort();
-  }, [
-    filters.from,
-    filters.to,
-    filters.path,
-    filters.device,
-    source,
-    campaign,
-    signal,
-    offset,
-    revision,
-  ]);
+  }, [filters.from, filters.to, filters.path, filters.device, source, campaign, signal, offset, revision, setError]);
   const change = (set: (value: string) => void, value: string) => {
     set(value);
     setOffset(0);
@@ -205,7 +196,7 @@ export function AnalyticsSessions({
       {loading ? <p role="status">Carregando sessões…</p> : null}
       {error ? (
         <p className={styles.error} role="alert">
-          {error}
+          <CmsFeedback message={error} kind={errorKind} />
         </p>
       ) : null}
       {report && !error ? (
@@ -414,7 +405,7 @@ function SessionJourney({
   onMap: (path: string, device: string) => void;
 }) {
   const [data, setData] = useState<Journey | null>(null),
-    [error, setError] = useState("");
+    [error, setError, errorKind] = useCmsMessage("");
   const [index, setIndex] = useState(0),
     [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -438,7 +429,7 @@ function SessionJourney({
           );
       });
     return () => controller.abort();
-  }, [session.session_id, filters.from, filters.to]);
+  }, [session.session_id, filters.from, filters.to, setError]);
   useEffect(() => {
     if (!playing || !data || index >= data.events.length - 1) return;
     const timer = window.setInterval(
@@ -476,7 +467,7 @@ function SessionJourney({
       </p>
       {error ? (
         <p role="alert" className={styles.error}>
-          {error}
+          <CmsFeedback message={error} kind={errorKind} />
         </p>
       ) : !data ? (
         <p role="status">Carregando jornada…</p>

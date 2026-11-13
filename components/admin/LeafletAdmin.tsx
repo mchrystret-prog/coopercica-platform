@@ -1,4 +1,7 @@
 "use client";
+import { cmsUploadFetch, reportCmsUploadError } from "@/lib/cms-upload-feedback";
+import { CmsFileInput } from "./CmsFileInput";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
@@ -29,7 +32,7 @@ export function LeafletAdmin({
   const [boxes, setBoxes] = useState<string[]>([]);
   const [seals, setSeals] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, string>>({});
-  const [message, setMessage] = useState("");
+  const [message, setMessage, messageKind] = useCmsMessage("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [requiredEans, setRequiredEans] = useState<Set<string>>(new Set());
   const imageIndex = useMemo(() => {
@@ -60,7 +63,7 @@ export function LeafletAdmin({
     return () => {
       active = false;
     };
-  }, [libraryRevision]);
+  }, [libraryRevision, setMessage]);
   function chooseImageFolder(e: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     setImageFiles(files);
@@ -70,7 +73,7 @@ export function LeafletAdmin({
     setMessage(
       requiredEans.size
         ? `Pasta selecionada. ${matched} das ${requiredEans.size} imagens necessárias foram localizadas pelo EAN.`
-        : "Pasta selecionada. O cruzamento será feito somente com os EANs da planilha.",
+        : "Pasta selecionada. O cruzamento será feito somente com os EANs da planilha.", "info",
     );
     setStatus("idle");
   }
@@ -114,7 +117,7 @@ export function LeafletAdmin({
         missing++;
         return;
       }
-      const up = await fetch(
+      const up = await cmsUploadFetch(
         `${SUPABASE_URL}/storage/v1/object/leaflet-assets/${path}`,
         {
           method: "POST",
@@ -134,7 +137,7 @@ export function LeafletAdmin({
       p.image_url = `${SUPABASE_URL}/storage/v1/object/public/leaflet-assets/${path}`;
       matched++;
       if ((index + 1) % 12 === 0)
-        setMessage(`Enviando imagens dos produtos… ${matched} localizadas.`);
+        setMessage(`Enviando imagens dos produtos… ${matched} localizadas.`, "info");
     });
     for (let i = 0; i < jobs.length; i += 6)
       await Promise.all(jobs.slice(i, i + 6).map((job) => job()));
@@ -153,7 +156,7 @@ export function LeafletAdmin({
     setLoading(true);
     setStatus("idle");
     setResult(null);
-    setMessage("Lendo exportação do ERP...");
+    setMessage("Lendo exportação do ERP...", "info");
     try {
       const form = new FormData(formElement);
       const file = form.get("file");
@@ -194,7 +197,7 @@ export function LeafletAdmin({
         if (!(file instanceof File) || !file.size) return "";
         const ext = file.name.split(".").pop()?.toLowerCase() || "webp";
         const path = `${Date.now()}-${kind}.${ext}`;
-        const up = await fetch(
+        const up = await cmsUploadFetch(
           `${SUPABASE_URL}/storage/v1/object/leaflet-assets/${path}`,
           {
             method: "POST",
@@ -218,7 +221,7 @@ export function LeafletAdmin({
         }
         return `${SUPABASE_URL}/storage/v1/object/public/leaflet-assets/${path}`;
       };
-      setMessage("Enviando imagens do folheto...");
+      setMessage("Enviando imagens do folheto...", "info");
       const coverUrl = await upload(form.get("cover_file"), "thumb");
       const headerUrl = await upload(form.get("header_file"), "header");
       const name = String(form.get("name") || "");
@@ -233,19 +236,19 @@ export function LeafletAdmin({
         "-" +
         Date.now().toString(36);
       setMessage(
-        `Planilha lida: ${records.length} produtos. Preparando dados...`,
+        `Planilha lida: ${records.length} produtos. Preparando dados...`, "info",
       );
       let imageReport = { matched: 0, missing: 0 };
       if (imageFiles.length) {
         setMessage(
-          `Cruzando ${products.length} produtos com o banco de imagens pelo EAN…`,
+          `Cruzando ${products.length} produtos com o banco de imagens pelo EAN…`, "info",
         );
         imageReport = await uploadProductImages(products, token, slug);
         setMessage(
-          `Imagens: ${imageReport.matched} encontradas · ${imageReport.missing} sem correspondência. Salvando folheto…`,
+          `Imagens: ${imageReport.matched} encontradas · ${imageReport.missing} sem correspondência. Salvando folheto…`, "info",
         );
       } else
-        setMessage(`Planilha lida: ${products.length} produtos. Salvando...`);
+        setMessage(`Planilha lida: ${products.length} produtos. Salvando...`, "info");
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/rpc/import_digital_leaflet`,
         {
@@ -281,7 +284,7 @@ export function LeafletAdmin({
       setMessage(
         res.ok
           ? `Folheto criado com sucesso: ${j.products} produtos importados.${imageFiles.length ? ` ${imageReport.matched} imagens vinculadas pelo EAN${imageReport.missing ? ` · ${imageReport.missing} sem imagem` : ""}.` : ""}`
-          : j.error || `Erro ao importar (HTTP ${res.status}).`,
+          : j.error || `Erro ao importar (HTTP ${res.status}).`, res.ok ? "success" : "error",
       );
       if (res.ok) {
         setBoxes([]);
@@ -347,9 +350,10 @@ export function LeafletAdmin({
         ),
       );
       setMessage(
-        `Planilha lida: ${records.length} produtos. Confira os fundos dos boxes e os selos abaixo.`,
+        `Planilha lida: ${records.length} produtos. Confira os fundos dos boxes e os selos abaixo.`, "info",
       );
     } catch (error) {
+      reportCmsUploadError(e.target, error);
       setStatus("error");
       setMessage(
         error instanceof Error
@@ -395,7 +399,7 @@ export function LeafletAdmin({
           </label>
           <label>
             Thumbnail do folheto
-            <input
+            <CmsFileInput
               name="cover_file"
               type="file"
               accept="image/png,image/jpeg,image/webp"
@@ -405,7 +409,7 @@ export function LeafletAdmin({
           </label>
           <label>
             Header da página
-            <input
+            <CmsFileInput
               name="header_file"
               type="file"
               accept="image/png,image/jpeg,image/webp"
@@ -425,7 +429,7 @@ export function LeafletAdmin({
           </label>
           <label className="form-span-full">
             Planilha de produtos — ERP
-            <input
+            <CmsFileInput
               name="file"
               type="file"
               accept=".xlsx"
@@ -506,7 +510,7 @@ export function LeafletAdmin({
           ) : null}
           <label className="form-span-full">
             Banco de imagens dos produtos
-            <input
+            <CmsFileInput
               type="file"
               accept="image/png,image/jpeg,image/webp"
               multiple
@@ -555,7 +559,7 @@ export function LeafletAdmin({
           data-state={status === "idle" ? undefined : status}
           role={status === "error" ? "alert" : "status"}
         >
-          <strong>{message}</strong>
+          <strong><CmsFeedback message={message} kind={messageKind} /></strong>
           {result?.sections?.length ? (
             <p>Categorias: {result.sections.join(" · ")}</p>
           ) : null}

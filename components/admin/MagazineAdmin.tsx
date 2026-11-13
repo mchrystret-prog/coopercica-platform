@@ -1,4 +1,7 @@
 "use client";
+import { cmsUploadFetch } from "@/lib/cms-upload-feedback";
+import { CmsFileInput } from "./CmsFileInput";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import { validateCmsUpload, validateCmsUploads } from "@/lib/cms-upload-validation";
@@ -16,16 +19,16 @@ async function uploadCover(file: FormDataEntryValue | null) {
   await validateCmsUpload(file, "magazineCover");
   const token = await getCmsAccessToken();
   const path = `magazines/cover-${crypto.randomUUID()}.${file.name.split(".").pop()}`;
-  const response = await fetch(`${SUPABASE_URL}/storage/v1/object/site-content/${path}`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}`, "Content-Type": file.type }, body: file });
+  const response = await cmsUploadFetch(`${SUPABASE_URL}/storage/v1/object/site-content/${path}`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}`, "Content-Type": file.type }, body: file });
   if (!response.ok) throw await publicationUploadError(response, "A capa");
   return `${SUPABASE_URL}/storage/v1/object/public/site-content/${path}`;
 }
 export function MagazineAdmin() {
-  const [message, setMessage] = useState("");
+  const [message, setMessage, messageKind] = useCmsMessage("");
   const [loading, setLoading] = useState(false);
   const [reading, setReading] = useState(false);
   const [readStatus, setReadStatus] = useState("");
-  const [readError, setReadError] = useState("");
+  const [readError, setReadError] = useCmsMessage("");
   const [editorial, setEditorial] = useState<MagazineEditorial>(emptyMagazineEditorial);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -65,7 +68,7 @@ export function MagazineAdmin() {
         const data = new FormData(event.currentTarget);
         const token = await getCmsAccessToken();
         await validateCmsUploads([[data.get("cover"), "magazineCover"], [data.get("pdf"), "pdf"]]);
-        setMessage("Enviando capa e PDF…");
+        setMessage("Enviando capa e PDF…", "info");
         const [cover, pdf] = await Promise.all([uploadCover(data.get("cover")), uploadPublicationPdf(data.get("pdf"), token, "magazines")]);
         // Assign the ID before insertion so retrying editorial save never creates another edition.
         id = crypto.randomUUID();
@@ -74,7 +77,7 @@ export function MagazineAdmin() {
         setCreatedId(id); publicationCreated = true;
       }
       if (createdId || editorial.summary.trim() || editorial.highlights.some(item => item.text.trim())) await saveMagazineEditorial(id, editorial);
-      setSaved(true); setMessage("Revista e conteúdo de Nessa edição salvos com sucesso.");
+      setSaved(true); setMessage("Revista e conteúdo de Nessa edição salvos com sucesso.", "success");
     } catch (error) {
       setMessage(`${publicationCreated ? "A revista foi cadastrada, mas Nessa edição não foi salvo. Use Salvar Nessa edição para tentar novamente, sem reenviar os arquivos. " : ""}${error instanceof Error ? error.message : "Erro ao cadastrar."}`);
     } finally { setLoading(false); }
@@ -83,18 +86,18 @@ export function MagazineAdmin() {
     <fieldset className="settings-form form-span-full" disabled={loading || Boolean(createdId)}><legend>Dados da revista</legend>
       <label>Título<input name="title" required placeholder="Ex.: Setembro 2026" /></label><label>Edição<input name="edition" required placeholder="Ex.: Especial Primavera" /></label>
       <label>Data da edição<input name="published_at" type="date" required /></label><label><input name="active" type="checkbox" defaultChecked /> Publicada</label>
-      <label>Capa da revista<input name="cover" type="file" accept="image/png,image/jpeg,image/webp" required /><UploadRequirements rule="magazineCover" /></label>
-      <label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required onChange={event => { const file = event.target.files?.[0] ?? null; setSelectedPdf(file); setEditorial(emptyMagazineEditorial); setReadStatus(""); setReadError(""); controller.current?.abort(); if (file) void readPdf(file); }} /><UploadRequirements rule="pdf">A leitura automática começa ao selecionar o arquivo, antes de publicar.</UploadRequirements></label>
+      <label>Capa da revista<CmsFileInput name="cover" type="file" accept="image/png,image/jpeg,image/webp" required /><UploadRequirements rule="magazineCover" /></label>
+      <label>Arquivo PDF<CmsFileInput name="pdf" fieldError={readError} type="file" accept="application/pdf,.pdf" required onChange={event => { const file = event.target.files?.[0] ?? null; setSelectedPdf(file); setEditorial(emptyMagazineEditorial); setReadStatus(""); setReadError(""); controller.current?.abort(); if (file) void readPdf(file); }} /><UploadRequirements rule="pdf">A leitura automática começa ao selecionar o arquivo, antes de publicar.</UploadRequirements></label>
     </fieldset>
     <fieldset className="settings-form form-span-full" disabled={loading || reading}><legend>Nessa edição · revise antes de publicar</legend>
       <p className="form-span-full">O resumo e os destaques são sugeridos a partir do texto do PDF. Você pode corrigir ou preencher manualmente. PDFs em imagem precisam de OCR, ainda não incluído.</p>
       <label className="form-span-full">Resumo<textarea rows={4} maxLength={700} value={editorial.summary} onChange={event => { setSaved(false); setEditorial({ ...editorial, summary: event.target.value }); }} /></label>
-      {editorial.highlights.map((item, index) => <div className="settings-form form-span-full" key={index}><label>Quadro<input value={item.label} maxLength={60} onChange={event => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, label: event.target.value } : row) }); }} /></label><label>Título da matéria<input value={item.text} maxLength={200} onChange={event => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, text: event.target.value } : row) }); }} /></label><Button variant="secondary" type="button" onClick={() => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.filter((_, i) => i !== index) }); }}>Remover destaque {index + 1}</Button></div>)}
+      {editorial.highlights.map((item, index) => <div className="settings-form form-span-full" key={index}><label>Quadro<input value={item.label} maxLength={60} onChange={event => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, label: event.target.value } : row) }); }} /></label><label>Título da matéria<input value={item.text} maxLength={200} onChange={event => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, text: event.target.value } : row) }); }} /></label><Button variant="danger" type="button" onClick={() => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.filter((_, i) => i !== index) }); }}>Remover destaque {index + 1}</Button></div>)}
       <Button variant="secondary" type="button" disabled={editorial.highlights.length >= 8} onClick={() => { setSaved(false); setEditorial({ ...editorial, highlights: [...editorial.highlights, { label: "", text: "" }] }); }}>Adicionar destaque</Button>
       {!createdId && selectedPdf && <Button variant="secondary" type="button" onClick={() => { if (selectedPdf) void readPdf(selectedPdf); }}>Ler PDF novamente e substituir sugestão</Button>}
     </fieldset>
-    <div className="form-span-full" role="status">{readStatus}</div>{readError && <p className="form-span-full" role="alert">{readError}</p>}
+    <div className="form-span-full" role="status">{readStatus}</div>
     {reading && <Button variant="ghost" type="button" onClick={() => controller.current?.abort()}>Cancelar leitura</Button>}
     <div className="form-actions"><Button variant="primary" type="submit" className="button" disabled={loading || reading || saved}>{loading ? "Salvando…" : createdId ? "Salvar Nessa edição" : "Publicar revista e Nessa edição"}</Button>{createdId && <Button variant="secondary" type="button" className="button button-secondary" disabled={loading} onClick={() => { formRef.current?.reset(); setSelectedPdf(null); setCreatedId(null); setSaved(false); setEditorial(emptyMagazineEditorial); setMessage(""); setReadStatus(""); setReadError(""); }}>Cadastrar outra edição</Button>}</div>
-  </form>{message && <div className="form-status" role="status"><strong>{message}</strong>{createdId && <p><Link href="/admin/revistas?tab=settings">Editar ou reler esta edição em Revistas</Link></p>}</div>}</>;
+  </form>{message && <div className="form-status" role="status"><strong><CmsFeedback message={message} kind={messageKind} /></strong>{createdId && <p><Link href="/admin/revistas?tab=settings">Editar ou reler esta edição em Revistas</Link></p>}</div>}</>;
 }
