@@ -111,7 +111,7 @@ export function FaqAnswerEditor({ value, format, disabled, onChange }: { value: 
     {linkForm ? <div className={styles.linkForm}>
       <label>Texto do link<input value={label} maxLength={200} disabled={disabled} onChange={e => setLabel(e.target.value)} /></label>
       <label>Destino do link<input autoFocus value={href} maxLength={1000} disabled={disabled} placeholder="/#historia, /lojas ou https://..." onChange={e => setHref(e.target.value)} /></label>
-      <div className={styles.actions}><Button variant="secondary" type="button" disabled={disabled} onClick={applyLink}>Aplicar link</Button><Button variant="ghost" type="button" disabled={disabled} onClick={() => { setLinkForm(false); setMessage(""); editor.current?.focus(); }}>Cancelar</Button></div>
+      <div className={styles.actions}><Button variant="secondary" type="button" disabled={disabled} onClick={applyLink}>Aplicar link</Button><Button variant="danger" type="button" disabled={disabled} onClick={() => { setLinkForm(false); setMessage(""); editor.current?.focus(); }}>Cancelar</Button></div>
     </div> : null}
     <div ref={editor} className={styles.editor} contentEditable={!disabled} suppressContentEditableWarning role="textbox" aria-multiline="true" aria-labelledby={id} aria-disabled={disabled} tabIndex={disabled ? -1 : 0} onInput={emit} onPaste={paste} onDrop={drop} onClick={event => { if ((event.target as HTMLElement).closest("a")) event.preventDefault(); }} />
     <small>Selecione um texto para inserir um link. Sites externos abrem em outra aba. {answerText(value, format).length}/4000 caracteres.</small>

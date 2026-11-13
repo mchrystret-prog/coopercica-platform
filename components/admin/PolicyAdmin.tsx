@@ -175,7 +175,7 @@ export function PolicyAdmin() {
             </h2>
           </div>
           {editing ? (
-            <Button variant="ghost" type="button" className="cms-edit-one" onClick={() => setEditing(null)}>
+            <Button variant="danger" type="button" className="cms-edit-one" onClick={() => setEditing(null)}>
               Cancelar edição
             </Button>
           ) : null}

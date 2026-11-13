@@ -54,7 +54,7 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
       <label>Edição para editar<select disabled={reading} value={edition.id} onChange={event => { setEditionId(event.target.value); setSuggestion(null); setError(""); setStatus(""); }}>{magazines.map(item => <option key={item.id} value={item.id}>{item.title} · {item.edition}</option>)}</select></label>
       <div className="form-span-full">
         <Button variant="secondary" type="button" disabled={reading || !edition.pdfHref} onClick={readPdf}>Ler PDF e sugerir conteúdo</Button>
-        {reading && <Button variant="ghost" type="button" onClick={() => controller.current?.abort()}>Cancelar leitura</Button>}
+        {reading && <Button variant="danger" type="button" onClick={() => controller.current?.abort()}>Cancelar leitura</Button>}
         <p>Identifica quadros e títulos na camada de texto do PDF, sem enviar o arquivo a um serviço de IA. Revise a sugestão antes de aplicar. Até 15 MB e 60 páginas.</p>
         {!edition.pdfHref && <p>Cadastre um PDF válido desta edição no menu Revistas para usar a leitura automática.</p>}
         <p role="status" aria-live="polite">{status}</p>

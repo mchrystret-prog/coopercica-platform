@@ -226,7 +226,7 @@ export function LeafletAssetLibrary() {
                 : "Cadastrar arquivo"}
           </Button>
           {editing ? (
-            <Button variant="ghost"
+            <Button variant="danger"
               type="button"
               disabled={busy}
               onClick={() => { setEditing(null); setCodeValue(""); }}

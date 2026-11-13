@@ -236,7 +236,7 @@ export function JobsAdmin() {
                   >
                     Ver no site
                   </Button>
-                  <Button variant="secondary" type="button" disabled={busy} onClick={() => close(job)}>
+                  <Button variant="danger" type="button" disabled={busy} onClick={() => close(job)}>
                     Encerrar
                   </Button>
                 </>
@@ -276,7 +276,7 @@ export function JobsAdmin() {
         >
           <div className={styles.formHeading}>
             <h2>{editing ? "Editar vaga" : "Nova oportunidade"}</h2>
-            <Button variant="ghost" type="button"
+            <Button variant="danger" type="button"
               className="cms-edit-one"
               disabled={busy}
               onClick={() => {
