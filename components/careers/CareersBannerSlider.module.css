@@ -1,14 +1,21 @@
-.slider { width:100%; background:var(--surface-soft); }
+.slider { width:100%; background:linear-gradient(90deg, var(--brand-green-900), var(--brand-green-700)); color:var(--text-inverse); }
 .stage { width:100%; touch-action:pan-y; }
 .slide { display:block; width:100%; }
 .slide[hidden] { display:none; }
 .slide picture { display:block; }
 .slide img { display:block; width:100%; height:auto; object-fit:contain; }
-.controls { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:4px; padding:8px 12px; }
-.controls button { display:grid; place-items:center; min-width:44px; height:44px; border:1px solid var(--border-soft); border-radius:999px; background:var(--surface-card); color:var(--text-heading); cursor:pointer; }
-.controls button:focus-visible, .slide:focus-visible { outline:3px solid var(--brand-green-900); outline-offset:-3px; }
+.controls { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:4px; padding:12px 12px 4px; }
+.controls button { display:grid; place-items:center; min-width:44px; height:44px; border:1px solid rgb(255 255 255 / 25%); border-radius:999px; background:rgb(255 255 255 / 8%); color:var(--text-inverse); cursor:pointer; }
+.controls button:focus-visible, .slide:focus-visible { outline:3px solid var(--brand-lime-500); outline-offset:-3px; }
 .dots { display:flex; flex-wrap:wrap; justify-content:center; }
 .dots button { border:0; background:transparent; }
-.dots span { width:8px; height:8px; border-radius:999px; background:var(--border-strong); }
-.dots [aria-current="true"] span { width:24px; background:var(--brand-green-900); }
-.count { font-size:13px; padding:0 8px; color:var(--text-heading); }
+.dots span { width:8px; height:8px; border-radius:999px; background:rgb(255 255 255 / 40%); }
+.dots [aria-current="true"] span { width:24px; background:var(--brand-lime-500); }
+.count { font-size:13px; padding:0 8px; color:var(--text-inverse-muted); }
+
+.navigation { padding:16px 12px 8px; }
+.progress { height:3px; width:min(280px, 70%); margin:0 auto; overflow:hidden; border-radius:999px; background:rgb(255 255 255 / 20%); }
+.progress span { display:block; width:100%; height:100%; background:var(--brand-lime-500); transform:scaleX(0); transform-origin:left; }
+.controls button:hover { background:rgb(255 255 255 / 16%); }
+.stage { position:relative; }
+.stage::after { content:""; position:absolute; inset:auto 0 0; height:16px; pointer-events:none; background:linear-gradient(transparent, rgb(28 71 34 / 35%)); }

@@ -10,6 +10,8 @@ export function CareersBannerSlider({ items, interval = 8000, autoplay = true }:
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [reduced, setReduced] = useState(true);
+  const progress = useRef<HTMLSpanElement>(null);
+  const elapsed = useRef(0);
   const touch = useRef<number | null>(null);
   const swiped = useRef(false);
   useEffect(() => {
@@ -21,12 +23,33 @@ export function CareersBannerSlider({ items, interval = 8000, autoplay = true }:
   const stopped = paused || hovered || focused || reduced;
   useEffect(() => {
     if (stopped || items.length < 2) return;
-    const timer = window.setInterval(() => { if (!document.hidden) setCurrent(previous => (previous + 1) % items.length); }, interval);
-    return () => window.clearInterval(timer);
+    let frame = 0;
+    let previous: number | null = null;
+    const duration = Math.max(1000, interval);
+    const tick = (now: number) => {
+      if (document.hidden) {
+        previous = null;
+      } else {
+        if (previous !== null) elapsed.current += now - previous;
+        previous = now;
+        if (elapsed.current >= duration) {
+          elapsed.current = 0;
+          setCurrent(value => (value + 1) % items.length);
+        }
+        if (progress.current) progress.current.style.transform = `scaleX(${Math.min(elapsed.current / duration, 1)})`;
+      }
+      frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
   }, [stopped, items.length, interval]);
   if (!items.length) return null;
   const active = current % items.length;
-  const go = (index: number) => setCurrent((index + items.length) % items.length);
+  const go = (index: number) => {
+    elapsed.current = 0;
+    if (progress.current) progress.current.style.transform = "scaleX(0)";
+    setCurrent((index + items.length) % items.length);
+  };
   return <section id="depoimentos" className={styles.slider} aria-label="Histórias de quem faz parte da Coopercica" aria-roledescription="carrossel"
     onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
     onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
@@ -43,12 +66,15 @@ export function CareersBannerSlider({ items, interval = 8000, autoplay = true }:
         </picture>
       </a>)}
     </div>
-    {items.length > 1 ? <div className={styles.controls}>
+    {items.length > 1 ? <div className={styles.navigation}>
+      {!reduced ? <div className={styles.progress} aria-hidden="true"><span ref={progress} /></div> : null}
+      <div className={styles.controls}>
       <button type="button" onClick={() => go(active - 1)} aria-label="Depoimento anterior"><Icon name="chevron-left" /></button>
       <div className={styles.dots}>{items.map((item, index) => <button key={item.id} type="button" aria-label={`Exibir depoimento ${index + 1}: ${item.title}`} aria-current={index === active ? "true" : undefined} onClick={() => go(index)}><span /></button>)}</div>
       <button type="button" onClick={() => go(active + 1)} aria-label="Próximo depoimento"><Icon name="chevron-right" /></button>
       {!reduced ? <button type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? "Retomar depoimentos" : "Pausar depoimentos"}><Icon name={paused ? "play" : "pause"} /></button> : null}
       <span className={styles.count} aria-live={stopped ? "polite" : "off"}>{active + 1} / {items.length}</span>
+      </div>
     </div> : null}
   </section>;
 }

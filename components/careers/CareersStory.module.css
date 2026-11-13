@@ -51,7 +51,7 @@
 
 /* Branded depth, with restrained interaction rather than continuous movement. */
 .hero {
-  background: radial-gradient(ellipse at 95% 10%, var(--brand-green-700), transparent 60%), var(--brand-green-900);
+  background: linear-gradient(90deg, var(--brand-green-900), var(--brand-green-700));
 }
 .heroCopy .eyebrow::before,
 .invitation .eyebrow::before {
