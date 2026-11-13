@@ -368,9 +368,9 @@ export function LeafletAdmin({
     <>
       <form onSubmit={submit}>
         <fieldset
-          className="settings-form"
+          className="settings-form cms-leaflet-create"
           disabled={loading}
-          style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
+          style={{ border: 0, minWidth: 0 }}
         >
           <label>
             Nome do folheto
@@ -378,10 +378,11 @@ export function LeafletAdmin({
             <small>Nome que será exibido para o público.</small>
           </label>
           <label>
-            Slug (opcional)
-            <input name="slug" placeholder="ofertas-da-semana" />
-            <small>Deixe vazio para gerar automaticamente.</small>
+            Endereço do folheto — slug (opcional)
+            <input name="slug" placeholder="ofertas-da-semana" aria-describedby="leaflet-slug-help" />
+            <small id="leaflet-slug-help">O slug é a parte do link que identifica este folheto. Ex.: ofertas-da-semana. Use palavras curtas separadas por hífens, sem espaços ou acentos. Se deixar vazio, geramos a partir do nome. O sistema acrescenta um código ao final para evitar links repetidos.</small>
           </label>
+          <div className="cms-leaflet-dates form-span-full">
           <label>
             Exibir no site a partir de
             <input name="display_from" type="date" required />
@@ -397,8 +398,9 @@ export function LeafletAdmin({
             Fim da vigência
             <input name="ends_at" type="date" required />
           </label>
+          </div>
           <label>
-            Thumbnail do folheto
+            Capa do folheto
             <CmsFileInput
               name="cover_file"
               type="file"
@@ -408,7 +410,7 @@ export function LeafletAdmin({
             <UploadRequirements rule="leafletCover">Mantenha títulos e informações importantes longe das bordas.</UploadRequirements>
           </label>
           <label>
-            Header da página
+            Banner da página
             <CmsFileInput
               name="header_file"
               type="file"
@@ -417,7 +419,7 @@ export function LeafletAdmin({
             />
             <UploadRequirements rule="leafletHeader" />
           </label>
-          <label>
+          <label className="form-span-full">
             Status
             <select name="status" defaultValue="draft">
               <option value="draft">Salvar como rascunho</option>

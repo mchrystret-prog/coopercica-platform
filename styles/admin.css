@@ -474,3 +474,8 @@
 :is(.admin-shell, .cms-auth) .cms-feedback[data-state="info"] { color:var(--text-body); }
 :is(.admin-shell, .cms-auth) input[aria-invalid="true"] { border-color:var(--brand-red-500); }
 :is(.admin-shell, .cms-auth) [role="alert"] { color:var(--feedback-error); }
+
+/* Keep leaflet identity, schedule and artwork on coherent rows. */
+.admin-shell .cms-leaflet-create { margin-top: 24px; padding: clamp(20px, 3vw, 32px); align-items: start; }
+.cms-leaflet-dates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .cms-leaflet-dates { grid-template-columns: minmax(0, 1fr); } }
