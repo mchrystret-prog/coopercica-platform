@@ -262,6 +262,7 @@
   line-height: var(--line-height-body);
 }
 .success {
+  scroll-margin-top: calc(var(--header-height, 80px) + 24px);
   padding: var(--card-padding);
   background: var(--surface-soft);
   border-radius: var(--radius-sm);

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SUPABASE_URL } from "@/lib/leaflets";
 import { Button } from "@/components/ui/Button/Button";
 import { Card } from "@/components/ui/Card/Card";
@@ -16,6 +16,20 @@ export function ApplicationForm({
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [sent, setSent] = useState(false);
+  const confirmation = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!sent) return;
+    const frame = requestAnimationFrame(() => {
+      const element = confirmation.current;
+      if (!element) return;
+      element.focus({ preventScroll: true });
+      element.scrollIntoView({
+        block: "start",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+      });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [sent]);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
@@ -58,21 +72,26 @@ export function ApplicationForm({
       as="section"
       className={styles.application}
       id="candidatura"
-      aria-labelledby="application-title"
+      aria-labelledby={sent ? "application-success-title" : "application-title"}
     >
-      <SectionHeader
+      {!sent ? <SectionHeader
         id="application-title"
         eyebrow="Vamos nos conhecer"
         title="Candidate-se à vaga"
         description={title}
         stacked
-      />
+      /> : null}
       {sent ? (
-        <div className={styles.success} role="status">
-          <h3 className="ds-subtitle">Candidatura recebida!</h3>
+        <div ref={confirmation} className={styles.success} role="status" tabIndex={-1} aria-labelledby="application-success-title">
+          <h2 id="application-success-title" className="ds-subtitle">Candidatura recebida!</h2>
           <p>
-            Obrigado por seu interesse. O RH entrará em contato se houver
-            continuidade no processo.
+            Que bom saber que você quer fazer parte da nossa história! Obrigado por
+            compartilhar sua trajetória e dar esse passo com a Coopercica.
+          </p>
+          <p>
+            Recebemos sua candidatura para a vaga de <strong>{title}</strong>.
+            Nossa equipe de RH vai conhecer seu perfil e, se você avançar para a
+            próxima etapa, entrará em contato pelos dados informados.
           </p>
           <Button href="/vagas" variant="secondary">
             Explorar outras oportunidades
