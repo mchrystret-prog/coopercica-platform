@@ -22,6 +22,14 @@ export function ApplicationsAdmin() {
   return <ApplicationsPanel key={initialJob} initialJob={initialJob} />;
 }
 function ApplicationsPanel({ initialJob }: { initialJob: string }) {
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    let active = true;
+    void recruitmentRequest<boolean>("/rest/v1/rpc/cms_is_admin", { method: "POST", body: "{}" })
+      .then(value => { if (active) setIsAdmin(value === true); })
+      .catch(() => { if (active) setIsAdmin(false); });
+    return () => { active = false; };
+  }, []);
   const [job, setJob] = useState(
       /^[a-f0-9-]{36}$/i.test(initialJob) ? initialJob : "",
     ),
@@ -122,6 +130,30 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
       setRevision((n) => n + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao salvar.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function remove(candidate: Candidate) {
+    if (!isAdmin || busy) return;
+    if (!window.confirm(`Remover a candidatura de ${candidate.name}? Os dados e as anotações desta candidatura serão removidos. Esta ação não pode ser desfeita.`)) return;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const removed = await recruitmentRequest<{ id: string }[]>(
+        `/rest/v1/site_job_applications?id=eq.${candidate.id}&select=id`,
+        { method: "DELETE", headers: { Prefer: "return=representation" } },
+      );
+      if (!removed.some(row => row.id === candidate.id))
+        throw new Error("Não foi possível remover. Verifique se a candidatura ainda existe e se você tem acesso de administrador.");
+      if (selected?.id === candidate.id) setSelected(null);
+      setCandidates(current => current.filter(row => row.id !== candidate.id));
+      if (candidates.length === 1 && page > 0) setPage(current => current - 1);
+      else setRevision(current => current + 1);
+      setMessage("Candidatura removida.", "success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível remover a candidatura. Tente novamente.");
     } finally {
       setBusy(false);
     }
@@ -360,6 +392,9 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               >
                 Ver candidatura
               </Button>
+              {isAdmin ? <Button variant="danger" type="button" disabled={busy} onClick={() => void remove(c)}>
+                Remover candidatura
+              </Button> : null}
             </div>
           </article>
         ))}
