@@ -23,10 +23,15 @@ export function CareersPortal({ jobs }: { jobs: Job[] }) {
     <>
       <Section id="oportunidades" className={styles.opportunities} aria-labelledby="opportunities-title">
         <Container>
+          <div className={styles.opportunitiesIntro} data-careers-reveal>
+            <span className="eyebrow">Seu próximo passo</span>
+            <h2 id="opportunities-title">Encontre seu próximo passo na Coopercica.</h2>
+            <p>Confira as oportunidades abaixo e encontre a vaga que combina com você. Use os filtros para buscar por cargo, setor ou cidade.</p>
+          </div>
           <div className={styles.filterHeading} data-careers-reveal>
-            <h2 id="opportunities-title" className="ds-subtitle">
+            <h3 className="ds-subtitle">
               Oportunidades
-            </h2>
+            </h3>
             <Badge>
               {jobs.length}{" "}
               {jobs.length === 1 ? "vaga aberta" : "vagas abertas"}

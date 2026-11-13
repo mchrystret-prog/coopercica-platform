@@ -1,3 +1,6 @@
+.opportunitiesIntro { max-width: 780px; margin-bottom: var(--space-8); }
+.opportunitiesIntro h2 { margin: var(--space-4) 0; color: var(--text-heading); font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.12; letter-spacing: var(--tracking-heading); overflow-wrap: anywhere; }
+.opportunitiesIntro p { margin: 0; max-width: 680px; color: var(--text-body); line-height: var(--line-height-body); }
 .filterHeading,
 .results,
 .cardTop,

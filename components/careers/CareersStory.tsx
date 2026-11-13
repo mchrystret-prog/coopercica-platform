@@ -68,6 +68,5 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
         ].map(([title, description], index) => <article key={title} data-careers-reveal data-careers-delay={index * 70}><span className={styles.valueIndex} aria-hidden="true">0{index + 1}</span><h3>{title}</h3><p>{description}</p></article>)}</div>
       </Container>
     </Section>
-    <section className={styles.invitation} aria-labelledby="invitation-title"><Container><div className={styles.invitationGrid} data-careers-reveal><div><span className={styles.eyebrow}>Seu próximo passo</span><h2 id="invitation-title">Faça parte dos próximos capítulos.</h2><p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p></div><Button href="#oportunidades">Quero fazer parte</Button></div></Container></section>
   </>;
 }
