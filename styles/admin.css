@@ -444,12 +444,12 @@
 
 .admin-shell .cms-icon-button.ds-button { width:48px; min-width:48px; padding:var(--space-2); }
 
-/* Destructive actions use the brand red with readable dark text. */
+/* Destructive actions use a red outline, filling with brand red on hover. */
 :is(.admin-shell, .cms-auth) .ds-button--danger {
-  --cms-button-bg: var(--brand-red-500);
-  --cms-button-text: var(--neutral-1000);
+  --cms-button-bg: transparent;
+  --cms-button-text: var(--feedback-error);
   --cms-button-border: var(--brand-red-500);
-  --cms-button-hover-bg: var(--brand-coral-500);
+  --cms-button-hover-bg: var(--brand-red-500);
   --cms-button-hover-text: var(--neutral-1000);
   --cms-button-active-bg: var(--brand-red-500);
   --cms-button-active-text: var(--neutral-1000);

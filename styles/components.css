@@ -27,7 +27,7 @@
 .ds-button:hover .ds-icon { transform:translate(2px,-2px); }
 .ds-button--ghost:hover { transform:none; box-shadow:none; }
 
-.ds-button--danger { background:var(--brand-red-500); border-color:var(--brand-red-500); color:var(--neutral-1000); }
-.ds-button--danger:hover { background:var(--brand-coral-500); color:var(--neutral-1000); }
+.ds-button--danger { background:transparent; border-color:var(--brand-red-500); color:var(--feedback-error); }
+.ds-button--danger:hover { background:var(--brand-red-500); color:var(--neutral-1000); }
 .ds-button--danger:active { background:var(--brand-red-500); color:var(--neutral-1000); box-shadow:inset 0 0 0 2px var(--neutral-1000); }
 .ds-button--danger:focus-visible { outline-color:var(--brand-red-500); }

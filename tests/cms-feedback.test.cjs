@@ -16,6 +16,6 @@ test('CMS destructive buttons and upload fields use shared components',()=>{
  const tag=n.tagName.getText(a);
  if(tag==='CmsFileInput')uploads++;
  if(tag==='input'&&f!=='CmsFileInput.tsx')assert.ok(!n.attributes.properties.some(p=>p.name?.getText(a)==='type'&&p.initializer?.text==='file'),f);
- if(tag==='Button'&&ts.isJsxElement(n.parent)&&/\b(Apagar|Remover|Excluir)\b/i.test(n.parent.children.map(c=>c.getText(a)).join(' '))){assert.equal(n.attributes.properties.find(p=>p.name?.getText(a)==='variant')?.initializer?.text,'danger',f);destructive++;}
+ if(tag==='Button'&&ts.isJsxElement(n.parent)&&/\b(Apagar|Remover|Excluir|Zerar)\b/i.test(n.parent.children.map(c=>c.getText(a)).join(' '))){assert.equal(n.attributes.properties.find(p=>p.name?.getText(a)==='variant')?.initializer?.text,'danger',f);destructive++;}
  }ts.forEachChild(n,v)}v(a)}assert.ok(destructive>=10);assert.ok(uploads>=20);
 });
