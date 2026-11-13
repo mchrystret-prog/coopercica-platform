@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import { getCoopermaisInformation, getCoopermaisBanner } from "@/lib/coopermais-banner";
 import styles from "./CoopermaisBanner.module.css";
+import { observeBannerAutoplay } from "@/lib/banner-autoplay";
 const motionQuery = "(prefers-reduced-motion: reduce)";
 const subscribe = (callback: () => void) => {
   const media = window.matchMedia(motionQuery);
@@ -26,22 +27,35 @@ function BannerMedia({ media }: { media: Pick<ReturnType<typeof getCoopermaisBan
   const video = useRef<HTMLVideoElement>(null);
   const reducedMotion = useSyncExternalStore(subscribe, motionSnapshot, serverSnapshot);
   const [paused, setPaused] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
   const stopped = paused || reducedMotion;
   useEffect(() => {
     const element = video.current;
     if (!element) return;
     if (stopped) element.pause();
-    else void element.play().catch(() => setPaused(true));
-    return () => element.pause();
+    else return observeBannerAutoplay(element);
   }, [stopped, failed]);
-  const pauseLabel = reducedMotion ? "Animação pausada" : stopped ? "Reproduzir vídeo" : "Pausar vídeo";
+  const pauseLabel = reducedMotion ? "Animação pausada" : !playing ? "Reproduzir vídeo" : "Pausar vídeo";
+  const togglePlayback = () => {
+    const element = video.current;
+    if (!element || reducedMotion) return;
+    if (!element.paused) {
+      setPaused(true);
+      element.pause();
+    } else {
+      setPaused(false);
+      element.muted = true;
+      // Keep the play call inside the tap handler for mobile autoplay restrictions.
+      void element.play().catch(() => {});
+    }
+  };
   return <>
     <a className={styles.link} href={media.ctaHref} target="_blank" rel="noopener noreferrer" aria-label={`${media.ctaLabel} (abre em nova aba)`} data-analytics-id="cta:coopermais-banner" data-analytics-label={media.ctaLabel}>
-    {media.video && !failed ? <video ref={video} className={styles.image} src={media.video} poster={media.image} width={media.width} height={media.height} autoPlay={!stopped} muted loop playsInline controls={false} disablePictureInPicture disableRemotePlayback preload="metadata" aria-label={media.alt} onError={() => setFailed(true)} /> : <Image src={media.image} alt={media.alt} width={media.width} height={media.height} sizes="(max-width: 1280px) 100vw, 1280px" className={styles.image} />}
+    {media.video && !failed ? <video ref={video} className={styles.image} src={media.video} poster={media.image} width={media.width} height={media.height} autoPlay={!stopped} muted loop playsInline controls={false} disablePictureInPicture disableRemotePlayback preload="metadata" aria-label={media.alt} onPlaying={() => setPlaying(true)} onPause={() => setPlaying(false)} onError={() => setFailed(true)} /> : <Image src={media.image} alt={media.alt} width={media.width} height={media.height} sizes="(max-width: 1280px) 100vw, 1280px" className={styles.image} />}
     </a>
-    {media.video && !failed ? <button type="button" className={styles.pause} disabled={reducedMotion} aria-label={pauseLabel} title={pauseLabel} onClick={() => setPaused(value => !value)}>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">{stopped ? <path d="M4 2v12l10-6z" /> : <><rect x="3" y="2" width="4" height="12" rx="1" /><rect x="9" y="2" width="4" height="12" rx="1" /></>}</svg>
+    {media.video && !failed ? <button type="button" className={styles.pause} data-playing={playing} disabled={reducedMotion} aria-label={pauseLabel} title={pauseLabel} onClick={togglePlayback}>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">{!playing ? <path d="M4 2v12l10-6z" /> : <><rect x="3" y="2" width="4" height="12" rx="1" /><rect x="9" y="2" width="4" height="12" rx="1" /></>}</svg>
     </button> : null}
   </>;
 }
