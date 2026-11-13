@@ -77,17 +77,6 @@
   gap: 8px;
   flex-shrink: 0;
 }
-.actions button,
-.pager button {
-  min-height: 44px;
-  padding: 10px 14px;
-  border: 1px solid var(--border-strong);
-  border-radius: 10px;
-  background: var(--surface-soft);
-  color: var(--text-heading);
-  font-weight: 700;
-  cursor: pointer;
-}
 .pager {
   display: flex;
   align-items: center;
@@ -175,17 +164,6 @@
   color: var(--text-muted);
   font-size: 0.8rem;
 }
-.row a {
-  color: var(--brand-green-900);
-  font-weight: 700;
-}
-.list button:disabled,
-.pager button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-.row button:focus-visible,
-.pager button:focus-visible,
 .filters select:focus-visible,
 .filters input:focus-visible {
   outline: 3px solid var(--brand-green-500);
@@ -216,3 +194,11 @@
     min-width: 130px;
   }
 }
+
+/* Labels remain visible so stage information does not rely on color alone. */
+.status[data-status="received"] { background: #EAF2FF; color: #214F87; }
+.status[data-status="review"] { background: #FFF4D6; color: var(--feedback-warning); }
+.status[data-status="interview"] { background: #F1EBFA; color: #65408B; }
+.status[data-status="hired"] { background: var(--surface-soft); color: var(--brand-green-900); }
+.status[data-status="rejected"] { background: #FFF0EE; color: var(--feedback-error); }
+.notesHelp { margin: -8px 0 0; color: var(--text-body); font-size: var(--font-size-sm); line-height: var(--line-height-body); max-width: 80ch; }

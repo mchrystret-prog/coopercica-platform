@@ -1,7 +1,6 @@
 "use client";
 import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
-import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   recruitmentList,
@@ -225,18 +224,18 @@ export function JobsAdmin() {
               <Button variant="secondary" type="button" disabled={busy} onClick={() => edit(job)}>
                 Editar
               </Button>
-              <Link href={`/admin/vagas/candidaturas?vaga=${job.id}`}>
+              <Button variant="secondary" icon={false} href={`/admin/vagas/candidaturas?vaga=${job.id}`}>
                 Candidaturas
-              </Link>
+              </Button>
               {job.status === "open" ? (
                 <>
-                  <Link
+                  <Button variant="secondary" external
                     href={`/vagas/${job.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Ver no site
-                  </Link>
+                  </Button>
                   <Button variant="secondary" type="button" disabled={busy} onClick={() => close(job)}>
                     Encerrar
                   </Button>

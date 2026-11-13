@@ -241,13 +241,13 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
         <article className={styles.detail}>
           <div className={styles.detailHeading}>
             <div>
-              <span className={styles.status}>
+              <span className={styles.status} data-status={selected.status}>
                 {applicationStatuses[selected.status]}
               </span>
               <h2>{selected.name}</h2>
               <p>{selected.site_jobs?.title}</p>
             </div>
-            <Button variant="ghost" type="button"
+            <Button variant="secondary" type="button"
               className="cms-edit-one"
               disabled={busy}
               onClick={() => setSelected(null)}
@@ -314,12 +314,16 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               <textarea
                 className={styles.notes}
                 name="internal_notes"
+                aria-describedby="internal-notes-help"
                 rows={5}
                 maxLength={12000}
                 defaultValue={selected.internal_notes}
-                placeholder="Anotações acessíveis somente ao RH e administradores."
+                placeholder="Ex.: entrevista realizada, disponibilidade confirmada e próximo contato combinado."
               />
             </label>
+            <p id="internal-notes-help" className={styles.notesHelp}>
+              Use as anotações internas para registrar o andamento da seleção, pontos da entrevista e próximos passos. Elas ficam vinculadas a esta candidatura e são acessíveis somente ao RH e administradores. O candidato não vê essas anotações e não recebe mensagem ao salvar. Para gravar a etapa e o texto, clique em “Salvar acompanhamento”.
+            </p>
             <div>
               <Button variant="primary" type="submit" className="button" disabled={busy}>
                 {busy ? "Salvando…" : "Salvar acompanhamento"}
@@ -332,7 +336,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
         {candidates.map((c) => (
           <article className={styles.row} key={c.id}>
             <div>
-              <span className={styles.status}>
+              <span className={styles.status} data-status={c.status}>
                 {applicationStatuses[c.status]}
               </span>
               <h2>{c.name}</h2>
