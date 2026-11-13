@@ -206,7 +206,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
         </div>
       </header>
       <RecruitmentNav />
-      <div className={styles.filters}>
+      <div className={`${styles.filters} ${styles.applicationFilters}`}>
         <label>
           Vaga
           <select value={job} onChange={(e) => change(setJob, e.target.value)}>
@@ -232,7 +232,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
             ))}
           </select>
         </label>
-        <form
+        <form className={styles.candidateSearch}
           onSubmit={(e) => {
             e.preventDefault();
             change(setQuery, search);
