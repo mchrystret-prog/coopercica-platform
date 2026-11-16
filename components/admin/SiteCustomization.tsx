@@ -25,6 +25,7 @@ import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { customizationUploadRule } from "@/lib/cms-upload-rules";
 import { UploadRequirements } from "./UploadRequirements";
+import { IdentityColorField } from "./IdentityColorField";
 import { DEFAULT_FAVICON } from "@/lib/site";
 import { FaqEditor } from "./FaqEditor";
 import { SocialSharingEditor } from "./SocialSharingEditor";
@@ -278,9 +279,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       {tab === "identity" ? (
         <div className="settings-form">
           <p id="identity-colors-note" className="form-span-full">
-            As cores do site público seguem os tokens oficiais do Design System.
-            Os valores existentes são preservados, mas não podem ser editados
-            nesta fase.
+            Clique em uma cor para abrir o seletor ou informar um código HEX. Depois, salve a personalização para publicar as alterações.
           </p>
           <label>
             Nome do site
@@ -289,45 +288,10 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               onChange={(e) => setIdentity("siteName", e.target.value)}
             />
           </label>
-          <label>
-            Cor principal
-            <input
-              type="color"
-              value={i.primaryColor || "#1c4722"}
-              disabled
-              aria-describedby="identity-colors-note"
-            />
-            <small>
-              Usada em títulos, navegação e elementos institucionais.
-            </small>
-          </label>
-          <label>
-            Cor secundária
-            <input
-              type="color"
-              value={i.secondaryColor || "#6ab945"}
-              disabled
-              aria-describedby="identity-colors-note"
-            />
-          </label>
-          <label>
-            Cor de destaque
-            <input
-              type="color"
-              value={i.accentColor || "#ef4037"}
-              disabled
-              aria-describedby="identity-colors-note"
-            />
-          </label>
-          <label>
-            Cor de fundo do site
-            <input
-              type="color"
-              value={i.pageColor || "#f6faf6"}
-              disabled
-              aria-describedby="identity-colors-note"
-            />
-          </label>
+          <IdentityColorField label="Cor principal" value={i.primaryColor || "#1c4722"} disabled={busy} onChange={value => setIdentity("primaryColor", value)} />
+          <IdentityColorField label="Cor secundária" value={i.secondaryColor || "#6ab945"} disabled={busy} onChange={value => setIdentity("secondaryColor", value)} />
+          <IdentityColorField label="Cor de destaque" value={i.accentColor || "#ef4037"} disabled={busy} onChange={value => setIdentity("accentColor", value)} />
+          <IdentityColorField label="Cor de fundo do site" value={i.pageColor || "#f6faf6"} disabled={busy} onChange={value => setIdentity("pageColor", value)} />
           <label>
             Link do botão Compre Online
             <input

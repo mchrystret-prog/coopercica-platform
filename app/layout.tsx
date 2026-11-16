@@ -1,3 +1,5 @@
+import { identityColorTokens } from "@/lib/identity-colors";
+import type { CSSProperties } from "react";
 import type { Metadata, Viewport } from "next";
 import { siteOrigin, brandDescription, indexingEnabled, organizationGraph } from "@/lib/seo";
 import { StructuredData } from "@/components/seo/StructuredData";
@@ -43,5 +45,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const [identity, leaflets] = await Promise.all([getSiteIdentity(), getActiveLeaflets()]);
-  return <html lang="pt-BR" className={montserrat.variable}><body><StructuredData value={organizationGraph(identity.siteName)} /><MobileNavigationProvider deliveryUrl={identity.deliveryUrl} hasOffers={leaflets.length > 0}>{children}</MobileNavigationProvider><SiteAnalytics /></body></html>;
+  return <html lang="pt-BR" className={montserrat.variable} style={identityColorTokens(identity) as CSSProperties}><body><StructuredData value={organizationGraph(identity.siteName)} /><MobileNavigationProvider deliveryUrl={identity.deliveryUrl} hasOffers={leaflets.length > 0}>{children}</MobileNavigationProvider><SiteAnalytics /></body></html>;
 }

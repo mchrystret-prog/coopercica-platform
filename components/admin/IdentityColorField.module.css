@@ -1,0 +1,15 @@
+.field { display: grid; gap: 8px; min-width: 0; font-weight: 700; font-size: .85rem; }
+.field small { font-weight: 400; }
+.trigger { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid #b9cbbd; border-radius: 12px; background: #fff; color: #1c4722; font: inherit; cursor: pointer; }
+.trigger > :last-child { margin-left: auto; }
+.swatch { width: 44px; height: 26px; border: 1px solid #b9cbbd; border-radius: 5px; }
+.dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; border: 1px solid #b9cbbd; border-radius: 20px; padding: 24px; background: #fff; color: #1c4722; font-weight: 400; }
+.dialog::backdrop { background: rgb(0 0 0 / 45%); }
+.dialog h2 { margin-top: 0; font-size: 1.3rem; }
+.dialog p { font-size: .85rem; line-height: 1.5; }
+.control { display: grid; gap: 8px; margin: 16px 0; font-weight: 700; }
+.control input { width: 100%; min-height: 48px; border: 1px solid #b9cbbd; border-radius: 8px; padding: 8px 12px; font: inherit; background: #fff; color: #1c4722; }
+.control input[type="color"] { cursor: pointer; height: 64px; padding: 4px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
+.trigger:focus-visible, .control input:focus-visible { outline: 3px solid #205f30; outline-offset: 3px; }
+.trigger:disabled { opacity: .6; cursor: wait; }
