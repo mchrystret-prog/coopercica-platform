@@ -1,4 +1,5 @@
 "use client";
+import { CmsRoleContext } from "./CmsRoleContext";
 import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
 import Link from "next/link";
@@ -354,7 +355,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </aside>
       <main>
         {allowed ? (
-          children
+          <CmsRoleContext.Provider value={member.role}>{children}</CmsRoleContext.Provider>
         ) : (
           <section className="admin-page">
             <h1>Acesso restrito</h1>

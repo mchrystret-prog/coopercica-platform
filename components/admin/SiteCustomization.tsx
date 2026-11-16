@@ -1,9 +1,10 @@
 "use client";
 import { cmsUploadFetch, reportCmsUploadError } from "@/lib/cms-upload-feedback";
+import { useCmsRole } from "./CmsRoleContext";
 import { CmsFileInput } from "./CmsFileInput";
 import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
-import { customizationModules, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
+import { customizationModules, customizationTabsForRole, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
 import { validateCoopermaisInformation } from "@/lib/coopermais-banner";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
@@ -51,7 +52,9 @@ const labels: Record<string, string> = {
   image: "Imagem da seção",
 };
 export function SiteCustomization({ magazines = [], initialTab, module = "personalization", embedded = false }: { magazines?: Magazine[]; initialTab?: CustomizationTab; module?: CustomizationModule; embedded?: boolean }) {
-  const config = customizationModules[module];
+  const role = useCmsRole();
+  const baseConfig = customizationModules[module];
+  const config = { ...baseConfig, tabs: customizationTabsForRole(module, role) };
   const [editionItems, setEditionItems] = useState(magazines);
   useEffect(() => { if (module === "magazines") { let cancelled = false; getMagazines().then(items => { if (!cancelled) setEditionItems(items); }); return () => { cancelled = true; }; } }, [module]);
   const [data, setData] = useState<Payload | null>(null),
@@ -95,7 +98,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     if (!data) return;
     const historyError = module === "personalization" ? validateHistory(data.settings.history_images || {}) : null;
     if (historyError) { setTab("history"); setMsg(historyError); return; }
-    const bannerError = module === "personalization" ? validateCareersBanners(data.settings.careers_hero || {}) : null;
+    const bannerError = module === "personalization" && role !== "marketing" ? validateCareersBanners(data.settings.careers_hero || {}) : null;
     if (bannerError) { setTab("careers"); setMsg(bannerError); return; }
     const faqError = module === "personalization" ? validateFaq(data.settings.home_faq || {}) : null;
     if (faqError) { setTab("faq"); setMsg(faqError); return; }
@@ -109,7 +112,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     const offersError = module === "settings" ? validateOffersSettings(data.settings) : null;
     if (offersError) { setTab("offers"); setMsg(offersError); return; }
     if (
-      module === "personalization" && data.settings.careers_hero?.image &&
+      module === "personalization" && role !== "marketing" && data.settings.careers_hero?.image &&
       !data.settings.careers_hero.alt?.trim()
     ) {
       setTab("careers");
@@ -142,7 +145,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             Authorization: `Bearer ${token()}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(customizationSavePayload(module, data, latest)),
+          body: JSON.stringify(customizationSavePayload(module, data, latest, role || undefined)),
         },
       );
       if (!r.ok) throw new Error(await r.text());
@@ -399,7 +402,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           setData(current => current ? { ...current, settings: { ...current.settings, [key]: { ...current.settings[key], ...patch } } } : current);
           setMsg("Configuração de ofertas alterada. Salve as alterações para publicar.", "info");
         }} />
-      ) : tab === "careers" ? (
+      ) : tab === "careers" && role !== "marketing" ? (
         <CareersHeroEditor
           value={data.settings.careers_hero || {}}
           busy={busy}

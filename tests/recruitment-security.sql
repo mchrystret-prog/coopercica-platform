@@ -38,7 +38,7 @@ do $$ declare n integer;policy_id uuid;begin
  insert into public.site_jobs(slug,title,department,city,employment_type,work_mode,description,requirements) values('qa-rh-created','Criada pelo RH','QA','Jundiaí','clt','onsite','Descrição técnica de teste com mais de vinte letras.','Requisitos técnicos de QA.');
  assert (select count(*) from public.site_job_applications where email='qa-recruitment@example.invalid')=1,'RH reads candidates';
  update public.site_job_applications set status='interview',internal_notes='Anotação privada' where id='82000000-0000-4000-8000-000000000001';get diagnostics n=row_count;assert n=1,'RH reviews candidate';
- assert (select count(*) from storage.objects where bucket_id='job-resumes')=1,'RH reads private resumes';
+ assert (select count(*) from storage.objects where bucket_id='job-resumes' and name='81000000-0000-4000-8000-000000000001/82000000-0000-4000-8000-000000000001.pdf')=1,'RH reads private resumes';
  begin update public.site_job_applications set email='changed@example.invalid';raise exception 'PII mutation accepted';exception when insufficient_privilege then null;end;
  policy_id:=public.cms_save_policy(null,'Documento QA RH','qa-rh-policy','','https://example.invalid/qa.pdf',0,false);
  assert (select count(*) from public.site_policies where id=policy_id)=1,'RH reads inactive document';
@@ -52,7 +52,7 @@ do $$ declare n integer;policy_id uuid;begin
  begin update public.digital_leaflets set name='Must not change';get diagnostics n=row_count;assert n=0,'RH cannot edit leaflets';exception when insufficient_privilege then null;end;
  assert (select count(*) from public.site_analytics_events)=0,'RH cannot read analytics';
  begin perform public.cms_site_analytics_report(current_date,current_date);raise exception 'RH report accepted';exception when insufficient_privilege then null;end;
- begin perform public.cms_get_site_customization();raise exception 'RH customization accepted';exception when raise_exception then assert sqlerrm<>'RH customization accepted';end;
+ begin perform public.cms_get_site_customization();raise exception 'RH customization accepted';exception when raise_exception or insufficient_privilege then assert sqlerrm<>'RH customization accepted';end;
 end $$;
 reset role;
 update public.cms_members set status='pending' where user_id=current_setting('qa.recruitment.uid')::uuid;

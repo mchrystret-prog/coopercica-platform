@@ -97,6 +97,7 @@ export function CmsUsers() {
         O perfil <strong>Recursos Humanos</strong> acessa somente Portal de
         Vagas, candidaturas e Políticas e documentos.
       </p>
+      <p>O perfil <strong>Marketing</strong> gerencia personalização, campanhas, folhetos, revistas, lojas, mídias, analytics e documentos. Não acessa o Portal de Vagas, as configurações de API nem a gestão de usuários.</p>
       <div className="cms-list">
         {items.map((x) => (
           <article className="cms-list-row" key={x.user_id}>
@@ -114,7 +115,7 @@ export function CmsUsers() {
             <div className="cms-row-actions">
               {x.status !== "approved" ? (
                 <>
-                  {(["editor", "hr", "admin"] as const).map((role) => (
+                  {(["marketing", "editor", "hr", "admin"] as const).map((role) => (
                     <Button variant="secondary" type="button"
                       key={role}
                       disabled={busy}
@@ -142,7 +143,7 @@ export function CmsUsers() {
                       }
                       aria-label={`Perfil de ${x.name || x.email}`}
                     >
-                      {(["editor", "hr", "admin"] as const).map((role) => (
+                      {(["marketing", "editor", "hr", "admin"] as const).map((role) => (
                         <option key={role} value={role}>
                           {cmsRoleName(role)}
                         </option>

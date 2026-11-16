@@ -1,3 +1,4 @@
+import type { CmsRole } from "./cms-access";
 export type CustomizationTab = "identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq";
 export type CustomizationModule = "personalization" | "settings" | "magazines";
 export const customizationModules: Record<CustomizationModule, { title: string; tabs: CustomizationTab[]; settings: string[]; sections: string[] }> = {
@@ -7,11 +8,14 @@ export const customizationModules: Record<CustomizationModule, { title: string; 
 };
 export const customizationTabLabels: Record<CustomizationTab, string> = { identity: "Identidade visual", sections: "Seções da Home", history: "Nossa História", careers: "Portal de Vagas", offers: "Integrações de ofertas", videos: "Vídeos", coopermais: "Coopermais", partners: "Parceiros", magazine: "Resumo e destaques", contact: "Contatos e redes sociais", sharing: "Compartilhamento", faq: "Perguntas Frequentes" };
 export const legacyCustomizationDestinations: Partial<Record<CustomizationTab, string>> = { magazine: "/admin/revistas?tab=settings" };
+export function customizationTabsForRole(module: CustomizationModule, role?: CmsRole | null) {
+  return customizationModules[module].tabs.filter(tab => role !== "marketing" || (tab !== "careers" && tab !== "offers"));
+}
 type Section = { id: string; label: string; sort_order: number; active: boolean; content: Record<string, string> };
 type Payload = { settings: Record<string, Record<string, string>>; sections: Section[] };
-export function customizationSavePayload(module: CustomizationModule, data: Payload, current: Payload = data) {
+export function customizationSavePayload(module: CustomizationModule, data: Payload, current: Payload = data, role?: CmsRole) {
   const config = customizationModules[module];
-  const settings = Object.fromEntries(Object.entries(data.settings).filter(([key]) => config.settings.includes(key)));
+  const settings = Object.fromEntries(Object.entries(data.settings).filter(([key]) => config.settings.includes(key) && (role !== "marketing" || (key !== "careers_hero" && !key.startsWith("offers_")))));
   const sections = data.sections.filter(section => module === "personalization" || config.sections.includes(section.id)).map(section => {
     const latest = current.sections.find(item => item.id === section.id)?.content || section.content;
     if (module === "magazines") return { id: section.id, content: { ...latest, editionDetails: section.content.editionDetails || "{}" } };
