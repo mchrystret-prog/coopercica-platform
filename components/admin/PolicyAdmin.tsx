@@ -153,14 +153,15 @@ export function PolicyAdmin() {
                   <span className="badge">{p.active ? "Publicado" : "Oculto"}</span>
                 </div>
                 <div className="cms-row-actions">
-                  <a
+                  <Button
+                    variant="secondary"
+                    external
+                    icon={false}
                     className="cms-edit-one"
                     href={p.file_url}
-                    target="_blank"
-                    rel="noreferrer"
                   >
                     Abrir
-                  </a>
+                  </Button>
                   <Button variant="secondary" type="button"
                     className="cms-edit-one"
                     onClick={() => { setEditing(p); setMode("edit"); setMsg(""); }}
@@ -251,3 +252,4 @@ export function PolicyAdmin() {
     </section>
   );
 }
+
