@@ -26,3 +26,5 @@ supabase/functions/.env
 .navigation-test/
 .careers-test/
 .cms-feedback-test/
+
+.report-test/

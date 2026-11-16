@@ -11,6 +11,7 @@ import {
   type Application,
   type Job,
 } from "@/lib/jobs";
+import { applicationFilterQuery, loadApplicationReport, applicationWorkbook } from "@/lib/application-report";
 import { RecruitmentNav } from "./RecruitmentNav";
 import styles from "./RecruitmentAdmin.module.css";
 type Candidate = Application & {
@@ -22,6 +23,9 @@ export function ApplicationsAdmin() {
   return <ApplicationsPanel key={initialJob} initialJob={initialJob} />;
 }
 function ApplicationsPanel({ initialJob }: { initialJob: string }) {
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [exporting, setExporting] = useState(false);
   const [view, setView] = useState<"list" | "kanban">("list");
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
@@ -80,19 +84,16 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
       if (c.signal.aborted) return;
       setLoading(true);
       setError("");
-      const term = query
-        .replace(/[^\p{L}\p{N} @._-]/gu, "")
-        .trim()
-        .slice(0, 120);
       try {
+        const filter = applicationFilterQuery({ job, status, query, start, end });
         const r = await recruitmentList<Candidate>(
-          `site_job_applications?select=*,site_jobs(title,department)&order=created_at.desc,id.asc&limit=25&offset=${view === "kanban" ? 0 : page * 25}${job ? `&job_id=eq.${job}` : ""}${status ? `&status=eq.${status}` : ""}${term ? `&or=${encodeURIComponent(`(name.ilike.*${term}*,email.ilike.*${term}*)`)}` : ""}`,
+          `site_job_applications?select=*,site_jobs(title,department)&order=created_at.desc,id.asc&limit=25&offset=${view === "kanban" ? 0 : page * 25}&${filter}`,
         );
         if (view === "kanban") {
           while (r.items.length < r.total) {
             if (c.signal.aborted) return;
             const batch = await recruitmentList<Candidate>(
-              `site_job_applications?select=*,site_jobs(title,department)&order=created_at.desc,id.asc&limit=200&offset=${r.items.length}${job ? `&job_id=eq.${job}` : ""}${status ? `&status=eq.${status}` : ""}${term ? `&or=${encodeURIComponent(`(name.ilike.*${term}*,email.ilike.*${term}*)`)}` : ""}`,
+              `site_job_applications?select=*,site_jobs(title,department)&order=created_at.desc,id.asc&limit=200&offset=${r.items.length}&${filter}`,
             );
             if (!batch.items.length) break;
             r.items.push(...batch.items);
@@ -111,7 +112,23 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     }
     void load();
     return () => c.abort();
-  }, [job, status, query, page, revision, view, setError]);
+  }, [job, status, query, start, end, page, revision, view, setError]);
+  async function exportReport() {
+    if (exporting) return;
+    setExporting(true);
+    setError("");
+    setMessage("");
+    try {
+      const filters = { job, status, query, start, end };
+      const rows = await loadApplicationReport(filters);
+      if (!rows.length) { setMessage("Nenhuma candidatura encontrada para exportar.", "info"); return; }
+      const xlsx = await import("xlsx");
+      xlsx.writeFile(applicationWorkbook(xlsx, rows, filters), `candidaturas-${start || "inicio"}-${end || "hoje"}.xlsx`, { compression: true });
+      setMessage(`Relatório gerado com ${rows.length} candidaturas.`, "success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível gerar o relatório.");
+    } finally { setExporting(false); }
+  }
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selected || busy) return;
@@ -308,6 +325,18 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           Atualizar
         </Button>
       </div>
+      <section aria-labelledby="application-report-title">
+        <h2 id="application-report-title">Relatório de candidaturas</h2>
+        <p className={styles.fieldHint}>Filtre pela data de envio (horário de São Paulo). O Excel inclui todas as páginas e respeita a vaga, a etapa e a busca aplicadas acima. Deixe as datas em branco para consultar todo o período.</p>
+        <div className={styles.filters}>
+          <label>Data inicial<input type="date" value={start} max={end || undefined} onChange={e => change(setStart, e.target.value)} /></label>
+          <label>Data final<input type="date" value={end} min={start || undefined} onChange={e => change(setEnd, e.target.value)} /></label>
+          <Button variant="primary" type="button" disabled={exporting || loading || busy || !!(start && end && start > end)} onClick={() => void exportReport()}>
+            {exporting ? "Gerando relatório…" : "Baixar relatório XLSX"}
+          </Button>
+        </div>
+        {exporting ? <p role="status">Buscando todas as candidaturas dos filtros selecionados…</p> : null}
+      </section>
       {error ? (
         <p className={styles.error} role="alert">
           <CmsFeedback message={error} kind={errorKind} />
