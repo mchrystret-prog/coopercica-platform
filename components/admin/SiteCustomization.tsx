@@ -7,6 +7,7 @@ import { customizationModules, customizationTabLabels, customizationSavePayload,
 import { ChangeEvent, useEffect, useState } from "react";
 import { validateCoopermaisInformation } from "@/lib/coopermais-banner";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
+import { validateHistory } from "@/lib/history-timeline";
 import { HistoryImageEditor } from "./HistoryImageEditor";
 import { CoopermaisBannerEditor } from "./CoopermaisBannerEditor";
 import { VideosHeaderEditor } from "./VideosHeaderEditor";
@@ -92,6 +93,8 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   }
   async function saveAll() {
     if (!data) return;
+    const historyError = module === "personalization" ? validateHistory(data.settings.history_images || {}) : null;
+    if (historyError) { setTab("history"); setMsg(historyError); return; }
     const bannerError = module === "personalization" ? validateCareersBanners(data.settings.careers_hero || {}) : null;
     if (bannerError) { setTab("careers"); setMsg(bannerError); return; }
     const faqError = module === "personalization" ? validateFaq(data.settings.home_faq || {}) : null;
@@ -424,6 +427,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       ) : tab === "history" ? (
         <HistoryImageEditor
           images={data.settings.history_images || {}}
+          onChange={entries => setData(current => current ? { ...current, settings: { ...current.settings, history_images: { ...current.settings.history_images, __timeline: JSON.stringify(entries) } } } : current)}
           busy={busy}
           onUpload={(e, id) => media(e, `history:${id}`)}
           onRestore={(id) => {

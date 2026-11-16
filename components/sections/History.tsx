@@ -3,16 +3,14 @@
 import { useEffect, useRef } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader/SectionHeader";
 import { Icon } from "@/components/ui/Icon";
+import { resolveHistory } from "@/lib/history-timeline";
 import { historyItems, type HistoryItem } from "@/data/history";
 import styles from "./History.module.css";
 import { TimelineCard } from "./TimelineCard";
 import { useHorizontalHistory } from "./useHorizontalHistory";
 
 export function History({ images = {}, showHeading = true, chapters = historyItems }: { showHeading?: boolean; images?: Record<string, string>; chapters?: HistoryItem[] }) {
-  const items = chapters.map((item) => ({
-    ...item,
-    image: images[item.id] || item.image,
-  }));
+  const items = resolveHistory(images, chapters);
   const {
     trackRef,
     activeIndex,
@@ -46,6 +44,7 @@ export function History({ images = {}, showHeading = true, chapters = historyIte
     }
   }, [activeIndex]);
 
+  if (!items.length) return null;
   return (
     <section
       id="historia"
