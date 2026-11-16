@@ -1,1 +1,5 @@
-import{PolicyAdmin}from"@/components/admin/PolicyAdmin";export default function Page(){return <section className="admin-page"><header className="admin-header"><div><span className="eyebrow">Institucional</span><h1>Políticas e documentos</h1><p>Publique políticas, termos, relatórios de transparência e outros documentos oficiais exibidos no site.</p></div></header><PolicyAdmin/></section>}
+import { PolicyAdmin } from "@/components/admin/PolicyAdmin";
+
+export default function Page() {
+  return <PolicyAdmin />;
+}

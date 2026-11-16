@@ -17,11 +17,14 @@ const slugify = (v: string) =>
     .replace(/(^-|-$)/g, "");
 export function PolicyAdmin() {
   const [items, setItems] = useState<SitePolicy[]>([]),
+    [mode, setMode] = useState<"list" | "create" | "edit">("list"),
+    [loading, setLoading] = useState(true),
     [editing, setEditing] = useState<SitePolicy | null>(null),
     [busy, setBusy] = useState(false),
     [msg, setMsg, msgKind] = useCmsMessage("");
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
   const load = useCallback(async () => {
+    try {
     const r = await fetch(
       `${SUPABASE_URL}/rest/v1/site_policies?select=*&order=sort_order.asc,title.asc`,
       {
@@ -31,9 +34,15 @@ export function PolicyAdmin() {
         },
       },
     );
-    if (r.ok) setItems(await r.json());
-  }, []);
+    if (!r.ok) throw new Error("Não foi possível carregar os documentos. Tente novamente.");
+    setItems(await r.json());
+    } catch (error) {
+      setMsg(error instanceof Error ? error.message : "Não foi possível carregar os documentos.");
+    } finally { setLoading(false); }
+  }, [setMsg]);
   useEffect(() => {
+    // The loader updates state after the network request completes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
   async function save(e: FormEvent<HTMLFormElement>) {
@@ -88,6 +97,7 @@ export function PolicyAdmin() {
       setMsg(editing ? "Documento atualizado." : "Documento publicado.", "success");
       setEditing(null);
       form.reset();
+      setMode("list");
       await load();
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Não foi possível salvar.");
@@ -109,26 +119,38 @@ export function PolicyAdmin() {
     if (r.ok) {
       if (editing?.id === id) setEditing(null);
       await load();
+      setMsg("Documento excluído.", "success");
     } else { setMsg("Não foi possível excluir o documento. Tente novamente."); }
   } catch (cause) { setMsg(cause instanceof Error ? cause.message : "Não foi possível concluir a exclusão. Tente novamente."); }}
   return (
-    <div className="cms-policy-manager">
+    <section className="admin-page cms-policy-manager">
+      {mode !== "list" && <Button variant="ghost" className="cms-back-list" type="button" disabled={busy} onClick={() => { setMode("list"); setEditing(null); setMsg(""); }}>← Voltar para políticas e documentos</Button>}
+      <header className="admin-header"><div>
+        <span className="eyebrow">{mode === "list" ? "Institucional" : mode === "edit" ? "Editar conteúdo" : "Novo conteúdo"}</span>
+        <h1>{mode === "list" ? "Políticas e documentos" : mode === "edit" ? "Editar documento" : "Novo documento"}</h1>
+        <p>{mode === "edit" ? "Altere os dados do documento e salve para atualizar o site." : "Gerencie políticas, termos, relatórios de transparência e outros documentos oficiais exibidos no site."}</p>
+      </div></header>
+      {msg ? <div className="form-status" role="status"><CmsFeedback message={msg} kind={msgKind} /></div> : null}
+      {mode === "list" ? (
       <section className="cms-content-section">
         <div className="cms-content-heading">
           <div>
-            <span className="eyebrow">Publicados</span>
+            <span className="eyebrow">Conteúdo cadastrado</span>
             <h2>Documentos do site</h2>
           </div>
+          <div className="cms-list-actions"><Button variant="primary" className="button" type="button" onClick={() => { setEditing(null); setMode("create"); setMsg(""); }}>+ Novo documento</Button></div>
         </div>
-        {items.length ? (
+        {loading ? <div className="cms-empty" role="status">Carregando documentos...</div> : items.length ? (
           <div className="cms-content-list">
             {items.map((p) => (
-              <article className="cms-policy-row" key={p.id}>
-                <div>
+              <article className="cms-content-row" key={p.id}>
+                <div className="cms-content-placeholder" aria-hidden="true">PDF</div>
+                <div className="cms-content-info">
                   <strong>{p.title}</strong>
                   <small>
-                    {p.active ? "Publicado" : "Oculto"} · ordem {p.sort_order}
+                    Ordem {p.sort_order}
                   </small>
+                  <span className="badge">{p.active ? "Publicado" : "Oculto"}</span>
                 </div>
                 <div className="cms-row-actions">
                   <a
@@ -141,7 +163,7 @@ export function PolicyAdmin() {
                   </a>
                   <Button variant="secondary" type="button"
                     className="cms-edit-one"
-                    onClick={() => setEditing(p)}
+                    onClick={() => { setEditing(p); setMode("edit"); setMsg(""); }}
                   >
                     Editar
                   </Button>
@@ -159,27 +181,13 @@ export function PolicyAdmin() {
           <div className="cms-empty">
             <strong>Nenhum documento cadastrado.</strong>
             <span>
-              Use o formulário abaixo para publicar a primeira política.
+              Crie o primeiro documento para começar.
             </span>
+            <Button variant="primary" type="button" onClick={() => { setEditing(null); setMode("create"); setMsg(""); }}>+ Criar documento</Button>
           </div>
         )}
       </section>
-      <section className="cms-create-section">
-        <div className="cms-create-heading">
-          <div>
-            <span className="eyebrow">
-              {editing ? "Edição" : "Novo documento"}
-            </span>
-            <h2>
-              {editing ? "Editar política" : "Publicar política ou relatório"}
-            </h2>
-          </div>
-          {editing ? (
-            <Button variant="danger" type="button" className="cms-edit-one" onClick={() => setEditing(null)}>
-              Cancelar edição
-            </Button>
-          ) : null}
-        </div>
+      ) : (
         <form
           key={editing?.id || "new"}
           className="settings-form"
@@ -229,6 +237,7 @@ export function PolicyAdmin() {
             Exibir no site
           </label>
           <div className="form-actions">
+            <Button variant="secondary" type="button" disabled={busy} onClick={() => { setMode("list"); setEditing(null); setMsg(""); }}>Cancelar</Button>
             <Button variant="primary" type="submit" className="button" disabled={busy}>
               {busy
                 ? "Salvando..."
@@ -238,8 +247,7 @@ export function PolicyAdmin() {
             </Button>
           </div>
         </form>
-        {msg ? <div className="form-status"><CmsFeedback message={msg} kind={msgKind} /></div> : null}
-      </section>
-    </div>
+      )}
+    </section>
   );
 }
