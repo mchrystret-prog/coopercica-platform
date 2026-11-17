@@ -91,6 +91,8 @@ export function Magazine({ items,content={} }: MagazineProps) {
                       className={styles.coverImage}
                       src={selectedCover}
                       alt={`Capa da ${selectedMagazine.edition}`}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className={styles.coverFallback}>
@@ -130,7 +132,7 @@ export function Magazine({ items,content={} }: MagazineProps) {
                   >
                     <span className={styles.thumbnail}>
                       {cover ? (
-                        <img src={cover} alt="" aria-hidden="true" />
+                        <img src={cover} alt="" aria-hidden="true" loading="lazy" decoding="async" />
                       ) : (
                         <span className={styles.thumbnailFallback}>
                           {item.edition}

@@ -30,6 +30,7 @@ export function TimelineCard({ item, index, total, active }: TimelineCardProps) 
           alt={item.imageAlt}
           className={styles.image}
           loading={index < 2 ? "eager" : "lazy"}
+          decoding="async"
           draggable={false}
         />
       </div>
