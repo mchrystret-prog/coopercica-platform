@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useRef, useState } from "react";
 import type { Magazine } from "@/types/content";
 import { emptyMagazineEditorial, magazineEditorials, type MagazineEditorial } from "@/lib/magazine-editorial";
@@ -51,8 +52,8 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
     {edition ? <fieldset disabled={busy}><legend>Conteúdo editorial</legend><div className="settings-form">
       <label>Edição para editar<select disabled={reading} value={edition.id} onChange={event => { setEditionId(event.target.value); setSuggestion(null); setError(""); setStatus(""); }}>{magazines.map(item => <option key={item.id} value={item.id}>{item.title} · {item.edition}</option>)}</select></label>
       <div className="form-span-full">
-        <button type="button" disabled={reading || !edition.pdfHref} onClick={readPdf}>Ler PDF e sugerir conteúdo</button>
-        {reading && <button type="button" onClick={() => controller.current?.abort()}>Cancelar leitura</button>}
+        <Button variant="secondary" type="button" disabled={reading || !edition.pdfHref} onClick={readPdf}>Ler PDF e sugerir conteúdo</Button>
+        {reading && <Button variant="ghost" type="button" onClick={() => controller.current?.abort()}>Cancelar leitura</Button>}
         <p>Identifica quadros e títulos na camada de texto do PDF, sem enviar o arquivo a um serviço de IA. Revise a sugestão antes de aplicar. Até 15 MB e 60 páginas.</p>
         {!edition.pdfHref && <p>Cadastre um PDF válido desta edição no menu Revistas para usar a leitura automática.</p>}
         <p role="status" aria-live="polite">{status}</p>
@@ -62,11 +63,11 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
           <p>{suggestion.content.summary}</p>
           <ul>{suggestion.content.highlights.map((item, index) => <li key={index}><strong>{item.label}</strong>: {item.text} · página {item.page}</li>)}</ul>
           <p>Lidas {suggestion.content.pagesRead} de {suggestion.content.totalPages} páginas. O reconhecimento pode omitir quadros ou associar títulos incorretamente; confira com a revista.</p>
-          <button type="button" onClick={() => {
+          <Button variant="secondary" type="button" onClick={() => {
             update({ summary: suggestion.content.summary, highlights: suggestion.content.highlights.map(({ label, text }) => ({ label, text })) });
             setSuggestion(null); setStatus("Sugestão aplicada aos campos. Revise e clique em Salvar alterações para publicar.");
-          }}>Aplicar sugestão ao resumo e destaques</button>
-          <button type="button" onClick={() => { setSuggestion(null); setStatus("Sugestão descartada. Os campos foram preservados."); }}>Descartar sugestão</button>
+          }}>Aplicar sugestão ao resumo e destaques</Button>
+          <Button variant="ghost" type="button" onClick={() => { setSuggestion(null); setStatus("Sugestão descartada. Os campos foram preservados."); }}>Descartar sugestão</Button>
         </section>}
       </div>
       <label className="form-span-full">Título editorial<input value={editorial.headline} maxLength={140} placeholder={edition.title} onChange={event => update({ headline: event.target.value })} /><small>Ex.: Cooperar é cuidar. Se ficar vazio, usamos o título cadastrado na revista.</small></label>
@@ -74,9 +75,9 @@ export function MagazineEditorialEditor({ magazines, value, busy, onChange }: { 
       {editorial.highlights.map((item, index) => <div className="form-span-full settings-form" key={index}>
         <label>Categoria do destaque {index + 1}<input maxLength={60} value={item.label} placeholder="Ex.: Receitas" onChange={event => update({ highlights: editorial.highlights.map((row, i) => i === index ? { ...row, label: event.target.value } : row) })} /></label>
         <label>Conteúdo do destaque {index + 1}<input maxLength={200} value={item.text} placeholder="Título ou assunto da matéria" onChange={event => update({ highlights: editorial.highlights.map((row, i) => i === index ? { ...row, text: event.target.value } : row) })} /></label>
-        <button type="button" aria-label={`Remover destaque ${index + 1}`} onClick={() => update({ highlights: editorial.highlights.filter((_, i) => i !== index) })}>Remover destaque</button>
+        <Button variant="secondary" type="button" aria-label={`Remover destaque ${index + 1}`} onClick={() => update({ highlights: editorial.highlights.filter((_, i) => i !== index) })}>Remover destaque</Button>
       </div>)}
-      <div className="form-span-full"><button type="button" disabled={editorial.highlights.length >= 8} onClick={() => update({ highlights: [...editorial.highlights, { label: "", text: "" }] })}>+ Adicionar destaque</button><p>Até 8 destaques. Itens sem conteúdo não aparecem no site.</p></div>
+      <div className="form-span-full"><Button variant="secondary" type="button" disabled={editorial.highlights.length >= 8} onClick={() => update({ highlights: [...editorial.highlights, { label: "", text: "" }] })}>+ Adicionar destaque</Button><p>Até 8 destaques. Itens sem conteúdo não aparecem no site.</p></div>
     </div></fieldset> : <p>Publique uma revista no menu Revistas para configurar o destaque.</p>}
   </article>;
 }
