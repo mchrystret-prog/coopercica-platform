@@ -61,6 +61,7 @@ test("Ofertas is hidden in both mobile and complete menus when there are no acti
   const html = renderNavigation("/", undefined, true, false);
   assert.doesNotMatch(html, />Ofertas</);
   assert.doesNotMatch(html, /mobile-navigation:offers/);
+  assert.match(html, /data-has-offers="false"/);
   assert.match(html, />Compre Online</);
   assert.match(html, />Lojas</);
 });
