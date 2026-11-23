@@ -1,7 +1,7 @@
 export type CustomizationTab = "identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq";
 export type CustomizationModule = "personalization" | "settings" | "magazines";
 export const customizationModules: Record<CustomizationModule, { title: string; tabs: CustomizationTab[]; settings: string[]; sections: string[] }> = {
-  personalization: { title: "Personalização", tabs: ["identity", "sections", "history", "careers", "videos", "coopermais", "partners", "contact", "sharing", "faq"], settings: ["identity", "history_images", "careers_hero", "home_videos", "videos_header", "coopermais_banner", "home_partners", "footer_contact", "social_sharing", "home_faq"], sections: [] },
+  personalization: { title: "Personalização", tabs: ["identity", "sections", "history", "careers", "videos", "coopermais", "partners", "contact", "sharing", "faq"], settings: ["identity", "history_images", "careers_hero", "careers_testimonials", "home_videos", "videos_header", "coopermais_banner", "home_partners", "footer_contact", "social_sharing", "home_faq"], sections: [] },
   settings: { title: "Configurações", tabs: ["offers"], settings: ["offers_delivery", "offers_pharmacy"], sections: [] },
   magazines: { title: "Nessa edição", tabs: ["magazine"], settings: [], sections: ["revista"] },
 };
