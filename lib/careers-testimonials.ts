@@ -4,6 +4,7 @@ export type CareersTestimonial = {
   name: string;
   role: string;
   tenure: string;
+  image: string;
   order: number;
   active: boolean;
 };
@@ -15,6 +16,7 @@ export const careersTestimonialDefaults: CareersTestimonial[] = [
     name: "Cleo Moraes",
     role: "Gerente de Relacionamento",
     tenure: "49 anos de casa",
+    image: "",
     order: 1,
     active: true,
   },
@@ -24,6 +26,7 @@ export const careersTestimonialDefaults: CareersTestimonial[] = [
     name: "Marcia Santos",
     role: "Auxiliar Administrativo",
     tenure: "23 anos de casa",
+    image: "",
     order: 2,
     active: true,
   },
@@ -33,6 +36,7 @@ export const careersTestimonialDefaults: CareersTestimonial[] = [
     name: "Maria do Carmo",
     role: "Operadora de Caixa",
     tenure: "22 anos de casa",
+    image: "",
     order: 3,
     active: true,
   },
@@ -42,6 +46,7 @@ export const careersTestimonialDefaults: CareersTestimonial[] = [
     name: "Israel Lemos",
     role: "Auxiliar de Criação",
     tenure: "13 anos de casa",
+    image: "",
     order: 4,
     active: true,
   },
@@ -75,6 +80,7 @@ export function parseCareersTestimonials(value: unknown): CareersTestimonial[] {
       name: typeof item.name === "string" ? item.name.trim().slice(0, 160) : "",
       role: typeof item.role === "string" ? item.role.trim().slice(0, 160) : "",
       tenure: typeof item.tenure === "string" ? item.tenure.trim().slice(0, 100) : "",
+      image: typeof item.image === "string" ? item.image.trim().slice(0, 2000) : "",
       order: Number.isFinite(Number(item.order)) ? Math.max(1, Math.floor(Number(item.order))) : index + 1,
       active: item.active === true,
     }));
