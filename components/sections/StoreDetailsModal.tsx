@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { StorePhotoViewer } from "./StorePhotoViewer";
 import type { Store } from "@/data/stores";
 import { storeMapsLink } from "@/lib/store-directory";
 import { Button } from "@/components/ui/Button/Button";
@@ -9,7 +10,9 @@ import styles from "./StoreDetailsModal.module.css";
 export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store: Store; trigger: HTMLButtonElement; keyboard: boolean; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [photo, setPhoto] = useState(0);
+  const [photoViewerTrigger, setPhotoViewerTrigger] = useState<HTMLButtonElement | null>(null);
   const photos = [...new Set(store.photos?.length ? store.photos : [store.image].filter(Boolean))];
+  const onOpenPhotoViewer = (button: HTMLButtonElement) => setPhotoViewerTrigger(button);
   const digits = store.phone.replace(/\D/g, "");
   const phone = digits.length === 10 || digits.length === 11 ? `+55${digits}` : /^55\d{10,11}$/.test(digits) ? `+${digits}` : null;
   useEffect(() => {
@@ -38,7 +41,7 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
     <button type="button" className={styles.close} aria-label="Fechar informações da loja" autoFocus onClick={onClose}>×</button>
     <div className={styles.layout}>
       <div className={styles.gallery}>
-        <StorePhoto src={photos[photo]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${photo + 1}`} className={styles.mainPhoto} />
+        <button type="button" className={styles.photoZoom} aria-label={`Ampliar foto ${photo + 1} da Loja ${store.storeNumber}`} onClick={event => onOpenPhotoViewer(event.currentTarget)}><StorePhoto src={photos[photo]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${photo + 1}`} className={styles.mainPhoto} /></button>
         {photos.length > 1 ? <><div className={styles.galleryControls}><button type="button" onClick={() => setPhoto(index => (index - 1 + photos.length) % photos.length)} aria-label="Foto anterior"><Icon name="chevron-left" /></button><span role="status">Foto {photo + 1} de {photos.length}</span><button type="button" onClick={() => setPhoto(index => (index + 1) % photos.length)} aria-label="Próxima foto"><Icon name="chevron-right" /></button></div><div className={styles.thumbnails}>{photos.map((src, index) => <button key={src} type="button" aria-label={`Exibir foto ${index + 1}`} aria-pressed={photo === index} onClick={() => setPhoto(index)}><StorePhoto src={src} alt="" className={styles.thumbnail} sizes="76px" /></button>)}</div></> : null}
       </div>
       <div className={styles.info}>
@@ -51,5 +54,6 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
       </div>
     </div>
     <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
+    {photoViewerTrigger ? <StorePhotoViewer key={`${store.slug}-${photo}`} store={{ ...store, photos: [photos[photo]] }} trigger={photoViewerTrigger} onClose={() => setPhotoViewerTrigger(null)} /> : null}
   </dialog>;
 }
