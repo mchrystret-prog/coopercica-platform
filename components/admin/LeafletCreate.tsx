@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import { FormEvent, useState } from "react";
 import { LeafletAdmin } from "./LeafletAdmin";
@@ -7,7 +8,7 @@ import { getCmsAccessToken } from "@/lib/cms-session";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 export function LeafletCreate({ libraryRevision }: { libraryRevision: number }) {
   const [mode, setMode] = useState("sheet");
-  return <><div className="cms-custom-tabs"><button type="button" data-active={mode === "sheet"} onClick={() => setMode("sheet")}>Importar planilha</button><button type="button" data-active={mode === "pdf"} onClick={() => setMode("pdf")}>Enviar folheto PDF</button></div>{mode === "sheet" ? <LeafletAdmin libraryRevision={libraryRevision} /> : <PdfLeafletForm />}</>;
+  return <><div className="cms-custom-tabs"><Button variant="ghost" type="button" data-active={mode === "sheet"} onClick={() => setMode("sheet")}>Importar planilha</Button><Button variant="ghost" type="button" data-active={mode === "pdf"} onClick={() => setMode("pdf")}>Enviar folheto PDF</Button></div>{mode === "sheet" ? <LeafletAdmin libraryRevision={libraryRevision} /> : <PdfLeafletForm />}</>;
 }
 function PdfLeafletForm() {
   const [busy, setBusy] = useState(false), [message, setMessage] = useState("");
@@ -27,5 +28,5 @@ function PdfLeafletForm() {
     } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível cadastrar."); }
     finally { setBusy(false); }
   }
-  return <><form onSubmit={submit}><fieldset className="settings-form" disabled={busy}><legend>Novo folheto em PDF</legend><label>Nome do folheto<input name="name" required maxLength={160} /></label><label>Exibir a partir de<input name="display_from" type="date" required /></label><label>Início da vigência<input name="starts_at" type="date" required /></label><label>Fim da vigência<input name="ends_at" type="date" required /></label><label>Status<select name="status" defaultValue="draft"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></label><label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required /><UploadRequirements rule="pdf" /></label><button className="button" disabled={busy}>{busy ? "Enviando…" : "Salvar folheto"}</button></fieldset></form>{message ? <p role="status">{message}</p> : null}</>;
+  return <><form onSubmit={submit}><fieldset className="settings-form" disabled={busy}><legend>Novo folheto em PDF</legend><label>Nome do folheto<input name="name" required maxLength={160} /></label><label>Exibir a partir de<input name="display_from" type="date" required /></label><label>Início da vigência<input name="starts_at" type="date" required /></label><label>Fim da vigência<input name="ends_at" type="date" required /></label><label>Status<select name="status" defaultValue="draft"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></label><label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required /><UploadRequirements rule="pdf" /></label><Button variant="primary" type="submit" className="button" disabled={busy}>{busy ? "Enviando…" : "Salvar folheto"}</Button></fieldset></form>{message ? <p role="status">{message}</p> : null}</>;
 }
