@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import { useEffect, useState, type FormEvent } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
@@ -214,21 +215,21 @@ export function LeafletAssetLibrary() {
           </UploadRequirements>
         </label>
         <div className="form-actions">
-          <button className="button" disabled={busy || !ready}>
+          <Button variant="primary" type="submit" className="button" disabled={busy || !ready}>
             {busy
               ? "Salvando..."
               : editing
                 ? "Substituir arquivo"
                 : "Cadastrar arquivo"}
-          </button>
+          </Button>
           {editing ? (
-            <button
+            <Button variant="ghost"
               type="button"
               disabled={busy}
               onClick={() => { setEditing(null); setCodeValue(""); }}
             >
               Cancelar
-            </button>
+            </Button>
           ) : null}
         </div>
       </form>
@@ -249,7 +250,7 @@ export function LeafletAssetLibrary() {
                 {asset.kind === "box" ? "Fundo" : "Selo"}:{" "}
                 <code>{asset.code}</code>
               </p>
-              <button
+              <Button variant="secondary"
                 type="button"
                 disabled={busy}
                 onClick={() => {
@@ -259,7 +260,7 @@ export function LeafletAssetLibrary() {
                 }}
               >
                 Substituir arquivo
-              </button>
+              </Button>
             </div>
           </article>
         ))}
