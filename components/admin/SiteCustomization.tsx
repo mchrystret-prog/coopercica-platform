@@ -51,7 +51,8 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   const [data, setData] = useState<Payload | null>(null),
     [tab, setTab] = useState<CustomizationTab>(initialTab && config.tabs.includes(initialTab) ? initialTab : config.tabs[0]),
     [msg, setMsg] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
   useEffect(() => {
     fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`, {
@@ -179,6 +180,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     const file = e.target.files?.[0];
     if (!file) return;
     setBusy(true);
+    setUploadErrors(current => ({ ...current, [target]: "" }));
     try {
       await validateCmsUpload(file, customizationUploadRule(target));
       const url = await upload(
@@ -243,7 +245,9 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       } else setIdentity(target, url);
       setMsg("Arquivo enviado. Clique em Salvar alterações para publicar.");
     } catch (err) {
-      setMsg(err instanceof Error ? err.message : "Falha no upload.");
+      const errorText = err instanceof Error ? err.message : "Falha no upload.";
+      setUploadErrors(current => ({ ...current, [target]: errorText }));
+      setMsg(errorText);
     } finally {
       setBusy(false);
     }
@@ -266,7 +270,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       </header>
       {config.tabs.length > 1 ? <nav className="cms-custom-tabs" aria-label="Configurações do módulo">{config.tabs.map(item => <Button variant="ghost" key={item} type="button" data-active={tab === item} aria-pressed={tab === item} onClick={() => setTab(item)}>{item === "sections" && module !== "personalization" ? "Chamada da seção" : customizationTabLabels[item]}</Button>)}</nav> : null}
 
-      {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
+      {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} uploadError={uploadErrors["social:image"]} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
       {tab === "faq" ? <FaqEditor value={data.settings.home_faq || {}} busy={busy} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, home_faq: { ...current.settings.home_faq, ...patch } } } : current)} /> : null}
       {tab === "identity" ? (
         <div className="settings-form">
@@ -330,7 +334,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               disabled={busy}
               onChange={(e) => media(e, "logo")}
             />
-            <UploadRequirements rule="logo">Use fundo transparente.</UploadRequirements>
+            <UploadRequirements rule="logo">Use fundo transparente.</UploadRequirements>{uploadErrors.logo ? <small className="cms-upload-error" role="alert">{uploadErrors.logo}</small> : null}
             {i.logo ? (
               <img
                 className="cms-upload-preview"
@@ -347,7 +351,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               disabled={busy}
               onChange={(e) => media(e, "logoWhite")}
             />
-            <UploadRequirements rule="logo">Use fundo transparente e a versão clara da marca.</UploadRequirements>
+            <UploadRequirements rule="logo">Use fundo transparente e a versão clara da marca.</UploadRequirements>{uploadErrors.logoWhite ? <small className="cms-upload-error" role="alert">{uploadErrors.logoWhite}</small> : null}
             {i.logoWhite ? (
               <img
                 className="cms-upload-preview cms-upload-preview-dark"
@@ -364,7 +368,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               disabled={busy}
               onChange={(e) => media(e, "favicon")}
             />
-            <UploadRequirements rule="favicon">Use o símbolo da marca com fundo transparente. Salve as alterações para publicar.</UploadRequirements>
+            <UploadRequirements rule="favicon">Use o símbolo da marca com fundo transparente. Salve as alterações para publicar.</UploadRequirements>{uploadErrors.favicon ? <small className="cms-upload-error" role="alert">{uploadErrors.favicon}</small> : null}
             <img
               className="cms-upload-preview cms-upload-preview-dark"
               src={i.favicon || DEFAULT_FAVICON}
@@ -398,7 +402,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           setData(current => current ? { ...current, settings: { ...current.settings, home_videos: { ...current.settings.home_videos, ...patch } } } : current);
           setMsg("Vídeos da home alterados. Salve as alterações para publicar.");
         }} />
-        <VideosHeaderEditor value={data.settings.videos_header || {}} busy={busy}
+        <VideosHeaderEditor value={data.settings.videos_header || {}} busy={busy} uploadErrors={uploadErrors}
           onUpload={(e, field) => media(e, `videos:${field}`)}
           onChange={patch => {
             setData(current => current ? { ...current, settings: { ...current.settings,
@@ -408,7 +412,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           }} />
         </>
       ) : tab === "coopermais" ? (
-        <CoopermaisBannerEditor value={data.settings.coopermais_banner || {}} busy={busy}
+        <CoopermaisBannerEditor value={data.settings.coopermais_banner || {}} busy={busy} uploadErrors={uploadErrors}
           onUpload={(e, field) => media(e, `coopermais:${field}`)}
           onChange={patch => {
             setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, ...patch } } } : current);
@@ -423,6 +427,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         <CareersHeroEditor
           value={data.settings.careers_hero || {}}
           busy={busy}
+          uploadErrors={uploadErrors}
           onUpload={(e, field) => media(e, `careers:${field}`)}
           onChange={(patch) => {
             setData((current) =>
@@ -448,6 +453,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         <HistoryImageEditor
           images={data.settings.history_images || {}}
           busy={busy}
+          uploadErrors={uploadErrors}
           onUpload={(e, id) => media(e, `history:${id}`)}
           onRestore={(id) => {
             const images = { ...data.settings.history_images };
@@ -507,7 +513,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
                       disabled={busy}
                       onChange={(e) => media(e, `section:${s.id}`)}
                     />
-                    <UploadRequirements rule="section" />
+                    <UploadRequirements rule="section" />{uploadErrors[`section:${s.id}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`section:${s.id}`]}</small> : null}
                     {s.content.image || s.id === "lojas" ? (
                       <img
                         className="cms-upload-preview"
