@@ -28,7 +28,7 @@ As versões exatas das dependências estão registradas em package.json e packag
 
 ## Requisitos
 
-- Node.js compatível com Next.js 16 (recomendado Node.js 20 ou superior).
+- Node.js 22 ou superior (recomendado para executar todos os scripts de teste, incluindo o suporte nativo a TypeScript usado pelo Node Test Runner).
 - npm.
 - Acesso ao projeto Supabase utilizado pelo ambiente.
 - Acesso à Vercel para acompanhar os deploys vinculados ao repositório.
