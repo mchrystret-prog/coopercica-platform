@@ -312,6 +312,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.primaryColor || "#1c4722"}
+              onChange={(e) => setIdentity("primaryColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
             <small>
@@ -323,6 +324,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.secondaryColor || "#6ab945"}
+              onChange={(e) => setIdentity("secondaryColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
           </label>
@@ -331,6 +333,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.accentColor || "#ef4037"}
+              onChange={(e) => setIdentity("accentColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
           </label>
@@ -339,6 +342,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.pageColor || "#f6faf6"}
+              onChange={(e) => setIdentity("pageColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
           </label>
