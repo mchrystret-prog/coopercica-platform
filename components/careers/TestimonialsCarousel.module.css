@@ -1,6 +1,9 @@
 .carousel { width: 100%; }
 .track {
   display: flex;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
   gap: 20px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -9,6 +12,7 @@
   padding: 2px 2px 8px;
 }
 .track::-webkit-scrollbar { display: none; }
+.track:active { cursor: grabbing; }
 .card {
   flex: 0 0 calc((100% - 20px) / 2);
   min-width: 0;
