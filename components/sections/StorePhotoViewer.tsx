@@ -35,7 +35,7 @@ export function StorePhotoViewer({ store, trigger, onClose }: { store: Store; tr
 
   return (
     <dialog ref={dialog} className={styles.viewer} aria-label={`Fotos da Loja ${store.storeNumber}: ${store.name}`} onCancel={event => { event.preventDefault(); onClose(); }}>
-      <button type="button" className={styles.close} onClick={onClose} aria-label="Fechar fotos"><Icon name="x" /></button>
+      <button type="button" className={styles.close} onClick={onClose} aria-label="Fechar fotos"><span aria-hidden="true">×</span></button>
       <div className={styles.topline}>
         <span>LOJA {store.storeNumber} · {store.name}</span>
         {photos.length > 1 ? <span role="status">{index + 1} / {photos.length}</span> : null}
