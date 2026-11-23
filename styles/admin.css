@@ -395,3 +395,14 @@
 /* Upload validation errors must remain red across every CMS form. */
 .admin-shell .cms-upload-error { display:block!important; margin-top:8px!important; color:#b42318!important; font-size:12px!important; font-weight:750!important; line-height:1.45!important; }
 .admin-shell .cms-pdf-description { margin:8px 0 10px!important; color:var(--text-muted)!important; font-size:13px!important; font-weight:500!important; line-height:1.55!important; }
+
+
+/* PDF leaflet form: keep its heading, upload guidance and submit action in clear rows. */
+.admin-shell .cms-pdf-leaflet-form > legend,
+.admin-shell .cms-pdf-leaflet-form > .button { grid-column:1/-1; }
+.admin-shell .cms-pdf-leaflet-form > legend { width:100%; margin-bottom:2px; color:var(--brand-green-900); font-size:18px; font-weight:800; }
+.admin-shell .cms-pdf-file-field { display:grid; align-content:start; gap:9px; min-width:0; }
+.admin-shell .cms-pdf-file-field > label { display:block; }
+.admin-shell .cms-pdf-file-field > input[type="file"] { box-sizing:border-box; width:100%; min-width:0; }
+.admin-shell .cms-pdf-file-field .cms-pdf-description { margin:2px 0 0!important; }
+.admin-shell .cms-pdf-file-field > small:not(.cms-upload-error) { display:block; }

@@ -417,8 +417,8 @@ export function LeafletAdmin({
               required
               onChange={async (event) => { setUploadError(""); const file = event.currentTarget.files?.[0]; if (!file) return; try { await validateCmsUpload(file, "leafletCover"); } catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar a thumbnail."); setUploadErrorField("cover"); } }}
             />
-            <UploadRequirements rule="leafletCover">Mantenha títulos e informações importantes longe das bordas.</UploadRequirements>
             {uploadError && uploadErrorField === "cover" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
+            <UploadRequirements rule="leafletCover">Mantenha títulos e informações importantes longe das bordas.</UploadRequirements>
           </label>
           <label>
             Header da página
