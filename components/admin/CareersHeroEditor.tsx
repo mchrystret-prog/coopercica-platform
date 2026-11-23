@@ -8,11 +8,13 @@ import { UploadRequirements } from "./UploadRequirements";
 export function CareersHeroEditor({
   value,
   busy,
+  uploadErrors = {},
   onChange,
   onUpload,
 }: {
   value: Record<string, string>;
   busy: boolean;
+  uploadErrors?: Record<string, string>;
   onChange: (patch: Record<string, string>) => void;
   onUpload: (
     event: ChangeEvent<HTMLInputElement>,
@@ -54,6 +56,7 @@ export function CareersHeroEditor({
                 <UploadRequirements rule={field === "image" ? "careersDesktop" : "careersMobile"}>
                   {field === "mobileImage" ? "Sem esta imagem, o celular usa a foto principal." : null}
                 </UploadRequirements>
+                {uploadErrors[`careers:${field}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`careers:${field}`]}</small> : null}
                 {src ? (
                   <Image
                     className="cms-upload-preview"
