@@ -46,7 +46,7 @@ export function HistoryImageEditor({
                 disabled={busy}
                 onChange={(e) => onUpload(e, item.id)}
               />
-              <UploadRequirements rule="history" />{uploadErrors[`history:${item.id}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`history:${item.id}`]}</small> : null}
+              {uploadErrors[`history:${item.id}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`history:${item.id}`]}</small> : null}<UploadRequirements rule="history" />
             </label>
           </div>
           {images[item.id] ? (
