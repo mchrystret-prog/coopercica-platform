@@ -30,6 +30,8 @@ export function LeafletAdmin({
   const [seals, setSeals] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
+  const [uploadError, setUploadError] = useState("");
+  const [uploadErrorField, setUploadErrorField] = useState<"sheet" | "cover" | "header" | "products">("sheet");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [requiredEans, setRequiredEans] = useState<Set<string>>(new Set());
   const imageIndex = useMemo(() => {
@@ -62,6 +64,7 @@ export function LeafletAdmin({
     };
   }, [libraryRevision]);
   function chooseImageFolder(e: ChangeEvent<HTMLInputElement>) {
+    setUploadError("");
     const files = Array.from(e.target.files || []);
     setImageFiles(files);
     const matched = files.filter((f) =>
@@ -128,8 +131,8 @@ export function LeafletAdmin({
         },
       );
       if (!up.ok) {
-        missing++;
-        return;
+        const detail = await up.text().catch(() => "");
+        throw new Error(`Falha ao enviar a imagem do produto ${p.ean} (HTTP ${up.status})${detail ? `: ${detail}` : ""}`);
       }
       p.image_url = `${SUPABASE_URL}/storage/v1/object/public/leaflet-assets/${path}`;
       matched++;
@@ -150,6 +153,8 @@ export function LeafletAdmin({
       return;
     }
     const formElement = e.currentTarget;
+    let failedUploadField: "sheet" | "cover" | "header" | "products" = "sheet";
+    setUploadError("");
     setLoading(true);
     setStatus("idle");
     setResult(null);
@@ -219,7 +224,9 @@ export function LeafletAdmin({
         return `${SUPABASE_URL}/storage/v1/object/public/leaflet-assets/${path}`;
       };
       setMessage("Enviando imagens do folheto...");
+      failedUploadField = "cover";
       const coverUrl = await upload(form.get("cover_file"), "thumb");
+      failedUploadField = "header";
       const headerUrl = await upload(form.get("header_file"), "header");
       const name = String(form.get("name") || "");
       const baseSlug = String(form.get("slug") || "") || name;
@@ -240,6 +247,7 @@ export function LeafletAdmin({
         setMessage(
           `Cruzando ${products.length} produtos com o banco de imagens pelo EAN…`,
         );
+        failedUploadField = "products";
         imageReport = await uploadProductImages(products, token, slug);
         setMessage(
           `Imagens: ${imageReport.matched} encontradas · ${imageReport.missing} sem correspondência. Salvando folheto…`,
@@ -295,8 +303,11 @@ export function LeafletAdmin({
       }
     } catch (err) {
       setStatus("error");
+      const errorText = err instanceof Error ? err.message : "Erro ao processar planilha.";
+      setUploadError(errorText);
+      setUploadErrorField(failedUploadField);
       setMessage(
-        err instanceof Error ? err.message : "Erro ao processar planilha.",
+        errorText,
       );
     } finally {
       setLoading(false);
@@ -309,6 +320,7 @@ export function LeafletAdmin({
     setOverrides({});
     setRequiredEans(new Set());
     if (!file) return;
+    setUploadError("");
     setLoading(true);
     setStatus("idle");
     try {
@@ -350,11 +362,12 @@ export function LeafletAdmin({
         `Planilha lida: ${records.length} produtos. Confira os fundos dos boxes e os selos abaixo.`,
       );
     } catch (error) {
+      const errorText = error instanceof Error ? error.message : "Não foi possível ler a planilha.";
+      setUploadError(errorText);
+      setUploadErrorField("sheet");
       setStatus("error");
       setMessage(
-        error instanceof Error
-          ? error.message
-          : "Não foi possível ler a planilha.",
+        errorText,
       );
     } finally {
       setLoading(false);
@@ -376,7 +389,7 @@ export function LeafletAdmin({
           <label>
             Slug (opcional)
             <input name="slug" placeholder="ofertas-da-semana" />
-            <small>Deixe vazio para gerar automaticamente.</small>
+            <small>O slug é o identificador usado no endereço do folheto no site. Use palavras curtas, sem espaços ou acentos, separadas por hífens. Deixe vazio para gerar automaticamente.</small>
           </label>
           <label>
             Exibir no site a partir de
@@ -402,6 +415,7 @@ export function LeafletAdmin({
               required
             />
             <UploadRequirements rule="leafletCover">Mantenha títulos e informações importantes longe das bordas.</UploadRequirements>
+            {uploadError && uploadErrorField === "cover" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
           </label>
           <label>
             Header da página
@@ -412,6 +426,7 @@ export function LeafletAdmin({
               required
             />
             <UploadRequirements rule="leafletHeader" />
+            {uploadError && uploadErrorField === "header" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
           </label>
           <label>
             Status
@@ -433,6 +448,7 @@ export function LeafletAdmin({
               onChange={previewSheet}
             />
             <UploadRequirements rule="sheet" />
+            {uploadError && uploadErrorField === "sheet" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
           </label>
           <div className="form-span-full">
             <p>
@@ -522,6 +538,7 @@ export function LeafletAdmin({
               7891234567890.jpg). JPG, PNG ou WebP. Apenas as imagens usadas
               neste folheto serão enviadas.
             </UploadRequirements>
+            {uploadError && uploadErrorField === "products" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
             {imageFiles.length ? (
               <span className="cms-folder-status">
                 {requiredEans.size ? (

@@ -209,3 +209,14 @@
 .kanbanCard { cursor:pointer; }
 .kanbanCard:focus-visible { outline:3px solid var(--brand-green-500); outline-offset:3px; }
 @media(max-width:600px) { .modalBackdrop { padding:10px; align-items:end; } .candidateModal { max-height:94vh; padding:18px; border-radius:18px; } .modalActions { justify-content:stretch; } .modalActions button { width:100%; } }
+
+
+/* Candidate modal hierarchy: make the details below the name easy to scan. */
+.detailHeading h2 { margin: 8px 0 6px; color: var(--text-heading); font-size: clamp(24px, 3vw, 32px); line-height: 1.12; letter-spacing: -0.025em; }
+.detailHeading p { display:inline-flex; align-items:center; margin:0; padding:7px 11px; border:1px solid #cbdccf; border-radius:9px; background:#edf5ee; color:#214d2a; font-size:13px; font-weight:800; line-height:1.35; }
+.detail dl { margin:24px 0; gap:12px; }
+.detail dl > div { min-width:0; padding:14px 16px; border:1px solid var(--border-soft); border-radius:12px; background:var(--surface-soft); }
+.detail dt { color:#526257; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.055em; }
+.detail dd { color:#1e2c21; font-size:14px; font-weight:600; line-height:1.55; }
+.detail dd a { color:#174f25; font-weight:800; text-decoration:underline; text-underline-offset:3px; }
+.cms-upload-error { display:block!important; margin-top:8px!important; color:#b42318!important; font-size:12px!important; font-weight:750!important; line-height:1.45!important; }
