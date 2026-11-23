@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CareersTestimonial } from "@/lib/careers-testimonials";
 import styles from "./TestimonialsCarousel.module.css";
 
@@ -8,7 +8,7 @@ export function TestimonialsCarousel({ testimonials }: { testimonials: CareersTe
   const trackRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
 
-  const move = (direction: "next" | "previous") => {
+  const move = useCallback((direction: "next" | "previous") => {
     const track = trackRef.current;
     if (!track) return;
     const card = track.querySelector<HTMLElement>("[data-testimonial-card]");
@@ -22,13 +22,13 @@ export function TestimonialsCarousel({ testimonials }: { testimonials: CareersTe
     } else {
       track.scrollBy({ left: direction === "next" ? distance : -distance, behavior: "smooth" });
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (paused || testimonials.length < 2) return;
     const timer = window.setInterval(() => move("next"), 6000);
     return () => window.clearInterval(timer);
-  }, [paused, testimonials.length]);
+  }, [move, paused, testimonials.length]);
 
   return (
     <div className={styles.carousel} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={(event) => {
