@@ -16,7 +16,8 @@ import type { Magazine } from "@/types/content";
 import { validatePartners } from "@/lib/home-partners";
 import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
-import { CareersHeroEditor } from "./CareersHeroEditor";
+import { CareersBannersEditor } from "./CareersBannersEditor";
+import { parseCareersBanners, isValidCareersBannerImage, isValidCareersBannerHref } from "@/lib/careers-banners";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { customizationUploadRule } from "@/lib/cms-upload-rules";
@@ -99,15 +100,23 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     if (videosError) { setTab("videos"); setMsg(videosError); return; }
     const offersError = module === "settings" ? validateOffersSettings(data.settings) : null;
     if (offersError) { setTab("offers"); setMsg(offersError); return; }
-    if (
-      module === "personalization" && data.settings.careers_hero?.image &&
-      !data.settings.careers_hero.alt?.trim()
-    ) {
-      setTab("careers");
-      setMsg(
-        "Adicione uma descrição da foto do Portal de Vagas para acessibilidade.",
-      );
-      return;
+    if (module === "personalization") {
+      const banners = parseCareersBanners(data.settings.careers_hero);
+      const invalidBanner = banners.find((banner) => banner.active && (
+        !banner.title.trim() ||
+        !isValidCareersBannerImage(banner.desktopImage) ||
+        (Boolean(banner.mobileImage) && !isValidCareersBannerImage(banner.mobileImage))
+      ));
+      if (invalidBanner) {
+        setTab("careers");
+        setMsg("Cada banner ativo precisa ter uma imagem desktop válida e um texto alternativo. A imagem mobile, quando enviada, também precisa ser válida.");
+        return;
+      }
+      if (banners.some((banner) => banner.href && !isValidCareersBannerHref(banner.href))) {
+        setTab("careers");
+        setMsg("Confira os links dos banners. Use um endereço HTTPS ou um caminho interno iniciado por /.");
+        return;
+      }
     }
     if (module === "personalization" && data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
       setTab("videos"); setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
@@ -190,7 +199,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         file,
         target === "social:image" ? "social" : target.startsWith("coopermais:") ? "sections" : target.startsWith("videos:")
           ? "videos"
-          : target.startsWith("careers:")
+          : target.startsWith("careers:") || target.startsWith("careers-banner:")
           ? "careers"
           : target.startsWith("history:")
             ? "history"
@@ -209,22 +218,20 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           videos_header: { ...current.settings.videos_header, [field]: url,
             alt: current.settings.videos_header?.alt || "Mais conteúdo pra você. Família reunida assistindo ao canal da Coopercica." }
         } } : current);
-      } else if (target.startsWith("careers:")) {
-        const field = target.slice(8);
-        setData((current) =>
-          current
-            ? {
-                ...current,
-                settings: {
-                  ...current.settings,
-                  careers_hero: {
-                    ...current.settings.careers_hero,
-                    [field]: url,
-                  },
-                },
-              }
-            : current,
-        );
+      } else if (target.startsWith("careers-banner:")) {
+        const [, bannerId, field] = target.split(":");
+        setData((current) => {
+          if (!current || !bannerId || !["desktopImage", "mobileImage"].includes(field)) return current;
+          const banners = parseCareersBanners(current.settings.careers_hero);
+          const updated = banners.map((banner) => banner.id === bannerId ? { ...banner, [field]: url } : banner);
+          return {
+            ...current,
+            settings: {
+              ...current.settings,
+              careers_hero: { ...current.settings.careers_hero, banners: JSON.stringify(updated) },
+            },
+          };
+        });
       } else if (target.startsWith("history:")) {
         const id = target.slice(8);
         setData((current) =>
@@ -440,29 +447,31 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           setMsg("Configuração de ofertas alterada. Salve as alterações para publicar.");
         }} />
       ) : tab === "careers" ? (
-        <CareersHeroEditor
-          value={data.settings.careers_hero || {}}
+        <CareersBannersEditor
+          banners={parseCareersBanners(data.settings.careers_hero)}
+          contentValue={data.settings.careers_hero || {}}
           busy={busy}
           uploadErrors={uploadErrors}
-          onUpload={(e, field) => media(e, `careers:${field}`)}
-          onChange={(patch) => {
-            setData((current) =>
-              current
-                ? {
-                    ...current,
-                    settings: {
-                      ...current.settings,
-                      careers_hero: {
-                        ...current.settings.careers_hero,
-                        ...patch,
-                      },
-                    },
-                  }
-                : current,
-            );
-            setMsg(
-              "Portal de Vagas alterado. Salve as alterações para publicar.",
-            );
+          onUpload={(e, target) => media(e, target)}
+          onBannersChange={(banners) => {
+            setData((current) => current ? {
+              ...current,
+              settings: {
+                ...current.settings,
+                careers_hero: { ...current.settings.careers_hero, banners: JSON.stringify(banners) },
+              },
+            } : current);
+            setMsg("Banners do Portal de Vagas alterados. Salve as alterações para publicar.");
+          }}
+          onContentChange={(patch) => {
+            setData((current) => current ? {
+              ...current,
+              settings: {
+                ...current.settings,
+                careers_hero: { ...current.settings.careers_hero, ...patch },
+              },
+            } : current);
+            setMsg("Conteúdo institucional alterado. Salve as alterações para publicar.");
           }}
         />
       ) : tab === "history" ? (

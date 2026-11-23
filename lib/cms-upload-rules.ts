@@ -25,6 +25,8 @@ export const uploadRules = {
   history: image("Foto da história", [1600, 1000]),
   careersDesktop: image("Foto principal de Vagas", [1600, 1200]),
   careersMobile: image("Foto mobile de Vagas", [1080, 810]),
+  careersBannerDesktop: image("Banner desktop do Portal de Vagas", [1920, 826]),
+  careersBannerMobile: image("Banner mobile do Portal de Vagas", [1080, 1350]),
   videosDesktop: image("Cabeçalho de Vídeos", [2048, 522]),
   videosMobile: image("Cabeçalho mobile de Vídeos", [1080, 810]),
   coopermaisImage: image("Imagem Coopermais", [2880, 432]),
@@ -65,6 +67,7 @@ export function customizationUploadRule(target: string): UploadRuleKey {
   if (target === "favicon") return "favicon";
   if (target === "logo" || target === "logoWhite") return "logo";
   if (target.startsWith("history:")) return "history";
+  if (target.startsWith("careers-banner:")) return target.endsWith("mobileImage") ? "careersBannerMobile" : "careersBannerDesktop";
   if (target.startsWith("careers:")) return target.endsWith("mobileImage") ? "careersMobile" : "careersDesktop";
   if (target.startsWith("videos:")) return target.endsWith("mobileImage") ? "videosMobile" : "videosDesktop";
   if (target.startsWith("coopermais:")) {
