@@ -156,7 +156,6 @@ export function PolicyAdmin() {
         </section>
       ) : (
         <section className="cms-content-section">
-          <div className="cms-content-heading"><div><span className="eyebrow">Conteúdo cadastrado</span><h2>Documentos do site</h2></div></div>
           {items.length ? <div className="cms-content-list">{items.map((item) => (
             <article className="cms-content-row cms-policy-list-row" key={item.id}>
               <div className="cms-content-info"><strong>{item.title}</strong><small>{item.active ? "Publicado" : "Oculto"} · ordem {item.sort_order}</small></div>

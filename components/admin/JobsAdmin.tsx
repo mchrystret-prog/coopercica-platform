@@ -224,20 +224,20 @@ export function JobsAdmin() {
               <Button variant="secondary" type="button" className="cms-edit-one" disabled={busy} onClick={() => edit(job)}>
                 Editar
               </Button>
-              <Link href={`/admin/vagas/candidaturas?vaga=${job.id}`}>
+              <Link className="cms-edit-one" href={`/admin/vagas/candidaturas?vaga=${job.id}`}>
                 Candidaturas
               </Link>
               {job.status === "open" ? (
                 <>
                   <Link
-                    className="ds-button ds-button--secondary jobs-site-link"
+                    className="cms-edit-one"
                     href={`/vagas/${job.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Ver no site
                   </Link>
-                  <Button variant="secondary" type="button" disabled={busy} onClick={() => close(job)}>
+                  <Button variant="secondary" type="button" className="cms-delete-one" disabled={busy} onClick={() => close(job)}>
                     Encerrar
                   </Button>
                 </>

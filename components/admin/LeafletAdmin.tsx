@@ -366,7 +366,7 @@ export function LeafletAdmin({
         <fieldset
           className="settings-form cms-leaflet-form-grid"
           disabled={loading}
-          style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
+          style={{ border: 0, margin: "35px 0 0", minWidth: 0 }}
         >
           <label>
             Nome do folheto
