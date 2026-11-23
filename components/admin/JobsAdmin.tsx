@@ -230,6 +230,7 @@ export function JobsAdmin() {
               {job.status === "open" ? (
                 <>
                   <Link
+                    className="ds-button ds-button--secondary jobs-site-link"
                     href={`/vagas/${job.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
