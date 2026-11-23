@@ -502,26 +502,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           Próxima
         </Button>
       </div>
-      <style jsx global>{`
-        .admin-page .recruitment-kanban { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(280px,1fr); align-items:start; gap:16px; max-width:100%; margin:24px 0; padding:0 0 12px; overflow-x:auto; overscroll-behavior-x:contain; }
-        .admin-page .recruitment-kanban-column { display:grid; align-content:start; gap:12px; min-width:0; min-height:220px; padding:14px; border:1px solid var(--border-soft); border-radius:18px; background:var(--surface-soft); }
-        .admin-page .recruitment-kanban-column > h2 { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 2px; font-size:15px; }
-        .admin-page .recruitment-kanban-column > h2 > span:last-child { display:inline-grid; min-width:28px; height:28px; place-items:center; padding:0 7px; border-radius:999px; background:#fff; color:var(--text-heading); font-size:12px; font-weight:800; }
-        .admin-page .recruitment-kanban-card { display:grid; gap:12px; align-items:stretch; padding:16px; border:1px solid var(--border-soft); border-radius:14px; background:var(--surface-card); box-shadow:0 5px 16px rgb(28 71 34 / 5%); cursor:grab; }
-        .admin-page .recruitment-kanban-card:active { cursor:grabbing; }
-        .admin-page .recruitment-kanban-card h2 { font-size:16px; line-height:1.3; overflow-wrap:anywhere; }
-        .admin-page .recruitment-kanban-card p { overflow-wrap:anywhere; }
-        .admin-page .recruitment-kanban-card .actions { display:grid; grid-template-columns:1fr; }
-        .admin-page .recruitment-kanban-card .actions > * { width:100%; }
-        .admin-page .recruitment-kanban-column .columnEmpty { margin:0; padding:18px 10px; border:1px dashed var(--border-strong); border-radius:12px; color:var(--text-muted); font-size:13px; text-align:center; }
-        .admin-page .actions .candidate-action { min-height:50px!important; padding:0 22px!important; border-radius:999px!important; border:1px solid var(--brand-green-900)!important; background:transparent!important; color:var(--text-heading)!important; font-weight:800!important; }
-        .admin-page .actions .candidate-action:hover:not(:disabled) { border-color:var(--brand-green-900)!important; background:var(--brand-green-900)!important; color:#fff!important; transform:translateY(-2px); box-shadow:0 14px 30px rgb(28 71 34 / 14%); }
-        .admin-page .actions .button-danger { min-height:50px!important; padding:0 22px!important; border-radius:999px!important; border:1px solid var(--brand-red-500)!important; background:transparent!important; color:var(--brand-red-500)!important; font-weight:800!important; }
-        .admin-page .actions .button-danger:hover:not(:disabled) { border-color:var(--brand-red-500)!important; background:var(--brand-red-500)!important; color:#fff!important; transform:translateY(-2px); box-shadow:0 14px 30px rgb(239 64 55 / 18%); }
-        .admin-shell .button-danger, .admin-shell .cms-danger-outline, .admin-shell .cms-delete-one { border:1px solid var(--brand-red-500)!important; background:transparent!important; color:var(--brand-red-500)!important; }
-        .admin-shell .button-danger:hover:not(:disabled), .admin-shell .cms-danger-outline:hover:not(:disabled), .admin-shell .cms-delete-one:hover:not(:disabled) { border-color:var(--brand-red-500)!important; background:var(--brand-red-500)!important; color:#fff!important; box-shadow:0 10px 24px rgb(239 64 55 / 18%); }
-        @media(max-width:800px) { .admin-page .recruitment-kanban { grid-auto-columns:minmax(260px,84vw); } .admin-page .recruitment-kanban-card { padding:14px; } }
-      `}</style>
+
     </section>
   );
 }
