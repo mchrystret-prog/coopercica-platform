@@ -250,7 +250,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               >
                 Ver candidatura
               </Button>
-              {isAdmin ? <Button variant="danger" type="button" disabled={busy} onClick={() => void remove(c)}>
+              {isAdmin ? <Button variant="secondary" className="button button-danger" type="button" disabled={busy} onClick={() => void remove(c)}>
                 Remover candidatura
               </Button> : null}
             </div>
