@@ -74,8 +74,11 @@ export function TestimonialsCarousel({ testimonials }: { testimonials: CareersTe
             <span className={styles.quoteMark} aria-hidden="true">“</span>
             <blockquote>{item.quote}</blockquote>
             <div className={styles.person}>
-              <strong>{item.name}</strong>
-              <span>{[item.role, item.tenure].filter(Boolean).join(" · ")}</span>
+              {item.image ? <img className={styles.avatar} src={item.image} alt={`Foto de ${item.name}`} width={56} height={56} loading="lazy" /> : <span className={styles.avatarFallback} aria-hidden="true">{item.name.trim().charAt(0).toUpperCase()}</span>}
+              <div className={styles.personInfo}>
+                <strong>{item.name}</strong>
+                <span>{[item.role, item.tenure].filter(Boolean).join(" · ")}</span>
+              </div>
             </div>
           </article>
         ))}
