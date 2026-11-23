@@ -118,57 +118,6 @@ export function PolicyAdmin() {
         </div>
       </header>
       <div className="cms-policy-manager">
-      <section className="cms-content-section">
-        <div className="cms-content-heading">
-          <div>
-            <span className="eyebrow">Biblioteca de documentos</span>
-            <h2>Documentos do site</h2>
-          </div>
-        </div>
-        {items.length ? (
-          <div className="cms-content-list">
-            {items.map((p) => (
-              <article className="cms-policy-row" key={p.id}>
-                <div>
-                  <strong>{p.title}</strong>
-                  <small>
-                    {p.active ? "Publicado" : "Oculto"} · ordem {p.sort_order}
-                  </small>
-                </div>
-                <div className="cms-row-actions">
-                  <a
-                    className="cms-edit-one"
-                    href={p.file_url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Abrir
-                  </a>
-                  <Button variant="secondary" type="button"
-                    className="cms-edit-one"
-                    onClick={() => setEditing(p)}
-                  >
-                    Editar
-                  </Button>
-                  <Button variant="secondary" type="button"
-                    className="cms-delete-one"
-                    onClick={() => remove(p.id)}
-                  >
-                    Apagar
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="cms-empty">
-            <strong>Nenhum documento cadastrado.</strong>
-            <span>
-              Use o formulário abaixo para publicar a primeira política.
-            </span>
-          </div>
-        )}
-      </section>
       <section className="cms-create-section cms-policy-editor">
         <div className="cms-create-heading">
           <div>
@@ -244,6 +193,58 @@ export function PolicyAdmin() {
           </div>
         </form>
         {msg ? <div className="form-status">{msg}</div> : null}
+      </section>
+
+      <section className="cms-content-section">
+        <div className="cms-content-heading">
+          <div>
+            <span className="eyebrow">Biblioteca de documentos</span>
+            <h2>Documentos do site</h2>
+          </div>
+        </div>
+        {items.length ? (
+          <div className="cms-content-list">
+            {items.map((p) => (
+              <article className="cms-policy-row" key={p.id}>
+                <div>
+                  <strong>{p.title}</strong>
+                  <small>
+                    {p.active ? "Publicado" : "Oculto"} · ordem {p.sort_order}
+                  </small>
+                </div>
+                <div className="cms-row-actions">
+                  <a
+                    className="cms-edit-one"
+                    href={p.file_url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Abrir
+                  </a>
+                  <Button variant="secondary" type="button"
+                    className="cms-edit-one"
+                    onClick={() => setEditing(p)}
+                  >
+                    Editar
+                  </Button>
+                  <Button variant="secondary" type="button"
+                    className="cms-delete-one"
+                    onClick={() => remove(p.id)}
+                  >
+                    Apagar
+                  </Button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="cms-empty">
+            <strong>Nenhum documento cadastrado.</strong>
+            <span>
+              Use o formulário abaixo para publicar a primeira política.
+            </span>
+          </div>
+        )}
       </section>
       </div>
     </section>
