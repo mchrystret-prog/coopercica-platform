@@ -8,11 +8,13 @@ import { UploadRequirements } from "./UploadRequirements";
 export function HistoryImageEditor({
   images,
   busy,
+  uploadErrors = {},
   onUpload,
   onRestore,
 }: {
   images: Record<string, string>;
   busy: boolean;
+  uploadErrors?: Record<string, string>;
   onUpload: (event: ChangeEvent<HTMLInputElement>, id: string) => void;
   onRestore: (id: string) => void;
 }) {
@@ -44,7 +46,7 @@ export function HistoryImageEditor({
                 disabled={busy}
                 onChange={(e) => onUpload(e, item.id)}
               />
-              <UploadRequirements rule="history" />
+              <UploadRequirements rule="history" />{uploadErrors[`history:${item.id}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`history:${item.id}`]}</small> : null}
             </label>
           </div>
           {images[item.id] ? (
