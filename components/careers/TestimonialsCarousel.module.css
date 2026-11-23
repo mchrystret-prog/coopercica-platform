@@ -43,13 +43,29 @@
 }
 .person {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 12px;
   padding-top: 14px;
   border-top: 1px solid var(--border-soft);
 }
-.person strong { color: var(--brand-green-900); font-size: var(--font-size-sm); }
-.person span { color: var(--text-muted); font-size: var(--font-size-xs); line-height: 1.45; }
+.avatar, .avatarFallback {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-soft);
+}
+.avatarFallback {
+  display: grid;
+  place-items: center;
+  color: var(--brand-green-900);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.personInfo { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.personInfo strong { color: var(--brand-green-900); font-size: var(--font-size-sm); }
+.personInfo span { color: var(--text-muted); font-size: var(--font-size-xs); line-height: 1.45; }
 .controls {
   display: flex;
   align-items: center;
