@@ -271,9 +271,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       {tab === "identity" ? (
         <div className="settings-form">
           <p id="identity-colors-note" className="form-span-full">
-            As cores do site público seguem os tokens oficiais do Design System.
-            Os valores existentes são preservados, mas não podem ser editados
-            nesta fase.
+            Personalize as cores principais do site. As alterações serão publicadas junto com as demais configurações ao salvar.
           </p>
           <label>
             Nome do site
@@ -287,7 +285,6 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.primaryColor || "#1c4722"}
-              disabled
               aria-describedby="identity-colors-note"
             />
             <small>
@@ -299,7 +296,6 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.secondaryColor || "#6ab945"}
-              disabled
               aria-describedby="identity-colors-note"
             />
           </label>
@@ -308,7 +304,6 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.accentColor || "#ef4037"}
-              disabled
               aria-describedby="identity-colors-note"
             />
           </label>
@@ -317,7 +312,6 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.pageColor || "#f6faf6"}
-              disabled
               aria-describedby="identity-colors-note"
             />
           </label>
