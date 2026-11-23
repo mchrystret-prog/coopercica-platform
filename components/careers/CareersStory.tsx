@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/Button/Button";
 import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
 import styles from "./CareersStory.module.css";
+import type { CareersTestimonial } from "@/lib/careers-testimonials";
 
-export function CareersStory({ content }: { content: CareersContent }) {
+export function CareersStory({ content, testimonials }: { content: CareersContent; testimonials: CareersTestimonial[] }) {
   return <>
     <Section id="nossa-cultura" className={styles.manifesto} aria-labelledby="manifesto-title">
       <Container>
@@ -42,6 +43,31 @@ export function CareersStory({ content }: { content: CareersContent }) {
         ].map(([title, description], index) => <article key={title} data-careers-reveal data-careers-delay={index * 70}><span className={styles.valueIndex} aria-hidden="true">0{index + 1}</span><h3>{title}</h3><p>{description}</p></article>)}</div>
       </Container>
     </Section>
-    <section className={styles.invitation} aria-labelledby="invitation-title"><Container><div className={styles.invitationGrid} data-careers-reveal><div><span className={styles.eyebrow}>Seu próximo passo</span><h2 id="invitation-title">Faça parte dos próximos capítulos.</h2><p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p></div><Button href="#oportunidades">Quero fazer parte</Button></div></Container></section>
+    <section className={styles.invitation} aria-labelledby="invitation-title">
+      <Container>
+        <div className={styles.invitationHeading} data-careers-reveal>
+          <div>
+            <span className={styles.eyebrow}>Seu próximo passo</span>
+            <h2 id="invitation-title">Faça parte dos próximos capítulos.</h2>
+            <p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p>
+          </div>
+          <span className={styles.testimonialLabel}>Quem faz parte conta</span>
+        </div>
+        {testimonials.length > 0 ? (
+          <div className={styles.testimonialsGrid} data-careers-stack>
+            {testimonials.map((item, index) => (
+              <article className={styles.testimonialCard} key={item.id} data-careers-reveal data-careers-delay={Math.min(index, 3) * 70}>
+                <span className={styles.quoteMark} aria-hidden="true">“</span>
+                <blockquote>{item.quote}</blockquote>
+                <div className={styles.testimonialPerson}>
+                  <strong>{item.name}</strong>
+                  <span>{[item.role, item.tenure].filter(Boolean).join(" · ")}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
+      </Container>
+    </section>
   </>;
 }
