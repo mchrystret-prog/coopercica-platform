@@ -5,6 +5,8 @@ import type { ChangeEvent } from "react";
 import { Button } from "@/components/ui/Button/Button";
 import { careersDefaults, type CareersContent } from "@/lib/careers-content";
 import type { CareersBanner } from "@/lib/careers-banners";
+import type { CareersTestimonial } from "@/lib/careers-testimonials";
+import { CareersTestimonialsEditor } from "./CareersTestimonialsEditor";
 import { UploadRequirements } from "./UploadRequirements";
 
 type ContentField = keyof CareersContent;
@@ -12,19 +14,23 @@ type ContentField = keyof CareersContent;
 export function CareersBannersEditor({
   banners,
   contentValue,
+  testimonials,
   busy,
   uploadErrors = {},
   onUpload,
   onBannersChange,
   onContentChange,
+  onTestimonialsChange,
 }: {
   banners: CareersBanner[];
   contentValue: Record<string, string>;
+  testimonials: CareersTestimonial[];
   busy: boolean;
   uploadErrors?: Record<string, string>;
   onUpload: (event: ChangeEvent<HTMLInputElement>, target: string) => void;
   onBannersChange: (banners: CareersBanner[]) => void;
   onContentChange: (patch: Record<string, string>) => void;
+  onTestimonialsChange: (items: CareersTestimonial[]) => void;
 }) {
   function patchBanner(id: string, patch: Partial<CareersBanner>) {
     onBannersChange(banners.map((banner) => banner.id === id ? { ...banner, ...patch } : banner));
@@ -172,6 +178,12 @@ export function CareersBannersEditor({
           ))}
         </div>
       </article>
+
+      <CareersTestimonialsEditor
+        testimonials={testimonials}
+        busy={busy}
+        onChange={onTestimonialsChange}
+      />
     </div>
   );
 }
