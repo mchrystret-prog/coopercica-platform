@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button/Button";
 import type { ChangeEvent } from "react";
 import { historyItems } from "@/data/history";
 import { UploadRequirements } from "./UploadRequirements";
@@ -47,14 +48,14 @@ export function HistoryImageEditor({
             </label>
           </div>
           {images[item.id] ? (
-            <button
+            <Button variant="secondary"
               type="button"
               className="button button-secondary"
               disabled={busy}
               onClick={() => onRestore(item.id)}
             >
               Restaurar imagem original
-            </button>
+            </Button>
           ) : null}
         </article>
       ))}
