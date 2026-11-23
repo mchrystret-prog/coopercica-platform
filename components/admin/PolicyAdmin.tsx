@@ -109,7 +109,15 @@ export function PolicyAdmin() {
     }
   }
   return (
-    <div className="cms-policy-manager">
+    <section className="admin-page cms-policy-page">
+      <header className="admin-header">
+        <div>
+          <span className="eyebrow">Site</span>
+          <h1>Políticas e documentos</h1>
+          <p>Gerencie os documentos institucionais e os arquivos disponibilizados no site.</p>
+        </div>
+      </header>
+      <div className="cms-policy-manager">
       <section className="cms-content-section">
         <div className="cms-content-heading">
           <div>
@@ -237,6 +245,7 @@ export function PolicyAdmin() {
         </form>
         {msg ? <div className="form-status">{msg}</div> : null}
       </section>
-    </div>
+      </div>
+    </section>
   );
 }
