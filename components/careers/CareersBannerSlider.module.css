@@ -1,7 +1,7 @@
 .slider {
   position: relative;
   width: 100%;
-  height: clamp(360px, 43vw, 820px);
+  aspect-ratio: 3384 / 864;
   overflow: hidden;
   background: var(--surface-soft);
 }
@@ -28,7 +28,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 .arrow {
@@ -97,10 +97,8 @@
 }
 @media (max-width: 767px) {
   .slider {
-    height: auto;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1 / 1;
   }
-  .image { object-fit: contain; }
 }
 @media (prefers-reduced-motion: reduce) {
   .slide { transition: none; }
