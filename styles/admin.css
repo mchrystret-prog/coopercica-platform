@@ -351,3 +351,43 @@
 .cms-policy-page .settings-form { margin:0; border:0; box-shadow:none; }
 .cms-policy-page .form-actions { display:flex; align-items:center; gap:10px; }
 @media(max-width:700px) { .cms-policy-page .cms-policy-row { grid-template-columns:1fr; } .cms-policy-page .cms-row-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .cms-policy-page .cms-row-actions>* { width:100%; } .cms-policy-page .cms-row-actions .cms-delete-one { grid-column:1/-1; } .cms-policy-page .cms-content-heading, .cms-policy-page .cms-create-heading { align-items:flex-start; } }
+
+
+/* Policy module follows the list-first workflow used by the other CMS sections. */
+.cms-policy-page > .admin-header { align-items:center; }
+.cms-policy-page > .cms-content-section { margin-top:28px; }
+.cms-policy-list-row { grid-template-columns:minmax(0,1fr) auto; align-items:center; }
+.cms-policy-list-row .cms-content-info { min-width:0; display:grid; gap:6px; }
+.cms-policy-list-row .cms-content-info strong,
+.cms-policy-list-row .cms-content-info small { overflow-wrap:anywhere; }
+.cms-policy-page > .cms-create-section { margin-top:28px; }
+@media(max-width:760px) {
+  .cms-policy-page > .admin-header { align-items:flex-start; flex-direction:column; }
+  .cms-policy-list-row { grid-template-columns:minmax(0,1fr); }
+  .cms-policy-list-row .cms-row-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .cms-policy-list-row .cms-row-actions > * { min-width:0; width:100%; }
+  .cms-policy-list-row .cms-delete-one { grid-column:1/-1; }
+}
+
+/* Leaflet creation form: protect grid gutters and keep helper copy inside each field. */
+.admin-shell .cms-leaflet-form-grid {
+  box-sizing:border-box; width:100%; max-width:100%; min-width:0;
+  gap:24px 28px; padding:clamp(22px,3vw,40px);
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.admin-shell .cms-leaflet-form-grid > *,
+.admin-shell .cms-leaflet-form-grid label,
+.admin-shell .cms-leaflet-form-grid p,
+.admin-shell .cms-leaflet-form-grid small {
+  box-sizing:border-box; min-width:0; max-width:100%; overflow-wrap:anywhere;
+}
+.admin-shell .cms-leaflet-form-grid label { line-height:1.5; }
+.admin-shell .cms-leaflet-form-grid label > input,
+.admin-shell .cms-leaflet-form-grid label > select { margin-top:8px; }
+.admin-shell .cms-leaflet-form-grid .form-span-full { grid-column:1/-1; }
+@media(max-width:900px) {
+  .admin-shell .cms-leaflet-form-grid {
+    grid-template-columns:minmax(0,1fr); gap:18px;
+    padding:clamp(18px,4vw,28px);
+  }
+}

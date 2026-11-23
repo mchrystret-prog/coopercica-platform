@@ -84,6 +84,7 @@ export function PolicyAdmin() {
       if (!r.ok) throw new Error(await r.text());
       setMsg(editing ? "Documento atualizado." : "Documento publicado.");
       setEditing(null);
+      setCreating(false);
       form.reset();
       await load();
     } catch (err) {
@@ -91,6 +92,26 @@ export function PolicyAdmin() {
     } finally {
       setBusy(false);
     }
+  }
+  async function clearModule() {
+    if (!items.length) return;
+    if (!confirm(`Zerar Políticas e Documentos? Isso apagará ${items.length} documento(s) e não pode ser desfeito.`)) return;
+    if (!confirm("Confirma a exclusão de TODOS os documentos deste módulo?")) return;
+    setBusy(true);
+    setMsg("");
+    try {
+      for (const item of items) {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_delete_policy`, {
+          method: "POST",
+          headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ p_id: item.id }),
+        });
+        if (!response.ok) throw new Error("Não foi possível apagar todos os documentos. Atualize a lista e tente novamente.");
+      }
+      setEditing(null); setCreating(false); setMsg("Módulo zerado com sucesso."); await load();
+    } catch (error) {
+      setMsg(error instanceof Error ? error.message : "Não foi possível zerar o módulo."); await load();
+    } finally { setBusy(false); }
   }
   async function remove(id: string) {
     if (!confirm("Excluir este documento do site?")) return;
@@ -111,142 +132,42 @@ export function PolicyAdmin() {
   return (
     <section className="admin-page cms-policy-page">
       <header className="admin-header">
-        <div>
-          <span className="eyebrow">Conteúdo do site</span>
-          <h1>Políticas e documentos</h1>
-          <p>Cadastre, atualize e organize os documentos institucionais publicados no site.</p>
-        </div>
+        <div><span className="eyebrow">Conteúdo do site</span><h1>Políticas e documentos</h1><p>Gerencie os documentos institucionais publicados no site.</p></div>
+        {!creating && !editing ? <div className="cms-list-actions">
+          <Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Novo</Button>
+          <Button variant="secondary" className="cms-danger-outline" type="button" onClick={clearModule} disabled={!items.length || busy}>Zerar módulo</Button>
+        </div> : null}
       </header>
-      <div className="cms-policy-manager">
-      <section className="cms-create-section cms-policy-editor">
-        <div className="cms-create-heading">
-          <div>
-            <span className="eyebrow">
-              {editing ? "Edição" : "Novo documento"}
-            </span>
-            <h2>
-              {editing ? "Editar política" : "Publicar política ou relatório"}
-            </h2>
+      {msg ? <div className="form-status" role="status">{msg}</div> : null}
+      {creating || editing ? (
+        <section className="cms-create-section cms-policy-editor">
+          <div className="cms-create-heading"><div><span className="eyebrow">{editing ? "Edição" : "Novo documento"}</span><h2>{editing ? "Editar política" : "Publicar política ou relatório"}</h2></div>
+            <Button variant="ghost" type="button" className="cms-edit-one" onClick={() => { setEditing(null); setCreating(false); setMsg(""); }}>Voltar para documentos</Button>
           </div>
-          {editing ? (
-            <Button variant="ghost" type="button" className="cms-edit-one" onClick={() => setEditing(null)}>
-              Cancelar edição
-            </Button>
-          ) : null}
-        </div>
-        <form
-          key={editing?.id || "new"}
-          className="settings-form"
-          onSubmit={save}
-        >
-          <label>
-            Título
-            <input
-              name="title"
-              required
-              defaultValue={editing?.title || ""}
-              placeholder="Ex.: Política de Privacidade"
-            />
-          </label>
-          <label>
-            Ordem de exibição
-            <input
-              name="sort_order"
-              type="number"
-              min="0"
-              defaultValue={editing?.sort_order ?? 0}
-            />
-          </label>
-          <label className="form-span-full">
-            Descrição curta
-            <input
-              name="description"
-              defaultValue={editing?.description || ""}
-              placeholder="Explique brevemente o conteúdo do documento"
-            />
-          </label>
-          <label className="form-span-full">
-            Arquivo PDF
-            <input name="file" type="file" accept="application/pdf,.pdf" />
-            <UploadRequirements rule="pdf">
-              {editing
-                ? "Envie um novo PDF somente se quiser substituir o documento atual."
-                : ""}
-            </UploadRequirements>
-          </label>
-          <label className="cms-switch form-span-full">
-            <input
-              name="active"
-              type="checkbox"
-              defaultChecked={editing?.active ?? true}
-            />{" "}
-            Exibir no site
-          </label>
-          <div className="form-actions">
-            <Button variant="primary" type="submit" className="button" disabled={busy}>
-              {busy
-                ? "Salvando..."
-                : editing
-                  ? "Salvar alterações"
-                  : "Publicar documento"}
-            </Button>
-          </div>
-        </form>
-        {msg ? <div className="form-status">{msg}</div> : null}
-      </section>
-
-      <section className="cms-content-section">
-        <div className="cms-content-heading">
-          <div>
-            <span className="eyebrow">Biblioteca de documentos</span>
-            <h2>Documentos do site</h2>
-          </div>
-        </div>
-        {items.length ? (
-          <div className="cms-content-list">
-            {items.map((p) => (
-              <article className="cms-policy-row" key={p.id}>
-                <div>
-                  <strong>{p.title}</strong>
-                  <small>
-                    {p.active ? "Publicado" : "Oculto"} · ordem {p.sort_order}
-                  </small>
-                </div>
-                <div className="cms-row-actions">
-                  <a
-                    className="cms-edit-one"
-                    href={p.file_url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Abrir
-                  </a>
-                  <Button variant="secondary" type="button"
-                    className="cms-edit-one"
-                    onClick={() => setEditing(p)}
-                  >
-                    Editar
-                  </Button>
-                  <Button variant="secondary" type="button"
-                    className="cms-delete-one"
-                    onClick={() => remove(p.id)}
-                  >
-                    Apagar
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="cms-empty">
-            <strong>Nenhum documento cadastrado.</strong>
-            <span>
-              Use o formulário abaixo para publicar a primeira política.
-            </span>
-          </div>
-        )}
-      </section>
-      </div>
+          <form key={editing?.id || "new"} className="settings-form" onSubmit={save}>
+            <label>Título<input name="title" required defaultValue={editing?.title || ""} placeholder="Ex.: Política de Privacidade" /></label>
+            <label>Ordem de exibição<input name="sort_order" type="number" min="0" defaultValue={editing?.sort_order ?? 0} /></label>
+            <label className="form-span-full">Descrição curta<input name="description" defaultValue={editing?.description || ""} placeholder="Explique brevemente o conteúdo do documento" /></label>
+            <label className="form-span-full">Arquivo PDF<input name="file" type="file" accept="application/pdf,.pdf" /><UploadRequirements rule="pdf">{editing ? "Envie um novo PDF somente se quiser substituir o documento atual." : ""}</UploadRequirements></label>
+            <label className="cms-switch form-span-full"><input name="active" type="checkbox" defaultChecked={editing?.active ?? true} /> Exibir no site</label>
+            <div className="form-actions form-span-full"><Button variant="primary" type="submit" className="button" disabled={busy}>{busy ? "Salvando..." : editing ? "Salvar alterações" : "Publicar documento"}</Button></div>
+          </form>
+        </section>
+      ) : (
+        <section className="cms-content-section">
+          <div className="cms-content-heading"><div><span className="eyebrow">Conteúdo cadastrado</span><h2>Documentos do site</h2></div></div>
+          {items.length ? <div className="cms-content-list">{items.map((item) => (
+            <article className="cms-content-row cms-policy-list-row" key={item.id}>
+              <div className="cms-content-info"><strong>{item.title}</strong><small>{item.active ? "Publicado" : "Oculto"} · ordem {item.sort_order}</small></div>
+              <div className="cms-row-actions">
+                <a className="cms-edit-one" href={item.file_url} target="_blank" rel="noreferrer">Abrir</a>
+                <Button variant="secondary" type="button" className="cms-edit-one" onClick={() => { setCreating(false); setEditing(item); }}>Editar</Button>
+                <Button variant="secondary" type="button" className="cms-delete-one" onClick={() => remove(item.id)}>Apagar</Button>
+              </div>
+            </article>
+          ))}</div> : <div className="cms-empty"><strong>Nenhum documento cadastrado.</strong><span>Use o botão “Novo” para publicar a primeira política.</span></div>}
+        </section>
+      )}
     </section>
   );
 }

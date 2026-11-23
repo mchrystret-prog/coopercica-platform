@@ -364,7 +364,7 @@ export function LeafletAdmin({
     <>
       <form onSubmit={submit}>
         <fieldset
-          className="settings-form"
+          className="settings-form cms-leaflet-form-grid"
           disabled={loading}
           style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
         >
