@@ -64,8 +64,8 @@ export function CareersBannersEditor({
   ];
 
   const tabs: Array<{ id: CareersEditorTab; label: string; description: string }> = [
-    { id: "banners", label: "Banners", description: "Imagens de destaque que aparecem no topo do Portal de Vagas." },
-    { id: "testimonials", label: "Depoimentos", description: "Histórias e fotos dos colaboradores exibidas no carrossel." },
+    { id: "banners", label: `Banners (${banners.length})`, description: "Imagens de destaque que aparecem no topo do Portal de Vagas." },
+    { id: "testimonials", label: `Depoimentos (${testimonials.length})`, description: "Histórias e fotos dos colaboradores exibidas no carrossel." },
     { id: "culture", label: "Manifesto e cultura", description: "Textos institucionais, missão, visão e valores da Coopercica." },
   ];
 
@@ -93,9 +93,6 @@ export function CareersBannersEditor({
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.label}
-              <span className="cms-tab-count">
-                {tab.id === "banners" ? banners.length : tab.id === "testimonials" ? testimonials.length : " "}
-              </span>
             </Button>
           ))}
         </nav>
