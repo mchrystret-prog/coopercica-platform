@@ -102,6 +102,15 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     const offersError = module === "settings" ? validateOffersSettings(data.settings) : null;
     if (offersError) { setTab("offers"); setMsg(offersError); return; }
     if (module === "personalization") {
+      const testimonials = parseCareersTestimonials(data.settings.careers_testimonials);
+      const invalidTestimonial = testimonials.find((item) => item.active && (!item.quote.trim() || !item.name.trim()));
+      if (invalidTestimonial) {
+        setTab("careers");
+        setMsg("Cada depoimento ativo precisa ter o texto e o nome do colaborador preenchidos.");
+        return;
+      }
+    }
+    if (module === "personalization") {
       const banners = parseCareersBanners(data.settings.careers_hero);
       const invalidBanner = banners.find((banner) => banner.active && (
         !banner.title.trim() ||
