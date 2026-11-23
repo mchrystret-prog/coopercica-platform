@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
-import { validateCmsUpload, validateCmsUploads } from "@/lib/cms-upload-validation";
+import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
