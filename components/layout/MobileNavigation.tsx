@@ -20,7 +20,7 @@ export function usePublicMenu() {
   return menu;
 }
 
-export function MobileNavigationProvider({ children, deliveryUrl }: { children: ReactNode; deliveryUrl: string }) {
+export function MobileNavigationProvider({ children, deliveryUrl, hasOffers = true }: { children: ReactNode; deliveryUrl: string; hasOffers?: boolean }) {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname, open: false });
   const trigger = useRef<HTMLButtonElement | null>(null);
@@ -69,10 +69,12 @@ export function MobileNavigationProvider({ children, deliveryUrl }: { children: 
           <Link href={pathname === "/" ? "#home" : "/"} className={styles.item} aria-current={active === "home" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:home" data-analytics-label="Navegação mobile: Início">
             <Icon name="home" /><span>Início</span>
           </Link>
-          <Link href="/folheteria" className={styles.item} aria-current={active === "offers" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:offers" data-analytics-label="Navegação mobile: Ofertas">
-            <Icon name="tag" /><span>Ofertas</span>
-          </Link>
-          <a href={mobileDeliveryHref(deliveryUrl)} className={`${styles.item} ${styles.buy}`} target="_blank" rel="noopener noreferrer" onClick={() => closeMenu()} data-analytics-id="cta:mobile-buy-online" data-analytics-label="Compre Online">
+          {hasOffers ? (
+            <Link href="/folheteria" className={styles.item} aria-current={active === "offers" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:offers" data-analytics-label="Navegação mobile: Ofertas">
+              <Icon name="tag" /><span>Ofertas</span>
+            </Link>
+          ) : null}
+          <a href={mobileDeliveryHref(deliveryUrl)} className={styles.item + " " + styles.buy} target="_blank" rel="noopener noreferrer" onClick={() => closeMenu()} data-analytics-id="cta:mobile-buy-online" data-analytics-label="Compre Online">
             <Icon name="shopping-bag" /><span>Compre Online</span>
           </a>
           <Link href="/lojas" className={styles.item} aria-current={active === "stores" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:stores" data-analytics-label="Navegação mobile: Lojas">
