@@ -129,7 +129,7 @@ export function CareersBannersEditor({
                 />
                 {uploadErrors[`careers-banner:${banner.id}:desktopImage`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`careers-banner:${banner.id}:desktopImage`]}</small> : null}
                 <UploadRequirements rule="careersBannerDesktop" />
-                {banner.desktopImage ? <Image className="cms-upload-preview" src={banner.desktopImage} alt={banner.title || "Prévia do banner desktop"} width={960} height={413} style={{ width: "100%", height: "auto", objectFit: "contain" }} /> : null}
+                {banner.desktopImage ? <Image className="cms-upload-preview" src={banner.desktopImage} alt={banner.title || "Prévia do banner desktop"} width={1692} height={432} style={{ width: "100%", height: "auto", objectFit: "contain" }} /> : null}
                 {banner.desktopImage ? <Button type="button" variant="secondary" disabled={busy} onClick={() => patchBanner(banner.id, { desktopImage: "" })}>Remover imagem desktop</Button> : null}
               </label>
               <label>
@@ -142,7 +142,7 @@ export function CareersBannersEditor({
                 />
                 {uploadErrors[`careers-banner:${banner.id}:mobileImage`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`careers-banner:${banner.id}:mobileImage`]}</small> : null}
                 <UploadRequirements rule="careersBannerMobile">Sem uma versão mobile, o celular exibirá a imagem desktop.</UploadRequirements>
-                {banner.mobileImage ? <Image className="cms-upload-preview" src={banner.mobileImage} alt={banner.title || "Prévia do banner mobile"} width={360} height={450} style={{ width: "min(100%, 360px)", height: "auto", objectFit: "contain" }} /> : null}
+                {banner.mobileImage ? <Image className="cms-upload-preview" src={banner.mobileImage} alt={banner.title || "Prévia do banner mobile"} width={360} height={360} style={{ width: "min(100%, 360px)", height: "auto", objectFit: "contain" }} /> : null}
                 {banner.mobileImage ? <Button type="button" variant="secondary" disabled={busy} onClick={() => patchBanner(banner.id, { mobileImage: "" })}>Remover imagem mobile</Button> : null}
               </label>
             </div>
