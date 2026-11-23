@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Button } from "@/components/ui/Button/Button";
 import type { CareersTestimonial } from "@/lib/careers-testimonials";
-import { useState } from "react";
 
 export function CareersTestimonialsEditor({
   testimonials,
@@ -138,14 +137,6 @@ export function CareersTestimonialsEditor({
               />
             </label>
           </div>
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={busy}
-            onClick={() => onChange(testimonials.filter((entry) => entry.id !== item.id))}
-          >
-            Remover depoimento
-          </Button>
           </section> : null}
         </div>
       ))}
