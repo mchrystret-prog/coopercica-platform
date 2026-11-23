@@ -165,13 +165,16 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     });
   }
   function setSection(id: string, patch: Partial<Section>) {
-    if (!data) return;
-    setData({
-      ...data,
-      sections: data.sections.map((s) =>
-        s.id === id ? { ...s, ...patch } : s,
-      ),
-    });
+    setData((current) =>
+      current
+        ? {
+            ...current,
+            sections: current.sections.map((s) =>
+              s.id === id ? { ...s, ...patch } : s,
+            ),
+          }
+        : current,
+    );
   }
   async function media(
     e: ChangeEvent<HTMLInputElement>,
@@ -239,9 +242,22 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             : current,
         );
       } else if (target.startsWith("section:")) {
-        const id = target.split(":")[1];
-        const s = data?.sections.find((x) => x.id === id);
-        if (s) setSection(id, { content: { ...s.content, image: url } });
+        const id = target.slice("section:".length);
+        setData((current) =>
+          current
+            ? {
+                ...current,
+                sections: current.sections.map((section) =>
+                  section.id === id
+                    ? {
+                        ...section,
+                        content: { ...section.content, image: url },
+                      }
+                    : section,
+                ),
+              }
+            : current,
+        );
       } else setIdentity(target, url);
       setMsg("Arquivo enviado. Clique em Salvar alterações para publicar.");
     } catch (err) {
