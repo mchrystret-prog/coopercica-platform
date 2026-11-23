@@ -239,6 +239,11 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
   }
   const renderCandidate = (c: Candidate) => (
           <article className={`${styles.row} ${view === "kanban" ? styles.kanbanCard : ""} ${draggingId === c.id ? styles.dragging : ""} recruitment-kanban-card`} key={c.id}
+            onClick={view === "kanban" ? () => { setSelected(c); setMessage(""); } : undefined}
+            onKeyDown={view === "kanban" ? (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelected(c); setMessage(""); } } : undefined}
+            role={view === "kanban" ? "button" : undefined}
+            tabIndex={view === "kanban" ? 0 : undefined}
+            aria-label={view === "kanban" ? `Abrir candidatura de ${c.name}` : undefined}
             draggable={view === "kanban" && !busy}
             onDragStart={(event: DragEvent<HTMLElement>) => { setDraggingId(c.id); event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", c.id); }}
             onDragEnd={() => setDraggingId(null)}
@@ -258,21 +263,9 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
                 })}
               </p>
             </div>
-            <div className={styles.actions}>
-              <Button variant="secondary" className="candidate-action" type="button"
-                disabled={busy}
-                onClick={() => {
-                  setSelected(c);
-                  requestAnimationFrame(() => document.getElementById("candidate-details")?.scrollIntoView({ block: "start" }));
-                  setMessage("");
-                }}
-              >
-                Ver candidatura
-              </Button>
-              {isAdmin ? <Button variant="secondary" className="button-danger" type="button" disabled={busy} onClick={() => void remove(c)}>
-                Remover candidatura
-              </Button> : null}
-            </div>
+            {view === "list" ? <div className={styles.actions}>
+              <Button variant="secondary" className="candidate-action" type="button" disabled={busy} onClick={() => { setSelected(c); setMessage(""); }}>Ver candidatura</Button>
+            </div> : null}
           </article>
   );
   return (
@@ -368,13 +361,14 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
       ) : null}
       {loading ? <p role="status">Carregando candidaturas…</p> : null}
       {selected ? (
-        <article id="candidate-details" className={styles.detail}>
+        <div className={styles.modalBackdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) setSelected(null); }}>
+        <article id="candidate-details" className={`${styles.detail} ${styles.candidateModal}`} role="dialog" aria-modal="true" aria-labelledby="candidate-modal-title" onKeyDown={(event) => { if (event.key === "Escape" && !busy) setSelected(null); }}>
           <div className={styles.detailHeading}>
             <div>
               <span className={styles.status} data-status={selected.status}>
                 {applicationStatuses[selected.status]}
               </span>
-              <h2>{selected.name}</h2>
+              <h2 id="candidate-modal-title">{selected.name}</h2>
               <p>{selected.site_jobs?.title}</p>
             </div>
             <Button variant="secondary" type="button"
@@ -460,7 +454,9 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               </Button>
             </div>
           </form>
+          {isAdmin ? <div className={styles.modalActions}><Button variant="secondary" type="button" className="cms-delete-one" disabled={busy} onClick={() => void remove(selected)}>{busy ? "Aguarde…" : "Remover candidatura"}</Button></div> : null}
         </article>
+        </div>
       ) : null}
       {!loading && view === "kanban" ? <div className={`${styles.kanban} recruitment-kanban`} aria-label="Candidaturas por etapa">
         {Object.entries(applicationStatuses).map(([stage, label]) => <section className={`${styles.kanbanColumn} recruitment-kanban-column`} key={stage} aria-label={label}
