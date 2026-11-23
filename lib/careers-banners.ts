@@ -13,7 +13,7 @@ export type CareersBanner = {
 const careersStoragePrefix = `${SUPABASE_URL}/storage/v1/object/public/site-content/careers/`;
 
 export function isValidCareersBannerImage(value: string): boolean {
-  return value.startsWith(careersStoragePrefix) && !/[\\s?#]/.test(value);
+  return value.startsWith(careersStoragePrefix) && !/[\s?#]/.test(value);
 }
 
 export function parseCareersBanners(value: unknown): CareersBanner[] {

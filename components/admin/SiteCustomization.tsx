@@ -221,7 +221,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       } else if (target.startsWith("careers-banner:")) {
         const [, bannerId, field] = target.split(":");
         setData((current) => {
-          if (!current || !bannerId || !["desktopImage", "mobileImage"].includes(field)) return current;
+          if (!current || !bannerId || !field || !["desktopImage", "mobileImage"].includes(field)) return current;
           const banners = parseCareersBanners(current.settings.careers_hero);
           const updated = banners.map((banner) => banner.id === bannerId ? { ...banner, [field]: url } : banner);
           return {
