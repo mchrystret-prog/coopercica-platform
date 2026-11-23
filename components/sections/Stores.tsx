@@ -1,6 +1,7 @@
 "use client";
 import { StorePhoto } from "./StorePhoto";
 import { StoreDetailsModal } from "./StoreDetailsModal";
+import { StorePhotoViewer } from "./StorePhotoViewer";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { Store } from "@/data/stores";
@@ -24,6 +25,7 @@ function DetailIcon({ phone = false }: { phone?: boolean }) {
 }
 export function Stores({ items, compact = false, content = {}, showHeading = true }: { items: Store[]; compact?: boolean; showHeading?: boolean; content?: Record<string, string> }) {
   const [selectedStore, setSelectedStore] = useState<{ store: Store; trigger: HTMLButtonElement; keyboard: boolean } | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<{ store: Store; trigger: HTMLButtonElement } | null>(null);
   const [city, setCity] = useState("");
   const [onlyOpen, setOnlyOpen] = useState(false);
   const [onlyPharmacy, setOnlyPharmacy] = useState(false);
@@ -82,7 +84,7 @@ export function Stores({ items, compact = false, content = {}, showHeading = tru
           const digits = store.phone.replace(/\D/g, "");
           const phone = digits.length === 10 || digits.length === 11 ? `+55${digits}` : /^55\d{10,11}$/.test(digits) ? `+${digits}` : null;
           return <article key={store.slug} className={styles.card} id={`loja-${store.slug}`}>
-            <div className={styles.storeIntro}><div className={styles.storePhoto}><StorePhoto src={store.photos?.[0] || store.image} alt={`Foto da Loja ${store.storeNumber}`} className={styles.circleImage} sizes="112px" /></div>
+            <div className={styles.storeIntro}><button type="button" className={`${styles.storePhoto} ${styles.photoTrigger}`} aria-label={`Ampliar fotos da Loja ${store.storeNumber}: ${store.name}`} aria-haspopup="dialog" onClick={event => setSelectedPhoto({ store, trigger: event.currentTarget })}><StorePhoto src={store.photos?.[0] || store.image} alt={`Foto da Loja ${store.storeNumber}`} className={styles.circleImage} sizes="112px" /></button>
             <div className={styles.storeIdentity}>
               <div className={styles.heading}><h3><button type="button" className={styles.cardTrigger} aria-label={`Fotos e informações da Loja ${store.storeNumber}: ${store.name}`} aria-haspopup="dialog" onClick={event => setSelectedStore({ store, trigger: event.currentTarget, keyboard: event.detail === 0 })}>Loja {store.storeNumber}</button></h3>{hasPharmacy(store) ? <span className={styles.pharmacy}>com Drogaria</span> : null}</div>
               <p className={styles.storeName}>{store.name}</p>
@@ -105,5 +107,6 @@ export function Stores({ items, compact = false, content = {}, showHeading = tru
       <p className={styles.note}>Horário de Brasília. O funcionamento pode mudar em feriados; confirme com a unidade.</p>
     </Container>
     {selectedStore ? <StoreDetailsModal key={selectedStore.store.slug} store={selectedStore.store} trigger={selectedStore.trigger} keyboard={selectedStore.keyboard} onClose={() => setSelectedStore(null)} /> : null}
+    {selectedPhoto ? <StorePhotoViewer key={selectedPhoto.store.slug} store={selectedPhoto.store} trigger={selectedPhoto.trigger} onClose={() => setSelectedPhoto(null)} /> : null}
   </Section>;
 }
