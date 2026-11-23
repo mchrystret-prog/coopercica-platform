@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState, type ReactNode } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 export function CmsModuleWorkspace({ children, settings, listLabel, settingsLabel = "Apresentação no site", initialTab, restrictSettings = false }: { children: ReactNode; settings: ReactNode; listLabel: string; settingsLabel?: string; initialTab?: string; restrictSettings?: boolean }) {
@@ -14,7 +15,7 @@ export function CmsModuleWorkspace({ children, settings, listLabel, settingsLabe
   }, [restrictSettings]);
   const showSettings = tab === "settings" && canEditSettings;
   return <section className="admin-page cms-module-workspace">
-    {canEditSettings ? <nav className="cms-custom-tabs" aria-label="Conteúdo do módulo"><button type="button" aria-pressed={!showSettings} data-active={!showSettings} onClick={() => setTab("content")}>{listLabel}</button><button type="button" aria-pressed={showSettings} data-active={showSettings} onClick={() => setTab("settings")}>{settingsLabel}</button></nav> : null}
+    {canEditSettings ? <nav className="cms-custom-tabs" aria-label="Conteúdo do módulo"><Button variant="ghost" type="button" aria-pressed={!showSettings} data-active={!showSettings} onClick={() => setTab("content")}>{listLabel}</Button><Button variant="ghost" type="button" aria-pressed={showSettings} data-active={showSettings} onClick={() => setTab("settings")}>{settingsLabel}</Button></nav> : null}
     <div className="cms-module-body">{showSettings ? settings : children}</div>
   </section>;
 }
