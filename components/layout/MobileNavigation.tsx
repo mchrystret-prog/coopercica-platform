@@ -73,7 +73,7 @@ export function MobileNavigationProvider({ children, deliveryUrl, hasOffers = tr
             <Link href="/folheteria" className={styles.item} aria-current={active === "offers" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:offers" data-analytics-label="Navegação mobile: Ofertas">
               <Icon name="tag" /><span>Ofertas</span>
             </Link>
-          ) : <span className={styles.itemPlaceholder} aria-hidden="true" />}
+          ) : null}
           <a href={mobileDeliveryHref(deliveryUrl)} className={styles.item + " " + styles.buy} target="_blank" rel="noopener noreferrer" onClick={() => closeMenu()} data-analytics-id="cta:mobile-buy-online" data-analytics-label="Compre Online">
             <Icon name="shopping-bag" /><span>Compre Online</span>
           </a>
