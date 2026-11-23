@@ -21,6 +21,7 @@ export function LeafletAssetLibrary() {
   const [kind, setKind] = useState<"box" | "seal">("box");
   const [codeValue, setCodeValue] = useState("");
   const [message, setMessage] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -52,6 +53,7 @@ export function LeafletAssetLibrary() {
       data = new FormData(form);
     setBusy(true);
     setMessage("");
+    setUploadError("");
     try {
       const code =
         kind === "box" ? boxCode(data.get("code")) : sealCode(data.get("code"));
@@ -135,8 +137,10 @@ export function LeafletAssetLibrary() {
         "Arquivo cadastrado. Ele já pode ser usado nas próximas importações.",
       );
     } catch (error) {
+      const errorText = error instanceof Error ? error.message : "Não foi possível salvar.";
+      setUploadError(errorText);
       setMessage(
-        error instanceof Error ? error.message : "Não foi possível salvar.",
+        errorText,
       );
     } finally {
       setBusy(false);
@@ -207,6 +211,7 @@ export function LeafletAssetLibrary() {
             required
             accept="image/png,image/jpeg,image/webp"
           />
+          {uploadError ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
           <UploadRequirements rule={leafletAssetRule(kind, sealCode(codeValue))}>
             Use PNG ou WebP transparente para selos.{" "}
             {kind === "box"

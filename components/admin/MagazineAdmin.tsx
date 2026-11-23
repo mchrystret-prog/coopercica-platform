@@ -22,6 +22,7 @@ async function uploadCover(file: FormDataEntryValue | null) {
 }
 export function MagazineAdmin() {
   const [message, setMessage] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const [loading, setLoading] = useState(false);
   const [reading, setReading] = useState(false);
   const [readStatus, setReadStatus] = useState("");
@@ -57,7 +58,7 @@ export function MagazineAdmin() {
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setLoading(true); setMessage("");
+    setLoading(true); setMessage(""); setUploadError("");
     let id = createdId;
     let publicationCreated = Boolean(createdId);
     try {
@@ -76,15 +77,17 @@ export function MagazineAdmin() {
       if (createdId || editorial.summary.trim() || editorial.highlights.some(item => item.text.trim())) await saveMagazineEditorial(id, editorial);
       setSaved(true); setMessage("Revista e conteúdo de Nessa edição salvos com sucesso.");
     } catch (error) {
-      setMessage(`${publicationCreated ? "A revista foi cadastrada, mas Nessa edição não foi salvo. Use Salvar Nessa edição para tentar novamente, sem reenviar os arquivos. " : ""}${error instanceof Error ? error.message : "Erro ao cadastrar."}`);
+      const errorText = `${publicationCreated ? "A revista foi cadastrada, mas Nessa edição não foi salvo. Use Salvar Nessa edição para tentar novamente, sem reenviar os arquivos. " : ""}${error instanceof Error ? error.message : "Erro ao cadastrar."}`;
+      setUploadError(errorText);
+      setMessage(errorText);
     } finally { setLoading(false); }
   }
   return <><form ref={formRef} className="settings-form" onSubmit={submit}>
     <fieldset className="settings-form form-span-full" disabled={loading || Boolean(createdId)}><legend>Dados da revista</legend>
       <label>Título<input name="title" required placeholder="Ex.: Setembro 2026" /></label><label>Edição<input name="edition" required placeholder="Ex.: Especial Primavera" /></label>
       <label>Data da edição<input name="published_at" type="date" required /></label><label><input name="active" type="checkbox" defaultChecked /> Publicada</label>
-      <label>Capa da revista<input name="cover" type="file" accept="image/png,image/jpeg,image/webp" required /><UploadRequirements rule="magazineCover" /></label>
-      <label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required onChange={event => { const file = event.target.files?.[0] ?? null; setSelectedPdf(file); setEditorial(emptyMagazineEditorial); setReadStatus(""); setReadError(""); controller.current?.abort(); if (file) void readPdf(file); }} /><UploadRequirements rule="pdf">A leitura automática começa ao selecionar o arquivo, antes de publicar.</UploadRequirements></label>
+      <label>Capa da revista<input name="cover" type="file" accept="image/png,image/jpeg,image/webp" required /><UploadRequirements rule="magazineCover" />{uploadError ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}</label>
+      <label>Arquivo PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required onChange={event => { const file = event.target.files?.[0] ?? null; setSelectedPdf(file); setEditorial(emptyMagazineEditorial); setReadStatus(""); setReadError(""); controller.current?.abort(); if (file) void readPdf(file); }} /><UploadRequirements rule="pdf">A leitura automática começa ao selecionar o arquivo, antes de publicar.</UploadRequirements>{uploadError ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}</label>
     </fieldset>
     <fieldset className="settings-form form-span-full" disabled={loading || reading}><legend>Nessa edição · revise antes de publicar</legend>
       <p className="form-span-full">O resumo e os destaques são sugeridos a partir do texto do PDF. Você pode corrigir ou preencher manualmente. PDFs em imagem precisam de OCR, ainda não incluído.</p>
