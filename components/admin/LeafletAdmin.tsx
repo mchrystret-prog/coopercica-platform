@@ -6,7 +6,7 @@ import * as XLSX from "xlsx";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { getLeafletAssets } from "@/lib/leaflet-assets";
 import { spreadsheetRecords, importProducts } from "@/lib/leaflet-import";
-import { validateCmsUpload, validateCmsUploads } from "@/lib/cms-upload-validation";
+import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { UploadRequirements } from "./UploadRequirements";
 import {
   boxCode,
@@ -63,13 +63,14 @@ export function LeafletAdmin({
       active = false;
     };
   }, [libraryRevision]);
-  function chooseImageFolder(e: ChangeEvent<HTMLInputElement>) {
+  async function chooseImageFolder(e: ChangeEvent<HTMLInputElement>) {
     setUploadError("");
     const files = Array.from(e.target.files || []);
     setImageFiles(files);
-    const matched = files.filter((f) =>
-      requiredEans.has(f.name.replace(/\.[^.]+$/, "").trim()),
-    ).length;
+    const matchedFiles = files.filter((f) => requiredEans.has(f.name.replace(/\.[^.]+$/, "").trim()));
+    try { for (const file of matchedFiles) await validateCmsUpload(file, "product"); }
+    catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar imagem do produto."); setUploadErrorField("products"); }
+    const matched = matchedFiles.length;
     setMessage(
       requiredEans.size
         ? `Pasta selecionada. ${matched} das ${requiredEans.size} imagens necessárias foram localizadas pelo EAN.`
@@ -190,11 +191,12 @@ export function LeafletAdmin({
         const ean = image.name.replace(/\.[^.]+$/, "").trim();
         if (eans.has(ean)) selectedImages.set(ean, image);
       }
-      await validateCmsUploads([
-        [form.get("cover_file"), "leafletCover"],
-        [form.get("header_file"), "leafletHeader"],
-        ...Array.from(selectedImages.values()).map((image): [File, "product"] => [image, "product"]),
-      ]);
+      failedUploadField = "cover";
+      await validateCmsUpload(form.get("cover_file") as File, "leafletCover");
+      failedUploadField = "header";
+      await validateCmsUpload(form.get("header_file") as File, "leafletHeader");
+      failedUploadField = "products";
+      for (const image of selectedImages.values()) await validateCmsUpload(image, "product");
       const upload = async (file: FormDataEntryValue | null, kind: string) => {
         if (!(file instanceof File) || !file.size) return "";
         const ext = file.name.split(".").pop()?.toLowerCase() || "webp";
@@ -413,6 +415,7 @@ export function LeafletAdmin({
               type="file"
               accept="image/png,image/jpeg,image/webp"
               required
+              onChange={async (event) => { setUploadError(""); const file = event.currentTarget.files?.[0]; if (!file) return; try { await validateCmsUpload(file, "leafletCover"); } catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar a thumbnail."); setUploadErrorField("cover"); } }}
             />
             <UploadRequirements rule="leafletCover">Mantenha títulos e informações importantes longe das bordas.</UploadRequirements>
             {uploadError && uploadErrorField === "cover" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
@@ -424,6 +427,7 @@ export function LeafletAdmin({
               type="file"
               accept="image/png,image/jpeg,image/webp"
               required
+              onChange={async (event) => { setUploadError(""); const file = event.currentTarget.files?.[0]; if (!file) return; try { await validateCmsUpload(file, "leafletHeader"); } catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar o cabeçalho."); setUploadErrorField("header"); } }}
             />
             <UploadRequirements rule="leafletHeader" />
             {uploadError && uploadErrorField === "header" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
