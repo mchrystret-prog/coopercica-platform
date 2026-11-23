@@ -429,8 +429,8 @@ export function LeafletAdmin({
               required
               onChange={async (event) => { setUploadError(""); const file = event.currentTarget.files?.[0]; if (!file) return; try { await validateCmsUpload(file, "leafletHeader"); } catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar o cabeçalho."); setUploadErrorField("header"); } }}
             />
-            <UploadRequirements rule="leafletHeader" />
             {uploadError && uploadErrorField === "header" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
+            <UploadRequirements rule="leafletHeader" />
           </label>
           <label>
             Status
@@ -451,8 +451,8 @@ export function LeafletAdmin({
               required
               onChange={previewSheet}
             />
-            <UploadRequirements rule="sheet" />
             {uploadError && uploadErrorField === "sheet" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
+            <UploadRequirements rule="sheet" />
           </label>
           <div className="form-span-full">
             <p>
