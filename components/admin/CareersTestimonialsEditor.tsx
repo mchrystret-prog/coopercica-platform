@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { Button } from "@/components/ui/Button/Button";
 import type { CareersTestimonial } from "@/lib/careers-testimonials";
+import { useState } from "react";
 
 export function CareersTestimonialsEditor({
   testimonials,
@@ -22,9 +23,12 @@ export function CareersTestimonialsEditor({
     onChange(testimonials.map((item) => item.id === id ? { ...item, ...changes } : item));
   }
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   function add() {
+    const id = crypto.randomUUID();
     onChange([...testimonials, {
-      id: crypto.randomUUID(),
+      id,
       quote: "",
       name: "",
       role: "",
@@ -33,6 +37,7 @@ export function CareersTestimonialsEditor({
       order: testimonials.reduce((max, item) => Math.max(max, item.order), 0) + 1,
       active: true,
     }]);
+    setEditingId(id);
   }
 
   return (
@@ -51,7 +56,13 @@ export function CareersTestimonialsEditor({
       {testimonials.length === 0 ? (
         <p className="cms-empty">Nenhum depoimento cadastrado. Adicione o primeiro para começar.</p>
       ) : testimonials.map((item, index) => (
-        <section className="cms-section-card" key={item.id}>
+        <div className="cms-record-item" key={item.id} style={{ marginBottom: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", padding: 14, border: "1px solid #dfe5df", borderRadius: 10 }}>
+            {item.image ? <Image src={item.image} alt="" width={52} height={52} style={{ width: 52, height: 52, objectFit: "cover", borderRadius: "50%" }} /> : <span style={{ width: 52, height: 52, display: "grid", placeItems: "center", background: "#f2f4f2", borderRadius: "50%" }}>{item.name?.trim().charAt(0).toUpperCase() || "?"}</span>}
+            <div style={{ flex: "1 1 220px", minWidth: 0 }}><strong>{item.name || `Depoimento ${index + 1}`}</strong><div style={{ display: "flex", gap: 10, flexWrap: "wrap", fontSize: 13, color: "#647064", marginTop: 4 }}><span>{item.role || "Cargo não informado"}</span><span>{item.tenure || "Tempo de casa não informado"}</span><span>{item.active ? "Ativo" : "Inativo"}</span></div></div>
+            <div style={{ display: "flex", gap: 8 }}><Button type="button" variant="secondary" disabled={busy} onClick={() => setEditingId(editingId === item.id ? null : item.id)}>{editingId === item.id ? "Fechar edição" : "Editar"}</Button><Button type="button" variant="secondary" disabled={busy} onClick={() => { onChange(testimonials.filter((entry) => entry.id !== item.id)); if (editingId === item.id) setEditingId(null); }}>Apagar</Button></div>
+          </div>
+          {editingId === item.id ? <section className="cms-section-card" style={{ marginTop: 10 }}>
           <div className="cms-section-card-head">
             <div>
               <small>Depoimento {index + 1}</small>
@@ -135,7 +146,8 @@ export function CareersTestimonialsEditor({
           >
             Remover depoimento
           </Button>
-        </section>
+          </section> : null}
+        </div>
       ))}
     </article>
   );
