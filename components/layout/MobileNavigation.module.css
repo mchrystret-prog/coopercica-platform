@@ -18,7 +18,13 @@
     background: var(--surface-card);
     box-shadow: 0 -6px 24px rgb(28 71 34 / 10%);
   }
-  .itemPlaceholder { display: block; min-width: 0; min-height: 52px; }
+  .navigation[data-has-offers="false"] {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .navigation[data-has-offers="false"] .item { flex: 1 1 0; }
+  .navigation[data-has-offers="false"] .buy { flex: 0 0 clamp(120px, 32vw, 144px); }
   .item {
     display: flex;
     min-width: 0;
