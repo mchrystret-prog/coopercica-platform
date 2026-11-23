@@ -19,8 +19,8 @@ export function VideosHeaderEditor({ value, busy, uploadErrors = {}, onChange, o
       {([['image', 'Arte principal'], ['mobileImage', 'Arte para celular (opcional)']] as const).map(([field, label]) => <label key={field}>
         {label}
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy || (field === 'mobileImage' && !value.image)} onChange={e => onUpload(e, field)} />
-        <UploadRequirements rule={field === "image" ? "videosDesktop" : "videosMobile"}>{field === "mobileImage" ? "Sem esta versão, o celular mostra a arte principal inteira." : null}</UploadRequirements>
         {uploadErrors[`videos:${field}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`videos:${field}`]}</small> : null}
+        <UploadRequirements rule={field === "image" ? "videosDesktop" : "videosMobile"}>{field === "mobileImage" ? "Sem esta versão, o celular mostra a arte principal inteira." : null}</UploadRequirements>
       </label>)}
       <label className="form-span-full">Descrição da arte (acessibilidade)
         <input disabled={busy} maxLength={300} value={value.alt ?? hero.alt} onChange={e => onChange({ alt: e.target.value })} />
