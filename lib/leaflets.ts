@@ -1,3 +1,4 @@
+import { cache } from "react";
 export const SUPABASE_URL = "https://pmcvhrkykezvtdzkkfpa.supabase.co";
 export const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_-aG-9UkJ21nWIcHzRpEheQ_9hCU29x_";
@@ -50,12 +51,12 @@ async function rest<T>(path: string): Promise<T> {
   }
   return response.json();
 }
-export async function getActiveLeaflets() {
+export const getActiveLeaflets = cache(async () => {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
   return rest<Leaflet[]>(
     `digital_leaflets?select=*&status=eq.published&display_from=lte.${today}&ends_at=gte.${today}&order=ends_at.asc`,
   );
-}
+});
 export async function getLeaflet(slug: string) {
   const leaflets = await rest<Leaflet[]>(
     `digital_leaflets?select=*&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`,
