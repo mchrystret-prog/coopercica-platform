@@ -16,7 +16,8 @@ export function PolicyAdmin() {
   const [items, setItems] = useState<SitePolicy[]>([]),
     [editing, setEditing] = useState<SitePolicy | null>(null),
     [busy, setBusy] = useState(false),
-    [msg, setMsg] = useState("");
+    [msg, setMsg] = useState(""),
+    [creating, setCreating] = useState(false);
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
   const load = useCallback(async () => {
     const r = await fetch(
