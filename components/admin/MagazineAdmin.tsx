@@ -62,14 +62,18 @@ export function MagazineAdmin() {
     setLoading(true); setMessage(""); setCoverError(""); setPdfError("");
     let id = createdId;
     let publicationCreated = Boolean(createdId);
+    let failedUpload: "cover" | "pdf" = "cover";
     try {
       if (!id) {
         const data = new FormData(event.currentTarget);
         const token = await getCmsAccessToken();
         try { await validateCmsUpload(data.get("cover") as File, "magazineCover"); } catch (error) { setCoverError(error instanceof Error ? error.message : "Falha ao validar a capa."); throw error; }
+        failedUpload = "pdf";
         try { await validateCmsUpload(data.get("pdf") as File, "pdf"); } catch (error) { setPdfError(error instanceof Error ? error.message : "Falha ao validar o PDF."); throw error; }
         setMessage("Enviando capa e PDF…");
+        failedUpload = "cover";
         let cover: string; try { cover = await uploadCover(data.get("cover")); } catch (error) { setCoverError(error instanceof Error ? error.message : "Falha ao enviar a capa."); throw error; }
+        failedUpload = "pdf";
         let pdf: string; try { pdf = await uploadPublicationPdf(data.get("pdf"), token, "magazines"); } catch (error) { setPdfError(error instanceof Error ? error.message : "Falha ao enviar o PDF."); throw error; }
         // Assign the ID before insertion so retrying editorial save never creates another edition.
         id = crypto.randomUUID();
@@ -81,7 +85,8 @@ export function MagazineAdmin() {
       setSaved(true); setMessage("Revista e conteúdo de Nessa edição salvos com sucesso.");
     } catch (error) {
       const errorText = `${publicationCreated ? "A revista foi cadastrada, mas Nessa edição não foi salvo. Use Salvar Nessa edição para tentar novamente, sem reenviar os arquivos. " : ""}${error instanceof Error ? error.message : "Erro ao cadastrar."}`;
-      if (!coverError && !pdfError) setPdfError(errorText);
+      if (failedUpload === "cover") setCoverError(errorText);
+      else setPdfError(errorText);
       setMessage(errorText);
     } finally { setLoading(false); }
   }
