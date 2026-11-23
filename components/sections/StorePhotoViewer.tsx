@@ -6,10 +6,11 @@ import { Icon } from "@/components/ui/Icon";
 import { StorePhoto } from "./StorePhoto";
 import styles from "./StorePhotoViewer.module.css";
 
-export function StorePhotoViewer({ store, trigger, onClose }: { store: Store; trigger: HTMLButtonElement; onClose: () => void }) {
+export function StorePhotoViewer({ store, trigger, onClose, initialIndex = 0 }: { store: Store; trigger: HTMLButtonElement; onClose: () => void; initialIndex?: number }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const pointer = useRef<{ x: number; y: number } | null>(null);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(initialIndex);
+  const [showControls, setShowControls] = useState(true);
   const photos = [...new Set(store.photos?.length ? store.photos : [store.image].filter(Boolean))];
 
   const previous = () => setIndex(value => (value - 1 + photos.length) % photos.length);
@@ -50,14 +51,18 @@ export function StorePhotoViewer({ store, trigger, onClose }: { store: Store; tr
           const dx = event.clientX - pointer.current.x;
           const dy = event.clientY - pointer.current.y;
           pointer.current = null;
-          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2 && photos.length > 1) dx < 0 ? next() : previous();
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2 && photos.length > 1) {
+            dx < 0 ? next() : previous();
+          } else if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+            setShowControls(value => !value);
+          }
         }}
         onPointerCancel={() => { pointer.current = null; }}
       >
         <StorePhoto key={photos[index]} src={photos[index]} alt={`Loja ${store.storeNumber} · ${store.name} — foto ${index + 1}`} className={styles.photo} sizes="100vw" />
         {photos.length > 1 ? <>
-          <button type="button" className={`${styles.arrow} ${styles.previous}`} onClick={previous} aria-label="Foto anterior"><Icon name="chevron-left" /></button>
-          <button type="button" className={`${styles.arrow} ${styles.next}`} onClick={next} aria-label="Próxima foto"><Icon name="chevron-right" /></button>
+          <button type="button" className={`${styles.arrow} ${styles.previous} ${showControls ? "" : styles.hidden}`} aria-hidden={!showControls} tabIndex={showControls ? 0 : -1} onClick={previous} aria-label="Foto anterior"><Icon name="chevron-left" /></button>
+          <button type="button" className={`${styles.arrow} ${styles.next} ${showControls ? "" : styles.hidden}`} aria-hidden={!showControls} tabIndex={showControls ? 0 : -1} onClick={next} aria-label="Próxima foto"><Icon name="chevron-right" /></button>
         </> : null}
       </div>
       {photos.length > 1 ? <div className={styles.thumbnails} aria-label="Selecionar foto">
