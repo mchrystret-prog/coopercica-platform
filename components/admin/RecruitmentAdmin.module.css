@@ -220,3 +220,7 @@
 .detail dd { color:var(--text-body); font-size:15px; font-weight:500; line-height:1.55; }
 .detail dd a { color:#174f25; font-weight:800; text-decoration:underline; text-underline-offset:3px; }
 .cms-upload-error { display:block!important; margin-top:8px!important; color:#b42318!important; font-size:12px!important; font-weight:750!important; line-height:1.45!important; }
+
+/* Application rows open the candidate details when the surface is selected. */
+.row[tabindex="0"] { cursor:pointer; }
+.row[tabindex="0"]:focus-visible { outline:3px solid var(--brand-green-500); outline-offset:3px; }

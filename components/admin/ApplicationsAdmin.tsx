@@ -239,11 +239,10 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
   }
   const renderCandidate = (c: Candidate) => (
           <article className={`${styles.row} ${view === "kanban" ? styles.kanbanCard : ""} ${draggingId === c.id ? styles.dragging : ""} recruitment-kanban-card`} key={c.id}
-            onClick={view === "kanban" ? () => { setSelected(c); setMessage(""); } : undefined}
-            onKeyDown={view === "kanban" ? (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelected(c); setMessage(""); } } : undefined}
-            role={view === "kanban" ? "button" : undefined}
-            tabIndex={view === "kanban" ? 0 : undefined}
-            aria-label={view === "kanban" ? `Abrir candidatura de ${c.name}` : undefined}
+            onClick={(event) => { if (event.target instanceof Element && event.target.closest("button, a, input, select, textarea")) return; setSelected(c); setMessage(""); }}
+            onKeyDown={(event) => { if (event.target !== event.currentTarget) return; if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelected(c); setMessage(""); } }}
+            tabIndex={0}
+            aria-label={`Abrir candidatura de ${c.name}`}
             draggable={view === "kanban" && !busy}
             onDragStart={(event: DragEvent<HTMLElement>) => { setDraggingId(c.id); event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", c.id); }}
             onDragEnd={() => setDraggingId(null)}

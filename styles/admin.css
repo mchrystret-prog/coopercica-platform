@@ -391,3 +391,7 @@
     padding:clamp(18px,4vw,28px);
   }
 }
+
+/* Upload validation errors must remain red across every CMS form. */
+.admin-shell .cms-upload-error { display:block!important; margin-top:8px!important; color:#b42318!important; font-size:12px!important; font-weight:750!important; line-height:1.45!important; }
+.admin-shell .cms-pdf-description { margin:8px 0 10px!important; color:var(--text-muted)!important; font-size:13px!important; font-weight:500!important; line-height:1.55!important; }
