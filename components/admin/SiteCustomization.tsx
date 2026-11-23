@@ -18,6 +18,7 @@ import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
 import { CareersBannersEditor } from "./CareersBannersEditor";
 import { parseCareersBanners, isValidCareersBannerImage, isValidCareersBannerHref } from "@/lib/careers-banners";
+import { parseCareersTestimonials } from "@/lib/careers-testimonials";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { customizationUploadRule } from "@/lib/cms-upload-rules";
@@ -454,6 +455,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         <CareersBannersEditor
           banners={parseCareersBanners(data.settings.careers_hero)}
           contentValue={data.settings.careers_hero || {}}
+          testimonials={parseCareersTestimonials(data.settings.careers_testimonials)}
           busy={busy}
           uploadErrors={uploadErrors}
           onUpload={(e, target) => media(e, target)}
@@ -476,6 +478,16 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               },
             } : current);
             setMsg("Conteúdo institucional alterado. Salve as alterações para publicar.");
+          }}
+          onTestimonialsChange={(items) => {
+            setData((current) => current ? {
+              ...current,
+              settings: {
+                ...current.settings,
+                careers_testimonials: { testimonials: JSON.stringify(items) },
+              },
+            } : current);
+            setMsg("Depoimentos alterados. Salve as alterações para publicar.");
           }}
         />
       ) : tab === "history" ? (
