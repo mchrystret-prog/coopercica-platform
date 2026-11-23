@@ -7,6 +7,7 @@ import styles from "./TestimonialsCarousel.module.css";
 export function TestimonialsCarousel({ testimonials }: { testimonials: CareersTestimonial[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
+  const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
 
   const move = useCallback((direction: "next" | "previous") => {
     const track = trackRef.current;
@@ -34,7 +35,40 @@ export function TestimonialsCarousel({ testimonials }: { testimonials: CareersTe
     <div className={styles.carousel} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={(event) => {
       if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false);
     }}>
-      <div className={styles.track} ref={trackRef} aria-label="Depoimentos dos colaboradores">
+      <div
+        className={styles.track}
+        ref={trackRef}
+        aria-label="Depoimentos dos colaboradores"
+        onPointerDown={(event) => {
+          if (event.pointerType !== "mouse" || event.button !== 0) return;
+          const track = trackRef.current;
+          if (!track) return;
+          dragRef.current = { active: true, startX: event.clientX, startScroll: track.scrollLeft };
+          track.setPointerCapture(event.pointerId);
+          setPaused(true);
+        }}
+        onPointerMove={(event) => {
+          if (!dragRef.current.active) return;
+          event.preventDefault();
+          const track = trackRef.current;
+          if (track) track.scrollLeft = dragRef.current.startScroll - (event.clientX - dragRef.current.startX);
+        }}
+        onPointerUp={() => {
+          if (!dragRef.current.active) return;
+          dragRef.current.active = false;
+          setPaused(false);
+        }}
+        onPointerCancel={() => {
+          dragRef.current.active = false;
+          setPaused(false);
+        }}
+        onLostPointerCapture={() => {
+          if (dragRef.current.active) {
+            dragRef.current.active = false;
+            setPaused(false);
+          }
+        }}
+      >
         {testimonials.map((item) => (
           <article className={styles.card} key={item.id} data-testimonial-card>
             <span className={styles.quoteMark} aria-hidden="true">“</span>
