@@ -10,7 +10,7 @@ const fields:Record<Kind,Array<{name:string;label:string;type?:string}>>={campai
 const table:Record<Kind,string>={campaign:"site_campaigns",leaflet:"digital_leaflets",magazine:"site_magazines",store:"site_stores"};
 const format=(v:unknown,type?:string)=>{if(v==null)return"";const s=String(v);return type==="datetime-local"?s.slice(0,16):s};
 export function ContentEditor({kind,id,onDone}:{kind:Kind;id:string;onDone:()=>void}){const[data,setData]=useState<Data|null>(null),[msg,setMsg]=useState(""),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
-const [photos,setPhotos]=useState<string[]>([]),[photosDirty,setPhotosDirty]=useState(false),[uploading,setUploading]=useState(false);
+const [photos,setPhotos]=useState<string[]>([]),[photosDirty,setPhotosDirty]=useState(false),[uploading,setUploading]=useState(false),[uploadError,setUploadError]=useState("");
 async function customization(token:string) {
   const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`,{method:"POST",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${token}`,"Content-Type":"application/json"},body:"{}"});
   if(!r.ok)throw new Error("Não foi possível carregar as fotos da unidade.");
@@ -21,7 +21,7 @@ async function uploadPhotos(event:ChangeEvent<HTMLInputElement>) {
   if(!files.length)return;
   if(photos.length+files.length>6){setMsg("Cada loja pode ter até 6 fotos.");input.value="";return;}
   const t=sessionStorage.getItem("coopercica_admin_token");if(!t){setMsg("Sessão expirada.");return;}
-  setUploading(true);setMsg("");
+  setUploading(true);setMsg("");setUploadError("");
   try {
     await validateCmsUploads(files.map(file=>[file,"store"]));
     const urls=await Promise.all(files.map(async file=>{
@@ -31,7 +31,7 @@ async function uploadPhotos(event:ChangeEvent<HTMLInputElement>) {
       return `${SUPABASE_URL}/storage/v1/object/public/site-content/${path}`;
     }));
     setPhotos(current=>[...current,...urls]);setPhotosDirty(true);setMsg("Fotos enviadas. Salve as alterações da loja para publicar.");
-  }catch(error){setMsg(error instanceof Error?error.message:"Erro ao enviar fotos.");}
+  }catch(error){const errorText=error instanceof Error?error.message:"Erro ao enviar fotos.";setUploadError(errorText);setMsg(errorText);}
   finally{setUploading(false);input.value="";}
 }
 useEffect(()=>{const t=sessionStorage.getItem("coopercica_admin_token");if(!t)return;fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_content`,{method:"POST",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${t}`,"Content-Type":"application/json"},body:JSON.stringify({p_kind:kind,p_id:id})}).then(async r=>{if(!r.ok)throw new Error();return r.json()}).then(async content=>{if(kind==="store"){const current=await customization(t);setPhotos(storeGallery(current.settings.store_galleries||{},String(content.slug)));setPhotosDirty(false);}setData(content);}).catch(()=>setMsg("Não foi possível carregar este conteúdo.")).finally(()=>setLoading(false))},[kind,id]);
@@ -58,5 +58,5 @@ return <form className="settings-form" onSubmit={submit}>{fields[kind].map(f=><l
 {kind==="store"?<><label className="form-span-full">Serviços<input name="services" defaultValue={Array.isArray(data.services)?data.services.join(", "):""}/><small>Separe por vírgula.</small></label><label><input name="featured" type="checkbox" defaultChecked={Boolean(data.featured)}/> Unidade em destaque</label><label><input name="active" type="checkbox" defaultChecked={Boolean(data.active)}/> Publicada</label></>:null}
 {kind==="leaflet"?<label>Status<select name="status" defaultValue={String(data.status||"draft")}><option value="draft">Rascunho</option><option value="published">Publicado</option></select><small>Publicado respeita a data de exibição e o fim da vigência. Imagens pendentes podem ser adicionadas abaixo.</small></label>:null}
 {kind==="leaflet"||kind==="magazine"?<PublicationPdfField kind={kind} id={id} currentUrl={String(data.pdf_url||"")}/>:null}
-{kind==="store"?<StoreGalleryEditor photos={photos} storeNumber={String(data.store_number)} busy={saving||uploading} onUpload={uploadPhotos} onChange={next=>{setPhotos(next);setPhotosDirty(true);}}/>:null}
+{kind==="store"?<StoreGalleryEditor photos={photos} storeNumber={String(data.store_number)} busy={saving||uploading} uploadError={uploadError} onUpload={uploadPhotos} onChange={next=>{setPhotos(next);setPhotosDirty(true);}}/>:null}
 <div className="form-actions"><Button variant="primary" type="submit" className="button" disabled={saving||uploading}>{saving?"Salvando...":"Salvar alterações"}</Button></div>{msg?<div className="form-status" role="status"><strong>{msg}</strong></div>:null}{kind==="leaflet"?<LeafletMissingImages leafletId={id}/>:null}</form>}
