@@ -15,14 +15,16 @@ export function StorePhotoViewer({ store, trigger, onClose }: { store: Store; tr
   const previous = () => setIndex(value => (value - 1 + photos.length) % photos.length);
   const next = () => setIndex(value => (value + 1) % photos.length);
 
+  const photoCount = photos.length;
+
   useEffect(() => {
     const element = dialog.current;
     const previousOverflow = document.body.style.overflow;
     element?.showModal();
     document.body.style.overflow = "hidden";
     const keydown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft" && photos.length > 1) { event.preventDefault(); previous(); }
-      if (event.key === "ArrowRight" && photos.length > 1) { event.preventDefault(); next(); }
+      if (event.key === "ArrowLeft" && photoCount > 1) { event.preventDefault(); setIndex(value => (value - 1 + photoCount) % photoCount); }
+      if (event.key === "ArrowRight" && photoCount > 1) { event.preventDefault(); setIndex(value => (value + 1) % photoCount); }
     };
     element?.addEventListener("keydown", keydown);
     return () => {
@@ -31,7 +33,7 @@ export function StorePhotoViewer({ store, trigger, onClose }: { store: Store; tr
       document.body.style.overflow = previousOverflow;
       if (trigger.isConnected) trigger.focus({ preventScroll: true });
     };
-  }, [trigger, photos.length]);
+  }, [trigger, photoCount]);
 
   return (
     <dialog ref={dialog} className={styles.viewer} aria-label={`Fotos da Loja ${store.storeNumber}: ${store.name}`} onCancel={event => { event.preventDefault(); onClose(); }}>
