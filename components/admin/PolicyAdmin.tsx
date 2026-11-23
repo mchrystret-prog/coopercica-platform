@@ -112,16 +112,16 @@ export function PolicyAdmin() {
     <section className="admin-page cms-policy-page">
       <header className="admin-header">
         <div>
-          <span className="eyebrow">Site</span>
+          <span className="eyebrow">Conteúdo do site</span>
           <h1>Políticas e documentos</h1>
-          <p>Gerencie os documentos institucionais e os arquivos disponibilizados no site.</p>
+          <p>Cadastre, atualize e organize os documentos institucionais publicados no site.</p>
         </div>
       </header>
       <div className="cms-policy-manager">
       <section className="cms-content-section">
         <div className="cms-content-heading">
           <div>
-            <span className="eyebrow">Publicados</span>
+            <span className="eyebrow">Biblioteca de documentos</span>
             <h2>Documentos do site</h2>
           </div>
         </div>
@@ -154,7 +154,7 @@ export function PolicyAdmin() {
                     className="cms-delete-one"
                     onClick={() => remove(p.id)}
                   >
-                    Excluir
+                    Apagar
                   </Button>
                 </div>
               </article>
@@ -169,7 +169,7 @@ export function PolicyAdmin() {
           </div>
         )}
       </section>
-      <section className="cms-create-section">
+      <section className="cms-create-section cms-policy-editor">
         <div className="cms-create-heading">
           <div>
             <span className="eyebrow">
