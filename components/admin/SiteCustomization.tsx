@@ -103,10 +103,10 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     if (offersError) { setTab("offers"); setMsg(offersError); return; }
     if (module === "personalization") {
       const testimonials = parseCareersTestimonials(data.settings.careers_testimonials);
-      const invalidTestimonial = testimonials.find((item) => item.active && (!item.quote.trim() || !item.name.trim()));
+      const invalidTestimonial = testimonials.find((item) => item.active && (!item.quote.trim() || !item.name.trim() || !item.image.trim()));
       if (invalidTestimonial) {
         setTab("careers");
-        setMsg("Cada depoimento ativo precisa ter o texto e o nome do colaborador preenchidos.");
+        setMsg("Cada depoimento ativo precisa ter texto, nome e foto do colaborador.");
         return;
       }
     }
@@ -209,7 +209,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         file,
         target === "social:image" ? "social" : target.startsWith("coopermais:") ? "sections" : target.startsWith("videos:")
           ? "videos"
-          : target.startsWith("careers:") || target.startsWith("careers-banner:")
+          : target.startsWith("careers:") || target.startsWith("careers-banner:") || target.startsWith("careers-testimonial:")
           ? "careers"
           : target.startsWith("history:")
             ? "history"
@@ -228,6 +228,14 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           videos_header: { ...current.settings.videos_header, [field]: url,
             alt: current.settings.videos_header?.alt || "Mais conteúdo pra você. Família reunida assistindo ao canal da Coopercica." }
         } } : current);
+      } else if (target.startsWith("careers-testimonial:")) {
+        const testimonialId = target.slice("careers-testimonial:".length);
+        setData((current) => {
+          if (!current || !testimonialId) return current;
+          const testimonials = parseCareersTestimonials(current.settings.careers_testimonials);
+          const updated = testimonials.map((item) => item.id === testimonialId ? { ...item, image: url } : item);
+          return { ...current, settings: { ...current.settings, careers_testimonials: { testimonials: JSON.stringify(updated) } } };
+        });
       } else if (target.startsWith("careers-banner:")) {
         const [, bannerId, field] = target.split(":");
         setData((current) => {
@@ -468,6 +476,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           busy={busy}
           uploadErrors={uploadErrors}
           onUpload={(e, target) => media(e, target)}
+          onTestimonialUpload={(e, testimonialId) => media(e, `careers-testimonial:${testimonialId}`)}
           onBannersChange={(banners) => {
             setData((current) => current ? {
               ...current,
