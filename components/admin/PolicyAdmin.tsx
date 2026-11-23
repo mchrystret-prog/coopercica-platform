@@ -17,7 +17,8 @@ export function PolicyAdmin() {
     [editing, setEditing] = useState<SitePolicy | null>(null),
     [busy, setBusy] = useState(false),
     [msg, setMsg] = useState(""),
-    [creating, setCreating] = useState(false);
+    [creating, setCreating] = useState(false),
+    [uploadError, setUploadError] = useState("");
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
   const load = useCallback(async () => {
     const r = await fetch(
@@ -38,6 +39,7 @@ export function PolicyAdmin() {
     e.preventDefault();
     setBusy(true);
     setMsg("");
+    setUploadError("");
     const form = e.currentTarget,
       fd = new FormData(form),
       file = fd.get("file") as File;
@@ -89,7 +91,9 @@ export function PolicyAdmin() {
       form.reset();
       await load();
     } catch (err) {
-      setMsg(err instanceof Error ? err.message : "Não foi possível salvar.");
+      const errorText = err instanceof Error ? err.message : "Não foi possível salvar.";
+      setUploadError(errorText);
+      setMsg(errorText);
     } finally {
       setBusy(false);
     }
@@ -149,7 +153,7 @@ export function PolicyAdmin() {
             <label>Título<input name="title" required defaultValue={editing?.title || ""} placeholder="Ex.: Política de Privacidade" /></label>
             <label>Ordem de exibição<input name="sort_order" type="number" min="0" defaultValue={editing?.sort_order ?? 0} /></label>
             <label className="form-span-full">Descrição curta<input name="description" defaultValue={editing?.description || ""} placeholder="Explique brevemente o conteúdo do documento" /></label>
-            <label className="form-span-full">Arquivo PDF<input name="file" type="file" accept="application/pdf,.pdf" /><UploadRequirements rule="pdf">{editing ? "Envie um novo PDF somente se quiser substituir o documento atual." : ""}</UploadRequirements></label>
+            <label className="form-span-full">Arquivo PDF<input name="file" type="file" accept="application/pdf,.pdf" />{uploadError ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}<UploadRequirements rule="pdf">{editing ? "Envie um novo PDF somente se quiser substituir o documento atual." : ""}</UploadRequirements></label>
             <label className="cms-switch form-span-full"><input name="active" type="checkbox" defaultChecked={editing?.active ?? true} /> Exibir no site</label>
             <div className="form-actions form-span-full"><Button variant="primary" type="submit" className="button" disabled={busy}>{busy ? "Salvando..." : editing ? "Salvar alterações" : "Publicar documento"}</Button></div>
           </form>
