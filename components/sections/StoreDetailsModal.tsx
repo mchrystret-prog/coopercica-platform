@@ -54,6 +54,6 @@ export function StoreDetailsModal({ store, trigger, keyboard, onClose }: { store
       </div>
     </div>
     <div className={styles.actions}><Button href={storeMapsLink(store)} external>Como chegar</Button></div>
-    {photoViewerTrigger ? <StorePhotoViewer key={`${store.slug}-${photo}`} store={{ ...store, photos: [photos[photo]] }} trigger={photoViewerTrigger} onClose={() => setPhotoViewerTrigger(null)} /> : null}
+    {photoViewerTrigger ? <StorePhotoViewer key={`${store.slug}-${photo}`} store={store} initialIndex={photo} trigger={photoViewerTrigger} onClose={() => setPhotoViewerTrigger(null)} /> : null}
   </dialog>;
 }
