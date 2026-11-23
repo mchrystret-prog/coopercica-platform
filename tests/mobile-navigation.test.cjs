@@ -9,7 +9,7 @@ const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 const navigation = require("../.navigation-test/mobile-navigation.js");
 
-function renderNavigation(pathname, deliveryUrl, withHeader = false) {
+function renderNavigation(pathname, deliveryUrl, withHeader = false, hasOffers = true) {
   const modules = new Map();
   function load(file) {
     if (modules.has(file)) return modules.get(file);
@@ -41,9 +41,9 @@ function renderNavigation(pathname, deliveryUrl, withHeader = false) {
   }
   const { MobileNavigationProvider } = load("components/layout/MobileNavigation.tsx");
   const children = withHeader
-    ? React.createElement(load("components/layout/Header.tsx").Header)
+    ? React.createElement(load("components/layout/Header.tsx").Header, { hasOffers })
     : React.createElement("main", null, "Conteúdo");
-  return renderToStaticMarkup(React.createElement(MobileNavigationProvider, { deliveryUrl }, children));
+  return renderToStaticMarkup(React.createElement(MobileNavigationProvider, { deliveryUrl, hasOffers }, children));
 }
 
 test("all five mobile actions render with the configured Delivery link and accessible menu control", () => {
@@ -56,6 +56,13 @@ test("all five mobile actions render with the configured Delivery link and acces
   assert.match(html, /aria-expanded="false"/);
   assert.match(html, /aria-label="Mais — abrir menu completo"/);
   assert.equal((html.match(/aria-current="page"/g) || []).length, 1);
+});
+test("Ofertas is hidden in both mobile and complete menus when there are no active leaflets", () => {
+  const html = renderNavigation("/", undefined, true, false);
+  assert.doesNotMatch(html, />Ofertas</);
+  assert.doesNotMatch(html, /mobile-navigation:offers/);
+  assert.match(html, />Compre Online</);
+  assert.match(html, />Lojas</);
 });
 test("the complete header menu and the lower navigation share the same disclosure", () => {
   const html = renderNavigation("/lojas", undefined, true);
