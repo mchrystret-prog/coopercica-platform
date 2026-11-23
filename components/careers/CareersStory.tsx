@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
 import styles from "./CareersStory.module.css";
 import type { CareersTestimonial } from "@/lib/careers-testimonials";
+import { TestimonialsCarousel } from "./TestimonialsCarousel";
 
 export function CareersStory({ content, testimonials }: { content: CareersContent; testimonials: CareersTestimonial[] }) {
   return <>
@@ -53,20 +54,7 @@ export function CareersStory({ content, testimonials }: { content: CareersConten
           </div>
           <span className={styles.testimonialLabel}>Quem faz parte conta</span>
         </div>
-        {testimonials.length > 0 ? (
-          <div className={styles.testimonialsGrid} data-careers-stack>
-            {testimonials.map((item, index) => (
-              <article className={styles.testimonialCard} key={item.id} data-careers-reveal data-careers-delay={Math.min(index, 3) * 70}>
-                <span className={styles.quoteMark} aria-hidden="true">“</span>
-                <blockquote>{item.quote}</blockquote>
-                <div className={styles.testimonialPerson}>
-                  <strong>{item.name}</strong>
-                  <span>{[item.role, item.tenure].filter(Boolean).join(" · ")}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : null}
+        {testimonials.length > 0 ? <TestimonialsCarousel testimonials={testimonials} /> : null}
       </Container>
     </section>
   </>;
