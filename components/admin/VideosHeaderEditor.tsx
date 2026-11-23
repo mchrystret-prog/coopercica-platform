@@ -4,9 +4,10 @@ import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { getVideosHeader } from "@/lib/videos-header";
-export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
+export function VideosHeaderEditor({ value, busy, uploadErrors = {}, onChange, onUpload }: {
   value: Record<string, string>;
   busy: boolean;
+  uploadErrors?: Record<string, string>;
   onChange: (patch: Record<string, string>) => void;
   onUpload: (event: ChangeEvent<HTMLInputElement>, field: "image" | "mobileImage") => void;
 }) {
@@ -19,6 +20,7 @@ export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
         {label}
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy || (field === 'mobileImage' && !value.image)} onChange={e => onUpload(e, field)} />
         <UploadRequirements rule={field === "image" ? "videosDesktop" : "videosMobile"}>{field === "mobileImage" ? "Sem esta versão, o celular mostra a arte principal inteira." : null}</UploadRequirements>
+        {uploadErrors[`videos:${field}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`videos:${field}`]}</small> : null}
       </label>)}
       <label className="form-span-full">Descrição da arte (acessibilidade)
         <input disabled={busy} maxLength={300} value={value.alt ?? hero.alt} onChange={e => onChange({ alt: e.target.value })} />
