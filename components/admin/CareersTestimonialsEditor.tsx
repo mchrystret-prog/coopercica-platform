@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import type { ChangeEvent } from "react";
 import { Button } from "@/components/ui/Button/Button";
 import type { CareersTestimonial } from "@/lib/careers-testimonials";
 
@@ -7,10 +9,14 @@ export function CareersTestimonialsEditor({
   testimonials,
   busy,
   onChange,
+  onUpload,
+  uploadErrors = {},
 }: {
   testimonials: CareersTestimonial[];
   busy: boolean;
   onChange: (items: CareersTestimonial[]) => void;
+  onUpload: (event: ChangeEvent<HTMLInputElement>, testimonialId: string) => void;
+  uploadErrors?: Record<string, string>;
 }) {
   function patch(id: string, changes: Partial<CareersTestimonial>) {
     onChange(testimonials.map((item) => item.id === id ? { ...item, ...changes } : item));
@@ -23,6 +29,7 @@ export function CareersTestimonialsEditor({
       name: "",
       role: "",
       tenure: "",
+      image: "",
       order: testimonials.reduce((max, item) => Math.max(max, item.order), 0) + 1,
       active: true,
     }]);
@@ -61,6 +68,14 @@ export function CareersTestimonialsEditor({
             </label>
           </div>
           <div className="settings-form">
+            <label className="form-span-full">
+              Foto do colaborador *
+              <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} aria-required="true" onChange={(event) => onUpload(event, item.id)} />
+              <small>Obrigatória para publicar o depoimento. Prefira uma foto quadrada, com o rosto bem visível.</small>
+              {uploadErrors[`careers-testimonial:${item.id}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`careers-testimonial:${item.id}`]}</small> : null}
+              {item.image ? <Image className="cms-upload-preview" src={item.image} alt={`Foto de ${item.name || "colaborador"}`} width={240} height={240} style={{ width: 120, height: 120, objectFit: "cover", borderRadius: "50%" }} /> : <small>Nenhuma foto enviada.</small>}
+              {item.image ? <Button type="button" variant="secondary" disabled={busy} onClick={() => patch(item.id, { image: "" })}>Remover foto</Button> : null}
+            </label>
             <label className="form-span-full">
               Depoimento
               <textarea
