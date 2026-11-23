@@ -65,7 +65,7 @@ export function MobileNavigationProvider({ children, deliveryUrl, hasOffers = tr
       {children}
       {visible ? <>
         <div className={styles.spacer} aria-hidden="true" />
-        <nav className={styles.navigation} aria-label="Navegação rápida" data-mobile-navigation data-public-menu data-analytics-fixed>
+        <nav className={styles.navigation} aria-label="Navegação rápida" data-mobile-navigation data-public-menu data-analytics-fixed data-has-offers={hasOffers}>
           <Link href={pathname === "/" ? "#home" : "/"} className={styles.item} aria-current={active === "home" ? "page" : undefined} onClick={() => closeMenu()} data-analytics-id="mobile-navigation:home" data-analytics-label="Navegação mobile: Início">
             <Icon name="home" /><span>Início</span>
           </Link>
