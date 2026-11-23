@@ -36,14 +36,16 @@ export function CareersBannersEditor({
   onTestimonialUpload: (event: ChangeEvent<HTMLInputElement>, testimonialId: string) => void;
 }) {
   const [activeTab, setActiveTab] = useState<CareersEditorTab>("banners");
+  const [editingBannerId, setEditingBannerId] = useState<string | null>(null);
 
   function patchBanner(id: string, patch: Partial<CareersBanner>) {
     onBannersChange(banners.map((banner) => banner.id === id ? { ...banner, ...patch } : banner));
   }
 
   function addBanner() {
+    const id = crypto.randomUUID();
     onBannersChange([...banners, {
-      id: crypto.randomUUID(),
+      id,
       title: "",
       desktopImage: "",
       mobileImage: "",
@@ -51,6 +53,7 @@ export function CareersBannersEditor({
       order: banners.reduce((max, banner) => Math.max(max, banner.order), 0) + 1,
       active: false,
     }]);
+    setEditingBannerId(id);
   }
 
   const contentFields: Array<[ContentField, string, number]> = [
@@ -116,7 +119,19 @@ export function CareersBannersEditor({
             {banners.length === 0 ? (
               <p className="cms-empty">Nenhum banner cadastrado. Adicione o primeiro para começar.</p>
             ) : banners.map((banner, index) => (
-              <section className="cms-section-card" key={banner.id}>
+              <div className="cms-record-item" key={banner.id} style={{ marginBottom: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", padding: 14, border: "1px solid #dfe5df", borderRadius: 10 }}>
+                  {banner.desktopImage ? <Image src={banner.desktopImage} alt="" width={120} height={48} style={{ width: 120, height: 48, objectFit: "cover", borderRadius: 6 }} /> : <span style={{ width: 120, height: 48, display: "grid", placeItems: "center", background: "#f2f4f2", borderRadius: 6, fontSize: 12 }}>Sem imagem</span>}
+                  <div style={{ flex: "1 1 220px", minWidth: 0 }}>
+                    <strong>{banner.title || `Banner ${index + 1}`}</strong>
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", fontSize: 13, color: "#647064", marginTop: 4 }}><span>Ordem: {banner.order}</span><span>{banner.active ? "Ativo" : "Inativo"}</span></div>
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <Button type="button" variant="secondary" disabled={busy} onClick={() => setEditingBannerId(editingBannerId === banner.id ? null : banner.id)}>{editingBannerId === banner.id ? "Fechar edição" : "Editar"}</Button>
+                    <Button type="button" variant="secondary" disabled={busy} onClick={() => { onBannersChange(banners.filter((item) => item.id !== banner.id)); if (editingBannerId === banner.id) setEditingBannerId(null); }}>Apagar</Button>
+                  </div>
+                </div>
+                {editingBannerId === banner.id ? <section className="cms-section-card" style={{ marginTop: 10 }}>
                 <div className="cms-section-card-head">
                   <div>
                     <small>Banner {index + 1}</small>
@@ -192,8 +207,8 @@ export function CareersBannersEditor({
                     {banner.mobileImage ? <Button type="button" variant="secondary" disabled={busy} onClick={() => patchBanner(banner.id, { mobileImage: "" })}>Remover imagem mobile</Button> : null}
                   </label>
                 </div>
-                <Button type="button" variant="secondary" disabled={busy} onClick={() => onBannersChange(banners.filter((item) => item.id !== banner.id))}>Remover banner</Button>
-              </section>
+              </section> : null}
+              </div>
             ))}
             <p>Os banners ativos são exibidos em ordem crescente. A reprodução automática pode ser pausada no próprio slider.</p>
           </article>
