@@ -1,7 +1,7 @@
 "use client";
 import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
 import { Button } from "@/components/ui/Button/Button";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type DragEvent, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { SUPABASE_URL } from "@/lib/leaflets";
 import {
@@ -27,6 +27,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
   const [end, setEnd] = useState("");
   const [exporting, setExporting] = useState(false);
   const [view, setView] = useState<"list" | "kanban">("list");
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     let active = true;
@@ -222,8 +223,26 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     setPage(0);
     setSelected(null);
   };
+  async function moveCandidate(candidate: Candidate, nextStatus: string) {
+    if (busy || candidate.status === nextStatus) return;
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const rows = await recruitmentRequest<Application[]>(`/rest/v1/site_job_applications?id=eq.${candidate.id}`, {
+        method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify({ status: nextStatus }),
+      });
+      if (!rows.length) throw new Error("Não foi possível atualizar a etapa da candidatura.");
+      setCandidates(current => current.map(item => item.id === candidate.id ? { ...item, ...rows[0] } : item));
+      setSelected(current => current?.id === candidate.id ? { ...current, ...rows[0] } : current);
+      setMessage(`Candidatura de ${candidate.name} movida para ${applicationStatuses[nextStatus] || nextStatus}.`, "success");
+    } catch (err) { setError(err instanceof Error ? err.message : "Não foi possível atualizar a etapa."); }
+    finally { setBusy(false); setDraggingId(null); }
+  }
   const renderCandidate = (c: Candidate) => (
-          <article className={styles.row} key={c.id}>
+          <article className={`${styles.row} ${view === "kanban" ? styles.kanbanCard : ""} ${draggingId === c.id ? styles.dragging : ""} recruitment-kanban-card`} key={c.id}
+            draggable={view === "kanban" && !busy}
+            onDragStart={(event: DragEvent<HTMLElement>) => { setDraggingId(c.id); event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", c.id); }}
+            onDragEnd={() => setDraggingId(null)}
+          >
             <div>
               <span className={styles.status} data-status={c.status}>
                 {applicationStatuses[c.status]}
@@ -240,7 +259,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               </p>
             </div>
             <div className={styles.actions}>
-              <Button variant="secondary" type="button"
+              <Button variant="secondary" className="candidate-action" type="button"
                 disabled={busy}
                 onClick={() => {
                   setSelected(c);
@@ -250,7 +269,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               >
                 Ver candidatura
               </Button>
-              {isAdmin ? <Button variant="secondary" className="button button-danger" type="button" disabled={busy} onClick={() => void remove(c)}>
+              {isAdmin ? <Button variant="secondary" className="button-danger" type="button" disabled={busy} onClick={() => void remove(c)}>
                 Remover candidatura
               </Button> : null}
             </div>
@@ -443,8 +462,11 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           </form>
         </article>
       ) : null}
-      {!loading && view === "kanban" ? <div className={styles.kanban} aria-label="Candidaturas por etapa">
-        {Object.entries(applicationStatuses).map(([stage, label]) => <section className={styles.kanbanColumn} key={stage} aria-label={label}>
+      {!loading && view === "kanban" ? <div className={`${styles.kanban} recruitment-kanban`} aria-label="Candidaturas por etapa">
+        {Object.entries(applicationStatuses).map(([stage, label]) => <section className={`${styles.kanbanColumn} recruitment-kanban-column`} key={stage} aria-label={label}
+          onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }}
+          onDrop={(event) => { event.preventDefault(); const candidateId = event.dataTransfer.getData("text/plain"); const candidate = candidates.find(item => item.id === candidateId); if (candidate) void moveCandidate(candidate, stage); else setDraggingId(null); }}
+        >
           <h2><span className={styles.status} data-status={stage}>{label}</span><span>{candidates.filter(candidate => candidate.status === stage).length}</span></h2>
           {candidates.filter(candidate => candidate.status === stage).map(renderCandidate)}
           {!candidates.some(candidate => candidate.status === stage) ? <p className={styles.columnEmpty}>Nenhuma candidatura nesta etapa.</p> : null}
@@ -480,6 +502,26 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           Próxima
         </Button>
       </div>
+      <style jsx global>{`
+        .admin-page .recruitment-kanban { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(280px,1fr); align-items:start; gap:16px; max-width:100%; margin:24px 0; padding:0 0 12px; overflow-x:auto; overscroll-behavior-x:contain; }
+        .admin-page .recruitment-kanban-column { display:grid; align-content:start; gap:12px; min-width:0; min-height:220px; padding:14px; border:1px solid var(--border-soft); border-radius:18px; background:var(--surface-soft); }
+        .admin-page .recruitment-kanban-column > h2 { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 2px; font-size:15px; }
+        .admin-page .recruitment-kanban-column > h2 > span:last-child { display:inline-grid; min-width:28px; height:28px; place-items:center; padding:0 7px; border-radius:999px; background:#fff; color:var(--text-heading); font-size:12px; font-weight:800; }
+        .admin-page .recruitment-kanban-card { display:grid; gap:12px; align-items:stretch; padding:16px; border:1px solid var(--border-soft); border-radius:14px; background:var(--surface-card); box-shadow:0 5px 16px rgb(28 71 34 / 5%); cursor:grab; }
+        .admin-page .recruitment-kanban-card:active { cursor:grabbing; }
+        .admin-page .recruitment-kanban-card h2 { font-size:16px; line-height:1.3; overflow-wrap:anywhere; }
+        .admin-page .recruitment-kanban-card p { overflow-wrap:anywhere; }
+        .admin-page .recruitment-kanban-card .actions { display:grid; grid-template-columns:1fr; }
+        .admin-page .recruitment-kanban-card .actions > * { width:100%; }
+        .admin-page .recruitment-kanban-column .columnEmpty { margin:0; padding:18px 10px; border:1px dashed var(--border-strong); border-radius:12px; color:var(--text-muted); font-size:13px; text-align:center; }
+        .admin-page .actions .candidate-action { min-height:50px!important; padding:0 22px!important; border-radius:999px!important; border:1px solid var(--brand-green-900)!important; background:transparent!important; color:var(--text-heading)!important; font-weight:800!important; }
+        .admin-page .actions .candidate-action:hover:not(:disabled) { border-color:var(--brand-green-900)!important; background:var(--brand-green-900)!important; color:#fff!important; transform:translateY(-2px); box-shadow:0 14px 30px rgb(28 71 34 / 14%); }
+        .admin-page .actions .button-danger { min-height:50px!important; padding:0 22px!important; border-radius:999px!important; border:1px solid var(--brand-red-500)!important; background:transparent!important; color:var(--brand-red-500)!important; font-weight:800!important; }
+        .admin-page .actions .button-danger:hover:not(:disabled) { border-color:var(--brand-red-500)!important; background:var(--brand-red-500)!important; color:#fff!important; transform:translateY(-2px); box-shadow:0 14px 30px rgb(239 64 55 / 18%); }
+        .admin-shell .button-danger, .admin-shell .cms-danger-outline, .admin-shell .cms-delete-one { border:1px solid var(--brand-red-500)!important; background:transparent!important; color:var(--brand-red-500)!important; }
+        .admin-shell .button-danger:hover:not(:disabled), .admin-shell .cms-danger-outline:hover:not(:disabled), .admin-shell .cms-delete-one:hover:not(:disabled) { border-color:var(--brand-red-500)!important; background:var(--brand-red-500)!important; color:#fff!important; box-shadow:0 10px 24px rgb(239 64 55 / 18%); }
+        @media(max-width:800px) { .admin-page .recruitment-kanban { grid-auto-columns:minmax(260px,84vw); } .admin-page .recruitment-kanban-card { padding:14px; } }
+      `}</style>
     </section>
   );
 }
