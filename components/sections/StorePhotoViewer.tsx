@@ -53,7 +53,7 @@ export function StorePhotoViewer({ store, trigger, onClose, initialIndex = 0 }: 
           pointer.current = null;
           if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2 && photos.length > 1) {
             dx < 0 ? next() : previous();
-          } else if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+          } else if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && !(event.target instanceof Element && event.target.closest("button"))) {
             setShowControls(value => !value);
           }
         }}
