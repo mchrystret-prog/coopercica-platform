@@ -21,6 +21,7 @@ export function CareersBannersEditor({
   onBannersChange,
   onContentChange,
   onTestimonialsChange,
+  onTestimonialUpload,
 }: {
   banners: CareersBanner[];
   contentValue: Record<string, string>;
@@ -31,6 +32,7 @@ export function CareersBannersEditor({
   onBannersChange: (banners: CareersBanner[]) => void;
   onContentChange: (patch: Record<string, string>) => void;
   onTestimonialsChange: (items: CareersTestimonial[]) => void;
+  onTestimonialUpload: (event: ChangeEvent<HTMLInputElement>, testimonialId: string) => void;
 }) {
   function patchBanner(id: string, patch: Partial<CareersBanner>) {
     onBannersChange(banners.map((banner) => banner.id === id ? { ...banner, ...patch } : banner));
@@ -183,6 +185,8 @@ export function CareersBannersEditor({
         testimonials={testimonials}
         busy={busy}
         onChange={onTestimonialsChange}
+        onUpload={onTestimonialUpload}
+        uploadErrors={uploadErrors}
       />
     </div>
   );
