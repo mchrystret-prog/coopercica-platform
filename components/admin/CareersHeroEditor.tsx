@@ -53,10 +53,10 @@ export function CareersHeroEditor({
                   disabled={busy || (field === "mobileImage" && !value.image)}
                   onChange={(e) => onUpload(e, field)}
                 />
+                {uploadErrors[`careers:${field}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`careers:${field}`]}</small> : null}
                 <UploadRequirements rule={field === "image" ? "careersDesktop" : "careersMobile"}>
                   {field === "mobileImage" ? "Sem esta imagem, o celular usa a foto principal." : null}
                 </UploadRequirements>
-                {uploadErrors[`careers:${field}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`careers:${field}`]}</small> : null}
                 {src ? (
                   <Image
                     className="cms-upload-preview"
