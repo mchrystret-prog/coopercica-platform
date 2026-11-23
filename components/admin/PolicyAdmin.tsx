@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import type { SitePolicy } from "@/lib/policies";
@@ -135,18 +136,18 @@ export function PolicyAdmin() {
                   >
                     Abrir
                   </a>
-                  <button
+                  <Button variant="secondary" type="button"
                     className="cms-edit-one"
                     onClick={() => setEditing(p)}
                   >
                     Editar
-                  </button>
-                  <button
+                  </Button>
+                  <Button variant="secondary" type="button"
                     className="cms-delete-one"
                     onClick={() => remove(p.id)}
                   >
                     Excluir
-                  </button>
+                  </Button>
                 </div>
               </article>
             ))}
@@ -171,9 +172,9 @@ export function PolicyAdmin() {
             </h2>
           </div>
           {editing ? (
-            <button className="cms-edit-one" onClick={() => setEditing(null)}>
+            <Button variant="ghost" type="button" className="cms-edit-one" onClick={() => setEditing(null)}>
               Cancelar edição
-            </button>
+            </Button>
           ) : null}
         </div>
         <form
@@ -225,13 +226,13 @@ export function PolicyAdmin() {
             Exibir no site
           </label>
           <div className="form-actions">
-            <button className="button" disabled={busy}>
+            <Button variant="primary" type="submit" className="button" disabled={busy}>
               {busy
                 ? "Salvando..."
                 : editing
                   ? "Salvar alterações"
                   : "Publicar documento"}
-            </button>
+            </Button>
           </div>
         </form>
         {msg ? <div className="form-status">{msg}</div> : null}
