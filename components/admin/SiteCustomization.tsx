@@ -51,6 +51,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   const [editionItems, setEditionItems] = useState(magazines);
   useEffect(() => { if (module === "magazines") { let cancelled = false; getMagazines().then(items => { if (!cancelled) setEditionItems(items); }); return () => { cancelled = true; }; } }, [module]);
   const [data, setData] = useState<Payload | null>(null),
+    [savedData, setSavedData] = useState<Payload | null>(null),
     [tab, setTab] = useState<CustomizationTab>(initialTab && config.tabs.includes(initialTab) ? initialTab : config.tabs[0]),
     [msg, setMsg] = useState(""),
     [busy, setBusy] = useState(false),
@@ -67,7 +68,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       body: "{}",
     })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setData)
+      .then((loaded: Payload) => { setData(loaded); setSavedData(loaded); })
       .catch(() => setMsg("Não foi possível carregar a personalização."));
   }, []);
   async function upload(file: File, folder: string) {
@@ -162,6 +163,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         body: JSON.stringify(payload),
       });
       if (!r.ok) throw new Error(await r.text());
+      setSavedData(data);
       setMsg("Alterações desta aba salvas e publicadas no site.");
     } catch (err) {
       let detail = "Erro desconhecido ao salvar.";
@@ -302,6 +304,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     return (
       <div className="cms-empty">{msg || "Carregando personalização..."}</div>
     );
+  const hasChanges = savedData !== null && JSON.stringify(data) !== JSON.stringify(savedData);
   const i = data.settings.identity || {};
   return (
     <section className={embedded ? "cms-module-settings" : "admin-page"}>
@@ -601,7 +604,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <span>Revise as alterações antes de publicar.</span>
           )}
         </div>
-        <Button variant="primary" type="button" className="button" onClick={saveAll} disabled={busy}>
+        <Button variant="primary" type="button" className="button" onClick={saveAll} disabled={busy || !hasChanges}>
           {busy ? "Salvando..." : "Salvar alterações desta aba"}
         </Button>
       </div>
