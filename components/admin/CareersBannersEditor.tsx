@@ -127,8 +127,8 @@ export function CareersBannersEditor({
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap", fontSize: 13, color: "#647064", marginTop: 4 }}><span>Ordem: {banner.order}</span><span>{banner.active ? "Ativo" : "Inativo"}</span></div>
                   </div>
                   <div style={{ display: "flex", gap: 8 }}>
-                    <Button type="button" variant="secondary" disabled={busy} onClick={() => setEditingBannerId(editingBannerId === banner.id ? null : banner.id)}>{editingBannerId === banner.id ? "Fechar edição" : "Editar"}</Button>
-                    <Button type="button" variant="secondary" disabled={busy} onClick={() => { onBannersChange(banners.filter((item) => item.id !== banner.id)); if (editingBannerId === banner.id) setEditingBannerId(null); }}>Apagar</Button>
+                    <Button type="button" variant="secondary" className="cms-edit-one" disabled={busy} onClick={() => setEditingBannerId(editingBannerId === banner.id ? null : banner.id)}>{editingBannerId === banner.id ? "Fechar edição" : "Editar"}</Button>
+                    <Button type="button" variant="secondary" className="cms-delete-one" disabled={busy} onClick={() => { onBannersChange(banners.filter((item) => item.id !== banner.id)); if (editingBannerId === banner.id) setEditingBannerId(null); }}>Apagar</Button>
                   </div>
                 </div>
                 {editingBannerId === banner.id ? <section className="cms-section-card" style={{ marginTop: 10 }}>

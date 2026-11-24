@@ -51,8 +51,8 @@ export function CareersStory({ content, testimonials }: { content: CareersConten
             <span className={styles.eyebrow}>Seu próximo passo</span>
             <h2 id="invitation-title">Faça parte dos próximos capítulos.</h2>
             <p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p>
+            <span className={styles.testimonialLabel}>Quem faz parte conta</span>
           </div>
-          <span className={styles.testimonialLabel}>Quem faz parte conta</span>
         </div>
         {testimonials.length > 0 ? <TestimonialsCarousel testimonials={testimonials} /> : null}
       </Container>
