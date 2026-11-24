@@ -31,6 +31,7 @@ export function MagazineAdmin() {
   const [editorial, setEditorial] = useState<MagazineEditorial>(emptyMagazineEditorial);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const controller = useRef<AbortController | null>(null);
   const [selectedPdf, setSelectedPdf] = useState<File | null>(null);
@@ -82,7 +83,7 @@ export function MagazineAdmin() {
         setCreatedId(id); publicationCreated = true;
       }
       if (createdId || editorial.summary.trim() || editorial.highlights.some(item => item.text.trim())) await saveMagazineEditorial(id, editorial);
-      setSaved(true); setMessage("Revista e conteúdo de Nessa edição salvos com sucesso.");
+      setSaved(true); setDirty(false); setMessage("Revista e conteúdo de Nessa edição salvos com sucesso.");
     } catch (error) {
       const errorText = `${publicationCreated ? "A revista foi cadastrada, mas Nessa edição não foi salvo. Use Salvar Nessa edição para tentar novamente, sem reenviar os arquivos. " : ""}${error instanceof Error ? error.message : "Erro ao cadastrar."}`;
       if (failedUpload === "cover") setCoverError(errorText);
@@ -90,7 +91,7 @@ export function MagazineAdmin() {
       setMessage(errorText);
     } finally { setLoading(false); }
   }
-  return <><form ref={formRef} className="settings-form" onSubmit={submit}>
+  return <><form ref={formRef} className="settings-form" onSubmit={submit} onChange={() => setDirty(true)}>
     <fieldset className="settings-form form-span-full" disabled={loading || Boolean(createdId)}><legend>Dados da revista</legend>
       <label>Título<input name="title" required placeholder="Ex.: Setembro 2026" /></label><label>Edição<input name="edition" required placeholder="Ex.: Especial Primavera" /></label>
       <label>Data da edição<input name="published_at" type="date" required /></label><label><input name="active" type="checkbox" defaultChecked /> Publicada</label>
@@ -99,13 +100,13 @@ export function MagazineAdmin() {
     </fieldset>
     <fieldset className="settings-form form-span-full" disabled={loading || reading}><legend>Nessa edição · revise antes de publicar</legend>
       <p className="form-span-full">O resumo e os destaques são sugeridos a partir do texto do PDF. Você pode corrigir ou preencher manualmente. PDFs em imagem precisam de OCR, ainda não incluído.</p>
-      <label className="form-span-full">Resumo<textarea rows={4} maxLength={700} value={editorial.summary} onChange={event => { setSaved(false); setEditorial({ ...editorial, summary: event.target.value }); }} /></label>
-      {editorial.highlights.map((item, index) => <div className="settings-form form-span-full" key={index}><label>Quadro<input value={item.label} maxLength={60} onChange={event => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, label: event.target.value } : row) }); }} /></label><label>Título da matéria<input value={item.text} maxLength={200} onChange={event => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, text: event.target.value } : row) }); }} /></label><Button variant="secondary" type="button" onClick={() => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.filter((_, i) => i !== index) }); }}>Remover destaque {index + 1}</Button></div>)}
-      <Button variant="secondary" type="button" disabled={editorial.highlights.length >= 8} onClick={() => { setSaved(false); setEditorial({ ...editorial, highlights: [...editorial.highlights, { label: "", text: "" }] }); }}>Adicionar destaque</Button>
+      <label className="form-span-full">Resumo<textarea rows={4} maxLength={700} value={editorial.summary} onChange={event => { setSaved(false); setDirty(true); setEditorial({ ...editorial, summary: event.target.value }); }} /></label>
+      {editorial.highlights.map((item, index) => <div className="settings-form form-span-full" key={index}><label>Quadro<input value={item.label} maxLength={60} onChange={event => { setSaved(false); setDirty(true); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, label: event.target.value } : row) }); }} /></label><label>Título da matéria<input value={item.text} maxLength={200} onChange={event => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.map((row, i) => i === index ? { ...row, text: event.target.value } : row) }); }} /></label><Button variant="secondary" type="button" onClick={() => { setSaved(false); setEditorial({ ...editorial, highlights: editorial.highlights.filter((_, i) => i !== index) }); }}>Remover destaque {index + 1}</Button></div>)}
+      <Button variant="secondary" type="button" disabled={editorial.highlights.length >= 8} onClick={() => { setSaved(false); setDirty(true); setEditorial({ ...editorial, highlights: [...editorial.highlights, { label: "", text: "" }] }); }}>Adicionar destaque</Button>
       {!createdId && selectedPdf && <Button variant="secondary" type="button" onClick={() => { if (selectedPdf) void readPdf(selectedPdf); }}>Ler PDF novamente e substituir sugestão</Button>}
     </fieldset>
     <div className="form-span-full" role="status">{readStatus}</div>{readError && <p className="form-span-full" role="alert">{readError}</p>}
     {reading && <Button variant="ghost" type="button" onClick={() => controller.current?.abort()}>Cancelar leitura</Button>}
-    <div className="form-actions"><Button variant="primary" type="submit" className="button" disabled={loading || reading || saved}>{loading ? "Salvando…" : createdId ? "Salvar Nessa edição" : "Publicar revista e Nessa edição"}</Button>{createdId && <Button variant="secondary" type="button" className="button button-secondary" disabled={loading} onClick={() => { formRef.current?.reset(); setSelectedPdf(null); setCreatedId(null); setSaved(false); setEditorial(emptyMagazineEditorial); setMessage(""); setReadStatus(""); setReadError(""); }}>Cadastrar outra edição</Button>}</div>
+    <div className="form-actions"><Button variant="primary" type="submit" className="button" disabled={loading || reading || saved || !dirty}>{loading ? "Salvando…" : createdId ? "Salvar Nessa edição" : "Publicar revista e Nessa edição"}</Button>{createdId && <Button variant="secondary" type="button" className="button button-secondary" disabled={loading} onClick={() => { formRef.current?.reset(); setSelectedPdf(null); setCreatedId(null); setSaved(false); setDirty(true); setEditorial(emptyMagazineEditorial); setMessage(""); setReadStatus(""); setReadError(""); }}>Cadastrar outra edição</Button>}</div>
   </form>{message && <div className="form-status" role="status"><strong>{message}</strong>{createdId && <p><Link href="/admin/revistas?tab=settings">Editar ou reler esta edição em Revistas</Link></p>}</div>}</>;
 }
