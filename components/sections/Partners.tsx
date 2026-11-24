@@ -24,7 +24,7 @@ export function Partners({ content }: { content: Record<string, string> }) {
     element.addEventListener("scroll", sync, { passive: true });
     return () => { observer.disconnect(); element.removeEventListener("scroll", sync); };
   }, [content.items, content.enabled, items.length]);
-  if (content.enabled === "false" || !items.length) return null;
+  if (String(content.enabled).toLowerCase() === "false" || !items.length) return null;
   function slide(direction: number) {
     const element = rail.current;
     if (!element) return;
