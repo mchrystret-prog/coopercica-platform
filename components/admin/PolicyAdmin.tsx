@@ -161,7 +161,7 @@ export function PolicyAdmin() {
           </header>
           <section className="cms-content-section">
             <div className="cms-content-heading">
-              <div><span className="eyebrow">Conteúdo cadastrado</span><h2>Políticas e documentos</h2></div>
+              
               <div className="cms-list-actions">
                 <Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Novo</Button>
                 <Button variant="secondary" className="cms-danger-outline" type="button" onClick={clearModule} disabled={!items.length || busy}>Zerar módulo</Button>
