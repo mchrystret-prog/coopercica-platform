@@ -293,6 +293,7 @@ export function JobsAdmin() {
             className="settings-form"
             key={editing?.id || "new"}
             onSubmit={save}
+            onChange={() => setFormDirty(true)}
           >
             <label>
               Cargo
@@ -428,7 +429,7 @@ export function JobsAdmin() {
               <small>Rascunhos e vagas encerradas não aparecem no site.</small>
             </label>
             <div className="form-actions">
-              <Button variant="primary" type="submit" className="button" disabled={busy}>
+              <Button variant="primary" type="submit" className="button" disabled={busy || !formDirty}>
                 {busy ? "Salvando…" : "Salvar vaga"}
               </Button>
             </div>
