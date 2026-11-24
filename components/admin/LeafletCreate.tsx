@@ -11,7 +11,8 @@ export function LeafletCreate({ libraryRevision }: { libraryRevision: number }) 
   return <><div className="cms-custom-tabs"><Button variant="ghost" type="button" data-active={mode === "sheet"} onClick={() => setMode("sheet")}>Importar planilha</Button><Button variant="ghost" type="button" data-active={mode === "pdf"} onClick={() => setMode("pdf")}>Enviar folheto PDF</Button></div>{mode === "sheet" ? <LeafletAdmin libraryRevision={libraryRevision} /> : <PdfLeafletForm />}</>;
 }
 function PdfLeafletForm() {
-  const [busy, setBusy] = useState(false), [message, setMessage] = useState(""), [uploadError, setUploadError] = useState("");\n  const [dirty, setDirty] = useState(false);
+  const [busy, setBusy] = useState(false), [message, setMessage] = useState(""), [uploadError, setUploadError] = useState("");
+  const [dirty, setDirty] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const form = event.currentTarget, data = new FormData(form);
     const token = sessionStorage.getItem("coopercica_admin_token");
