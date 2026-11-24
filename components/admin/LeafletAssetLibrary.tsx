@@ -157,6 +157,7 @@ export function LeafletAssetLibrary() {
         key={editing ? assetKey(editing) : "new"}
         className="settings-form"
         onSubmit={save}
+        onChange={() => setDirty(true)}
       >
         <label>
           Tipo
