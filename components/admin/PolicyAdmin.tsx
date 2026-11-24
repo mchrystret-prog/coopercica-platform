@@ -136,42 +136,53 @@ export function PolicyAdmin() {
   }
   return (
     <section className="admin-page cms-policy-page">
-      <header className="admin-header">
-        <div><span className="eyebrow">Conteúdo do site</span><h1>Políticas e documentos</h1><p>Gerencie os documentos institucionais publicados no site.</p></div>
-        {!creating && !editing ? <div className="cms-list-actions">
-          <Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Novo</Button>
-          <Button variant="secondary" className="cms-danger-outline" type="button" onClick={clearModule} disabled={!items.length || busy}>Zerar módulo</Button>
-        </div> : null}
-      </header>
-      {msg ? <div className="form-status" role="status">{msg}</div> : null}
       {creating || editing ? (
-        <section className="cms-create-section cms-policy-editor">
-          <div className="cms-create-heading"><div><span className="eyebrow">{editing ? "Edição" : "Novo documento"}</span><h2>{editing ? "Editar política" : "Publicar política ou relatório"}</h2></div>
-            <Button variant="ghost" type="button" className="cms-edit-one" onClick={() => { setEditing(null); setCreating(false); setMsg(""); }}>Voltar para documentos</Button>
-          </div>
-          <form key={editing?.id || "new"} className="settings-form" onSubmit={save}>
-            <label>Título<input name="title" required defaultValue={editing?.title || ""} placeholder="Ex.: Política de Privacidade" /></label>
-            <label>Ordem de exibição<input name="sort_order" type="number" min="0" defaultValue={editing?.sort_order ?? 0} /></label>
-            <label className="form-span-full">Descrição curta<input name="description" defaultValue={editing?.description || ""} placeholder="Explique brevemente o conteúdo do documento" /></label>
-            <label className="form-span-full">Arquivo PDF<input name="file" type="file" accept="application/pdf,.pdf" />{uploadError ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}<UploadRequirements rule="pdf">{editing ? "Envie um novo PDF somente se quiser substituir o documento atual." : ""}</UploadRequirements></label>
-            <label className="cms-switch form-span-full"><input name="active" type="checkbox" defaultChecked={editing?.active ?? true} /> Exibir no site</label>
-            <div className="form-actions form-span-full"><Button variant="primary" type="submit" className="button" disabled={busy}>{busy ? "Salvando..." : editing ? "Salvar alterações" : "Publicar documento"}</Button></div>
-          </form>
-        </section>
+        <>
+          <Button variant="ghost" type="button" className="cms-back-list" onClick={() => { setEditing(null); setCreating(false); setMsg(""); }}>← Voltar para políticas e documentos</Button>
+          <header className="admin-header">
+            <div><span className="eyebrow">{editing ? "Editar conteúdo" : "Novo conteúdo"}</span><h1>{editing ? "Editar documento" : "Novo documento"}</h1><p>{editing ? "Altere os dados do documento e salve para atualizar o site." : "Publique políticas, termos, relatórios de transparência e outros documentos oficiais."}</p></div>
+          </header>
+          <section className="cms-create-section cms-policy-editor">
+            <div className="cms-create-heading"><div><span className="eyebrow">{editing ? "Edição" : "Novo documento"}</span><h2>{editing ? "Editar política" : "Publicar política ou relatório"}</h2></div></div>
+            <form key={editing?.id || "new"} className="settings-form" onSubmit={save}>
+              <label>Título<input name="title" required defaultValue={editing?.title || ""} placeholder="Ex.: Política de Privacidade" /></label>
+              <label>Ordem de exibição<input name="sort_order" type="number" min="0" defaultValue={editing?.sort_order ?? 0} /></label>
+              <label className="form-span-full">Descrição curta<input name="description" defaultValue={editing?.description || ""} placeholder="Explique brevemente o conteúdo do documento" /></label>
+              <label className="form-span-full">Arquivo PDF<input name="file" type="file" accept="application/pdf,.pdf" />{uploadError ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}<UploadRequirements rule="pdf">{editing ? "Envie um novo PDF somente se quiser substituir o documento atual." : ""}</UploadRequirements></label>
+              <label className="cms-switch form-span-full"><input name="active" type="checkbox" defaultChecked={editing?.active ?? true} /> Exibir no site</label>
+              <div className="form-actions form-span-full"><Button variant="primary" type="submit" className="button" disabled={busy}>{busy ? "Salvando..." : editing ? "Salvar alterações" : "Publicar documento"}</Button></div>
+            </form>
+          </section>
+        </>
       ) : (
-        <section className="cms-content-section">
-          {items.length ? <div className="cms-content-list">{items.map((item) => (
-            <article className="cms-content-row cms-policy-list-row" key={item.id}>
-              <div className="cms-content-info"><strong>{item.title}</strong><small>{item.active ? "Publicado" : "Oculto"} · ordem {item.sort_order}</small></div>
-              <div className="cms-row-actions">
-                <a className="cms-edit-one" href={item.file_url} target="_blank" rel="noreferrer">Abrir</a>
-                <Button variant="secondary" type="button" className="cms-edit-one" onClick={() => { setCreating(false); setEditing(item); }}>Editar</Button>
-                <Button variant="secondary" type="button" className="cms-delete-one" onClick={() => remove(item.id)}>Apagar</Button>
+        <>
+          <header className="admin-header">
+            <div><span className="eyebrow">Institucional</span><h1>Políticas e documentos</h1><p>Publique políticas, termos, relatórios de transparência e outros documentos oficiais exibidos no site.</p></div>
+          </header>
+          <section className="cms-content-section">
+            <div className="cms-content-heading">
+              <div><span className="eyebrow">Conteúdo cadastrado</span><h2>Políticas e documentos</h2></div>
+              <div className="cms-list-actions">
+                <Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Novo</Button>
+                <Button variant="secondary" className="cms-danger-outline" type="button" onClick={clearModule} disabled={!items.length || busy}>Zerar módulo</Button>
               </div>
-            </article>
-          ))}</div> : <div className="cms-empty"><strong>Nenhum documento cadastrado.</strong><span>Use o botão “Novo” para publicar a primeira política.</span></div>}
-        </section>
+            </div>
+            {msg ? <div className="form-status" role="status"><strong>{msg}</strong></div> : null}
+            {items.length ? <div className="cms-content-list">{items.map((item) => (
+              <article className="cms-content-row cms-policy-list-row" key={item.id}>
+                <div className="cms-content-placeholder" aria-hidden="true" />
+                <div className="cms-content-info"><strong>{item.title}</strong><small>{item.active ? "Publicado" : "Oculto"} · ordem {item.sort_order}</small></div>
+                <div className="cms-row-actions">
+                  <a className="cms-edit-one" href={item.file_url} target="_blank" rel="noreferrer">Abrir</a>
+                  <Button variant="secondary" type="button" className="cms-edit-one" onClick={() => { setCreating(false); setEditing(item); }}>Editar</Button>
+                  <Button variant="secondary" type="button" className="cms-delete-one" onClick={() => remove(item.id)}>Apagar</Button>
+                </div>
+              </article>
+            ))}</div> : <div className="cms-empty"><strong>Nenhum documento cadastrado.</strong><span>Crie o primeiro documento para começar.</span><Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Criar novo</Button></div>}
+          </section>
+        </>
       )}
     </section>
   );
+}
 }
