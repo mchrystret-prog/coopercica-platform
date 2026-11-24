@@ -326,49 +326,6 @@
 .admin-shell [data-status="rejected"] { color:#a8322b !important; background:#fff0ee !important; border:1px solid #f1c8c3 !important; }
 @media(max-width:800px) { .admin-shell .recruitment-kanban { grid-auto-columns:minmax(260px,84vw); } .admin-shell .recruitment-kanban-card { padding:14px; } }
 
-/* Policy and document management follows the same page, list and form hierarchy as other modules. */
-.cms-policy-page .cms-policy-manager { margin-top: 0; }
-.cms-policy-page .cms-policy-row { grid-template-columns:minmax(0,1fr) auto; }
-.cms-policy-page .cms-create-section { margin-top: 34px; }
-.cms-policy-page .cms-policy-row .cms-row-actions { flex-wrap: wrap; justify-content:flex-end; }
-@media(max-width:700px) {
-  .cms-policy-page .cms-policy-row { grid-template-columns:1fr; }
-  .cms-policy-page .cms-policy-row .cms-row-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .cms-policy-page .cms-policy-row .cms-delete-one { grid-column:1/-1; }
-}
-
-/* Policy manager shares the same content panels, row rhythm and form grid as other CMS modules. */
-.cms-policy-page { max-width:none; }
-.cms-policy-page .cms-policy-manager { display:grid; gap:28px; margin-top:0; }
-.cms-policy-page .cms-content-section, .cms-policy-page .cms-create-section { min-width:0; padding:clamp(18px,2vw,28px); border:1px solid var(--border-soft); border-radius:18px; background:var(--surface-card); box-shadow:0 5px 18px rgb(28 71 34 / 4%); }
-.cms-policy-page .cms-content-heading, .cms-policy-page .cms-create-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
-.cms-policy-page .cms-content-list { display:grid; gap:12px; }
-.cms-policy-page .cms-policy-row { grid-template-columns:minmax(0,1fr) auto; align-items:center; padding:18px; border:1px solid var(--border-soft); border-radius:14px; background:var(--surface-soft); }
-.cms-policy-page .cms-policy-row strong { color:var(--text-heading); font-size:15px; }
-.cms-policy-page .cms-policy-row small { color:var(--text-muted); font-size:12px; }
-.cms-policy-page .cms-row-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
-.cms-policy-page .cms-create-section { margin-top:0; }
-.cms-policy-page .settings-form { margin:0; border:0; box-shadow:none; }
-.cms-policy-page .form-actions { display:flex; align-items:center; gap:10px; }
-@media(max-width:700px) { .cms-policy-page .cms-policy-row { grid-template-columns:1fr; } .cms-policy-page .cms-row-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .cms-policy-page .cms-row-actions>* { width:100%; } .cms-policy-page .cms-row-actions .cms-delete-one { grid-column:1/-1; } .cms-policy-page .cms-content-heading, .cms-policy-page .cms-create-heading { align-items:flex-start; } }
-
-
-/* Policy module follows the list-first workflow used by the other CMS sections. */
-.cms-policy-page > .admin-header { align-items:center; }
-.cms-policy-page > .cms-content-section { margin-top:28px; }
-.cms-policy-list-row { grid-template-columns:minmax(0,1fr) auto; align-items:center; }
-.cms-policy-list-row .cms-content-info { min-width:0; display:grid; gap:6px; }
-.cms-policy-list-row .cms-content-info strong,
-.cms-policy-list-row .cms-content-info small { overflow-wrap:anywhere; }
-.cms-policy-page > .cms-create-section { margin-top:28px; }
-@media(max-width:760px) {
-  .cms-policy-page > .admin-header { align-items:flex-start; flex-direction:column; }
-  .cms-policy-list-row { grid-template-columns:minmax(0,1fr); }
-  .cms-policy-list-row .cms-row-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .cms-policy-list-row .cms-row-actions > * { min-width:0; width:100%; }
-  .cms-policy-list-row .cms-delete-one { grid-column:1/-1; }
-}
-
 /* Leaflet creation form: protect grid gutters and keep helper copy inside each field. */
 .admin-shell .cms-leaflet-form-grid {
   box-sizing:border-box; width:100%; max-width:100%; min-width:0;
