@@ -29,7 +29,7 @@ export function JobsAdmin() {
     [message, setMessage] = useState(""),
     [error, setError] = useState(""),
     [revision, setRevision] = useState(0);
-  const formSection = useRef<HTMLElement>(null);
+  const formSection = useRef<HTMLElement>(null);\n  const [formDirty, setFormDirty] = useState(false);
   const [formDirty, setFormDirty] = useState(false);
   useEffect(() => {
     const c = new AbortController();
