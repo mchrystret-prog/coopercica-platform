@@ -232,7 +232,7 @@ export function LeafletAssetLibrary() {
             <Button variant="ghost"
               type="button"
               disabled={busy}
-              onClick={() => { setEditing(null); setCodeValue(""); }}
+              onClick={() => { setEditing(null); setCodeValue(""); setDirty(false); }}
             >
               Cancelar
             </Button>
@@ -261,6 +261,7 @@ export function LeafletAssetLibrary() {
                 disabled={busy}
                 onClick={() => {
                   setEditing(asset);
+                  setDirty(false);
                   setKind(asset.kind);
                   setCodeValue(asset.code);
                 }}
