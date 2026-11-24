@@ -8,7 +8,7 @@ export function PartnersEditor({ value, busy, onChange }: { value: Record<string
   return <div className="cms-section-card"><div className="cms-section-card-head"><div><small>Página inicial · abaixo dos vídeos</small><h2>Parceiros</h2></div></div>
     <p>Cadastre parcerias reais e seus destinos. Os cards podem ser arrastados ou navegados com setas. A opção Faculdades começa como rascunho; publique somente após informar a instituição e o link correto.</p>
     <fieldset disabled={busy}><legend>Configuração da seção</legend><div className="settings-form">
-      <label>Exibir seção<select value={value.enabled || "true"} onChange={e => onChange({ enabled: e.target.value })}><option value="true">Sim</option><option value="false">Não</option></select></label>
+      <label>Exibir seção<select value={String(value.enabled ?? "true")} onChange={e => onChange({ enabled: e.target.value })}><option value="true">Sim</option><option value="false">Não</option></select></label>
       <label>Título<input value={value.title ?? "Parceiros"} maxLength={100} onChange={e => onChange({ title: e.target.value })} /></label>
     </div></fieldset>
     {rows.map((item, index) => <fieldset disabled={busy} key={index}><legend>Parceiro {index + 1}</legend><div className="settings-form">
