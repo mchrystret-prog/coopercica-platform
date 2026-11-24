@@ -58,6 +58,7 @@ export function JobsAdmin() {
   }, [page, status, revision]);
   function edit(job: Job | null) {
     setEditing(job);
+    setFormDirty(false);
     setShowForm(true);
     setMessage("");
     setTimeout(
