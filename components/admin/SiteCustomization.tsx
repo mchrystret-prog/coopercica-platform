@@ -51,7 +51,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   const [editionItems, setEditionItems] = useState(magazines);
   useEffect(() => { if (module === "magazines") { let cancelled = false; getMagazines().then(items => { if (!cancelled) setEditionItems(items); }); return () => { cancelled = true; }; } }, [module]);
   const [data, setData] = useState<Payload | null>(null),
-    [savedData, setSavedData] = useState<Payload | null>(null),
+    [savedTabSnapshots, setSavedTabSnapshots] = useState<Record<string, string>>({}),
     [tab, setTab] = useState<CustomizationTab>(initialTab && config.tabs.includes(initialTab) ? initialTab : config.tabs[0]),
     [msg, setMsg] = useState(""),
     [busy, setBusy] = useState(false),
@@ -68,7 +68,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       body: "{}",
     })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((loaded: Payload) => { setData(loaded); setSavedData(loaded); })
+      .then((loaded: Payload) => { setData(loaded); setSavedTabSnapshots(Object.fromEntries(config.tabs.map(item => [`${module}:${item}`, JSON.stringify(customizationTabSavePayload(module, item, loaded))]))); })
       .catch(() => setMsg("Não foi possível carregar a personalização."));
   }, []);
   async function upload(file: File, folder: string) {
@@ -163,7 +163,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         body: JSON.stringify(payload),
       });
       if (!r.ok) throw new Error(await r.text());
-      setSavedData(data);
+      setSavedTabSnapshots(current => ({ ...current, [`${module}:${tab}`]: JSON.stringify(customizationTabSavePayload(module, tab, data)) }));
       setMsg("Alterações desta aba salvas e publicadas no site.");
     } catch (err) {
       let detail = "Erro desconhecido ao salvar.";
@@ -304,7 +304,8 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     return (
       <div className="cms-empty">{msg || "Carregando personalização..."}</div>
     );
-  const hasChanges = savedData !== null && JSON.stringify(data) !== JSON.stringify(savedData);
+  const tabSnapshotKey = `${module}:${tab}`;
+  const hasChanges = savedTabSnapshots[tabSnapshotKey] !== undefined && JSON.stringify(customizationTabSavePayload(module, tab, data)) !== savedTabSnapshots[tabSnapshotKey];
   const i = data.settings.identity || {};
   return (
     <section className={embedded ? "cms-module-settings" : "admin-page"}>
