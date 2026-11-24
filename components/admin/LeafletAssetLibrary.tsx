@@ -23,7 +23,8 @@ export function LeafletAssetLibrary() {
   const [message, setMessage] = useState("");
   const [uploadError, setUploadError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [ready, setReady] = useState(false);\n  const [dirty, setDirty] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [dirty, setDirty] = useState(false);
   useEffect(() => {
     let active = true;
     getLeafletAssets(
