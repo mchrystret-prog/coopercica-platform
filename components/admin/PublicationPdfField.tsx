@@ -9,7 +9,8 @@ export function PublicationPdfField({ kind, id, currentUrl }: { kind: "leaflet" 
   const [message, setMessage] = useState("");
   const [uploadError, setUploadError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [url, setUrl] = useState(currentUrl);\n  const [selectedFile, setSelectedFile] = useState(false);
+  const [url, setUrl] = useState(currentUrl);
+  const [selectedFile, setSelectedFile] = useState(false);
   async function upload() {
     const token = sessionStorage.getItem("coopercica_admin_token");
     if (!token) { setMessage("Entre no CMS novamente."); return; }
