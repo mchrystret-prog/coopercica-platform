@@ -25,6 +25,9 @@ export const uploadRules = {
   history: image("Foto da história", [1600, 1000]),
   careersDesktop: image("Foto principal de Vagas", [1600, 1200]),
   careersMobile: image("Foto mobile de Vagas", [1080, 810]),
+  careersBannerDesktop: image("Banner desktop do Portal de Vagas", [3384, 864]),
+  careersBannerMobile: image("Banner mobile do Portal de Vagas", [864, 864]),
+  careersTestimonial: { label: "Foto do colaborador", kind: "image", extensions: ["jpg", "jpeg", "png", "webp"], maxBytes: 2 * MB, minWidth: 400, minHeight: 400, maxWidth: 1600, maxHeight: 1600, minRatio: 0.8, maxRatio: 1.2 } as UploadRule,
   videosDesktop: image("Cabeçalho de Vídeos", [2048, 522]),
   videosMobile: image("Cabeçalho mobile de Vídeos", [1080, 810]),
   coopermaisImage: image("Imagem Coopermais", [2880, 432]),
@@ -50,6 +53,7 @@ export function formatUploadBytes(bytes: number) { return bytes >= MB ? `${bytes
 export function uploadRequirements(key: UploadRuleKey) {
   const rule: UploadRule = uploadRules[key];
   const dimensions = rule.dimensions ? `Medida obrigatória: ${rule.dimensions[0]} × ${rule.dimensions[1]} px.`
+    : key === "careersTestimonial" ? "Foto de perfil: imagem preferencialmente quadrada, de 400 × 400 a 1600 × 1600 px."
     : key === "logo" ? "PNG/WebP: largura de 1200 a 2400 px, altura até 600 px. Proporção horizontal de 4:1 a 7:1. SVG: vetorial estático, na mesma proporção, sem mínimo de pixels, scripts ou recursos externos."
     : key === "favicon" ? "Imagem quadrada (1:1): de 256 × 256 a 1024 × 1024 px."
     : rule.kind === "image" ? `Largura: ${rule.minWidth}–${rule.maxWidth} px. Altura: ${rule.minHeight}–${rule.maxHeight} px. Proporção livre, sem esticar a imagem.`
@@ -65,6 +69,8 @@ export function customizationUploadRule(target: string): UploadRuleKey {
   if (target === "favicon") return "favicon";
   if (target === "logo" || target === "logoWhite") return "logo";
   if (target.startsWith("history:")) return "history";
+  if (target.startsWith("careers-banner:")) return target.endsWith("mobileImage") ? "careersBannerMobile" : "careersBannerDesktop";
+  if (target.startsWith("careers-testimonial:")) return "careersTestimonial";
   if (target.startsWith("careers:")) return target.endsWith("mobileImage") ? "careersMobile" : "careersDesktop";
   if (target.startsWith("videos:")) return target.endsWith("mobileImage") ? "videosMobile" : "videosDesktop";
   if (target.startsWith("coopermais:")) {

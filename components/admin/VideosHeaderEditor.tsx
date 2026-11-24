@@ -1,11 +1,13 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { UploadRequirements } from "./UploadRequirements";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { getVideosHeader } from "@/lib/videos-header";
-export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
+export function VideosHeaderEditor({ value, busy, uploadErrors = {}, onChange, onUpload }: {
   value: Record<string, string>;
   busy: boolean;
+  uploadErrors?: Record<string, string>;
   onChange: (patch: Record<string, string>) => void;
   onUpload: (event: ChangeEvent<HTMLInputElement>, field: "image" | "mobileImage") => void;
 }) {
@@ -17,6 +19,7 @@ export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
       {([['image', 'Arte principal'], ['mobileImage', 'Arte para celular (opcional)']] as const).map(([field, label]) => <label key={field}>
         {label}
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy || (field === 'mobileImage' && !value.image)} onChange={e => onUpload(e, field)} />
+        {uploadErrors[`videos:${field}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`videos:${field}`]}</small> : null}
         <UploadRequirements rule={field === "image" ? "videosDesktop" : "videosMobile"}>{field === "mobileImage" ? "Sem esta versão, o celular mostra a arte principal inteira." : null}</UploadRequirements>
       </label>)}
       <label className="form-span-full">Descrição da arte (acessibilidade)
@@ -26,7 +29,7 @@ export function VideosHeaderEditor({ value, busy, onChange, onUpload }: {
       <div className="form-span-full"><Image src={hero.image} alt={hero.alt} width={2048} height={522} style={{ width: '100%', height: 'auto' }} /></div>
       {hero.mobileImage ? <div className="form-span-full"><p>Prévia da versão para celular</p><Image src={hero.mobileImage} alt={hero.alt} width={1080} height={810} style={{ width: 'min(100%, 360px)', height: 'auto' }} /></div> : null}
     </div>
-    {value.mobileImage ? <button className="button button-secondary" disabled={busy} onClick={() => onChange({ mobileImage: '' })}>Remover versão para celular</button> : null}
-    {value.image ? <button className="button button-secondary" disabled={busy} onClick={() => onChange({ image: '', mobileImage: '', alt: '' })}>Restaurar arte original</button> : null}
+    {value.mobileImage ? <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ mobileImage: '' })}>Remover versão para celular</Button> : null}
+    {value.image ? <Button variant="secondary" type="button" className="button button-secondary" disabled={busy} onClick={() => onChange({ image: '', mobileImage: '', alt: '' })}>Restaurar arte original</Button> : null}
   </article></div>;
 }

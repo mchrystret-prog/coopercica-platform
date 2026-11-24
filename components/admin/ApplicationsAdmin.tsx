@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useState, type FormEvent } from "react";
+import { CmsFeedback, useCmsMessage } from "./CmsFeedback";
+import { Button } from "@/components/ui/Button/Button";
+import { useEffect, useState, type DragEvent, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { SUPABASE_URL } from "@/lib/leaflets";
 import {
@@ -9,6 +11,7 @@ import {
   type Application,
   type Job,
 } from "@/lib/jobs";
+import { applicationFilterQuery, loadApplicationReport, applicationWorkbook } from "@/lib/application-report";
 import { RecruitmentNav } from "./RecruitmentNav";
 import styles from "./RecruitmentAdmin.module.css";
 type Candidate = Application & {
@@ -20,6 +23,19 @@ export function ApplicationsAdmin() {
   return <ApplicationsPanel key={initialJob} initialJob={initialJob} />;
 }
 function ApplicationsPanel({ initialJob }: { initialJob: string }) {
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const [view, setView] = useState<"list" | "kanban">("list");
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    let active = true;
+    void recruitmentRequest<boolean>("/rest/v1/rpc/cms_is_admin", { method: "POST", body: "{}" })
+      .then(value => { if (active) setIsAdmin(value === true); })
+      .catch(() => { if (active) setIsAdmin(false); });
+    return () => { active = false; };
+  }, []);
   const [job, setJob] = useState(
       /^[a-f0-9-]{36}$/i.test(initialJob) ? initialJob : "",
     ),
@@ -32,8 +48,8 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     [page, setPage] = useState(0),
     [selected, setSelected] = useState<Candidate | null>(null),
     [loading, setLoading] = useState(true),
-    [error, setError] = useState(""),
-    [message, setMessage] = useState(""),
+    [error, setError, errorKind] = useCmsMessage(""),
+    [message, setMessage, messageKind] = useCmsMessage(""),
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0);
   useEffect(() => {
@@ -61,7 +77,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     }
     void load();
     return () => c.abort();
-  }, []);
+  }, [setError]);
   useEffect(() => {
     const c = new AbortController();
     async function load() {
@@ -69,14 +85,21 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
       if (c.signal.aborted) return;
       setLoading(true);
       setError("");
-      const term = query
-        .replace(/[^\p{L}\p{N} @._-]/gu, "")
-        .trim()
-        .slice(0, 120);
       try {
+        const filter = applicationFilterQuery({ job, status, query, start, end });
         const r = await recruitmentList<Candidate>(
-          `site_job_applications?select=*,site_jobs(title,department)&order=created_at.desc,id.asc&limit=25&offset=${page * 25}${job ? `&job_id=eq.${job}` : ""}${status ? `&status=eq.${status}` : ""}${term ? `&or=${encodeURIComponent(`(name.ilike.*${term}*,email.ilike.*${term}*)`)}` : ""}`,
+          `site_job_applications?select=*,site_jobs(title,department)&order=created_at.desc,id.asc&limit=25&offset=${view === "kanban" ? 0 : page * 25}&${filter}`,
         );
+        if (view === "kanban") {
+          while (r.items.length < r.total) {
+            if (c.signal.aborted) return;
+            const batch = await recruitmentList<Candidate>(
+              `site_job_applications?select=*,site_jobs(title,department)&order=created_at.desc,id.asc&limit=200&offset=${r.items.length}&${filter}`,
+            );
+            if (!batch.items.length) break;
+            r.items.push(...batch.items);
+          }
+        }
         if (!c.signal.aborted) {
           setCandidates(r.items);
           setTotal(r.total);
@@ -90,7 +113,23 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     }
     void load();
     return () => c.abort();
-  }, [job, status, query, page, revision]);
+  }, [job, status, query, start, end, page, revision, view, setError]);
+  async function exportReport() {
+    if (exporting) return;
+    setExporting(true);
+    setError("");
+    setMessage("");
+    try {
+      const filters = { job, status, query, start, end };
+      const rows = await loadApplicationReport(filters);
+      if (!rows.length) { setMessage("Nenhuma candidatura encontrada para exportar.", "info"); return; }
+      const xlsx = await import("xlsx");
+      xlsx.writeFile(applicationWorkbook(xlsx, rows, filters), `candidaturas-${start || "inicio"}-${end || "hoje"}.xlsx`, { compression: true });
+      setMessage(`Relatório gerado com ${rows.length} candidaturas.`, "success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível gerar o relatório.");
+    } finally { setExporting(false); }
+  }
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selected || busy) return;
@@ -115,11 +154,35 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
         );
       setSelected({ ...selected, ...rows[0] });
       setMessage(
-        "Etapa e observações salvas. Nenhuma mensagem foi enviada ao candidato.",
+        "Etapa e observações salvas. Nenhuma mensagem foi enviada ao candidato.", "success",
       );
       setRevision((n) => n + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao salvar.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function remove(candidate: Candidate) {
+    if (!isAdmin || busy) return;
+    if (!window.confirm(`Remover a candidatura de ${candidate.name}? Os dados e as anotações desta candidatura serão removidos. Esta ação não pode ser desfeita.`)) return;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const removed = await recruitmentRequest<{ id: string }[]>(
+        `/rest/v1/site_job_applications?id=eq.${candidate.id}&select=id`,
+        { method: "DELETE", headers: { Prefer: "return=representation" } },
+      );
+      if (!removed.some(row => row.id === candidate.id))
+        throw new Error("Não foi possível remover. Verifique se a candidatura ainda existe e se você tem acesso de administrador.");
+      if (selected?.id === candidate.id) setSelected(null);
+      setCandidates(current => current.filter(row => row.id !== candidate.id));
+      if (view === "list" && candidates.length === 1 && page > 0) setPage(current => current - 1);
+      else setRevision(current => current + 1);
+      setMessage("Candidatura removida.", "success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível remover a candidatura. Tente novamente.");
     } finally {
       setBusy(false);
     }
@@ -160,6 +223,50 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
     setPage(0);
     setSelected(null);
   };
+  async function moveCandidate(candidate: Candidate, nextStatus: string) {
+    if (busy || candidate.status === nextStatus) return;
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const rows = await recruitmentRequest<Application[]>(`/rest/v1/site_job_applications?id=eq.${candidate.id}`, {
+        method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify({ status: nextStatus }),
+      });
+      if (!rows.length) throw new Error("Não foi possível atualizar a etapa da candidatura.");
+      setCandidates(current => current.map(item => item.id === candidate.id ? { ...item, ...rows[0] } : item));
+      setSelected(current => current?.id === candidate.id ? { ...current, ...rows[0] } : current);
+      setMessage(`Candidatura de ${candidate.name} movida para ${applicationStatuses[nextStatus] || nextStatus}.`, "success");
+    } catch (err) { setError(err instanceof Error ? err.message : "Não foi possível atualizar a etapa."); }
+    finally { setBusy(false); setDraggingId(null); }
+  }
+  const renderCandidate = (c: Candidate) => (
+          <article className={`${styles.row} ${view === "kanban" ? styles.kanbanCard : ""} ${draggingId === c.id ? styles.dragging : ""} recruitment-kanban-card`} key={c.id}
+            onClick={(event) => { if (event.target instanceof Element && event.target.closest("button, a, input, select, textarea")) return; setSelected(c); setMessage(""); }}
+            onKeyDown={(event) => { if (event.target !== event.currentTarget) return; if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelected(c); setMessage(""); } }}
+            tabIndex={0}
+            aria-label={`Abrir candidatura de ${c.name}`}
+            draggable={view === "kanban" && !busy}
+            onDragStart={(event: DragEvent<HTMLElement>) => { setDraggingId(c.id); event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", c.id); }}
+            onDragEnd={() => setDraggingId(null)}
+          >
+            <div>
+              <span className={styles.status} data-status={c.status}>
+                {applicationStatuses[c.status]}
+              </span>
+              <h2>{c.name}</h2>
+              <p>
+                {c.site_jobs?.title || "Vaga"} · {c.city}
+              </p>
+              <p>
+                {c.email} ·{" "}
+                {new Date(c.created_at).toLocaleDateString("pt-BR", {
+                  timeZone: "America/Sao_Paulo",
+                })}
+              </p>
+            </div>
+            {view === "list" ? <div className={styles.actions}>
+              <Button variant="secondary" className="candidate-action" type="button" disabled={busy} onClick={() => { setSelected(c); setMessage(""); }}>Ver candidatura</Button>
+            </div> : null}
+          </article>
+  );
   return (
     <section className="admin-page">
       <header className="admin-header">
@@ -172,7 +279,12 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
         </div>
       </header>
       <RecruitmentNav />
-      <div className={styles.filters}>
+      <div className={styles.viewToggle} role="group" aria-label="Visualização das candidaturas">
+        <Button variant={view === "list" ? "primary" : "secondary"} aria-pressed={view === "list"} onClick={() => { setView("list"); setPage(0); }}>Lista</Button>
+        <Button variant={view === "kanban" ? "primary" : "secondary"} aria-pressed={view === "kanban"} onClick={() => { setView("kanban"); setPage(0); }}>Kanban</Button>
+      </div>
+      {view === "kanban" ? <p className={styles.fieldHint}>Cada cartão representa uma candidatura. Abra os detalhes para alterar a etapa e clique em “Salvar acompanhamento” para atualizar o quadro.</p> : null}
+      <div className={`${styles.filters} ${styles.applicationFilters}`}>
         <label>
           Vaga
           <select value={job} onChange={(e) => change(setJob, e.target.value)}>
@@ -198,7 +310,7 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
             ))}
           </select>
         </label>
-        <form
+        <form className={styles.candidateSearch}
           onSubmit={(e) => {
             e.preventDefault();
             change(setQuery, search);
@@ -214,44 +326,57 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               placeholder="Nome ou e-mail"
             />
           </label>
-          <button className="cms-edit-one">Buscar</button>
+          <Button variant="secondary" type="submit" className="cms-edit-one">Buscar</Button>
         </form>
-        <button
+        <Button variant="secondary" type="button"
           className="button button-secondary"
           disabled={loading}
           onClick={() => setRevision((n) => n + 1)}
         >
           Atualizar
-        </button>
+        </Button>
       </div>
+      <section aria-labelledby="application-report-title">
+        <h2 id="application-report-title">Relatório de candidaturas</h2>
+        <p className={styles.fieldHint}>Filtre pela data de envio (horário de São Paulo). O Excel inclui todas as páginas e respeita a vaga, a etapa e a busca aplicadas acima. Deixe as datas em branco para consultar todo o período.</p>
+        <div className={styles.filters}>
+          <label>Data inicial<input type="date" value={start} max={end || undefined} onChange={e => change(setStart, e.target.value)} /></label>
+          <label>Data final<input type="date" value={end} min={start || undefined} onChange={e => change(setEnd, e.target.value)} /></label>
+          <Button variant="primary" type="button" disabled={exporting || loading || busy || !!(start && end && start > end)} onClick={() => void exportReport()}>
+            {exporting ? "Gerando relatório…" : "Baixar relatório XLSX"}
+          </Button>
+        </div>
+        {exporting ? <p role="status">Buscando todas as candidaturas dos filtros selecionados…</p> : null}
+      </section>
       {error ? (
         <p className={styles.error} role="alert">
-          {error}
+          <CmsFeedback message={error} kind={errorKind} />
         </p>
       ) : null}
       {message ? (
         <p className="form-status" role="status">
-          {message}
+          <CmsFeedback message={message} kind={messageKind} />
         </p>
       ) : null}
       {loading ? <p role="status">Carregando candidaturas…</p> : null}
       {selected ? (
-        <article className={styles.detail}>
+        <div className={styles.modalBackdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) setSelected(null); }}>
+        <article id="candidate-details" className={`${styles.detail} ${styles.candidateModal}`} role="dialog" aria-modal="true" aria-labelledby="candidate-modal-title" onKeyDown={(event) => { if (event.key === "Escape" && !busy) setSelected(null); }}>
           <div className={styles.detailHeading}>
             <div>
-              <span className={styles.status}>
+              <span className={styles.status} data-status={selected.status}>
                 {applicationStatuses[selected.status]}
               </span>
-              <h2>{selected.name}</h2>
+              <h2 id="candidate-modal-title">{selected.name}</h2>
               <p>{selected.site_jobs?.title}</p>
             </div>
-            <button
+            <Button variant="secondary" type="button"
               className="cms-edit-one"
               disabled={busy}
               onClick={() => setSelected(null)}
             >
               Fechar detalhes
-            </button>
+            </Button>
           </div>
           <dl>
             <div>
@@ -281,13 +406,13 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               <dd>{selected.message || "Não informada"}</dd>
             </div>
           </dl>
-          <button
+          <Button variant="secondary" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={download}
           >
             {busy ? "Aguarde…" : "Baixar currículo PDF"}
-          </button>
+          </Button>
           <form
             className={styles.noteForm}
             key={`${selected.id}:${selected.updated_at || selected.status}`}
@@ -312,64 +437,48 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
               <textarea
                 className={styles.notes}
                 name="internal_notes"
+                aria-describedby="internal-notes-help"
                 rows={5}
                 maxLength={12000}
                 defaultValue={selected.internal_notes}
-                placeholder="Anotações acessíveis somente ao RH e administradores."
+                placeholder="Ex.: entrevista realizada, disponibilidade confirmada e próximo contato combinado."
               />
             </label>
+            <p id="internal-notes-help" className={styles.notesHelp}>
+              Use as anotações internas para registrar o andamento da seleção, pontos da entrevista e próximos passos. Elas ficam vinculadas a esta candidatura e são acessíveis somente ao RH e administradores. O candidato não vê essas anotações e não recebe mensagem ao salvar. Para gravar a etapa e o texto, clique em “Salvar acompanhamento”.
+            </p>
             <div>
-              <button className="button" disabled={busy}>
+              <Button variant="primary" type="submit" className="button" disabled={busy}>
                 {busy ? "Salvando…" : "Salvar acompanhamento"}
-              </button>
+              </Button>
             </div>
           </form>
+          {isAdmin ? <div className={styles.modalActions}><Button variant="secondary" type="button" className="cms-delete-one" disabled={busy} onClick={() => void remove(selected)}>{busy ? "Aguarde…" : "Remover candidatura"}</Button></div> : null}
         </article>
+        </div>
       ) : null}
-      <div className={styles.list} aria-busy={loading}>
-        {candidates.map((c) => (
-          <article className={styles.row} key={c.id}>
-            <div>
-              <span className={styles.status}>
-                {applicationStatuses[c.status]}
-              </span>
-              <h2>{c.name}</h2>
-              <p>
-                {c.site_jobs?.title || "Vaga"} · {c.city}
-              </p>
-              <p>
-                {c.email} ·{" "}
-                {new Date(c.created_at).toLocaleDateString("pt-BR", {
-                  timeZone: "America/Sao_Paulo",
-                })}
-              </p>
-            </div>
-            <div className={styles.actions}>
-              <button
-                disabled={busy}
-                onClick={() => {
-                  setSelected(c);
-                  setMessage("");
-                }}
-              >
-                Ver candidatura
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
+      {!loading && view === "kanban" ? <div className={`${styles.kanban} recruitment-kanban`} aria-label="Candidaturas por etapa">
+        {Object.entries(applicationStatuses).map(([stage, label]) => <section className={`${styles.kanbanColumn} recruitment-kanban-column`} key={stage} aria-label={label}
+          onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }}
+          onDrop={(event) => { event.preventDefault(); const candidateId = event.dataTransfer.getData("text/plain"); const candidate = candidates.find(item => item.id === candidateId); if (candidate) void moveCandidate(candidate, stage); else setDraggingId(null); }}
+        >
+          <h2><span className={styles.status} data-status={stage}>{label}</span><span>{candidates.filter(candidate => candidate.status === stage).length}</span></h2>
+          {candidates.filter(candidate => candidate.status === stage).map(renderCandidate)}
+          {!candidates.some(candidate => candidate.status === stage) ? <p className={styles.columnEmpty}>Nenhuma candidatura nesta etapa.</p> : null}
+        </section>)}
+      </div> : <div className={styles.list} aria-busy={loading}>{!loading ? candidates.map(renderCandidate) : null}</div>}
       {!loading && !error && !candidates.length ? (
         <div className="cms-empty">
           Nenhuma candidatura encontrada neste filtro.
         </div>
       ) : null}
-      <div className={styles.pager}>
+      <div className={styles.pager} hidden={view === "kanban"}>
         <span>
           {total
             ? `${page * 25 + 1}–${Math.min((page + 1) * 25, total)} de ${total} candidaturas`
             : "0 candidaturas"}
         </span>
-        <button
+        <Button variant="secondary" type="button"
           disabled={loading || page === 0}
           onClick={() => {
             setPage((n) => n - 1);
@@ -377,8 +486,8 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           }}
         >
           Anterior
-        </button>
-        <button
+        </Button>
+        <Button variant="secondary" type="button"
           disabled={loading || (page + 1) * 25 >= total}
           onClick={() => {
             setPage((n) => n + 1);
@@ -386,8 +495,9 @@ function ApplicationsPanel({ initialJob }: { initialJob: string }) {
           }}
         >
           Próxima
-        </button>
+        </Button>
       </div>
+
     </section>
   );
 }

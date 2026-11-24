@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useState } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { cmsRoleName, type CmsRole } from "@/lib/cms-access";
@@ -113,20 +114,20 @@ export function CmsUsers() {
               {x.status !== "approved" ? (
                 <>
                   {(["editor", "hr", "admin"] as const).map((role) => (
-                    <button
+                    <Button variant="secondary" type="button"
                       key={role}
                       disabled={busy}
                       onClick={() => update(x.user_id, "approved", role)}
                     >
                       Aprovar {cmsRoleName(role)}
-                    </button>
+                    </Button>
                   ))}
-                  <button
+                  <Button variant="secondary" type="button"
                     disabled={busy}
                     onClick={() => update(x.user_id, "rejected")}
                   >
                     Recusar
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>
@@ -147,12 +148,12 @@ export function CmsUsers() {
                       ))}
                     </select>
                   </label>
-                  <button
+                  <Button variant="secondary" type="button"
                     disabled={busy || x.user_id === self}
                     onClick={() => update(x.user_id, "rejected")}
                   >
                     Revogar acesso
-                  </button>
+                  </Button>
                 </>
               )}
             </div>

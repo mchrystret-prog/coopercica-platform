@@ -1,11 +1,12 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
 import { getLeafletAssets } from "@/lib/leaflet-assets";
 import { spreadsheetRecords, importProducts } from "@/lib/leaflet-import";
-import { validateCmsUpload, validateCmsUploads } from "@/lib/cms-upload-validation";
+import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { UploadRequirements } from "./UploadRequirements";
 import {
   boxCode,
@@ -29,6 +30,8 @@ export function LeafletAdmin({
   const [seals, setSeals] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
+  const [uploadError, setUploadError] = useState("");
+  const [uploadErrorField, setUploadErrorField] = useState<"sheet" | "cover" | "header" | "products">("sheet");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [requiredEans, setRequiredEans] = useState<Set<string>>(new Set());
   const imageIndex = useMemo(() => {
@@ -41,6 +44,7 @@ export function LeafletAdmin({
   }, [imageFiles, requiredEans]);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   useEffect(() => {
     let active = true;
@@ -60,12 +64,14 @@ export function LeafletAdmin({
       active = false;
     };
   }, [libraryRevision]);
-  function chooseImageFolder(e: ChangeEvent<HTMLInputElement>) {
+  async function chooseImageFolder(e: ChangeEvent<HTMLInputElement>) {
+    setUploadError("");
     const files = Array.from(e.target.files || []);
     setImageFiles(files);
-    const matched = files.filter((f) =>
-      requiredEans.has(f.name.replace(/\.[^.]+$/, "").trim()),
-    ).length;
+    const matchedFiles = files.filter((f) => requiredEans.has(f.name.replace(/\.[^.]+$/, "").trim()));
+    try { for (const file of matchedFiles) await validateCmsUpload(file, "product"); }
+    catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar imagem do produto."); setUploadErrorField("products"); }
+    const matched = matchedFiles.length;
     setMessage(
       requiredEans.size
         ? `Pasta selecionada. ${matched} das ${requiredEans.size} imagens necessárias foram localizadas pelo EAN.`
@@ -127,8 +133,8 @@ export function LeafletAdmin({
         },
       );
       if (!up.ok) {
-        missing++;
-        return;
+        const detail = await up.text().catch(() => "");
+        throw new Error(`Falha ao enviar a imagem do produto ${p.ean} (HTTP ${up.status})${detail ? `: ${detail}` : ""}`);
       }
       p.image_url = `${SUPABASE_URL}/storage/v1/object/public/leaflet-assets/${path}`;
       matched++;
@@ -149,6 +155,8 @@ export function LeafletAdmin({
       return;
     }
     const formElement = e.currentTarget;
+    let failedUploadField: "sheet" | "cover" | "header" | "products" = "sheet";
+    setUploadError("");
     setLoading(true);
     setStatus("idle");
     setResult(null);
@@ -184,11 +192,12 @@ export function LeafletAdmin({
         const ean = image.name.replace(/\.[^.]+$/, "").trim();
         if (eans.has(ean)) selectedImages.set(ean, image);
       }
-      await validateCmsUploads([
-        [form.get("cover_file"), "leafletCover"],
-        [form.get("header_file"), "leafletHeader"],
-        ...Array.from(selectedImages.values()).map((image): [File, "product"] => [image, "product"]),
-      ]);
+      failedUploadField = "cover";
+      await validateCmsUpload(form.get("cover_file") as File, "leafletCover");
+      failedUploadField = "header";
+      await validateCmsUpload(form.get("header_file") as File, "leafletHeader");
+      failedUploadField = "products";
+      for (const image of selectedImages.values()) await validateCmsUpload(image, "product");
       const upload = async (file: FormDataEntryValue | null, kind: string) => {
         if (!(file instanceof File) || !file.size) return "";
         const ext = file.name.split(".").pop()?.toLowerCase() || "webp";
@@ -218,7 +227,9 @@ export function LeafletAdmin({
         return `${SUPABASE_URL}/storage/v1/object/public/leaflet-assets/${path}`;
       };
       setMessage("Enviando imagens do folheto...");
+      failedUploadField = "cover";
       const coverUrl = await upload(form.get("cover_file"), "thumb");
+      failedUploadField = "header";
       const headerUrl = await upload(form.get("header_file"), "header");
       const name = String(form.get("name") || "");
       const baseSlug = String(form.get("slug") || "") || name;
@@ -239,6 +250,7 @@ export function LeafletAdmin({
         setMessage(
           `Cruzando ${products.length} produtos com o banco de imagens pelo EAN…`,
         );
+        failedUploadField = "products";
         imageReport = await uploadProductImages(products, token, slug);
         setMessage(
           `Imagens: ${imageReport.matched} encontradas · ${imageReport.missing} sem correspondência. Salvando folheto…`,
@@ -294,8 +306,11 @@ export function LeafletAdmin({
       }
     } catch (err) {
       setStatus("error");
+      const errorText = err instanceof Error ? err.message : "Erro ao processar planilha.";
+      setUploadError(errorText);
+      setUploadErrorField(failedUploadField);
       setMessage(
-        err instanceof Error ? err.message : "Erro ao processar planilha.",
+        errorText,
       );
     } finally {
       setLoading(false);
@@ -308,6 +323,7 @@ export function LeafletAdmin({
     setOverrides({});
     setRequiredEans(new Set());
     if (!file) return;
+    setUploadError("");
     setLoading(true);
     setStatus("idle");
     try {
@@ -349,11 +365,12 @@ export function LeafletAdmin({
         `Planilha lida: ${records.length} produtos. Confira os fundos dos boxes e os selos abaixo.`,
       );
     } catch (error) {
+      const errorText = error instanceof Error ? error.message : "Não foi possível ler a planilha.";
+      setUploadError(errorText);
+      setUploadErrorField("sheet");
       setStatus("error");
       setMessage(
-        error instanceof Error
-          ? error.message
-          : "Não foi possível ler a planilha.",
+        errorText,
       );
     } finally {
       setLoading(false);
@@ -361,11 +378,11 @@ export function LeafletAdmin({
   }
   return (
     <>
-      <form onSubmit={submit}>
+      <form onSubmit={submit} onChange={() => setDirty(true)}>
         <fieldset
-          className="settings-form"
+          className="settings-form cms-leaflet-form-grid"
           disabled={loading}
-          style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
+          style={{ border: 0, margin: "35px 0 0", minWidth: 0 }}
         >
           <label>
             Nome do folheto
@@ -375,7 +392,7 @@ export function LeafletAdmin({
           <label>
             Slug (opcional)
             <input name="slug" placeholder="ofertas-da-semana" />
-            <small>Deixe vazio para gerar automaticamente.</small>
+            <small>O slug é o identificador usado no endereço do folheto no site. Use palavras curtas, sem espaços ou acentos, separadas por hífens. Deixe vazio para gerar automaticamente.</small>
           </label>
           <label>
             Exibir no site a partir de
@@ -399,7 +416,9 @@ export function LeafletAdmin({
               type="file"
               accept="image/png,image/jpeg,image/webp"
               required
+              onChange={async (event) => { setUploadError(""); const file = event.currentTarget.files?.[0]; if (!file) return; try { await validateCmsUpload(file, "leafletCover"); } catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar a thumbnail."); setUploadErrorField("cover"); } }}
             />
+            {uploadError && uploadErrorField === "cover" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
             <UploadRequirements rule="leafletCover">Mantenha títulos e informações importantes longe das bordas.</UploadRequirements>
           </label>
           <label>
@@ -409,7 +428,9 @@ export function LeafletAdmin({
               type="file"
               accept="image/png,image/jpeg,image/webp"
               required
+              onChange={async (event) => { setUploadError(""); const file = event.currentTarget.files?.[0]; if (!file) return; try { await validateCmsUpload(file, "leafletHeader"); } catch (error) { setUploadError(error instanceof Error ? error.message : "Falha ao validar o cabeçalho."); setUploadErrorField("header"); } }}
             />
+            {uploadError && uploadErrorField === "header" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
             <UploadRequirements rule="leafletHeader" />
           </label>
           <label>
@@ -431,6 +452,7 @@ export function LeafletAdmin({
               required
               onChange={previewSheet}
             />
+            {uploadError && uploadErrorField === "sheet" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
             <UploadRequirements rule="sheet" />
           </label>
           <div className="form-span-full">
@@ -521,6 +543,7 @@ export function LeafletAdmin({
               7891234567890.jpg). JPG, PNG ou WebP. Apenas as imagens usadas
               neste folheto serão enviadas.
             </UploadRequirements>
+            {uploadError && uploadErrorField === "products" ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
             {imageFiles.length ? (
               <span className="cms-folder-status">
                 {requiredEans.size ? (
@@ -542,9 +565,9 @@ export function LeafletAdmin({
             ) : null}
           </label>
           <div className="form-actions">
-            <button className="button" disabled={loading} aria-busy={loading}>
+            <Button variant="primary" type="submit" className="button" disabled={loading || !dirty} aria-busy={loading}>
               {loading ? "Importando folheto..." : "Criar folheto"}
-            </button>
+            </Button>
           </div>
         </fieldset>
       </form>

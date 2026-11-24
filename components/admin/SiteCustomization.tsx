@@ -1,5 +1,6 @@
 "use client";
-import { customizationModules, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
+import { Button } from "@/components/ui/Button/Button";
+import { customizationModules, customizationTabLabels, customizationTabSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
 import { validateCoopermaisInformation } from "@/lib/coopermais-banner";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
@@ -15,7 +16,9 @@ import type { Magazine } from "@/types/content";
 import { validatePartners } from "@/lib/home-partners";
 import { HomeVideosEditor } from "./HomeVideosEditor";
 import { validateHomeVideos } from "@/lib/home-videos";
-import { CareersHeroEditor } from "./CareersHeroEditor";
+import { CareersBannersEditor } from "./CareersBannersEditor";
+import { parseCareersBanners, isValidCareersBannerImage, isValidCareersBannerHref } from "@/lib/careers-banners";
+import { parseCareersTestimonials } from "@/lib/careers-testimonials";
 import { HomeOffersEditor, validateOffersSettings } from "./HomeOffersEditor";
 import { validateCmsUpload } from "@/lib/cms-upload-validation";
 import { customizationUploadRule } from "@/lib/cms-upload-rules";
@@ -48,9 +51,11 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   const [editionItems, setEditionItems] = useState(magazines);
   useEffect(() => { if (module === "magazines") { let cancelled = false; getMagazines().then(items => { if (!cancelled) setEditionItems(items); }); return () => { cancelled = true; }; } }, [module]);
   const [data, setData] = useState<Payload | null>(null),
+    [savedTabSnapshots, setSavedTabSnapshots] = useState<Record<string, string>>({}),
     [tab, setTab] = useState<CustomizationTab>(initialTab && config.tabs.includes(initialTab) ? initialTab : config.tabs[0]),
     [msg, setMsg] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
   const token = () => sessionStorage.getItem("coopercica_admin_token") || "";
   useEffect(() => {
     fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`, {
@@ -63,7 +68,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
       body: "{}",
     })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setData)
+      .then((loaded: Payload) => { setData(loaded); setSavedTabSnapshots(Object.fromEntries(config.tabs.map(item => [`${module}:${item}`, JSON.stringify(customizationTabSavePayload(module, item, loaded))]))); })
       .catch(() => setMsg("Não foi possível carregar a personalização."));
   }, []);
   async function upload(file: File, folder: string) {
@@ -86,68 +91,91 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   }
   async function saveAll() {
     if (!data) return;
-    const faqError = module === "personalization" ? validateFaq(data.settings.home_faq || {}) : null;
-    if (faqError) { setTab("faq"); setMsg(faqError); return; }
-    if (module === "personalization" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
-    const contactError = module === "personalization" ? validateFooterContact(data.settings.footer_contact || {}) : null;
-    if (contactError) { setTab("contact"); setMsg(contactError); return; }
-    const partnersError = module === "personalization" ? validatePartners(data.settings.home_partners || {}) : null;
-    if (partnersError) { setTab("partners"); setMsg(partnersError); return; }
-    const videosError = module === "personalization" ? validateHomeVideos(data.settings.home_videos || {}) : null;
-    if (videosError) { setTab("videos"); setMsg(videosError); return; }
-    const offersError = module === "settings" ? validateOffersSettings(data.settings) : null;
-    if (offersError) { setTab("offers"); setMsg(offersError); return; }
-    if (
-      module === "personalization" && data.settings.careers_hero?.image &&
-      !data.settings.careers_hero.alt?.trim()
-    ) {
-      setTab("careers");
-      setMsg(
-        "Adicione uma descrição da foto do Portal de Vagas para acessibilidade.",
-      );
-      return;
+
+    if (module === "personalization" && tab === "faq") {
+      const error = validateFaq(data.settings.home_faq || {});
+      if (error) { setMsg(error); return; }
     }
-    if (module === "personalization" && data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
-      setTab("videos"); setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
+    if (module === "personalization" && tab === "sharing" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) {
+      setMsg("Envie uma imagem válida na aba Compartilhamento."); return;
     }
-    if (module === "personalization" && data.settings.coopermais_banner?.ctaHref) {
-      try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
-      catch { setTab("coopermais"); setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
+    if (module === "personalization" && tab === "contact") {
+      const error = validateFooterContact(data.settings.footer_contact || {});
+      if (error) { setMsg(error); return; }
     }
-    const informationError = module === "personalization" ? validateCoopermaisInformation(data.settings.coopermais_banner || {}) : null;
-    if (informationError) { setTab("coopermais"); setMsg(informationError); return; }
+    if (module === "personalization" && tab === "partners") {
+      const error = validatePartners(data.settings.home_partners || {});
+      if (error) { setMsg(error); return; }
+    }
+    if (module === "personalization" && tab === "videos") {
+      const error = validateHomeVideos(data.settings.home_videos || {});
+      if (error) { setMsg(error); return; }
+      if (data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
+        setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
+      }
+    }
+    if (module === "personalization" && tab === "careers") {
+      const testimonials = parseCareersTestimonials(data.settings.careers_testimonials);
+      const invalidTestimonial = testimonials.find((item) => item.active && (!item.quote.trim() || !item.name.trim() || !item.image.trim()));
+      if (invalidTestimonial) {
+        setMsg("Cada depoimento ativo precisa ter texto, nome e foto do colaborador."); return;
+      }
+      const banners = parseCareersBanners(data.settings.careers_hero);
+      const invalidBanner = banners.find((banner) => banner.active && (
+        !banner.title.trim() ||
+        !isValidCareersBannerImage(banner.desktopImage) ||
+        (Boolean(banner.mobileImage) && !isValidCareersBannerImage(banner.mobileImage))
+      ));
+      if (invalidBanner) {
+        setMsg("Cada banner ativo precisa ter uma imagem desktop válida e um texto alternativo."); return;
+      }
+      if (banners.some((banner) => banner.href && !isValidCareersBannerHref(banner.href))) {
+        setMsg("Confira os links dos banners. Use um endereço HTTPS ou um caminho interno iniciado por /."); return;
+      }
+    }
+    if (module === "personalization" && tab === "coopermais") {
+      if (data.settings.coopermais_banner?.ctaHref) {
+        try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
+        catch { setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
+      }
+      const error = validateCoopermaisInformation(data.settings.coopermais_banner || {});
+      if (error) { setMsg(error); return; }
+    }
+    if (module === "settings" && tab === "offers") {
+      const error = validateOffersSettings(data.settings);
+      if (error) { setMsg(error); return; }
+    }
+
     setBusy(true);
     setMsg("");
     try {
-      const latestResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" }, body: "{}" });
+      const latestResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`, {
+        method: "POST",
+        headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" },
+        body: "{}",
+      });
       if (!latestResponse.ok) throw new Error("Não foi possível conferir os dados atuais antes de salvar.");
       const latest: Payload = await latestResponse.json();
-      const r = await fetch(
-        `${SUPABASE_URL}/rest/v1/rpc/cms_save_site_customization`,
-        {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${token()}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(customizationSavePayload(module, data, latest)),
-        },
-      );
+      const payload = customizationTabSavePayload(module, tab, data, latest);
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_save_site_customization`, {
+        method: "POST",
+        headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
       if (!r.ok) throw new Error(await r.text());
-      setMsg("Personalização salva e publicada no site.");
+      setSavedTabSnapshots(current => ({ ...current, [`${module}:${tab}`]: JSON.stringify(customizationTabSavePayload(module, tab, data)) }));
+      setMsg("Alterações desta aba salvas e publicadas no site.");
     } catch (err) {
       let detail = "Erro desconhecido ao salvar.";
       if (err instanceof Error && err.message) {
         try {
           const parsed = JSON.parse(err.message);
-          detail =
-            parsed.message || parsed.details || parsed.hint || err.message;
+          detail = parsed.message || parsed.details || parsed.hint || err.message;
         } catch {
           detail = err.message;
         }
       }
-      setMsg(`Não foi possível salvar: ${detail}`);
+      setMsg(`Não foi possível salvar esta aba: ${detail}`);
     } finally {
       setBusy(false);
     }
@@ -163,13 +191,16 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     });
   }
   function setSection(id: string, patch: Partial<Section>) {
-    if (!data) return;
-    setData({
-      ...data,
-      sections: data.sections.map((s) =>
-        s.id === id ? { ...s, ...patch } : s,
-      ),
-    });
+    setData((current) =>
+      current
+        ? {
+            ...current,
+            sections: current.sections.map((s) =>
+              s.id === id ? { ...s, ...patch } : s,
+            ),
+          }
+        : current,
+    );
   }
   async function media(
     e: ChangeEvent<HTMLInputElement>,
@@ -178,13 +209,14 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     const file = e.target.files?.[0];
     if (!file) return;
     setBusy(true);
+    setUploadErrors(current => ({ ...current, [target]: "" }));
     try {
       await validateCmsUpload(file, customizationUploadRule(target));
       const url = await upload(
         file,
         target === "social:image" ? "social" : target.startsWith("coopermais:") ? "sections" : target.startsWith("videos:")
           ? "videos"
-          : target.startsWith("careers:")
+          : target.startsWith("careers:") || target.startsWith("careers-banner:") || target.startsWith("careers-testimonial:")
           ? "careers"
           : target.startsWith("history:")
             ? "history"
@@ -203,22 +235,28 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           videos_header: { ...current.settings.videos_header, [field]: url,
             alt: current.settings.videos_header?.alt || "Mais conteúdo pra você. Família reunida assistindo ao canal da Coopercica." }
         } } : current);
-      } else if (target.startsWith("careers:")) {
-        const field = target.slice(8);
-        setData((current) =>
-          current
-            ? {
-                ...current,
-                settings: {
-                  ...current.settings,
-                  careers_hero: {
-                    ...current.settings.careers_hero,
-                    [field]: url,
-                  },
-                },
-              }
-            : current,
-        );
+      } else if (target.startsWith("careers-testimonial:")) {
+        const testimonialId = target.slice("careers-testimonial:".length);
+        setData((current) => {
+          if (!current || !testimonialId) return current;
+          const testimonials = parseCareersTestimonials(current.settings.careers_testimonials);
+          const updated = testimonials.map((item) => item.id === testimonialId ? { ...item, image: url } : item);
+          return { ...current, settings: { ...current.settings, careers_testimonials: { testimonials: JSON.stringify(updated) } } };
+        });
+      } else if (target.startsWith("careers-banner:")) {
+        const [, bannerId, field] = target.split(":");
+        setData((current) => {
+          if (!current || !bannerId || !field || !["desktopImage", "mobileImage"].includes(field)) return current;
+          const banners = parseCareersBanners(current.settings.careers_hero);
+          const updated = banners.map((banner) => banner.id === bannerId ? { ...banner, [field]: url } : banner);
+          return {
+            ...current,
+            settings: {
+              ...current.settings,
+              careers_hero: { ...current.settings.careers_hero, banners: JSON.stringify(updated) },
+            },
+          };
+        });
       } else if (target.startsWith("history:")) {
         const id = target.slice(8);
         setData((current) =>
@@ -236,13 +274,28 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             : current,
         );
       } else if (target.startsWith("section:")) {
-        const id = target.split(":")[1];
-        const s = data?.sections.find((x) => x.id === id);
-        if (s) setSection(id, { content: { ...s.content, image: url } });
+        const id = target.slice("section:".length);
+        setData((current) =>
+          current
+            ? {
+                ...current,
+                sections: current.sections.map((section) =>
+                  section.id === id
+                    ? {
+                        ...section,
+                        content: { ...section.content, image: url },
+                      }
+                    : section,
+                ),
+              }
+            : current,
+        );
       } else setIdentity(target, url);
       setMsg("Arquivo enviado. Clique em Salvar alterações para publicar.");
     } catch (err) {
-      setMsg(err instanceof Error ? err.message : "Falha no upload.");
+      const errorText = err instanceof Error ? err.message : "Falha no upload.";
+      setUploadErrors(current => ({ ...current, [target]: errorText }));
+      setMsg(errorText);
     } finally {
       setBusy(false);
     }
@@ -251,6 +304,8 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
     return (
       <div className="cms-empty">{msg || "Carregando personalização..."}</div>
     );
+  const tabSnapshotKey = `${module}:${tab}`;
+  const hasChanges = savedTabSnapshots[tabSnapshotKey] !== undefined && JSON.stringify(customizationTabSavePayload(module, tab, data)) !== savedTabSnapshots[tabSnapshotKey];
   const i = data.settings.identity || {};
   return (
     <section className={embedded ? "cms-module-settings" : "admin-page"}>
@@ -263,16 +318,14 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           </p>
         </div>
       </header>
-      {config.tabs.length > 1 ? <nav className="cms-custom-tabs" aria-label="Configurações do módulo">{config.tabs.map(item => <button key={item} type="button" data-active={tab === item} aria-pressed={tab === item} onClick={() => setTab(item)}>{item === "sections" && module !== "personalization" ? "Chamada da seção" : customizationTabLabels[item]}</button>)}</nav> : null}
+      {config.tabs.length > 1 ? <nav className="cms-custom-tabs" aria-label="Configurações do módulo">{config.tabs.map(item => <Button variant="ghost" key={item} type="button" data-active={tab === item} aria-pressed={tab === item} onClick={() => setTab(item)}>{item === "sections" && module !== "personalization" ? "Chamada da seção" : customizationTabLabels[item]}</Button>)}</nav> : null}
 
-      {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
+      {tab === "sharing" ? <SocialSharingEditor value={data.settings.social_sharing || {}} busy={busy} onUpload={e => media(e, "social:image")} uploadError={uploadErrors["social:image"]} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, social_sharing: { ...current.settings.social_sharing, ...patch } } } : current)} /> : null}
       {tab === "faq" ? <FaqEditor value={data.settings.home_faq || {}} busy={busy} onChange={patch => setData(current => current ? { ...current, settings: { ...current.settings, home_faq: { ...current.settings.home_faq, ...patch } } } : current)} /> : null}
       {tab === "identity" ? (
         <div className="settings-form">
           <p id="identity-colors-note" className="form-span-full">
-            As cores do site público seguem os tokens oficiais do Design System.
-            Os valores existentes são preservados, mas não podem ser editados
-            nesta fase.
+            Personalize as cores principais do site. As alterações serão publicadas junto com as demais configurações ao salvar.
           </p>
           <label>
             Nome do site
@@ -286,7 +339,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.primaryColor || "#1c4722"}
-              disabled
+              onChange={(e) => setIdentity("primaryColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
             <small>
@@ -298,7 +351,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.secondaryColor || "#6ab945"}
-              disabled
+              onChange={(e) => setIdentity("secondaryColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
           </label>
@@ -307,7 +360,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.accentColor || "#ef4037"}
-              disabled
+              onChange={(e) => setIdentity("accentColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
           </label>
@@ -316,7 +369,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <input
               type="color"
               value={i.pageColor || "#f6faf6"}
-              disabled
+              onChange={(e) => setIdentity("pageColor", e.target.value)}
               aria-describedby="identity-colors-note"
             />
           </label>
@@ -335,7 +388,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               disabled={busy}
               onChange={(e) => media(e, "logo")}
             />
-            <UploadRequirements rule="logo">Use fundo transparente.</UploadRequirements>
+            <UploadRequirements rule="logo">Use fundo transparente.</UploadRequirements>{uploadErrors.logo ? <small className="cms-upload-error" role="alert">{uploadErrors.logo}</small> : null}
             {i.logo ? (
               <img
                 className="cms-upload-preview"
@@ -352,7 +405,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               disabled={busy}
               onChange={(e) => media(e, "logoWhite")}
             />
-            <UploadRequirements rule="logo">Use fundo transparente e a versão clara da marca.</UploadRequirements>
+            <UploadRequirements rule="logo">Use fundo transparente e a versão clara da marca.</UploadRequirements>{uploadErrors.logoWhite ? <small className="cms-upload-error" role="alert">{uploadErrors.logoWhite}</small> : null}
             {i.logoWhite ? (
               <img
                 className="cms-upload-preview cms-upload-preview-dark"
@@ -369,7 +422,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
               disabled={busy}
               onChange={(e) => media(e, "favicon")}
             />
-            <UploadRequirements rule="favicon">Use o símbolo da marca com fundo transparente. Salve as alterações para publicar.</UploadRequirements>
+            <UploadRequirements rule="favicon">Use o símbolo da marca com fundo transparente. Salve as alterações para publicar.</UploadRequirements>{uploadErrors.favicon ? <small className="cms-upload-error" role="alert">{uploadErrors.favicon}</small> : null}
             <img
               className="cms-upload-preview cms-upload-preview-dark"
               src={i.favicon || DEFAULT_FAVICON}
@@ -403,7 +456,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           setData(current => current ? { ...current, settings: { ...current.settings, home_videos: { ...current.settings.home_videos, ...patch } } } : current);
           setMsg("Vídeos da home alterados. Salve as alterações para publicar.");
         }} />
-        <VideosHeaderEditor value={data.settings.videos_header || {}} busy={busy}
+        <VideosHeaderEditor value={data.settings.videos_header || {}} busy={busy} uploadErrors={uploadErrors}
           onUpload={(e, field) => media(e, `videos:${field}`)}
           onChange={patch => {
             setData(current => current ? { ...current, settings: { ...current.settings,
@@ -413,7 +466,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           }} />
         </>
       ) : tab === "coopermais" ? (
-        <CoopermaisBannerEditor value={data.settings.coopermais_banner || {}} busy={busy}
+        <CoopermaisBannerEditor value={data.settings.coopermais_banner || {}} busy={busy} uploadErrors={uploadErrors}
           onUpload={(e, field) => media(e, `coopermais:${field}`)}
           onChange={patch => {
             setData(current => current ? { ...current, settings: { ...current.settings, coopermais_banner: { ...current.settings.coopermais_banner, ...patch } } } : current);
@@ -425,34 +478,50 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           setMsg("Configuração de ofertas alterada. Salve as alterações para publicar.");
         }} />
       ) : tab === "careers" ? (
-        <CareersHeroEditor
-          value={data.settings.careers_hero || {}}
+        <CareersBannersEditor
+          banners={parseCareersBanners(data.settings.careers_hero)}
+          contentValue={data.settings.careers_hero || {}}
+          testimonials={parseCareersTestimonials(data.settings.careers_testimonials)}
           busy={busy}
-          onUpload={(e, field) => media(e, `careers:${field}`)}
-          onChange={(patch) => {
-            setData((current) =>
-              current
-                ? {
-                    ...current,
-                    settings: {
-                      ...current.settings,
-                      careers_hero: {
-                        ...current.settings.careers_hero,
-                        ...patch,
-                      },
-                    },
-                  }
-                : current,
-            );
-            setMsg(
-              "Portal de Vagas alterado. Salve as alterações para publicar.",
-            );
+          uploadErrors={uploadErrors}
+          onUpload={(e, target) => media(e, target)}
+          onTestimonialUpload={(e, testimonialId) => media(e, `careers-testimonial:${testimonialId}`)}
+          onBannersChange={(banners) => {
+            setData((current) => current ? {
+              ...current,
+              settings: {
+                ...current.settings,
+                careers_hero: { ...current.settings.careers_hero, banners: JSON.stringify(banners) },
+              },
+            } : current);
+            setMsg("Banners do Portal de Vagas alterados. Salve as alterações para publicar.");
+          }}
+          onContentChange={(patch) => {
+            setData((current) => current ? {
+              ...current,
+              settings: {
+                ...current.settings,
+                careers_hero: { ...current.settings.careers_hero, ...patch },
+              },
+            } : current);
+            setMsg("Conteúdo institucional alterado. Salve as alterações para publicar.");
+          }}
+          onTestimonialsChange={(items) => {
+            setData((current) => current ? {
+              ...current,
+              settings: {
+                ...current.settings,
+                careers_testimonials: { testimonials: JSON.stringify(items) },
+              },
+            } : current);
+            setMsg("Depoimentos alterados. Salve as alterações para publicar.");
           }}
         />
       ) : tab === "history" ? (
         <HistoryImageEditor
           images={data.settings.history_images || {}}
           busy={busy}
+          uploadErrors={uploadErrors}
           onUpload={(e, id) => media(e, `history:${id}`)}
           onRestore={(id) => {
             const images = { ...data.settings.history_images };
@@ -512,7 +581,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
                       disabled={busy}
                       onChange={(e) => media(e, `section:${s.id}`)}
                     />
-                    <UploadRequirements rule="section" />
+                    <UploadRequirements rule="section" />{uploadErrors[`section:${s.id}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`section:${s.id}`]}</small> : null}
                     {s.content.image || s.id === "lojas" ? (
                       <img
                         className="cms-upload-preview"
@@ -536,9 +605,9 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
             <span>Revise as alterações antes de publicar.</span>
           )}
         </div>
-        <button className="button" onClick={saveAll} disabled={busy}>
-          {busy ? "Salvando..." : "Salvar alterações"}
-        </button>
+        <Button variant="primary" type="button" className="button" onClick={saveAll} disabled={busy || !hasChanges}>
+          {busy ? "Salvando..." : "Salvar alterações desta aba"}
+        </Button>
       </div>
     </section>
   );

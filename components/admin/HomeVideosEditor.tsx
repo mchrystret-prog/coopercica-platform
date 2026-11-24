@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import { manualFeed, type VideoItem } from "@/lib/home-videos";
 export function HomeVideosEditor({ value, busy, onChange }: { value: Record<string, string>; busy: boolean; onChange: (patch: Record<string, string>) => void }) {
   const feed = manualFeed(value);
@@ -8,8 +9,8 @@ export function HomeVideosEditor({ value, busy, onChange }: { value: Record<stri
       <label>Título<input value={item.title} maxLength={160} onChange={e => update(items.map((row, i) => i === index ? { ...row, title: e.target.value } : row))} /></label>
       <label>Link ou ID do YouTube<input value={item.id} onChange={e => update(items.map((row, i) => i === index ? { ...row, id: e.target.value } : row))} /></label>
       {key === "playlists" ? <label>Vídeo para a capa (opcional)<input value={item.cover || ""} placeholder="Link ou ID de um vídeo da playlist" onChange={e => update(items.map((row, i) => i === index ? { ...row, cover: e.target.value } : row))} /></label> : null}
-      <div><button type="button" disabled={index === 0} onClick={() => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; update(next); }}>Subir</button> <button type="button" onClick={() => update(items.filter((_, i) => i !== index))}>Remover</button></div>
-    </div>)}<button type="button" disabled={items.length >= 30} onClick={() => update([...items, { id: "", title: "" }])}>+ Adicionar {key === "videos" ? "vídeo" : "playlist"}</button></fieldset>;
+      <div><Button variant="secondary" type="button" disabled={index === 0} onClick={() => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; update(next); }}>Subir</Button> <Button variant="secondary" type="button" onClick={() => update(items.filter((_, i) => i !== index))}>Remover</Button></div>
+    </div>)}<Button variant="secondary" type="button" disabled={items.length >= 30} onClick={() => update([...items, { id: "", title: "" }])}>+ Adicionar {key === "videos" ? "vídeo" : "playlist"}</Button></fieldset>;
   }
   // Keep unfinished rows editable until the user saves and validation runs.
   const editable = (key: "videos" | "playlists") => { try { const raw = JSON.parse(value[key]); if (Array.isArray(raw)) return raw as VideoItem[]; } catch {} return feed[key]; };

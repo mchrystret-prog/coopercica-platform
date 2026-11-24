@@ -1,37 +1,13 @@
-import Image, { getImageProps } from "next/image";
-import type { CareersHeroImage } from "@/lib/careers-hero";
 import type { CareersContent } from "@/lib/careers-content";
 import { Button } from "@/components/ui/Button/Button";
 import { Container } from "@/components/ui/Container/Container";
 import { Section } from "@/components/ui/Section/Section";
 import styles from "./CareersStory.module.css";
-export function CareersStory({ content, image }: { content: CareersContent; image?: CareersHeroImage }) {
-  const mobile = image?.mobileSrc ? getImageProps({ src: image.mobileSrc, alt: image.alt, width: 1080, height: 810, sizes: "100vw" }).props : undefined;
-  return <>
-    <section className={styles.hero} aria-labelledby="careers-title">
-      <Container>
-        <div className={`${styles.heroGrid} ${!image ? styles.withoutImage : ""}`}>
-          <div className={styles.heroCopy} data-careers-reveal>
-            <span className={styles.eyebrow}>Carreiras Coopercica</span>
-            <h1 id="careers-title">{content.heroTitle}</h1>
-            <p>{content.heroIntro}</p>
+import type { CareersTestimonial } from "@/lib/careers-testimonials";
+import { TestimonialsCarousel } from "./TestimonialsCarousel";
 
-          </div>
-          {image ? <div className={styles.media} data-careers-reveal data-careers-delay="70">
-            <picture>
-              {mobile ? <source media="(max-width: 760px)" srcSet={mobile.srcSet} sizes={mobile.sizes} /> : null}
-              <Image src={image.src} alt={image.alt} fill loading="eager" fetchPriority="high" sizes="(max-width: 760px) 100vw, (max-width: 1280px) 45vw, 560px" style={{ objectPosition: image.position }} />
-            </picture>
-            <span className={styles.photoCaption}>Uma história feita por pessoas.</span>
-          </div> : null}
-            <div className={styles.actions} data-careers-reveal data-careers-delay="140">
-              <Button href="#oportunidades">Encontre sua oportunidade</Button>
-              <a className={styles.textLink} href="#nossa-cultura">Conheça o que nos move <span aria-hidden="true">↓</span></a>
-            </div>
-        </div>
-        <div className={styles.heroFoot}><span>Qualidade com você desde 1969</span><span>Cooperar é fazer parte.</span></div>
-      </Container>
-    </section>
+export function CareersStory({ content, testimonials }: { content: CareersContent; testimonials: CareersTestimonial[] }) {
+  return <>
     <Section id="nossa-cultura" className={styles.manifesto} aria-labelledby="manifesto-title">
       <Container>
         <div className={styles.editorialGrid}>
@@ -68,6 +44,18 @@ export function CareersStory({ content, image }: { content: CareersContent; imag
         ].map(([title, description], index) => <article key={title} data-careers-reveal data-careers-delay={index * 70}><span className={styles.valueIndex} aria-hidden="true">0{index + 1}</span><h3>{title}</h3><p>{description}</p></article>)}</div>
       </Container>
     </Section>
-    <section className={styles.invitation} aria-labelledby="invitation-title"><Container><div className={styles.invitationGrid} data-careers-reveal><div><span className={styles.eyebrow}>Seu próximo passo</span><h2 id="invitation-title">Faça parte dos próximos capítulos.</h2><p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p></div><Button href="#oportunidades">Quero fazer parte</Button></div></Container></section>
+    <section className={styles.invitation} aria-labelledby="invitation-title">
+      <Container>
+        <div className={styles.invitationHeading} data-careers-reveal>
+          <div>
+            <span className={styles.eyebrow}>Seu próximo passo</span>
+            <h2 id="invitation-title">Faça parte dos próximos capítulos.</h2>
+            <p>Conheça as vagas e encontre onde seu talento pode fazer a diferença na Coopercica.</p>
+            <span className={styles.testimonialLabel}>Quem faz parte conta</span>
+          </div>
+        </div>
+        {testimonials.length > 0 ? <TestimonialsCarousel testimonials={testimonials} /> : null}
+      </Container>
+    </section>
   </>;
 }

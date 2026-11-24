@@ -1,7 +1,7 @@
 export type CustomizationTab = "identity" | "sections" | "history" | "careers" | "offers" | "videos" | "coopermais" | "partners" | "magazine" | "contact" | "sharing" | "faq";
 export type CustomizationModule = "personalization" | "settings" | "magazines";
 export const customizationModules: Record<CustomizationModule, { title: string; tabs: CustomizationTab[]; settings: string[]; sections: string[] }> = {
-  personalization: { title: "Personalização", tabs: ["identity", "sections", "history", "careers", "videos", "coopermais", "partners", "contact", "sharing", "faq"], settings: ["identity", "history_images", "careers_hero", "home_videos", "videos_header", "coopermais_banner", "home_partners", "footer_contact", "social_sharing", "home_faq"], sections: [] },
+  personalization: { title: "Personalização", tabs: ["identity", "sections", "history", "careers", "videos", "coopermais", "partners", "contact", "sharing", "faq"], settings: ["identity", "history_images", "careers_hero", "careers_testimonials", "home_videos", "videos_header", "coopermais_banner", "home_partners", "footer_contact", "social_sharing", "home_faq"], sections: [] },
   settings: { title: "Configurações", tabs: ["offers"], settings: ["offers_delivery", "offers_pharmacy"], sections: [] },
   magazines: { title: "Nessa edição", tabs: ["magazine"], settings: [], sections: ["revista"] },
 };
@@ -13,6 +13,38 @@ export function customizationSavePayload(module: CustomizationModule, data: Payl
   const config = customizationModules[module];
   const settings = Object.fromEntries(Object.entries(data.settings).filter(([key]) => config.settings.includes(key)));
   const sections = data.sections.filter(section => module === "personalization" || config.sections.includes(section.id)).map(section => {
+    const latest = current.sections.find(item => item.id === section.id)?.content || section.content;
+    if (module === "magazines") return { id: section.id, content: { ...latest, editionDetails: section.content.editionDetails || "{}" } };
+    const presentation = Object.fromEntries(Object.entries(section.content).filter(([key]) => key !== "editionDetails"));
+    return { id: section.id, active: section.active, sort_order: section.sort_order, content: section.id === "revista" ? { ...latest, ...presentation } : section.content };
+  });
+  return { p_settings: settings, p_sections: sections };
+}
+
+const personalizationTabSettings: Partial<Record<CustomizationTab, string[]>> = {
+  identity: ["identity"],
+  history: ["history_images"],
+  careers: ["careers_hero", "careers_testimonials"],
+  videos: ["home_videos", "videos_header"],
+  coopermais: ["coopermais_banner"],
+  partners: ["home_partners"],
+  contact: ["footer_contact"],
+  sharing: ["social_sharing"],
+  faq: ["home_faq"],
+};
+
+export function customizationTabSavePayload(module: CustomizationModule, tab: CustomizationTab, data: Payload, current: Payload = data) {
+  const config = customizationModules[module];
+  const allowedSettings = module === "personalization"
+    ? personalizationTabSettings[tab] || []
+    : config.settings;
+  const settings = Object.fromEntries(Object.entries(data.settings).filter(([key]) => allowedSettings.includes(key)));
+  const allowedSections = module === "magazines"
+    ? config.sections
+    : module === "personalization" && tab === "sections"
+      ? data.sections.map(section => section.id)
+      : [];
+  const sections = data.sections.filter(section => allowedSections.includes(section.id)).map(section => {
     const latest = current.sections.find(item => item.id === section.id)?.content || section.content;
     if (module === "magazines") return { id: section.id, content: { ...latest, editionDetails: section.content.editionDetails || "{}" } };
     const presentation = Object.fromEntries(Object.entries(section.content).filter(([key]) => key !== "editionDetails"));

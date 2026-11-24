@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button/Button";
 import type { ChangeEvent } from "react";
 import { historyItems } from "@/data/history";
 import { UploadRequirements } from "./UploadRequirements";
@@ -7,11 +8,13 @@ import { UploadRequirements } from "./UploadRequirements";
 export function HistoryImageEditor({
   images,
   busy,
+  uploadErrors = {},
   onUpload,
   onRestore,
 }: {
   images: Record<string, string>;
   busy: boolean;
+  uploadErrors?: Record<string, string>;
   onUpload: (event: ChangeEvent<HTMLInputElement>, id: string) => void;
   onRestore: (id: string) => void;
 }) {
@@ -43,18 +46,18 @@ export function HistoryImageEditor({
                 disabled={busy}
                 onChange={(e) => onUpload(e, item.id)}
               />
-              <UploadRequirements rule="history" />
+              {uploadErrors[`history:${item.id}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`history:${item.id}`]}</small> : null}<UploadRequirements rule="history" />
             </label>
           </div>
           {images[item.id] ? (
-            <button
+            <Button variant="secondary"
               type="button"
               className="button button-secondary"
               disabled={busy}
               onClick={() => onRestore(item.id)}
             >
               Restaurar imagem original
-            </button>
+            </Button>
           ) : null}
         </article>
       ))}

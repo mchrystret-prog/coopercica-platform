@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import { careersDefaults } from "@/lib/careers-content";
 import type { ChangeEvent } from "react";
@@ -7,11 +8,13 @@ import { UploadRequirements } from "./UploadRequirements";
 export function CareersHeroEditor({
   value,
   busy,
+  uploadErrors = {},
   onChange,
   onUpload,
 }: {
   value: Record<string, string>;
   busy: boolean;
+  uploadErrors?: Record<string, string>;
   onChange: (patch: Record<string, string>) => void;
   onUpload: (
     event: ChangeEvent<HTMLInputElement>,
@@ -50,6 +53,7 @@ export function CareersHeroEditor({
                   disabled={busy || (field === "mobileImage" && !value.image)}
                   onChange={(e) => onUpload(e, field)}
                 />
+                {uploadErrors[`careers:${field}`] ? <small className="cms-upload-error" role="alert">{uploadErrors[`careers:${field}`]}</small> : null}
                 <UploadRequirements rule={field === "image" ? "careersDesktop" : "careersMobile"}>
                   {field === "mobileImage" ? "Sem esta imagem, o celular usa a foto principal." : null}
                 </UploadRequirements>
@@ -102,22 +106,22 @@ export function CareersHeroEditor({
           </label>
         </div>
         {value.mobileImage ? (
-          <button
+          <Button variant="secondary" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={() => onChange({ mobileImage: "" })}
           >
             Remover versão mobile
-          </button>
+          </Button>
         ) : null}
         {value.image ? (
-          <button
+          <Button variant="secondary" type="button"
             className="button button-secondary"
             disabled={busy}
             onClick={() => onChange({ image: "", mobileImage: "" })}
           >
             Remover foto do header
-          </button>
+          </Button>
         ) : null}
       </article>
       <article className="cms-section-card">

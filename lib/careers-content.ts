@@ -1,6 +1,7 @@
 // Institutional copy: https://empresa.coopercica.com.br/coopercica/valores/index.html
 // History: https://empresa.coopercica.com.br/coopercica/
 export const careersDefaults = {
+  // Legacy copy remains in the settings type but is no longer displayed in the page hero.
   heroTitle: "O próximo capítulo da nossa história pode ter você.",
   heroIntro: "Desde 1969, a Coopercica aproxima pessoas por meio da cooperação. Venha colocar seu talento a serviço de uma história que continua sendo construída todos os dias.",
   manifestoTitle: "O que nos une faz a diferença.",

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
@@ -29,6 +30,7 @@ export function JobsAdmin() {
     [error, setError] = useState(""),
     [revision, setRevision] = useState(0);
   const formSection = useRef<HTMLElement>(null);
+  const [formDirty, setFormDirty] = useState(false);
   useEffect(() => {
     const c = new AbortController();
     async function load() {
@@ -56,6 +58,7 @@ export function JobsAdmin() {
   }, [page, status, revision]);
   function edit(job: Job | null) {
     setEditing(job);
+    setFormDirty(false);
     setShowForm(true);
     setMessage("");
     setTimeout(
@@ -158,9 +161,9 @@ export function JobsAdmin() {
             Crie oportunidades, publique no site e acompanhe as candidaturas.
           </p>
         </div>
-        <button className="button" disabled={busy} onClick={() => edit(null)}>
+        <Button variant="primary" type="button" className="button" disabled={busy} onClick={() => edit(null)}>
           + Nova vaga
-        </button>
+        </Button>
       </header>
       <RecruitmentNav />
       {message ? (
@@ -191,13 +194,13 @@ export function JobsAdmin() {
             ))}
           </select>
         </label>
-        <button
+        <Button variant="secondary" type="button"
           className="button button-secondary"
           disabled={loading}
           onClick={() => setRevision((n) => n + 1)}
         >
           Atualizar
-        </button>
+        </Button>
       </div>
       {loading ? <p role="status">Carregando vagas…</p> : null}
       <div className={styles.list} aria-busy={loading}>
@@ -220,24 +223,25 @@ export function JobsAdmin() {
               </p>
             </div>
             <div className={styles.actions}>
-              <button disabled={busy} onClick={() => edit(job)}>
+              <Button variant="secondary" type="button" className="cms-edit-one" disabled={busy} onClick={() => edit(job)}>
                 Editar
-              </button>
-              <Link href={`/admin/vagas/candidaturas?vaga=${job.id}`}>
+              </Button>
+              <Link className="cms-edit-one" href={`/admin/vagas/candidaturas?vaga=${job.id}`}>
                 Candidaturas
               </Link>
               {job.status === "open" ? (
                 <>
                   <Link
+                    className="cms-edit-one"
                     href={`/vagas/${job.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Ver no site
                   </Link>
-                  <button disabled={busy} onClick={() => close(job)}>
+                  <Button variant="secondary" type="button" className="cms-delete-one" disabled={busy} onClick={() => close(job)}>
                     Encerrar
-                  </button>
+                  </Button>
                 </>
               ) : null}
             </div>
@@ -255,18 +259,18 @@ export function JobsAdmin() {
             ? `${page * 25 + 1}–${Math.min((page + 1) * 25, total)} de ${total} vagas`
             : "0 vagas"}
         </span>
-        <button
+        <Button variant="secondary" type="button"
           disabled={loading || page === 0}
           onClick={() => setPage((n) => n - 1)}
         >
           Anterior
-        </button>
-        <button
+        </Button>
+        <Button variant="secondary" type="button"
           disabled={loading || (page + 1) * 25 >= total}
           onClick={() => setPage((n) => n + 1)}
         >
           Próxima
-        </button>
+        </Button>
       </div>
       {showForm ? (
         <section
@@ -275,7 +279,7 @@ export function JobsAdmin() {
         >
           <div className={styles.formHeading}>
             <h2>{editing ? "Editar vaga" : "Nova oportunidade"}</h2>
-            <button
+            <Button variant="ghost" type="button"
               className="cms-edit-one"
               disabled={busy}
               onClick={() => {
@@ -284,12 +288,13 @@ export function JobsAdmin() {
               }}
             >
               Cancelar
-            </button>
+            </Button>
           </div>
           <form
             className="settings-form"
             key={editing?.id || "new"}
             onSubmit={save}
+            onChange={() => setFormDirty(true)}
           >
             <label>
               Cargo
@@ -425,9 +430,9 @@ export function JobsAdmin() {
               <small>Rascunhos e vagas encerradas não aparecem no site.</small>
             </label>
             <div className="form-actions">
-              <button className="button" disabled={busy}>
+              <Button variant="primary" type="submit" className="button" disabled={busy || !formDirty}>
                 {busy ? "Salvando…" : "Salvar vaga"}
-              </button>
+              </Button>
             </div>
           </form>
         </section>

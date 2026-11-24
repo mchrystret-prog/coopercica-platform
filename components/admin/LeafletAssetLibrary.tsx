@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import Image from "next/image";
 import { useEffect, useState, type FormEvent } from "react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
@@ -20,8 +21,10 @@ export function LeafletAssetLibrary() {
   const [kind, setKind] = useState<"box" | "seal">("box");
   const [codeValue, setCodeValue] = useState("");
   const [message, setMessage] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const [dirty, setDirty] = useState(false);
   useEffect(() => {
     let active = true;
     getLeafletAssets(
@@ -51,6 +54,7 @@ export function LeafletAssetLibrary() {
       data = new FormData(form);
     setBusy(true);
     setMessage("");
+    setUploadError("");
     try {
       const code =
         kind === "box" ? boxCode(data.get("code")) : sealCode(data.get("code"));
@@ -134,8 +138,10 @@ export function LeafletAssetLibrary() {
         "Arquivo cadastrado. Ele já pode ser usado nas próximas importações.",
       );
     } catch (error) {
+      const errorText = error instanceof Error ? error.message : "Não foi possível salvar.";
+      setUploadError(errorText);
       setMessage(
-        error instanceof Error ? error.message : "Não foi possível salvar.",
+        errorText,
       );
     } finally {
       setBusy(false);
@@ -152,6 +158,7 @@ export function LeafletAssetLibrary() {
         key={editing ? assetKey(editing) : "new"}
         className="settings-form"
         onSubmit={save}
+        onChange={() => setDirty(true)}
       >
         <label>
           Tipo
@@ -206,6 +213,7 @@ export function LeafletAssetLibrary() {
             required
             accept="image/png,image/jpeg,image/webp"
           />
+          {uploadError ? <small className="cms-upload-error" role="alert">{uploadError}</small> : null}
           <UploadRequirements rule={leafletAssetRule(kind, sealCode(codeValue))}>
             Use PNG ou WebP transparente para selos.{" "}
             {kind === "box"
@@ -214,21 +222,21 @@ export function LeafletAssetLibrary() {
           </UploadRequirements>
         </label>
         <div className="form-actions">
-          <button className="button" disabled={busy || !ready}>
+          <Button variant="primary" type="submit" className="button" disabled={busy || !ready || !dirty}>
             {busy
               ? "Salvando..."
               : editing
                 ? "Substituir arquivo"
                 : "Cadastrar arquivo"}
-          </button>
+          </Button>
           {editing ? (
-            <button
+            <Button variant="ghost"
               type="button"
               disabled={busy}
-              onClick={() => { setEditing(null); setCodeValue(""); }}
+              onClick={() => { setEditing(null); setCodeValue(""); setDirty(false); }}
             >
               Cancelar
-            </button>
+            </Button>
           ) : null}
         </div>
       </form>
@@ -249,17 +257,18 @@ export function LeafletAssetLibrary() {
                 {asset.kind === "box" ? "Fundo" : "Selo"}:{" "}
                 <code>{asset.code}</code>
               </p>
-              <button
+              <Button variant="secondary"
                 type="button"
                 disabled={busy}
                 onClick={() => {
                   setEditing(asset);
+                  setDirty(false);
                   setKind(asset.kind);
                   setCodeValue(asset.code);
                 }}
               >
                 Substituir arquivo
-              </button>
+              </Button>
             </div>
           </article>
         ))}

@@ -85,3 +85,12 @@ test("Coopermais routes mobile uploads to portrait validation", async () => {
   await validateCmsUpload(imageFile(1080, 1350), "coopermaisMobileImage");
   await assert.rejects(validateCmsUpload(imageFile(2880, 432), "coopermaisMobileImage"), /1080 × 1350/);
 });
+
+
+test("Portal de Vagas banner uploads use independent desktop and mobile rules", async () => {
+  assert.equal(customizationUploadRule("careers-banner:banner-1:desktopImage"), "careersBannerDesktop");
+  assert.equal(customizationUploadRule("careers-banner:banner-1:mobileImage"), "careersBannerMobile");
+  await validateCmsUpload(imageFile(3384, 864), "careersBannerDesktop");
+  await validateCmsUpload(imageFile(864, 864), "careersBannerMobile");
+  await assert.rejects(validateCmsUpload(imageFile(1600, 1200), "careersBannerDesktop"), /3384 × 864/);
+});

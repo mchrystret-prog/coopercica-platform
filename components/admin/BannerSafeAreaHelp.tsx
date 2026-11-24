@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button/Button";
 import { useEffect, useId, useRef, useState } from "react";
 import { uploadRules } from "@/lib/cms-upload-rules";
 import styles from "./BannerSafeAreaHelp.module.css";
@@ -24,10 +25,10 @@ export function BannerSafeAreaHelp({ variant }: { variant: "desktop" | "mobile" 
   const model = `/guides/banner-${variant}-respiro.svg`;
   return (
     <div className={styles.help}>
-      <button type="button" className={styles.trigger} aria-label={`Mostrar áreas de respiro do banner ${variant}`} aria-haspopup="dialog" title="Áreas de respiro" onClick={() => { dialog.current?.showModal(); setOpen(true); }}>
+      <Button variant="ghost" type="button" className={styles.trigger} aria-label={`Mostrar áreas de respiro do banner ${variant}`} aria-haspopup="dialog" title="Áreas de respiro" onClick={() => { dialog.current?.showModal(); setOpen(true); }}>
         <span aria-hidden="true" className={styles.question}>?</span>
         <span>Áreas de respiro</span>
-      </button>
+      </Button>
       <dialog ref={dialog} className={styles.dialog} aria-labelledby={titleId} onClose={() => setOpen(false)} onClick={event => {
         if (event.target !== event.currentTarget) return;
         const bounds = event.currentTarget.getBoundingClientRect();
@@ -36,7 +37,7 @@ export function BannerSafeAreaHelp({ variant }: { variant: "desktop" | "mobile" 
       <div className={styles.panel}>
         <div className={styles.heading}>
           <h2 id={titleId}>Modelo {variant} · {width} × {height} px</h2>
-          <button type="button" className={styles.close} aria-label="Fechar áreas de respiro" onClick={() => dialog.current?.close()}>×</button>
+          <Button variant="secondary" type="button" className={`${styles.close} cms-icon-button`} aria-label="Fechar áreas de respiro" onClick={() => dialog.current?.close()}>×</Button>
         </div>
         <p>Coloque textos, logos, preços e chamadas dentro da área verde. Nas faixas vermelhas, use apenas fundo ou elementos que possam ficar sob os controles.</p>
         {/* Native image preserves the model's exact proportions and supports SVG download. */}

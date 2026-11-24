@@ -145,3 +145,95 @@
     background: var(--surface-card);
   }
 }
+
+
+/* Depoimentos de quem constrói a Coopercica todos os dias. */
+.invitationHeading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+.invitationHeading h2 {
+  color: inherit;
+  font-size: var(--font-size-h2);
+  line-height: 1.08;
+  max-width: 750px;
+  margin: 20px 0;
+  letter-spacing: var(--tracking-heading);
+}
+.invitationHeading p {
+  color: var(--text-inverse-muted);
+  line-height: var(--line-height-body);
+  max-width: 660px;
+  margin-bottom: 0;
+}
+.testimonialLabel {
+  flex-shrink: 0;
+  color: var(--brand-lime-500);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+.testimonialCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: var(--radius-md);
+  background: rgb(255 255 255 / 96%);
+  color: var(--text-body);
+  box-shadow: var(--shadow-soft);
+}
+.quoteMark {
+  display: block;
+  height: 38px;
+  color: var(--brand-green-700);
+  font-family: Georgia, serif;
+  font-size: 4rem;
+  line-height: 1;
+}
+.testimonialCard blockquote {
+  flex: 1;
+  margin: 12px 0 28px;
+  color: var(--text-heading);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  line-height: 1.65;
+}
+.testimonialPerson {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-soft);
+}
+.testimonialPerson strong {
+  color: var(--brand-green-900);
+  font-size: var(--font-size-body);
+}
+.testimonialPerson span {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+@media (max-width: 760px) {
+  .invitationHeading {
+    display: block;
+  }
+  .testimonialLabel {
+    display: inline-block;
+    margin-top: 24px;
+  }
+  .testimonialsGrid {
+    grid-template-columns: 1fr;
+  }
+}
