@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/Button/Button";
-import { customizationModules, customizationTabLabels, customizationSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
+import { customizationModules, customizationTabLabels, customizationTabSavePayload, type CustomizationModule, type CustomizationTab } from "@/lib/cms-customization-structure";
 import { ChangeEvent, useEffect, useState } from "react";
 import { validateCoopermaisInformation } from "@/lib/coopermais-banner";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/leaflets";
@@ -90,27 +90,35 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
   }
   async function saveAll() {
     if (!data) return;
-    const faqError = module === "personalization" ? validateFaq(data.settings.home_faq || {}) : null;
-    if (faqError) { setTab("faq"); setMsg(faqError); return; }
-    if (module === "personalization" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) { setTab("sharing"); setMsg("Envie uma imagem válida na aba Compartilhamento."); return; }
-    const contactError = module === "personalization" ? validateFooterContact(data.settings.footer_contact || {}) : null;
-    if (contactError) { setTab("contact"); setMsg(contactError); return; }
-    const partnersError = module === "personalization" ? validatePartners(data.settings.home_partners || {}) : null;
-    if (partnersError) { setTab("partners"); setMsg(partnersError); return; }
-    const videosError = module === "personalization" ? validateHomeVideos(data.settings.home_videos || {}) : null;
-    if (videosError) { setTab("videos"); setMsg(videosError); return; }
-    const offersError = module === "settings" ? validateOffersSettings(data.settings) : null;
-    if (offersError) { setTab("offers"); setMsg(offersError); return; }
-    if (module === "personalization") {
+
+    if (module === "personalization" && tab === "faq") {
+      const error = validateFaq(data.settings.home_faq || {});
+      if (error) { setMsg(error); return; }
+    }
+    if (module === "personalization" && tab === "sharing" && data.settings.social_sharing?.image && !socialImage(data.settings.social_sharing)) {
+      setMsg("Envie uma imagem válida na aba Compartilhamento."); return;
+    }
+    if (module === "personalization" && tab === "contact") {
+      const error = validateFooterContact(data.settings.footer_contact || {});
+      if (error) { setMsg(error); return; }
+    }
+    if (module === "personalization" && tab === "partners") {
+      const error = validatePartners(data.settings.home_partners || {});
+      if (error) { setMsg(error); return; }
+    }
+    if (module === "personalization" && tab === "videos") {
+      const error = validateHomeVideos(data.settings.home_videos || {});
+      if (error) { setMsg(error); return; }
+      if (data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
+        setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
+      }
+    }
+    if (module === "personalization" && tab === "careers") {
       const testimonials = parseCareersTestimonials(data.settings.careers_testimonials);
       const invalidTestimonial = testimonials.find((item) => item.active && (!item.quote.trim() || !item.name.trim() || !item.image.trim()));
       if (invalidTestimonial) {
-        setTab("careers");
-        setMsg("Cada depoimento ativo precisa ter texto, nome e foto do colaborador.");
-        return;
+        setMsg("Cada depoimento ativo precisa ter texto, nome e foto do colaborador."); return;
       }
-    }
-    if (module === "personalization") {
       const banners = parseCareersBanners(data.settings.careers_hero);
       const invalidBanner = banners.find((banner) => banner.active && (
         !banner.title.trim() ||
@@ -118,57 +126,54 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
         (Boolean(banner.mobileImage) && !isValidCareersBannerImage(banner.mobileImage))
       ));
       if (invalidBanner) {
-        setTab("careers");
-        setMsg("Cada banner ativo precisa ter uma imagem desktop válida e um texto alternativo. A imagem mobile, quando enviada, também precisa ser válida.");
-        return;
+        setMsg("Cada banner ativo precisa ter uma imagem desktop válida e um texto alternativo."); return;
       }
       if (banners.some((banner) => banner.href && !isValidCareersBannerHref(banner.href))) {
-        setTab("careers");
-        setMsg("Confira os links dos banners. Use um endereço HTTPS ou um caminho interno iniciado por /.");
-        return;
+        setMsg("Confira os links dos banners. Use um endereço HTTPS ou um caminho interno iniciado por /."); return;
       }
     }
-    if (module === "personalization" && data.settings.videos_header?.image && !data.settings.videos_header.alt?.trim()) {
-      setTab("videos"); setMsg("Adicione uma descrição da arte de Vídeos para acessibilidade."); return;
+    if (module === "personalization" && tab === "coopermais") {
+      if (data.settings.coopermais_banner?.ctaHref) {
+        try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
+        catch { setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
+      }
+      const error = validateCoopermaisInformation(data.settings.coopermais_banner || {});
+      if (error) { setMsg(error); return; }
     }
-    if (module === "personalization" && data.settings.coopermais_banner?.ctaHref) {
-      try { const url = new URL(data.settings.coopermais_banner.ctaHref); if (url.protocol !== "https:" || url.username || url.password) throw new Error(); }
-      catch { setTab("coopermais"); setMsg("Informe um link HTTPS válido para o CTA Coopermais."); return; }
+    if (module === "settings" && tab === "offers") {
+      const error = validateOffersSettings(data.settings);
+      if (error) { setMsg(error); return; }
     }
-    const informationError = module === "personalization" ? validateCoopermaisInformation(data.settings.coopermais_banner || {}) : null;
-    if (informationError) { setTab("coopermais"); setMsg(informationError); return; }
+
     setBusy(true);
     setMsg("");
     try {
-      const latestResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`, { method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" }, body: "{}" });
+      const latestResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_get_site_customization`, {
+        method: "POST",
+        headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" },
+        body: "{}",
+      });
       if (!latestResponse.ok) throw new Error("Não foi possível conferir os dados atuais antes de salvar.");
       const latest: Payload = await latestResponse.json();
-      const r = await fetch(
-        `${SUPABASE_URL}/rest/v1/rpc/cms_save_site_customization`,
-        {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${token()}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(customizationSavePayload(module, data, latest)),
-        },
-      );
+      const payload = customizationTabSavePayload(module, tab, data, latest);
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cms_save_site_customization`, {
+        method: "POST",
+        headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token()}`, "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
       if (!r.ok) throw new Error(await r.text());
-      setMsg("Personalização salva e publicada no site.");
+      setMsg("Alterações desta aba salvas e publicadas no site.");
     } catch (err) {
       let detail = "Erro desconhecido ao salvar.";
       if (err instanceof Error && err.message) {
         try {
           const parsed = JSON.parse(err.message);
-          detail =
-            parsed.message || parsed.details || parsed.hint || err.message;
+          detail = parsed.message || parsed.details || parsed.hint || err.message;
         } catch {
           detail = err.message;
         }
       }
-      setMsg(`Não foi possível salvar: ${detail}`);
+      setMsg(`Não foi possível salvar esta aba: ${detail}`);
     } finally {
       setBusy(false);
     }
@@ -597,7 +602,7 @@ export function SiteCustomization({ magazines = [], initialTab, module = "person
           )}
         </div>
         <Button variant="primary" type="button" className="button" onClick={saveAll} disabled={busy}>
-          {busy ? "Salvando..." : "Salvar alterações"}
+          {busy ? "Salvando..." : "Salvar alterações desta aba"}
         </Button>
       </div>
     </section>
