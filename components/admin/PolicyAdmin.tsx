@@ -158,11 +158,7 @@ export function PolicyAdmin() {
         <>
           <header className="admin-header">
             <div><span className="eyebrow">Institucional</span><h1>Políticas e documentos</h1><p>Publique políticas, termos, relatórios de transparência e outros documentos oficiais exibidos no site.</p></div>
-          </header>
-          <section className="cms-content-section">
-            <div className="cms-content-heading">
-              
-              <div className="cms-list-actions">
+            <div className="cms-list-actions">
                 <Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Novo</Button>
                 <Button variant="secondary" className="cms-danger-outline" type="button" onClick={clearModule} disabled={!items.length || busy}>Zerar módulo</Button>
               </div>
