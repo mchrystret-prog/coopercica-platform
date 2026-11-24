@@ -159,10 +159,11 @@ export function PolicyAdmin() {
           <header className="admin-header">
             <div><span className="eyebrow">Institucional</span><h1>Políticas e documentos</h1><p>Publique políticas, termos, relatórios de transparência e outros documentos oficiais exibidos no site.</p></div>
             <div className="cms-list-actions">
-                <Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Novo</Button>
-                <Button variant="secondary" className="cms-danger-outline" type="button" onClick={clearModule} disabled={!items.length || busy}>Zerar módulo</Button>
-              </div>
+              <Button variant="primary" className="button" type="button" onClick={() => { setMsg(""); setCreating(true); }}>+ Novo</Button>
+              <Button variant="secondary" className="cms-danger-outline" type="button" onClick={clearModule} disabled={!items.length || busy}>Zerar módulo</Button>
             </div>
+          </header>
+          <section className="cms-content-section">
             {msg ? <div className="form-status" role="status"><strong>{msg}</strong></div> : null}
             {items.length ? <div className="cms-content-list">{items.map((item) => (
               <article className="cms-content-row cms-policy-list-row" key={item.id}>
