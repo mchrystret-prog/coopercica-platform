@@ -44,6 +44,7 @@ export function LeafletAdmin({
   }, [imageFiles, requiredEans]);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   useEffect(() => {
     let active = true;
@@ -377,7 +378,7 @@ export function LeafletAdmin({
   }
   return (
     <>
-      <form onSubmit={submit}>
+      <form onSubmit={submit} onChange={() => setDirty(true)}>
         <fieldset
           className="settings-form cms-leaflet-form-grid"
           disabled={loading}
@@ -564,7 +565,7 @@ export function LeafletAdmin({
             ) : null}
           </label>
           <div className="form-actions">
-            <Button variant="primary" type="submit" className="button" disabled={loading} aria-busy={loading}>
+            <Button variant="primary" type="submit" className="button" disabled={loading || !dirty} aria-busy={loading}>
               {loading ? "Importando folheto..." : "Criar folheto"}
             </Button>
           </div>
